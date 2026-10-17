@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "consumes": [
+    {
+      "from": "2AMLogic/sg13g2-bandgap",
+      "commit": "52535387e6ccf0a89f6490901a9abb2b78144176",
+      "mode": "vendored",
+      "files": [
+        {
+          "upstream": "sim/tools/build-osdi.sh",
+          "local": "sim/harness/common/build-osdi.sh",
+          "sha256": "d022ddc32a02280081d32bb7186ba1920b0b3399b00b0a5ad5eeda717d1396bd"
+        }
+      ]
+    }
+  ]
+}

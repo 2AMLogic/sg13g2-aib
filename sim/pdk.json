@@ -1,0 +1,38 @@
+{
+  "_comment": "Pinned SG13G2 PDK revision and OSDI toolchain every committed evidence record under sim/ was generated against. Plain greppable fact sheet; sim/harness/common/fetch-pdk.sh reads release_url and tarball_sha256 from here. Bumping a pin is a new commit; earlier records stay as they were.",
+  "source": "IHP-GmbH/IHP-Open-PDK",
+  "release_tag": "v0.3.0",
+  "release_url": "https://github.com/IHP-GmbH/IHP-Open-PDK/archive/refs/tags/v0.3.0.tar.gz",
+  "tarball_sha256": "f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc",
+  "variant": "ihp-sg13g2",
+  "pdk_root_layout": "PDK_ROOT/ihp-sg13g2 (open_pdks-shaped install)",
+  "documented_tool_versions_from_pdk_versions_txt": {
+    "openvaf": "23.5.0",
+    "ngspice": "43",
+    "xschem": "3.4.6"
+  },
+  "osdi_toolchain": {
+    "_comment": "The PDK tarball ships Verilog-A sources, not .osdi binaries. sim/harness/common/build-osdi.sh is vendored from the sibling (see reuse.lock.json) and is the executable source of truth for these pins. No .osdi is committed; they are rebuilt locally.",
+    "approach": "compile the PDK's own Verilog-A with a checksum-pinned OpenVAF-Reloaded",
+    "build_script": "sim/harness/common/build-osdi.sh",
+    "compiler_repo": "OpenVAF/OpenVAF-Reloaded",
+    "compiler_tag": "v24.0.1mob",
+    "compiler_invocation_name": "openvaf-r",
+    "compiler_asset_sha256": {
+      "openvaf-r-v24.0.1mob-macos-aarch64.tar.gz": "b59a6d7ffba0cdc2e3d3d27edb62d686cde72e7fbe9931f7bed6a4538c15e85e",
+      "openvaf-r-v24.0.1mob-macos-x86_64.tar.gz": "1635e728a81830326c06d4f81e96f2a8943e661b906d4046084c35ff7595f41e",
+      "openvaf-r-v24.0.1mob-linux-x86_64.tar.gz": "3297e32f68becf5e0d4709d7f731d7d26f87f88dc136041334677d3ab36279e3"
+    },
+    "libllvm21_deb_linux_x86_64": {
+      "url": "https://apt.llvm.org/noble/pool/main/l/llvm-toolchain-21/libllvm21_21.1.8~++20251221032922+2078da43e25a-1~exp1~20251221153059.70_amd64.deb",
+      "sha256": "f1f058fff19f9d711c32b9efe5cd473dd2f0e7d5338d082fa5a25858322048cd"
+    },
+    "models_built": ["psp103.osdi", "psp103_nqs.osdi", "r3_cmc.osdi", "mosvar.osdi"],
+    "install_dir": "PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi (generated, not tracked)"
+  },
+  "vendored_from": {
+    "repo": "2AMLogic/sg13g2-bandgap",
+    "commit": "52535387e6ccf0a89f6490901a9abb2b78144176",
+    "file": "sim/tools/build-osdi.sh"
+  }
+}
