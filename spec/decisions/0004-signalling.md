@@ -16,8 +16,8 @@ a 3.3 V supply). The issue asks: core-supply CMOS, or reduced swing?
 Full-rail CMOS at VDDIO (1.2 V nominal, thin-oxide devices only), unterminated,
 point-to-point, with a driver output impedance of 40-80 Ω chosen to source-match
 the 50 Ω channel (channel-model.md) within ±40 %. The receiver is an
-inverter-class stage with its threshold within ±10 % of VDDIO of VDDIO/2 at every
-corner including 3σ mismatch (T-10, statistical), and no deliberate hysteresis
+inverter-class stage with its threshold within ±60 mV of VDDIO/2 (inside the ±90 mV
+eye-height mask with margin) at every corner including 3σ mismatch (T-10, statistical), and no deliberate hysteresis
 (≤ 60 mV if added, below the ±90 mV eye-height mask). Overshoot is limited by
 applying AIB 1.2 §4.2 Table 18 with this repo's own VOS (0.25 × VOS, ≤ 0.4 ns).
 
