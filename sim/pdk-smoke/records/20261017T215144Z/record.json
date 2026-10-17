@@ -1,0 +1,82 @@
+{
+  "record": "pdk-smoke",
+  "utc_stamp": "20261017T215144Z",
+  "smoke_only": true,
+  "note": "W/L, supplies and Vgs ranges are arbitrary; no design value.",
+  "pdk": {
+    "source": "IHP-GmbH/IHP-Open-PDK",
+    "release_tag": "v0.3.0",
+    "tarball_sha256": "f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+  },
+  "corner": "mos_tt",
+  "temp_c": 27,
+  "tools": {
+    "ngspice": "ngspice-46",
+    "openvaf_reloaded_tag": "v24.0.1mob",
+    "openvaf_r_asset_sha256_linux_x86_64": "3297e32f68becf5e0d4709d7f731d7d26f87f88dc136041334677d3ab36279e3"
+  },
+  "ngspice_exit_code": 0,
+  "devices": {
+    "sg13_lv_nmos": {
+      "op_converged": true,
+      "op_drain_current_a": 2.402224e-05,
+      "idvgs_points": 25,
+      "idvgs_all_finite": true,
+      "idvgs_first": [
+        0.0,
+        2.63762947e-11
+      ],
+      "idvgs_last": [
+        1.2,
+        0.000400125753
+      ],
+      "converged": true
+    },
+    "sg13_lv_pmos": {
+      "op_converged": true,
+      "op_drain_current_a": 3.475322e-05,
+      "idvgs_points": 25,
+      "idvgs_all_finite": true,
+      "idvgs_first": [
+        0.0,
+        0.000417581686
+      ],
+      "idvgs_last": [
+        1.2,
+        8.18181118e-11
+      ],
+      "converged": true
+    },
+    "sg13_hv_nmos": {
+      "op_converged": true,
+      "op_drain_current_a": 0.0001510759,
+      "idvgs_points": 34,
+      "idvgs_all_finite": true,
+      "idvgs_first": [
+        0.0,
+        1.3703787e-13
+      ],
+      "idvgs_last": [
+        3.3,
+        0.000532683638
+      ],
+      "converged": true
+    },
+    "sg13_hv_pmos": {
+      "op_converged": true,
+      "op_drain_current_a": 8.423316e-05,
+      "idvgs_points": 34,
+      "idvgs_all_finite": true,
+      "idvgs_first": [
+        0.0,
+        0.000428512724
+      ],
+      "idvgs_last": [
+        3.3,
+        4.85521757e-13
+      ],
+      "converged": true
+    }
+  },
+  "all_converged": true
+}

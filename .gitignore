@@ -107,3 +107,6 @@ results.xml
 
 # Repo Skills machine-local install metadata (absolute source path + timestamp)
 .claude/skills/repo/.install-local.json
+
+# sim/pdk-smoke records are committed evidence (append-only), so they escape *.log
+!sim/pdk-smoke/records/**/*.log
