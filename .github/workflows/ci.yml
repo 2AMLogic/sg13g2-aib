@@ -1,0 +1,53 @@
+name: ci
+
+# PDK-free and headless: no ngspice, klayout or PDK is installed or run here.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Self-test the checkers
+        run: python3 -I scripts/ci/test_checkers.py
+
+      - name: Check evidence structure and sim/ record format
+        run: python3 -I scripts/ci/check_evidence_format.py
+
+      - name: Check sim/ records are append-only
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: python3 -I scripts/ci/check_sim_append_only.py --base "$BASE"
+
+      - name: Install pinned grader
+        run: pipx install "klayout-tools==$(cat signoff/KLT_VERSION)"
+
+      - name: Re-grade the manifest and require the committed record to reproduce
+        run: |
+          set -u
+          fresh="$(mktemp)"
+          rc=0
+          klt signoff --manifest signoff/block-manifest.json --format json > "$fresh" || rc=$?
+          # 0 = every row met, 3 = rows unmet (today's honest state); anything else is a grader failure.
+          if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then
+            echo "::error::klt signoff exited $rc (expected 0 or 3)"; exit 1
+          fi
+          if ! cmp -s "$fresh" signoff/block-manifest.signoff.json; then
+            echo "::error::signoff/block-manifest.signoff.json does not reproduce; regenerate it (signoff/README.md)"
+            diff -u signoff/block-manifest.signoff.json "$fresh" || true
+            exit 1
+          fi
+          # Self-test: a one-byte edit of the record must be detected.
+          tampered="$(mktemp)"
+          sed 's/"unmet"/"met"/' signoff/block-manifest.signoff.json > "$tampered"
+          if cmp -s "$fresh" "$tampered"; then
+            echo "::error::re-grade self-test failed: tampered record still matches"; exit 1
+          fi
