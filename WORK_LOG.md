@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-20
 
+- **PR #7**: ci: add signoff record and evidence-format/append-only checks
+- **Issue #5** (closed): T1 item 10: add a block manifest, a committed signoff record and a PDK-free CI that keeps evidence formats valid
 - **PR #12**: docs(spec): record sibling spec-review comment in DR-0014
 - **PR #11**: docs(spec): propose DR-0014 on finer forwarded-clock alignment
 
