@@ -232,10 +232,13 @@ alignment block remains an ideal block in RTL and testbenches (dll-interface.md,
 Numerical ratification, any change to T-20/T-21 or an accepted record,
 circuit/RTL/layout work, a simulation campaign, spending, a `consumes:` edge or a
 `reuse.lock.json` change, level-conversion, a DLL or interpolator design in this
-repo, and any change to the sibling's PR #8. This record has not posted on the
-sibling; a gap filed there (finer-than-8 positions at the 500 MHz point, one jitter
-definition, spacing as a per-position figure) follows `2am/REUSE.md` once this
-proposal is reviewed.
+repo, and any change to the sibling's PR #8. The gaps (finer-than-8 positions at the
+500 MHz point, one jitter definition, spacing as a per-position figure, corner
+coverage of jitter, the false-lock argument for a longer chain) were posted on the
+sibling's existing spec review (PR #8, head `f947de6`) as a comment that requests no
+merge or relaxation:
+https://github.com/2AMLogic/sg13g2-dll/pull/8#issuecomment-6282704215. That comment
+is not a compatibility receipt.
 
 ## Alternatives rejected
 
