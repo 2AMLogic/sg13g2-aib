@@ -2,6 +2,10 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-20
+
+- **PR #11**: docs(spec): propose DR-0014 on finer forwarded-clock alignment
+
 ### 2026-10-17
 
 - **PR #8**: docs(spec): ratify target spec, channel model, test configuration, DLL interface
