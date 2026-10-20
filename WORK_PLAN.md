@@ -19,7 +19,7 @@ _None._
 
 `loom:important`; taken before unlabelled work.
 
-_None._
+- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
 
 ## Ready
 
@@ -67,7 +67,7 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
-| Important | 0 |
+| Important | 1 |
 | Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
