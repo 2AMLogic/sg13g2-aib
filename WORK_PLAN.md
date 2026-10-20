@@ -25,14 +25,13 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
 - **#5**: T1 item 10: add a block manifest, a committed signoff record and a PDK-free CI that keeps evidence formats valid
-- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
 
 ## PRs Awaiting Review
 
@@ -45,7 +44,6 @@ _None._
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#7**: ci: add signoff record and evidence-format/append-only checks
-- **#12**: docs(spec): record sibling spec-review comment in DR-0014
 
 ## Proposed
 
@@ -70,10 +68,10 @@ _None._
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
 | Important | 0 |
-| Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 2 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |

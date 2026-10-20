@@ -4,6 +4,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-20
 
+- **PR #12**: docs(spec): record sibling spec-review comment in DR-0014
 - **PR #11**: docs(spec): propose DR-0014 on finer forwarded-clock alignment
 
 ### 2026-10-17
