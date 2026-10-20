@@ -32,6 +32,7 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#5**: T1 item 10: add a block manifest, a committed signoff record and a PDK-free CI that keeps evidence formats valid
+- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
 
 ## PRs Awaiting Review
 
@@ -44,6 +45,7 @@ _None._
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#7**: ci: add signoff record and evidence-format/append-only checks
+- **#12**: docs(spec): record sibling spec-review comment in DR-0014
 
 ## Proposed
 
@@ -51,6 +53,7 @@ Issues carrying `loom:curated`.
 
 - **#3**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#5**: T1 item 10: add a block manifest, a committed signoff record and a PDK-free CI that keeps evidence formats valid *(curated)*
+- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -68,10 +71,10 @@ _None._
 | Very important | 0 |
 | Important | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 2 |
+| Approved PRs awaiting merge | 2 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
