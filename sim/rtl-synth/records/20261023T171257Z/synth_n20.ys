@@ -1,0 +1,9 @@
+read_liberty -lib $PDK_ROOT/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+read_verilog rtl/aib_tx_slice.v rtl/aib_rx_slice.v rtl/aib_datapath.v
+hierarchy -top aib_datapath -chparam N 20
+synth -top aib_datapath -flatten
+dfflibmap -liberty $PDK_ROOT/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+abc -liberty $PDK_ROOT/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+opt_clean -purge
+check -assert
+stat -liberty $PDK_ROOT/ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib

@@ -13,6 +13,8 @@ non-zero while proving nothing.
 
     python3 verification/run_tb.py
     python3 verification/run_tb.py --define INJECT_BUG_SHIFT_EDGE=1   # expect exit 1
+    python3 verification/run_tb.py --bench datapath --param N=8
+    python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1   # expect exit 1
 """
 
 from __future__ import annotations
@@ -23,9 +25,17 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-SOURCES = [ROOT / "rtl" / "shift_redundancy.v", HERE / "tb_top.v"]
-TOPLEVEL = "tb_top"
-TEST_MODULE = "test_shift_redundancy"
+RTL = ROOT / "rtl"
+BENCHES = {
+    "shift_redundancy": dict(
+        sources=[RTL / "shift_redundancy.v", HERE / "tb_top.v"],
+        toplevel="tb_top", test_module="test_shift_redundancy"),
+    "datapath": dict(
+        sources=[RTL / "aib_tx_slice.v", RTL / "aib_rx_slice.v", RTL / "aib_datapath.v",
+                 HERE / "tb_datapath.v"],
+        toplevel="tb_datapath", test_module="test_datapath"),
+}
+DEFAULT_BENCH = "shift_redundancy"
 
 EXIT_OK, EXIT_FAILED, EXIT_DID_NOT_RUN = 0, 1, 2
 
@@ -33,6 +43,9 @@ EXIT_OK, EXIT_FAILED, EXIT_DID_NOT_RUN = 0, 1, 2
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--bench", choices=sorted(BENCHES), default=DEFAULT_BENCH)
+    ap.add_argument("--param", action="append", default=[], metavar="NAME=VALUE",
+                    help="toplevel parameter, e.g. N=8")
     ap.add_argument("--define", action="append", default=[], metavar="NAME[=VALUE]")
     ap.add_argument("--testcase", default=None)
     args = ap.parse_args(argv)
@@ -48,10 +61,17 @@ def main(argv: list[str] | None = None) -> int:
         name, _, value = item.partition("=")
         defines[name] = value or 1
 
+    parameters: dict[str, object] = {}
+    for item in args.param:
+        name, _, value = item.partition("=")
+        parameters[name] = int(value)
+
+    bench = BENCHES[args.bench]
+    sources, toplevel, test_module = bench["sources"], bench["toplevel"], bench["test_module"]
     build_dir = HERE / "sim_build"
     runner = get_runner("icarus")
     try:
-        runner.build(verilog_sources=SOURCES, defines=defines, hdl_toplevel=TOPLEVEL,
+        runner.build(verilog_sources=sources, defines=defines, parameters=parameters, hdl_toplevel=toplevel,
                      build_dir=build_dir, timescale=("1ns", "1ps"), always=True)
     except Exception as exc:
         print(f"the design did not build: {exc}", file=sys.stderr)
@@ -61,7 +81,7 @@ def main(argv: list[str] | None = None) -> int:
     if str(HERE) not in sys.path:
         sys.path.insert(0, str(HERE))
     try:
-        results_xml = runner.test(hdl_toplevel=TOPLEVEL, test_module=TEST_MODULE, test_dir=HERE,
+        results_xml = runner.test(hdl_toplevel=toplevel, test_module=test_module, test_dir=HERE,
                                   build_dir=build_dir, seed=args.seed, timescale=("1ns", "1ps"),
                                   testcase=args.testcase,
                                   extra_env={"PYTHONDONTWRITEBYTECODE": "1"},

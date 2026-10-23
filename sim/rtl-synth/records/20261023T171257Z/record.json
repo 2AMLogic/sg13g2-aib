@@ -1,0 +1,50 @@
+{
+  "record": "rtl-synth",
+  "utc_stamp": "20261023T171257Z",
+  "smoke_only": true,
+  "note": "Elaboration and technology mapping only; no timing or area claim.",
+  "pdk": {
+    "source": "IHP-GmbH/IHP-Open-PDK",
+    "release_tag": "v0.3.0",
+    "tarball_sha256": "f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+  },
+  "tools": {
+    "yosys": "Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release)"
+  },
+  "liberty": "ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib",
+  "top": "aib_datapath",
+  "sources": [
+    "rtl/aib_tx_slice.v",
+    "rtl/aib_rx_slice.v",
+    "rtl/aib_datapath.v"
+  ],
+  "runs": {
+    "n20": {
+      "yosys_exit_code": 0,
+      "check_problems": 0,
+      "mapped_cells": {
+        "sg13g2_dfrbpq_1": 160,
+        "sg13g2_inv_1": 40,
+        "sg13g2_mux2_1": 60
+      },
+      "mapped_cell_total": 260,
+      "flip_flops": 160,
+      "cell_area_um2": 9144.576,
+      "elaborated_and_mapped": true
+    },
+    "n8": {
+      "yosys_exit_code": 0,
+      "check_problems": 0,
+      "mapped_cells": {
+        "sg13g2_dfrbpq_1": 64,
+        "sg13g2_inv_1": 16,
+        "sg13g2_mux2_1": 24
+      },
+      "mapped_cell_total": 104,
+      "flip_flops": 64,
+      "cell_area_um2": 3657.8304,
+      "elaborated_and_mapped": true
+    }
+  },
+  "all_runs_ok": true
+}

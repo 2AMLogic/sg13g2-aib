@@ -35,6 +35,21 @@ jobs:
             echo "::error::negative control exited $rc, expected exactly 1"; exit 1
           fi
 
+      - name: Run the datapath bench at N = 20 and N = 8 (expect 8/8 each)
+        run: |
+          . "$RUNNER_TEMP/venv/bin/activate"
+          python3 verification/run_tb.py --bench datapath --param N=20
+          python3 verification/run_tb.py --bench datapath --param N=8
+
+      - name: Latency negative control must exit exactly 1
+        run: |
+          . "$RUNNER_TEMP/venv/bin/activate"
+          rc=0
+          python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1 || rc=$?
+          if [ "$rc" != 1 ]; then
+            echo "::error::latency negative control exited $rc, expected exactly 1"; exit 1
+          fi
+
   evidence:
     runs-on: ubuntu-latest
     steps:
