@@ -9,6 +9,32 @@ permissions:
   contents: read
 
 jobs:
+  rtl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install iverilog and cocotb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install "cocotb>=2.0,<3"
+
+      - name: Run the shift-redundancy bench (expect 81/81)
+        run: |
+          . "$RUNNER_TEMP/venv/bin/activate"
+          python3 verification/run_tb.py
+
+      - name: Negative control must exit exactly 1
+        run: |
+          . "$RUNNER_TEMP/venv/bin/activate"
+          rc=0
+          python3 verification/run_tb.py --define INJECT_BUG_SHIFT_EDGE=1 || rc=$?
+          if [ "$rc" != 1 ]; then
+            echo "::error::negative control exited $rc, expected exactly 1"; exit 1
+          fi
+
   evidence:
     runs-on: ubuntu-latest
     steps:
