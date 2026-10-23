@@ -112,6 +112,25 @@ class AppendOnlyTests(unittest.TestCase):
     def test_zero_base_skips(self):
         self.assertEqual(run(APP, "--base", "0" * 40).returncode, 0)
 
+    def scenario_missing_base(self, change):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            git(root, "checkout", "-qb", "feature")
+            change(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "change")
+            return run(APP, "--base", "1" * 40, "--fallback-ref", "main", cwd=root).returncode
+
+    def test_missing_base_falls_back_ok(self):
+        self.assertEqual(self.scenario_missing_base(lambda r: (r / "sim/README.md").write_text("x\n")), 0)
+
+    def test_missing_base_falls_back_detects_edit(self):
+        self.assertNotEqual(self.scenario_missing_base(lambda r: (r / self.REC).write_text("{}")), 0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

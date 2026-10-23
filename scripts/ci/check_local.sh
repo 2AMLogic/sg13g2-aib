@@ -19,3 +19,13 @@ if [ "$rc" != 1 ]; then
   echo "negative control exited $rc, expected exactly 1" >&2
   exit 1
 fi
+
+for n in 20 8; do
+  python3 verification/run_tb.py --bench datapath --param N="$n"
+done
+rc=0
+python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1 || rc=$?
+if [ "$rc" != 1 ]; then
+  echo "latency negative control exited $rc, expected exactly 1" >&2
+  exit 1
+fi

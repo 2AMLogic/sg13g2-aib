@@ -42,3 +42,12 @@ tag, ngspice and OpenVAF-R versions, per-device convergence).
 
 Tool note: the worker's `ngspice` is `ngspice-46`; it loads the PSP103 OSDI
 models built by the pinned OpenVAF-R. The PDK's `versions.txt` documents 43.
+
+## rtl-synth
+
+`sim/rtl-synth/run_synth.sh` elaborates `rtl/aib_datapath.v` with Yosys and maps it to
+`sg13g2_stdcell` (typ 1.20 V 25 C liberty from the pinned PDK) for N = 20 and N = 8.
+**Smoke only**: it records the Yosys version, the liberty file (relative to the PDK
+root), the cell counts and the exit code; there is no timing and no area claim. Each
+run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
+`record.json`, append-only like the other records.
