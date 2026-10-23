@@ -6,6 +6,8 @@ A record path is any file under sim/ with a 'records' or 'corners' path
 component. Added (A) entries pass; modified, deleted, renamed or copied
 (M/D/R/C/T) entries fail. Harness scripts and READMEs under sim/ are not
 records and may change. An empty or all-zero base (new branch) is skipped.
+A base that is not in the clone (a push event after a force-push) falls back
+to the merge-base of --fallback-ref and the head.
 """
 import argparse
 import subprocess
@@ -37,13 +39,24 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default="")
     ap.add_argument("--head", default="HEAD")
+    ap.add_argument("--fallback-ref", default="origin/main")
     a = ap.parse_args(argv)
     if not a.base.strip("0"):
         print("append-only: no base commit (new branch); nothing to compare")
         return 0
+    base = a.base
+    have = subprocess.run(["git", "cat-file", "-e", f"{base}^{{commit}}"], capture_output=True)
+    if have.returncode != 0:
+        mb = subprocess.run(["git", "merge-base", a.fallback_ref, a.head], capture_output=True, text=True)
+        if mb.returncode != 0:
+            print(f"FAIL: base {base} is not in the clone and no merge-base with "
+                  f"{a.fallback_ref}: {mb.stderr.strip()}", file=sys.stderr)
+            return 2
+        base = mb.stdout.strip()
+        print(f"append-only: base {a.base} unreachable; using merge-base {base} with {a.fallback_ref}")
     # --no-renames: a rename must surface as D + A, never hide an edit.
     out = subprocess.run(
-        ["git", "diff", "--name-status", "--no-renames", f"{a.base}...{a.head}", "--", "sim/"],
+        ["git", "diff", "--name-status", "--no-renames", f"{base}...{a.head}", "--", "sim/"],
         capture_output=True, text=True,
     )
     if out.returncode != 0:
