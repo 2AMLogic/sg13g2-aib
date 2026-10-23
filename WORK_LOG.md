@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-22
+
+- **PR #21**: fix: wire package.json test/check scripts to the real CI checks
+- **Issue #20** (closed): Wire package.json check:ci/test/lint placeholders to the real CI checks (stub theater)
+
 ### 2026-10-21
 
 - **PR #17**: Bump Repo Skills 0.24.3 -> 0.24.7
