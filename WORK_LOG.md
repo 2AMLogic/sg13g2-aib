@@ -2,6 +2,10 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-24
+
+- **PR #30**: docs: record that the shift-redundancy RTL differs from AIB 1.2 section 3.3.1
+
 ### 2026-10-23
 
 - **PR #26**: feat: add DDR/SDR serializer, deserializer and L1 loopback RTL with latency bench
