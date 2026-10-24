@@ -14,14 +14,37 @@ Read as 20 fault positions x 2 shift directions = 40 per channel direction,
 80 for the two channel directions (TX->RX and RX->TX), plus the no-fault case.
 Faults on a spare wire and double faults are outside the 80 (DR-0003).
 
-### Unverified against AIB 1.2 section 3.3.1
+### Checked against AIB 1.2 section 3.3.1 (does not match)
 
-The public AIB specification could not be read when this was written (the forge
-reader was unavailable), so the "x 2" reading and the exact shift pattern
-(one-wire shift per side here, versus the "two positions" wording of T-05) are
-**not checked against section 3.3.1 / Figures 43-44**. If the specification
-differs, the module and this section change; the 80 does not change without a
-decision record. Tracked in the PR for #23.
+Read against AIB 1.2 at pin `096a970` (`spec/README.md`): section 3.3.1, Figures 43
+and 44, and section 3.3.1.1. The module **does not match** the pattern those
+describe. Two differences, both of which are findings, not yet changes:
+
+1. **Shift distance.** Section 3.3.1 reroutes a faulty signal "two signals away",
+   and Figure 43 draws each reroute hopping over one cell. This module moves each
+   shifted bit by one wire (T-05 and DR-0003 already say "two positions"; the RTL
+   does not).
+2. **Spare placement and direction.** Section 3.3.1 provides two spares per
+   channel, and Figures 43 and 44 put them between the two halves with the shift
+   in each half running toward them. This module has one spare at each end of a
+   single 20-wire direction and lets `dir` pick the side. A shift of two wires
+   cannot be built in the 22-wire layout above (nominal wire k + 1 plus two runs
+   past wire 21), so the fix is a layout change, not a constant.
+
+Section 3.3.1.1 (neighbour cells can take a rerouted signal; spares configurable as
+input or output) is cell-level behaviour and is not exercised by this mux.
+
+**The "x 2" case count is not confirmed.** The specification gives no "20 x 2" per
+direction: one direction per fault position, toward the spares, with the two spares
+shared by the channel. The 80 stays as defined above only until a decision record
+settles the layout. Faults on spares and double faults are unchanged (section 3.3.1,
+DR-0003).
+
+The RTL and bench are **not** changed here: the 80-case definition and the 20 + 2
+per-direction layout both live in the ratified spec (T-05, DR-0003), so a change
+needs a decision record first. Until then this RTL validates a one-wire shift, not
+the AIB pattern, and T-05 `RTL` evidence must not be cited as validating the AIB
+shift.
 
 `INJECT_BUG_SHIFT_EDGE` (negative control): TX skips the spare-B shift at
 position 19.
