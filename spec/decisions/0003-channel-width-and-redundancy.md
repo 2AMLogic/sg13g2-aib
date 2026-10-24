@@ -1,6 +1,6 @@
 # DR-0003: channel width, spares and what the test part can hold
 
-**Status**: accepted. **Rows**: T-03, T-05.
+**Status**: accepted. **Rows**: T-03, T-05. **Amended by**: DR-0016 (redundancy layout and case count).
 
 ## Context
 
@@ -18,7 +18,7 @@ redundancy (§3.3.1, Figures 43-44, neighbor-cell requirements §3.3.1.1).
   smaller test-vehicle size. It is labeled as such and is not "AIB Gen1-class".
 - **Stretch** 40 + 40 (Table 4 allows 20-80 per direction in steps of 20).
 - **Redundancy** is the AIB shift scheme: a fault reroutes two positions toward
-  the spares in both chiplets, and a second fault in a channel cannot be repaired.
+  the spares in both chiplets (spares at one end of the channel, DR-0016), and a second fault in a channel cannot be repaired.
   The README's "spare wire per channel" is replaced by AIB's two.
 
 ## What the test part can show
