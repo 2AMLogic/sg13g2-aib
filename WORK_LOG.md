@@ -2,6 +2,13 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-23
+
+- **PR #26**: feat: add DDR/SDR serializer, deserializer and L1 loopback RTL with latency bench
+- **PR #25**: feat: add shift-redundancy remap RTL with exhaustive single-fault cocotb bench
+- **Issue #24** (closed): RTL: DDR/SDR serializer, deserializer and L1 loopback with cycle-accounted latency (T-02, T-27, T-29)
+- **Issue #23** (closed): RTL: shift-redundancy remap for one 20+2 channel with an exhaustive single-fault cocotb bench (T-05)
+
 ### 2026-10-22
 
 - **PR #21**: fix: wire package.json test/check scripts to the real CI checks
