@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-27
+
+- **PR #49**: feat(signoff): attest T1 item 9 for both partitions, bump klt to 0.8.0
+- **Issue #45** (closed): T1 item 9 (testbenches shipped): item 9 inventories and attestations for both partitions
+
 ### 2026-10-24
 
 - **PR #30**: docs: record that the shift-redundancy RTL differs from AIB 1.2 section 3.3.1
