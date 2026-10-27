@@ -3,9 +3,9 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `5.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+"Item 2 (layout, analog)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
 
@@ -65,6 +65,38 @@ re-cite the hash and regenerate the record:
 
 ```bash
 uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+```
+
+## Item 5 / digital evidence
+
+`attest/item5-digital/` holds the verbatim `klt` envelopes, cited as a list under
+`5.digital` (the grader requires both kinds): three `klt functional-verification` runs
+(`fv_shift_redundancy` 81/81, `fv_datapath_n20` and `fv_datapath_n8` 8/8) and two
+`klt sta` runs (`sta_clk`, `sta_rx_clk`), each over `slow_1p08V_125C` and
+`fast_1p32V_m40C` at a 2.0 ns period (T-01, 500 MHz). Requests live in
+`verification/klt/` and `design/synth/aib_datapath.sta_*.json`.
+
+- The two negative controls (`fv_neg_shift_edge`, `fv_neg_extra_stage`) are committed
+  but **not cited**: they must fail (klt exit 3), and do (79/81, 6/8).
+- STA is `geometry_source: netlist_estimate` (the `klt synthesize` netlist, ideal wires,
+  no SPEF). It is not post-route; re-run after #38. The netlist predates the T-05 mux
+  decision (#29 / PR #32), so it does not contain the mux; re-synthesize and re-run
+  both after that merges.
+- `klt sta` takes one `clock_port`, and the datapath has two clocks, so there is one
+  request per clock. In each, the registers on the other clock are `unclocked` and
+  the outputs have no output delay, so every envelope reports
+  `constraint_completeness: incomplete` (180 unconstrained endpoints, 80 unclocked
+  registers) while `timing_status` is `constrained`. The grader reads the latter.
+  The completeness gap is a real limit of this evidence: no I/O budget is
+  invented here, and the TX-to-RX path across the two clocks is not timed.
+- `klt functional-verification` carries no provenance block, so the manifest pins no
+  `content_hash` on these entries. The runner reduces the three absolute scratch
+  paths in `environment` to file names; nothing else is edited.
+
+Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate the record:
+
+```bash
+PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ```
 
 ## Item 9 attestation

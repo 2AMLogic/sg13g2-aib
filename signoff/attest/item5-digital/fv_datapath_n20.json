@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "tb_datapath",
+  "testbench": "test_datapath",
+  "status": "pass",
+  "test_count": 8,
+  "passed_count": 8,
+  "failed_count": 0,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "ddr_round_trip",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.044
+    },
+    {
+      "name": "sdr_round_trip",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.04
+    },
+    {
+      "name": "l1_round_trip_ddr",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.043
+    },
+    {
+      "name": "l1_round_trip_sdr",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.048
+    },
+    {
+      "name": "l1_ignores_rx_wire",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.059
+    },
+    {
+      "name": "mode_switch",
+      "status": "passed",
+      "sim_time_ns": 11710.5,
+      "real_time_s": 0.122
+    },
+    {
+      "name": "latency_ddr",
+      "status": "passed",
+      "sim_time_ns": 254.0,
+      "real_time_s": 0.002
+    },
+    {
+      "name": "latency_sdr",
+      "status": "passed",
+      "sim_time_ns": 61.0,
+      "real_time_s": 0.0
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.1.0",
+    "results_xml": "results_icarus.xml",
+    "test_log": "test_icarus.log",
+    "build_log": "build_icarus.log",
+    "random_seed": 1,
+    "source_defines": {},
+    "initial_state": null,
+    "sdf": null
+  }
+}

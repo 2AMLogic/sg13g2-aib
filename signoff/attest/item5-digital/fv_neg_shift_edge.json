@@ -1,0 +1,517 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "tb_top",
+  "testbench": "test_shift_redundancy",
+  "status": "fail",
+  "test_count": 81,
+  "passed_count": 79,
+  "failed_count": 2,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "no_fault",
+      "status": "passed",
+      "sim_time_ns": 264.0,
+      "real_time_s": 0.018
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=0",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=1",
+      "status": "passed",
+      "sim_time_ns": 131.99999999999994,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=2",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=3",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=4",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=5",
+      "status": "passed",
+      "sim_time_ns": 132.0000000000001,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=6",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=7",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=8",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=9",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=10",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=11",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=12",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=13",
+      "status": "passed",
+      "sim_time_ns": 132.00000000000023,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=14",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=15",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=16",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=17",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=18",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=0/pos=19",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=0",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=1",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=2",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=3",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=4",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=5",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=6",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=7",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=8",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=9",
+      "status": "passed",
+      "sim_time_ns": 131.99999999999955,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=10",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=11",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=12",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=13",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=14",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=15",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=16",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=17",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=18",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ab/direction=1/pos=19",
+      "status": "failed",
+      "sim_time_ns": 2.0,
+      "real_time_s": 0.0,
+      "error_type": "AssertionError",
+      "error_message": "ab dir=1 pos=19 mode=0: sent fffff got 7ffff\nassert 524287 == 1048575\n +  where 524287 = int(LogicArray('01111111111111111111', Range(19, 'downto', 0)))"
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=0",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=1",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.013
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=2",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=3",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=4",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=5",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=6",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=7",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=8",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=9",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=10",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=11",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=12",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=13",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.013
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=14",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=15",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=16",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.01
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=17",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=18",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=0/pos=19",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.018
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=0",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.014
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=1",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=2",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=3",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=4",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=5",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=6",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.016
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=7",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=8",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=9",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=10",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=11",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=12",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=13",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=14",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=15",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=16",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=17",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.012
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=18",
+      "status": "passed",
+      "sim_time_ns": 132.0,
+      "real_time_s": 0.011
+    },
+    {
+      "name": "single_fault/link=ba/direction=1/pos=19",
+      "status": "failed",
+      "sim_time_ns": 2.0,
+      "real_time_s": 0.0,
+      "error_type": "AssertionError",
+      "error_message": "ba dir=1 pos=19 mode=0: sent fffff got 7ffff\nassert 524287 == 1048575\n +  where 524287 = int(LogicArray('01111111111111111111', Range(19, 'downto', 0)))"
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.1.0",
+    "results_xml": "results_icarus.xml",
+    "test_log": "test_icarus.log",
+    "build_log": "build_icarus.log",
+    "random_seed": 1,
+    "source_defines": {},
+    "initial_state": null,
+    "sdf": null
+  }
+}
