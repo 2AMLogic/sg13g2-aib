@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 1,
+  "description": "Analog design sources for the I/O-cell partition: xschem schematics and symbols, and SPICE netlists derived by klt netlist. Sources exist and netlists are fresh; no spec row is claimed.",
+  "sources": [
+    "design/aib_pad_esd.sch",
+    "design/aib_pad_esd.sym",
+    "design/aib_tx_data.sch",
+    "design/aib_tx_data.sym",
+    "design/aib_rx_data.sch",
+    "design/aib_rx_data.sym",
+    "design/aib_tx_clk.sch",
+    "design/aib_tx_clk.sym",
+    "design/aib_rx_clk.sch",
+    "design/aib_rx_clk.sym",
+    "design/xschemrc"
+  ],
+  "derived": [
+    {
+      "path": "design/aib_pad_esd.spice",
+      "generator": "klt netlist",
+      "check": {
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_pad_esd.sch",
+          "-o",
+          "design/aib_pad_esd.spice",
+          "--check"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/aib_tx_data.spice",
+      "generator": "klt netlist",
+      "check": {
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_tx_data.sch",
+          "-o",
+          "design/aib_tx_data.spice",
+          "--check"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/aib_rx_data.spice",
+      "generator": "klt netlist",
+      "check": {
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_rx_data.sch",
+          "-o",
+          "design/aib_rx_data.spice",
+          "--check"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/aib_tx_clk.spice",
+      "generator": "klt netlist",
+      "check": {
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_tx_clk.sch",
+          "-o",
+          "design/aib_tx_clk.spice",
+          "--check"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/aib_rx_clk.spice",
+      "generator": "klt netlist",
+      "check": {
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_rx_clk.sch",
+          "-o",
+          "design/aib_rx_clk.spice",
+          "--check"
+        ],
+        "local_only": true
+      }
+    }
+  ]
+}

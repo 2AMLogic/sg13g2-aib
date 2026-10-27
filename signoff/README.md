@@ -3,11 +3,11 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 / digital reads `met`
-(see "Item 1 / digital attestation") and item 9 reads `met` for both partitions
-(see "Item 9 attestation"); every other row reads `unmet` / `no_evidence`, which
-is the honest state until evidence is cited. Evidence paths resolve against the
-working directory, so always grade from the repo root.
+rows (11 items x analog and digital partitions), item 1 (both partitions) and item 9 (both
+partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)" and
+"Item 9 attestation"); every other row reads `unmet` / `no_evidence`, which is the honest
+state until evidence is cited. Evidence paths resolve against the working directory, so always
+grade from the repo root.
 
 The grader version is pinned in one place, `signoff/KLT_VERSION`; the CI
 workflow reads it too. Do not use a dev-build `klt` to generate the record.
@@ -36,6 +36,21 @@ netlist (`design/synth/`) with sha256 each. `attest/item1-digital.attest.json`
 declares `t1_item: 1` and pins the inventory's hash; the manifest key
 `1.digital` cites it with the same hash. `scripts/ci/check_design_sources.py
 --regenerate` rewrites all three; then regenerate the record (above).
+
+## Attest item 1 (analog)
+
+`attest/item1-analog.inventory.json` lists the design sources and derived
+netlists; `attest/item1-analog.json` is the envelope `klt signoff --attest 1`
+produced from it (needs klt >= 0.8.0, so the pin). The freshness commands are
+`local_only` because CI has no xschem or PDK. Regenerate after any `design/`
+edit, then re-cite the new `content_hash` in the manifest and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 1 \
+  --inventory signoff/attest/item1-analog.inventory.json -o signoff/attest/item1-analog.json
+```
+
+The manifest cites the envelope under `1.analog` with the inventory file's sha256.
 
 ## Item 9 attestation
 

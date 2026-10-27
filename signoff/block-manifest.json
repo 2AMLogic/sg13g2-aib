@@ -1,11 +1,16 @@
 {
   "block": "sg13g2-aib",
   "kind": "mixed-signal",
+  "partition_boundary": {
+    "analog": "I/O cells: data TX driver and RX receiver, clk/clkb forwarded-clock driver and receiver, pad/ESD structure; cells aib_tx_data, aib_rx_data, aib_tx_clk, aib_rx_clk, aib_pad_esd (design/); nets PAD, PADI, CLK_PAD, CLKB_PAD, VDDIO, VSS",
+    "digital": "synthesized data path: lane mux, shift redundancy, DDR registers; rtl/aib_datapath.v, driving the analog cells' DIN, OE, PUN, PD, CLK_D, CLKB_D and reading DOUT, CLK_O, CLKB_O"
+  },
   "evidence": {
     "1.digital": {
       "file": "signoff/attest/item1-digital.attest.json",
       "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095"
     },
+    "1.analog": {"file": "signoff/attest/item1-analog.json", "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"},
     "9.analog": {"file": "signoff/attest/item9-analog.json", "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"},
     "9.digital": {"file": "signoff/attest/item9-digital.json", "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"}
   }
