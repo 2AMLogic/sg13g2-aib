@@ -1,0 +1,47 @@
+#### Project-local xschem configuration for sg13g2-aib.
+#### Same PDK-resolution pattern as the sibling SG13G2 canaries' design/xschemrc.
+#### Load with:  klt netlist --rcfile design/xschemrc <cell>.sch -o <cell>.spice
+#### or:         xschem --rcfile design/xschemrc ...
+
+set XSCHEM_LIBRARY_PATH {}
+append XSCHEM_LIBRARY_PATH :${XSCHEM_SHAREDIR}/xschem_library/devices
+
+if {[info exists env(PDK_ROOT)]} {
+  set PDK_ROOT $env(PDK_ROOT)
+}
+if {[info exists env(PDK)]} {
+  set PDK $env(PDK)
+} else {
+  set PDK ihp-sg13g2
+}
+
+if { ![info exists PDK_ROOT] || $PDK_ROOT eq {} } {
+    foreach candidate [list /usr/share/pdk /usr/local/share/pdk \
+                            [file join $env(HOME) share pdk] \
+                            [file join $env(HOME) .ciel] \
+                            [file join $env(HOME) .volare]] {
+        if { [file isdir [file join $candidate $PDK libs.tech xschem]] } {
+            set PDK_ROOT $candidate
+            break
+        }
+    }
+}
+
+if { ![info exists PDK_ROOT] || $PDK_ROOT eq {} } {
+    puts stderr "xschemrc: no $PDK install found under PDK_ROOT or the usual prefixes."
+} else {
+    set env(PDK_ROOT) $PDK_ROOT
+    set env(PDK) $PDK
+    append XSCHEM_LIBRARY_PATH :[file join $PDK_ROOT $PDK libs.tech xschem]
+}
+
+set REPO_ROOT [file dirname [file dirname [file normalize [info script]]]]
+append XSCHEM_LIBRARY_PATH :[file join $REPO_ROOT design]
+
+#### Every cell is a reusable block, so it netlists as a .subckt.
+set netlist_type spice
+set top_is_subckt 1
+set flat_netlist 0
+set spiceprefix 1
+set XSCHEM_START_WINDOW {}
+set show_infowindow 0

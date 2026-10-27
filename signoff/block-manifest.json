@@ -1,5 +1,14 @@
 {
   "block": "sg13g2-aib",
   "kind": "mixed-signal",
-  "evidence": {}
+  "partition_boundary": {
+    "analog": "I/O cells: data TX driver and RX receiver, clk/clkb forwarded-clock driver and receiver, pad/ESD structure; cells aib_tx_data, aib_rx_data, aib_tx_clk, aib_rx_clk, aib_pad_esd (design/); nets PAD, PADI, CLK_PAD, CLKB_PAD, VDDIO, VSS",
+    "digital": "synthesized data path: lane mux, shift redundancy, DDR registers; rtl/aib_datapath.v, driving the analog cells' DIN, OE, PUN, PD, CLK_D, CLKB_D and reading DOUT, CLK_O, CLKB_O"
+  },
+  "evidence": {
+    "1.analog": {
+      "file": "attest/item1-analog.json",
+      "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"
+    }
+  }
 }

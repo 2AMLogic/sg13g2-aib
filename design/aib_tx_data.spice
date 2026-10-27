@@ -1,0 +1,20 @@
+** sch_path: design/aib_tx_data.sch
+.subckt aib_tx_data DIN OE PUN PD PAD VDDIO VSS
+*.PININFO DIN:I OE:I PUN:I PD:I PAD:B VDDIO:B VSS:B
+XMi1p OEB OE VDDIO VDDIO sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XMi1n OEB OE VSS VSS sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XMnd1p GP DIN VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMnd2p GP OE VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMnd1n GP DIN NA VSS sg13_lv_nmos w=4u l=0.13u ng=2 m=1
+XMnd2n NA OE VSS VSS sg13_lv_nmos w=4u l=0.13u ng=2 m=1
+XMnr1p NB DIN VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMnr2p GN OEB NB VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMnr1n GN DIN VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
+XMnr2n GN OEB VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
+XMp PAD GP VDDIO VDDIO sg13_lv_pmos w=1u l=0.13u ng=28 m=1
+XMn PAD GN VSS VSS sg13_lv_nmos w=1u l=0.13u ng=14 m=1
+XMpu PUX PUN VDDIO VDDIO sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XRpu PUX PAD VSS rppd w=0.5u l=24u m=1 b=0
+XMpd PDX PD VSS VSS sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+XRpd PAD PDX VSS rppd w=0.5u l=24u m=1 b=0
+.ends

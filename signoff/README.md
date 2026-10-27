@@ -1,10 +1,11 @@
 # signoff
 
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and an
-empty `evidence` map. `block-manifest.signoff.json` is the committed verdict of
+`evidence` map (today only `1.analog`). `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Every T1 row
-(22: 11 items x analog and digital partitions) reads `unmet` / `no_evidence`,
-which is the honest state until evidence is cited.
+(22: 11 items x analog and digital partitions) reads `unmet` / `no_evidence`
+except those with cited evidence: `1.analog` is `met` (sources exist, netlists
+fresh; no spec row). The honest state is `unmet` until evidence is cited.
 
 The grader version is pinned in one place, `signoff/KLT_VERSION`; the CI
 workflow reads it too. Do not use a dev-build `klt` to generate the record.
@@ -20,6 +21,19 @@ uvx --from "klayout-tools==$(cat KLT_VERSION)" klt signoff \
 ```
 
 Commit the result. Never hand-edit the record.
+
+## Attest item 1 (analog)
+
+`attest/item1-analog.inventory.json` lists the design sources and derived
+netlists; `attest/item1-analog.json` is the envelope `klt signoff --attest 1`
+produced from it (needs klt >= 0.8.0, so the pin). The freshness commands are
+`local_only` because CI has no xschem or PDK. Regenerate after any `design/`
+edit, then re-cite the new `content_hash` in the manifest and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 1 \
+  --inventory signoff/attest/item1-analog.inventory.json -o signoff/attest/item1-analog.json
+```
 
 ## What CI checks (`.github/workflows/ci.yml`)
 
