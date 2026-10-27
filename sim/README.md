@@ -100,6 +100,24 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    ~0.83 ns). Single-lane isolation runs of 3 ns: TX -> channel -> RX without the pad ESD
    cell completes; the pad ESD cell with the RX completes; TX + ESD + channel + ESD + RX did
    not finish in 11 min. The pad ESD path is the suspect; the cause is not isolated.
+   **Bisect (issue #60, one corner `mos_tt` 1.20 V 27 C, local, an unrecorded debug probe;
+   `bisect_esd.py` regenerates the netlists).** Driver check on `main` @ `85832ba`: with
+   DIN = OE = VDDIO the pad is 1.1999 V into 1 Mohm and 1.1918 V into 10 kohm, so finding 1
+   is fixed by `5584f0b`. One lane, 3 ns, `tran 2p 3n 0 5p`: no ESD cell completes in 1 s;
+   ESD on the TX side only aborts at 2.30 ns, on the RX side only at 0.82 ns, on both at
+   1.03 ns (`Timestep too small ... "vrx#branch"`, which names the supply branch, not the
+   culprit). Removing one `aib_pad_esd` element from the TX-side-only case: `XMclamp`,
+   `XResd`, `XDp1`, `XDn1`, `XDp2` still abort; removing `XDn2` (the 2u x 2u `dantenna`
+   on the inner node) completes, as does replacing it with 1 Tohm or 1 fF. With `XDn2` kept
+   as a plain diode on the `darea` card, dropping any one of `tt`, `bv`/`ibv`, `rs` also
+   completes, while dropping `cj0` makes it abort earlier (0.61 ns). The abort time does not
+   move with `gmin`, `abstol`, `vntol`, `reltol` 1e-2, `method=gear`, `klu` or `pivtol`,
+   and `reltol` 1e-4 or `tmax` 1-2 ps do not abort but crawl past 100 s. The diode alone,
+   driven by a similar RC edge, converges. Reading: the abort coincides with the PDK
+   `dantenna` model (long `tt`, large `rs`, breakdown card) on the inner pad node, and is
+   marginal rather than tied to one parameter; a bench option does not clear it and a cell
+   change in `design/` (#35's lineage) is not made here. Not established: whether the
+   PSP/OSDI side or the diode card is at fault, and any other corner.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
