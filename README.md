@@ -8,7 +8,12 @@ BiCMOS open PDK, designed by AI agents driving
 [klayout-tools](https://github.com/2AMLogic/klayout-tools), xschem + ngspice
 on the analog side and Yosys/OpenROAD on the digital side.
 
-**Status: just opened, specification phase.** Nothing is designed yet.
+**Status: specification ratified; verification harness and RTL smoke in place.**
+The spec ([`spec/target-spec.md`](spec/target-spec.md), ratified by #2) is the
+reference. The data-path RTL and its cocotb benches exist, as do the analog I/O
+cells (`design/`) and a structural-check-only I/O column stream (`layout/`); no
+DRC, LVS, extraction, PVT or channel simulation exists yet, and the T1 signoff record
+([`signoff/`](signoff/README.md)) reads `unmet` for every item not yet cited.
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation here is produced by AI agents working from a ratified
@@ -51,23 +56,58 @@ no HBTs are needed for a channel this short.
 - **Not claimed**: conformance with the AIB specification. "AIB Gen1-class"
   names the architecture this block follows.
 
-## Target specification (DRAFT — engineering to ratify, see issue #1)
+## Target specification (ratified: [`spec/target-spec.md`](spec/target-spec.md), #2)
 
-| Parameter | Target | Fallback | Stretch |
+Headline rows only; the spec has the full set (T-01 to T-30), each with its
+verification code, PVT scope and the AIB section it was read from. Results hold
+for the modeled channel (CH) or for the test configuration (TC), never blurred:
+see [`spec/test-configuration.md`](spec/test-configuration.md).
+
+| Parameter (row) | Target | Fallback | Stretch |
 |---|---|---|---|
-| Rate per wire | 1 Gb/s (DDR) | 500 Mb/s | 2 Gb/s |
-| Channel width | 20 data + forwarded clock | 8 data + clock | 40 data |
-| Signalling | unterminated, core-supply CMOS | — | reduced-swing below core supply |
-| Channel model | a ratified short-reach RC/RLC model (few mm) | — | — |
-| Skew | clock-to-data skew budget across the channel, ratified | — | — |
-| Energy | ≤ 1 pJ/bit TX + RX (target, simulated) | ≤ 2 pJ/bit | ≤ 0.5 pJ/bit |
-| Redundancy | spare wire per channel with muxing | none | — |
-| Signoff | DRC + LVS clean, I/O column included | — | — |
+| Rate per wire, DDR (T-01) | 1 Gb/s (500 MHz forwarded clock) | 500 Mb/s | 2 Gb/s |
+| Data wires per direction (T-03) | 20 TX + 20 RX + forwarded clock | 8 + 8 | 40 + 40 |
+| Spare wires (T-05) | 2 per channel, shift redundancy | none | — |
+| Signalling (T-06) | unterminated, full-rail CMOS at VDDIO (1.2 V) | — | reduced swing |
+| Channel model (T-12) | CH-3MM-RC, 3 mm RLC line ([`spec/channel-model.md`](spec/channel-model.md)) | CH-1MM | CH-5MM |
+| Data-to-data skew at TX (T-13) | ≤ 0.04 UI | ≤ 0.08 UI | ≤ 0.04 UI |
+| Data-to-clock skew at TX (T-14) | ≤ 0.02 UI | ≤ 0.04 UI | ≤ 0.02 UI |
+| I/O cell pitch (T-22) | 55 µm | 80 µm | 40 µm |
+| Energy per bit, TX + RX (T-26, simulated) | ≤ 1 pJ/bit | ≤ 2 pJ/bit | ≤ 0.5 pJ/bit |
+| Signoff (T-30) | DRC + LVS clean, I/O column included | — | — |
 
 Maturity ladder: spec ratified → I/O cell simulated across PVT → channel
 simulated end to end over the channel model → I/O column DRC-clean →
 assembled and LVS-clean → post-layout re-verification → shuttle seat →
-measured silicon. **Current position: pre-spec.**
+measured silicon. **Current position: spec ratified; digital data-path
+verification, PDK/synthesis smoke, analog I/O cells and a structurally checked
+I/O column stream (no DRC/LVS/extraction, no PVT or channel simulation).**
+
+## Reproducing results
+
+Every committed result comes from a command below, run from the repo root.
+CI (`.github/workflows/ci.yml`) runs the PDK-free ones; the rest need the PDK,
+ngspice or Yosys and run on a worker.
+
+```bash
+# RTL: cocotb + Icarus (pip install "cocotb>=2.0,<3"; iverilog on PATH)
+python3 verification/run_tb.py                                   # shift redundancy, 81/81
+python3 verification/run_tb.py --bench datapath --param N=20     # 8/8
+python3 verification/run_tb.py --bench datapath --param N=8      # 8/8
+
+# Evidence format and harness self-tests (no tools needed)
+python3 -I scripts/ci/test_checkers.py
+python3 -I scripts/ci/check_evidence_format.py
+
+# Signoff record: pinned grader, byte-for-byte reproduction
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff \
+  --manifest signoff/block-manifest.json --format json | cmp - signoff/block-manifest.signoff.json
+```
+
+PDK fetch, OSDI models, the ngspice smoke and the Yosys synthesis smoke are in
+[`sim/README.md`](sim/README.md); how the signoff record and the item 9 and 10
+attestations are made and checked is in [`signoff/README.md`](signoff/README.md).
+Simulated numbers (including energy per bit) are labelled as simulated.
 
 ## Repo layout
 

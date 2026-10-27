@@ -1,0 +1,11 @@
+* T-06 / T-08: driver DC levels and output resistance at both rails.
+* Driver enabled (OE = VDDIO), weak pulls off (PUN = VDDIO, PD = 0).
+* Ih sinks a DC load from the high-driving pad; Il sources one into the
+* low-driving pad. The request alters both between the unloaded and the loaded
+* solve. Output resistance is the chord (rail-to-pad voltage) / load current.
+Xesd_h pad_h padi_h vddio 0 aib_pad_esd
+Xtx_h vddio vddio vddio 0 pad_h vddio 0 aib_tx_data
+Ih pad_h 0 dc 0
+Xesd_l pad_l padi_l vddio 0 aib_pad_esd
+Xtx_l 0 vddio vddio 0 pad_l vddio 0 aib_tx_data
+Il vddio pad_l dc 0

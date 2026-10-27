@@ -17,7 +17,7 @@ C {lab_pin.sym} 200 170 0 0 {name=l2 lab=VDDIO}
 C {sg13g2_pr/dantenna.sym} 420 200 0 0 {name=Dn1 model=dantenna l=10u w=10u spiceprefix=X}
 C {lab_pin.sym} 420 230 0 0 {name=l3 lab=VSS}
 C {lab_pin.sym} 420 170 0 0 {name=l4 lab=PAD}
-C {sg13g2_pr/sg13_lv_nmos.sym} 640 200 0 0 {name=Mclamp model=sg13_lv_nmos w=2u l=0.35u ng=20 m=1}
+C {sg13g2_pr/sg13_lv_nmos.sym} 640 200 0 0 {name=Mclamp model=sg13_lv_nmos w=40u l=0.35u ng=20 m=1}
 C {lab_pin.sym} 660 170 0 0 {name=l5 lab=VDDIO}
 C {lab_pin.sym} 620 200 0 0 {name=l6 lab=VSS}
 C {lab_pin.sym} 660 230 0 0 {name=l7 lab=VSS}

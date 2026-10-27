@@ -3,10 +3,11 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), `1.analog` and item 9 (both
-partitions) read `met` (see "Attest item 1" and "Item 9 attestation"); every
-other row reads `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths
-resolve against the working directory, so always grade from the repo root.
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog` and items 9
+and 10 (both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
+"Item 2 (layout, analog)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+`unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
+against the working directory, so always grade from the repo root.
 
 The grader version is pinned in one place, `signoff/KLT_VERSION`; the CI
 workflow reads it too. Do not use a dev-build `klt` to generate the record.
@@ -20,7 +21,21 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff \
   --manifest signoff/block-manifest.json --format json > signoff/block-manifest.signoff.json
 ```
 
-Commit the result. Never hand-edit the record.
+Run it from the repo root, as CI does: the grader opens each `file` in the
+manifest relative to the working directory, not the manifest's directory, so
+the manifest's `file` paths are repo-root-relative. Run from anywhere else,
+item 1 grades `unmet` / `unreadable_evidence`. Commit the result. Never
+hand-edit the record.
+
+## Item 1 / digital attestation
+
+Item 1 is graded from an artifact-anchored `generic` envelope written by
+`scripts/ci/check_design_sources.py`. `attest/item1-digital.inventory.json`
+lists the RTL sources and the `klt synthesize` request, report, script and
+netlist (`design/synth/`) with sha256 each. `attest/item1-digital.attest.json`
+declares `t1_item: 1` and pins the inventory's hash; the manifest key
+`1.digital` cites it with the same hash. `scripts/ci/check_design_sources.py
+--regenerate` rewrites all three; then regenerate the record (above).
 
 ## Attest item 1 (analog)
 
@@ -36,6 +51,21 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 1 \
 ```
 
 The manifest cites the envelope under `1.analog` with the inventory file's sha256.
+
+## Item 2 (layout, analog)
+
+klt 0.8.0 has no `--attest 2`, so `layout/attest_item2.py` writes
+`attest/item2-analog.json`: it regenerates `layout/aib_io_column.gds` into a scratch
+directory, requires the same geometry digest as the committed stream and a passing
+`layout/check_io_column.py`, and only then writes the envelope (a `provenance.regeneration`
+claim with `hash_kind: geometry`). The manifest cites it under `2.analog` with the
+stream's sha256 (`provenance.input.content_hash`). The envelope is not DRC, LVS or
+extraction evidence; see `layout/README.md`. Regenerate after any `layout/` change, then
+re-cite the hash and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+```
 
 ## Item 9 attestation
 
@@ -63,6 +93,28 @@ Both cold starts are `local_only`, so CI skips them under `--check`.
 Inventories cover only the benches that exist today; extend them (and re-attest)
 as new benches land.
 
+## Item 10 attestation
+
+`attest/item10.inventory.json` lists the hygiene artifacts (README, LICENSE, the
+CI workflow) and the PDK-free checks (`scripts/ci/test_checkers.py`,
+`scripts/ci/check_evidence_format.py`); `attest/item10.json` is the envelope
+`klt signoff --attest 10` wrote from it. One envelope is cited under both
+`10.analog` and `10.digital`, with the inventory's `content_hash`. The RTL
+benches are not repeated here: they are the item 9 cold start and run in the CI
+`rtl` job. From the repo root:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 10 \
+  --inventory signoff/attest/item10.inventory.json -o signoff/attest/item10.json
+```
+
+Then update the two `content_hash` values for item 10 in the manifest and
+regenerate the record.
+
+Re-attest as the last step, after `README.md` and `.github/workflows/ci.yml`
+are final: both are hashed into the envelope, so any later edit to either
+makes the CI `--check` exit 3 (`drifted`).
+
 ## What CI checks (`.github/workflows/ci.yml`)
 
 - the pinned grader re-grades the manifest (exit 0 or 3 only) and the output
@@ -70,6 +122,7 @@ as new benches land.
 - each item-9 envelope re-attests with `--check` (inventoried file hashes, pins
   and the committed cold-start outcome; the cold-start commands themselves are
   skipped, they need the PDK, ngspice and Icarus);
+- the item-10 envelope re-attests with `--check`, re-running its two checkers;
 - each evidence directory (`spec design rtl verification sim layout
   measurements`) has a `README.md`;
 - each `sim/**/records/<stamp>/record.json` has `record`, `utc_stamp` and
@@ -77,6 +130,12 @@ as new benches land.
 - `sim/` records (files under a `records/` or `corners/` directory) are
   append-only against the PR base, or the pre-push SHA on a push: added
   files pass, modified, deleted or renamed ones fail;
+- `scripts/ci/check_design_sources.py`: every inventory file re-hashes, the RTL
+  sources match the synthesis report's input hash, the netlist matches its
+  `netlist_sha256`, and the envelope and manifest pin the current inventory;
+  edited RTL or a stale netlist fails. It does not re-hash the standard-cell
+  liberty (no PDK on the runner); `klt synthesize --check <report> [--rerun]`
+  covers that locally (`design/README.md`);
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 

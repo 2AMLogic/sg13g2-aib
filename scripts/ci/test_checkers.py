@@ -4,6 +4,7 @@
 Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -13,6 +14,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 FMT = HERE / "check_evidence_format.py"
 APP = HERE / "check_sim_append_only.py"
+SRC = HERE / "check_design_sources.py"
+REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
 
@@ -130,6 +133,50 @@ class AppendOnlyTests(unittest.TestCase):
 
     def test_missing_base_falls_back_detects_edit(self):
         self.assertNotEqual(self.scenario_missing_base(lambda r: (r / self.REC).write_text("{}")), 0)
+
+
+class DesignSourcesTests(unittest.TestCase):
+    """The committed netlist chain must pass, and a seeded-stale input must fail."""
+
+    def check(self, mutate=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for d in ("rtl", "design/synth", "signoff/attest"):
+                shutil.copytree(REPO / d, root / d)
+            shutil.copy(REPO / "signoff/block-manifest.json", root / "signoff/block-manifest.json")
+            if mutate:
+                mutate(root)
+            return run(SRC, "--root", root).returncode
+
+    def test_good(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_edited_rtl_fails(self):
+        def edit(r):
+            with open(r / "rtl/aib_datapath.v", "a") as f:
+                f.write("// x\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_stale_netlist_fails(self):
+        def edit(r):
+            nl = next((r / "design/synth/.klt").rglob("aib_datapath_synth.v"))
+            with open(nl, "a") as f:
+                f.write("// x\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_edited_inventory_fails(self):
+        def edit(r):
+            p = r / "signoff/attest/item1-digital.inventory.json"
+            p.write_text(p.read_text().replace("aib_datapath", "aib_datapathX", 1))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_stale_manifest_pin_fails(self):
+        def edit(r):
+            p = r / "signoff/block-manifest.json"
+            m = json.loads(p.read_text())
+            m["evidence"]["1.digital"]["content_hash"] = "sha256:" + "0" * 64
+            p.write_text(json.dumps(m))
+        self.assertNotEqual(self.check(edit), 0)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,432 @@
+{
+  "engine": "ngspice",
+  "netlist": "tb_dc_static.cir",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "corners": {
+    "process": [
+      {
+        "name": "tt",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_tt"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "ss",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ss"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "ff",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ff"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_bcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "sf",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_sf"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "fs",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_fs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vddio": [
+        1.08,
+        1.2,
+        1.32
+      ]
+    },
+    "temperature_c": [
+      -40,
+      27,
+      125
+    ]
+  },
+  "analysis_steps": [
+    {
+      "name": "drv_nl",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Ih": 0,
+        "Il": 0
+      },
+      "measurements": [
+        {
+          "name": "t06_voh_droop_v",
+          "expr": "v(vddio)-v(pad_h)",
+          "unit": "V",
+          "limits": {
+            "max": 0.1
+          }
+        },
+        {
+          "name": "t06_vol_v",
+          "expr": "v(pad_l)",
+          "unit": "V",
+          "limits": {
+            "max": 0.1
+          }
+        }
+      ]
+    },
+    {
+      "name": "drv_ld",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Ih": 0.001,
+        "Il": 0.001
+      },
+      "measurements": [
+        {
+          "name": "t06_voh_droop_v",
+          "expr": "v(vddio)-v(pad_h)",
+          "unit": "V",
+          "limits": {
+            "max": 0.1
+          }
+        },
+        {
+          "name": "t06_vol_v",
+          "expr": "v(pad_l)",
+          "unit": "V",
+          "limits": {
+            "max": 0.1
+          }
+        },
+        {
+          "name": "t08_rout_up_ohm",
+          "expr": "(v(vddio)-v(pad_h))/1e-3",
+          "unit": "ohm",
+          "limits": {
+            "min": 40,
+            "max": 80
+          }
+        },
+        {
+          "name": "t08_rout_dn_ohm",
+          "expr": "v(pad_l)/1e-3",
+          "unit": "ohm",
+          "limits": {
+            "min": 40,
+            "max": 80
+          }
+        }
+      ]
+    },
+    {
+      "name": "lk_0",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vpf": 0,
+        "Vpunf": 1,
+        "Vpdf": 0
+      },
+      "measurements": [
+        {
+          "name": "t07_t28_ipin_a",
+          "expr": "abs(i(vacp))",
+          "unit": "A",
+          "limits": {
+            "max": 1e-06
+          }
+        }
+      ]
+    },
+    {
+      "name": "lk_5",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vpf": 0.5,
+        "Vpunf": 1,
+        "Vpdf": 0
+      },
+      "measurements": [
+        {
+          "name": "t07_t28_ipin_a",
+          "expr": "abs(i(vacp))",
+          "unit": "A",
+          "limits": {
+            "max": 1e-06
+          }
+        }
+      ]
+    },
+    {
+      "name": "lk_10",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vpf": 1,
+        "Vpunf": 1,
+        "Vpdf": 0
+      },
+      "measurements": [
+        {
+          "name": "t07_t28_ipin_a",
+          "expr": "abs(i(vacp))",
+          "unit": "A",
+          "limits": {
+            "max": 1e-06
+          }
+        }
+      ]
+    },
+    {
+      "name": "pu_on",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vpf": 0.5,
+        "Vpunf": 0,
+        "Vpdf": 0
+      },
+      "measurements": [
+        {
+          "name": "t28_rpu_ohm",
+          "expr": "0.5*v(vddio)/i(vacp)",
+          "unit": "ohm",
+          "limits": {
+            "min": 10000.0,
+            "max": 20000.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "pd_on",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vpf": 0.5,
+        "Vpunf": 1,
+        "Vpdf": 1
+      },
+      "measurements": [
+        {
+          "name": "t28_rpd_ohm",
+          "expr": "-0.5*v(vddio)/i(vacp)",
+          "unit": "ohm",
+          "limits": {
+            "min": 10000.0,
+            "max": 20000.0
+          }
+        }
+      ]
+    },
+    {
+      "name": "cap_0",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vpf": 0,
+        "Vpunf": 1,
+        "Vpdf": 0,
+        "Vacp.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "t24_cpin_ff",
+          "expr": "vecmax(imag(-i(vacp)))/(2*pi*500e6)*1e15",
+          "unit": "fF",
+          "limits": {
+            "max": 100
+          }
+        }
+      ]
+    },
+    {
+      "name": "cap_5",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vpf": 0.5,
+        "Vpunf": 1,
+        "Vpdf": 0,
+        "Vacp.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "t24_cpin_ff",
+          "expr": "vecmax(imag(-i(vacp)))/(2*pi*500e6)*1e15",
+          "unit": "fF",
+          "limits": {
+            "max": 100
+          }
+        }
+      ]
+    },
+    {
+      "name": "cap_10",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vpf": 1,
+        "Vpunf": 1,
+        "Vpdf": 0,
+        "Vacp.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "t24_cpin_ff",
+          "expr": "vecmax(imag(-i(vacp)))/(2*pi*500e6)*1e15",
+          "unit": "fF",
+          "limits": {
+            "max": 100
+          }
+        }
+      ]
+    },
+    {
+      "name": "rx_up",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vfr 0 1 0.001"
+      },
+      "alter": {},
+      "measurements": [
+        {
+          "name": "vth_up",
+          "spice": ".meas dc vth_up WHEN v(dnorm)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vddio_v",
+          "expr": "v(vddio)[0]",
+          "unit": "V"
+        }
+      ]
+    },
+    {
+      "name": "rx_dn",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vfr 1 0 -0.001"
+      },
+      "alter": {},
+      "measurements": [
+        {
+          "name": "vth_dn",
+          "spice": ".meas dc vth_dn WHEN v(dnorm)=0.5 FALL=1",
+          "unit": "frac"
+        }
+      ]
+    }
+  ],
+  "measurements": [
+    {
+      "name": "t11_hyst_mv",
+      "expr": "abs(rx_up.vth_up-rx_dn.vth_dn)*rx_up.vddio_v*1000",
+      "unit": "mV",
+      "limits": {
+        "max": 60
+      }
+    }
+  ],
+  "options": {
+    "stage_model_inputs": true,
+    "fail_on_diagnostic": [
+      "nonconvergence"
+    ],
+    "timeout_s": 60,
+    "keep_artifacts": false,
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ]
+  },
+  "backend": "batch",
+  "batch": {
+    "runner_version_check": "warn",
+    "capacity_wait_s": 1800
+  }
+}

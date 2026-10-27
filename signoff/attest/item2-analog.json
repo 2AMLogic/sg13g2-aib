@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 2,
+  "summary": "T1 item 2 (Layout): committed stream regenerates to identical geometry from layout/gen_io_column.py and passes the structural checks in layout/check_io_column.py; not DRC, LVS or extraction evidence",
+  "source": "layout/aib_io_column.gds",
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "layout/aib_io_column.gds",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:25fcdcd89ee3f0ebc2a372208e784dede8efdaceaab2017b793bb5188e3525ab"
+    },
+    "regeneration": {
+      "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
+      "regenerated_hash": "sha256:22504249b723fc53d646f9fa435d7e306a7a6943d20352b7d270e575f53a6bc2",
+      "hash_kind": "geometry"
+    }
+  }
+}

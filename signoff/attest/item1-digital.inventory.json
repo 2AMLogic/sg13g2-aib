@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "t1_item": 1,
+  "partition": "digital",
+  "block": "sg13g2-aib",
+  "top": "aib_datapath",
+  "synthesis": {
+    "tool": "klt synthesize",
+    "request": "design/synth/aib_datapath.synth.json",
+    "report": "design/synth/aib_datapath.report.json",
+    "netlist": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+    "cell_library": "sg13g2_stdcell",
+    "corner": "slow_1p08V_125C"
+  },
+  "rtl_revision": {
+    "shift_redundancy_v_last_commit": "42fa21ca9fa178a70b06cea249bd5a17eb8eec13",
+    "note": "rtl/shift_redundancy.v is not instantiated by aib_datapath; the netlist does not depend on it. Re-synthesize after the T-05 decision (#29, PR #32)."
+  },
+  "files": [
+    {
+      "path": "rtl/aib_tx_slice.v",
+      "sha256": "sha256:0d8e3cc3dae2f5190576aa94c720e7cf4e4346e5793ca1b5562268bfc2aabfe0"
+    },
+    {
+      "path": "rtl/aib_rx_slice.v",
+      "sha256": "sha256:3f549f44ab7523c2fa0d122865fcbc296d675c8f4181526556269a3da06a442f"
+    },
+    {
+      "path": "rtl/aib_datapath.v",
+      "sha256": "sha256:8bbcfe02e117596bc88dbef74a87045b1d485905ae58c0c60daf838ebc1cc341"
+    },
+    {
+      "path": "rtl/shift_redundancy.v",
+      "sha256": "sha256:47ec522b18c4309d0872e3e060ac985ec9673419ed58176629158890f6d0bad3"
+    },
+    {
+      "path": "design/synth/aib_datapath.synth.json",
+      "sha256": "sha256:86081349dc87af7fec184707af297a199bb19ff408233192dfcf28e5073365e9"
+    },
+    {
+      "path": "design/synth/aib_datapath.report.json",
+      "sha256": "sha256:188765b75dac809633d8d4657a2a130ff2532e9db264b202f53b3b688caab570"
+    },
+    {
+      "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+      "sha256": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
+    },
+    {
+      "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/synth_aib_datapath.ys",
+      "sha256": "sha256:4b633c518de02da60913fcc8723db3359c0b10505e830a951270ed5093808ae1"
+    }
+  ]
+}

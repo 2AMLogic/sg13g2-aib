@@ -112,3 +112,9 @@ T-15 note: lanes A and B carry complementary data, so the measured skew is the
 rise/fall (opposite-polarity) arrival difference of one instance, not a layout skew.
 T-16 note: the clock is launched center aligned, so the graded quantity is the deviation
 of the data-to-clock arrival delay from the nominal 0.5 UI.
+
+## dc-static
+
+`sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner
+`klt sim` request (batch backend). Testbenches and request only so far: the fleet runner
+predates `analysis_steps`, so no record exists. See `sim/dc-static/README.md`.
