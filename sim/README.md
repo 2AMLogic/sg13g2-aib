@@ -147,6 +147,27 @@ rise/fall (opposite-polarity) arrival difference of one instance, not a layout s
 T-16 note: the clock is launched center aligned, so the graded quantity is the deviation
 of the data-to-clock arrival delay from the nominal 0.5 UI.
 
+## clock-path
+
+`sim/clock-path/` is the PVT-FULL clock-path family of the T1 item 5 (analog) campaign
+(#42, #54): `aib_tx_clk` -> `aib_pad_esd` -> CH-3MM-RC -> `aib_pad_esd` -> `aib_rx_clk`, plus
+one `aib_tx_data` lane for the data-to-clock timing. Rows: T-17 (forwarded-clock duty-cycle
+distortion at the TX output, |DCD| <= 3 %, ideal 50 % input so only the TX clock path
+contributes), T-04 (clk/clkb crossing at the RX pins and outputs; report-only, since
+`spec/target-spec.md` gives no numeric crossing bound) and T-02 (SIM half: data edge versus
+both clock edges at the RX; report-only, T-19/T-20 are not graded here). All rows are CH claims.
+T-21 and T-29 are declared gaps (no DLL-side model, no loopback mux in `design/`).
+
+```bash
+python3 -I sim/clock-path/gen_clock_path.py --check   # generated files fresh?
+cd sim/clock-path && klt sim request.json --dry-run   # 45 corners
+sim/clock-path/run_clock_path.sh                      # batch fleet; writes records/<UTC>/
+```
+
+**Status: no 45-corner record exists yet, and no row is claimed.** On 2026-10-27 the batch
+submit succeeded (15 jobs of 3 units) but the fleet left every job `pending` and never launched
+it, across a `--resume` and a wait of several minutes; no local fallback was run.
+
 ## dc-static
 
 `sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner

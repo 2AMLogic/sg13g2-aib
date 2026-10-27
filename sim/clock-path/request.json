@@ -1,0 +1,216 @@
+{
+  "engine": "ngspice",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "netlist": "tb_clock_path.cir",
+  "backend": "batch",
+  "corners": {
+    "process": [
+      {
+        "name": "mos_tt",
+        "sections": [
+          "mos_tt",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "mos_ss",
+        "sections": [
+          "mos_ss",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ss"
+          }
+        ]
+      },
+      {
+        "name": "mos_ff",
+        "sections": [
+          "mos_ff",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_bcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ff"
+          }
+        ]
+      },
+      {
+        "name": "mos_sf",
+        "sections": [
+          "mos_sf",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "mos_fs",
+        "sections": [
+          "mos_fs",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vdd_tx": [
+        1.08,
+        1.2,
+        1.32
+      ],
+      "vdd_rx": [
+        1.08,
+        1.2,
+        1.32
+      ]
+    },
+    "temperature_c": [
+      -40,
+      27,
+      125
+    ]
+  },
+  "analysis": {
+    "kind": "tran",
+    "args": "2p 24n 0 5p"
+  },
+  "measurements": [
+    {
+      "name": "t17_hi_c",
+      "unit": "s",
+      "spec_row": "T-17",
+      "spice": ".meas tran t17_hi_c TRIG v(dtc) VAL=0 RISE=6 TARG v(dtc) VAL=0 FALL=6"
+    },
+    {
+      "name": "t17_per_c",
+      "unit": "s",
+      "spec_row": "T-17",
+      "spice": ".meas tran t17_per_c TRIG v(dtc) VAL=0 RISE=6 TARG v(dtc) VAL=0 RISE=7"
+    },
+    {
+      "name": "t17_dcd_c",
+      "unit": "ratio",
+      "spec_row": "T-17",
+      "spice": ".meas tran t17_dcd_c param='t17_hi_c/t17_per_c-0.5'",
+      "limits": {
+        "min": -0.03,
+        "max": 0.03
+      }
+    },
+    {
+      "name": "t17_hi_cb",
+      "unit": "s",
+      "spec_row": "T-17",
+      "spice": ".meas tran t17_hi_cb TRIG v(dtcb) VAL=0 RISE=6 TARG v(dtcb) VAL=0 FALL=7"
+    },
+    {
+      "name": "t17_per_cb",
+      "unit": "s",
+      "spec_row": "T-17",
+      "spice": ".meas tran t17_per_cb TRIG v(dtcb) VAL=0 RISE=6 TARG v(dtcb) VAL=0 RISE=7"
+    },
+    {
+      "name": "t17_dcd_cb",
+      "unit": "ratio",
+      "spec_row": "T-17",
+      "spice": ".meas tran t17_dcd_cb param='t17_hi_cb/t17_per_cb-0.5'",
+      "limits": {
+        "min": -0.03,
+        "max": 0.03
+      }
+    },
+    {
+      "name": "t04_xlevel_pin_r_v",
+      "unit": "V",
+      "spec_row": "T-04",
+      "spice": ".meas tran t04_xlevel_pin_r_v FIND v(dxp) WHEN v(csp)=0 RISE=6"
+    },
+    {
+      "name": "t04_xlevel_pin_f_v",
+      "unit": "V",
+      "spec_row": "T-04",
+      "spice": ".meas tran t04_xlevel_pin_f_v FIND v(dxp) WHEN v(csp)=0 FALL=6"
+    },
+    {
+      "name": "t04_xlevel_out_r_v",
+      "unit": "V",
+      "spec_row": "T-04",
+      "spice": ".meas tran t04_xlevel_out_r_v FIND v(dxo) WHEN v(cso)=0 RISE=6"
+    },
+    {
+      "name": "t04_xlevel_out_f_v",
+      "unit": "V",
+      "spec_row": "T-04",
+      "spice": ".meas tran t04_xlevel_out_f_v FIND v(dxo) WHEN v(cso)=0 FALL=6"
+    },
+    {
+      "name": "t04_latency_s",
+      "unit": "s",
+      "spec_row": "T-04",
+      "spice": ".meas tran t04_latency_s TRIG v(csd) VAL=0 RISE=6 TARG v(cso) VAL=0 RISE=6"
+    },
+    {
+      "name": "t02_dr_cr",
+      "unit": "s",
+      "spec_row": "T-02",
+      "spice": ".meas tran t02_dr_cr TRIG v(ddo0) VAL=0 RISE=6 TARG v(dxo) VAL=0 RISE=6"
+    },
+    {
+      "name": "t02_df_cf",
+      "unit": "s",
+      "spec_row": "T-02",
+      "spice": ".meas tran t02_df_cf TRIG v(ddo0) VAL=0 FALL=6 TARG v(dxo) VAL=0 FALL=6"
+    },
+    {
+      "name": "t02_cr_df",
+      "unit": "s",
+      "spec_row": "T-02",
+      "spice": ".meas tran t02_cr_df TRIG v(dxo) VAL=0 RISE=6 TARG v(ddo0) VAL=0 FALL=6"
+    },
+    {
+      "name": "t02_cf_dr",
+      "unit": "s",
+      "spec_row": "T-02",
+      "spice": ".meas tran t02_cf_dr TRIG v(dxo) VAL=0 FALL=6 TARG v(ddo0) VAL=0 RISE=7"
+    }
+  ],
+  "batch": {
+    "runner_version_check": "warn"
+  },
+  "options": {
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ],
+    "timeout_s": 1100
+  }
+}
