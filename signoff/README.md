@@ -3,8 +3,8 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `5.digital` and items 9
-and 10 (both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.digital`, `5.digital` and items 9
+and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
@@ -88,6 +88,17 @@ the input stream's sha256. `claims."3"` in the manifest quotes `coverage.layers_
 `coverage.rules_skipped` and `coverage.deck_scope` per partition and discloses the unmodeled pad,
 latch-up and ESD rules. A re-run adds a new stamped directory and a re-cited manifest; old
 records stay. Re-check with `klt drc --check <report>`.
+
+## Item 4 (LVS)
+
+`4.digital` cites the `klt lvs` report `layout/lvs/digital.report.json` directly (an `lvs`-kind
+check: `status: match` and `power_connectivity.status` not `mismatch`; here both are `match`).
+`4.analog` cites nothing and reads `unmet` / `no_evidence`: the four per-cell reports are all
+`mismatch`, and item 4 takes one report per partition (2AMLogic/klayout-tools#4354). Details, the
+two layout differences behind the mismatch, and the commands are in
+[`layout/lvs/README.md`](../layout/lvs/README.md). The report's relative paths resolve against the
+current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
+re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.
 
 ## Item 5 / digital evidence
 
