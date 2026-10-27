@@ -126,6 +126,9 @@ ESD_DIODES = [
 ]
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
 ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
+# Table w is the drawn finger width. These devices carry the total width
+# (w_finger * ng) in the netlist; the check compares against that total.
+TOTAL_W_DEVICES = {"Mp", "Mn", "Mclamp"}
 
 
 def check_against_netlists(design_dir):
@@ -157,7 +160,8 @@ def check_against_netlists(design_dir):
                 if fix and exp in fix:
                     exp = fix[exp]
                 assert got[pin] == exp, (name, pin, got[pin], exp)
-            assert abs(num(kv["w"]) - w) < 1e-9 and abs(num(kv["l"]) - l) < 1e-9, name
+            w_net = w * ng if name in TOTAL_W_DEVICES else w
+            assert abs(num(kv["w"]) - w_net) < 1e-9 and abs(num(kv["l"]) - l) < 1e-9, name
             assert int(kv["ng"]) == ng, name
 
     chk_mos(parse(os.path.join(design_dir, "aib_tx_data.spice")), TX_DEVICES)
@@ -166,7 +170,7 @@ def check_against_netlists(design_dir):
     esd = parse(os.path.join(design_dir, "aib_pad_esd.spice"))
     nodes, kv = esd["Mclamp"]
     assert nodes[:3] == ["VDDIO", "VSS", "VSS"] and int(kv["ng"]) == ESD_CLAMP[4]
-    assert abs(num(kv["w"]) - ESD_CLAMP[2]) < 1e-9 and abs(num(kv["l"]) - ESD_CLAMP[3]) < 1e-9
+    assert abs(num(kv["w"]) - ESD_CLAMP[2] * ESD_CLAMP[4]) < 1e-9 and abs(num(kv["l"]) - ESD_CLAMP[3]) < 1e-9
     for name, kind, size, a, b in ESD_DIODES:
         nodes, kv = esd[name]
         assert abs(num(kv["w"]) - size) < 1e-9 and abs(num(kv["l"]) - size) < 1e-9, name
