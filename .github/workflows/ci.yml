@@ -95,3 +95,11 @@ jobs:
           if cmp -s "$fresh" "$tampered"; then
             echo "::error::re-grade self-test failed: tampered record still matches"; exit 1
           fi
+
+      - name: Re-attest item 9 against the committed envelopes
+        run: |
+          # cold_start is local_only (needs the PDK, ngspice, Icarus): skipped here, file hashes still checked.
+          for p in analog digital; do
+            klt signoff --attest 9 --inventory "signoff/attest/item9-$p.inventory.json" \
+              --check "signoff/attest/item9-$p.json" --format json > /dev/null
+          done

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 9,
+  "description": "Digital partition: the cocotb + Icarus benches over the data path and shift redundancy, plus the Yosys synthesis smoke script.",
+  "testbenches": [
+    "verification/run_tb.py",
+    "verification/test_datapath.py",
+    "verification/test_shift_redundancy.py",
+    "verification/tb_top.v",
+    "verification/tb_datapath.v",
+    "sim/rtl-synth/run_synth.sh"
+  ],
+  "cold_start": {
+    "argv": ["/usr/bin/python3", "verification/run_tb.py"],
+    "local_only": true
+  },
+  "pins": {
+    "pdk": {
+      "name": "IHP-Open-PDK",
+      "revision": "v0.3.0 tarball sha256:f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+    },
+    "tools": {
+      "iverilog": "13.0",
+      "cocotb": "2.1.0",
+      "yosys": "0.67",
+      "klt": "0.8.0"
+    }
+  }
+}
