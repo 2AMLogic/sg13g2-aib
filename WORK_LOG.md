@@ -4,6 +4,21 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-27
 
+- **PR #62**: docs(sim): record pad-ESD transient bisect and add probe netlist generator
+- **PR #61**: feat(sim): channel-eye PRBS-7 bench with separate CH and TC requests
+- **PR #59**: feat(signoff): cite klt functional-verification and multi-corner STA for item 5 digital
+- **PR #58**: fix(design): make driver and clamp w the total width so fingers meet wmin
+- **PR #57**: feat(sim): DC static testbenches and 45-corner request (no record yet)
+- **PR #55**: feat(layout): generate 55 um I/O cell and column stream with item 2 attestation
+- **PR #51**: feat(signoff): attest T1 item 10 and update README to the ratified spec
+- **PR #48**: feat: commit aib_datapath netlist with freshness check and item 1 digital attestation
+- **PR #47**: feat: add analog I/O-cell schematics, netlists and item-1 attestation
+- **Issue #56** (closed): design: aib_tx_data driver fingers are below the model minimum width (w is total width in sg13_lv_*)
+- **Issue #46** (closed): T1 item 10 (repo hygiene): item 10 inventory, attest envelope, and README spec table update
+- **Issue #43** (closed): T1 item 5 (corner verification, digital): multi-corner klt sta and the RTL functional suite for the data path
+- **Issue #37** (closed): T1 item 2 (layout, analog): I/O cell layout at the 55 µm pitch with documented provenance
+- **Issue #36** (closed): T1 item 1 (design sources, digital): commit the aib_datapath gate-level netlist with a freshness check and attest it
+- **Issue #35** (closed): T1 item 1 (design sources, analog): schematics and derived netlists for the TX driver, RX receiver and forwarded-clock I/O cells
 - **PR #49**: feat(signoff): attest T1 item 9 for both partitions, bump klt to 0.8.0
 - **Issue #45** (closed): T1 item 9 (testbenches shipped): item 9 inventories and attestations for both partitions
 
