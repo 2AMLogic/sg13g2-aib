@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 9,
+  "description": "Analog partition: the PDK/OSDI smoke bench (DC operating point and Id-Vgs convergence, one corner). Smoke only; no design measurement is claimed yet.",
+  "testbenches": [
+    "sim/pdk-smoke/tb_pdk_smoke.cir.in",
+    "sim/pdk-smoke/run_smoke.sh"
+  ],
+  "cold_start": {
+    "argv": ["sim/pdk-smoke/run_smoke.sh"],
+    "local_only": true
+  },
+  "pins": {
+    "pdk": {
+      "name": "IHP-Open-PDK",
+      "revision": "v0.3.0 tarball sha256:f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+    },
+    "tools": {
+      "ngspice": "ngspice-46",
+      "osdi": "OpenVAF-Reloaded v24.0.1mob (sim/pdk.json osdi_toolchain)",
+      "klt": "0.8.0"
+    }
+  }
+}

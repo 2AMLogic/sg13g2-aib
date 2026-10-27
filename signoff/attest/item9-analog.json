@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 9,
+  "summary": "T1 item 9 (Testbenches shipped): 5/5 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/attest/item9-analog.inventory.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 5,
+    "passed_count": 5,
+    "checks": [
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "sim/pdk-smoke/run_smoke.sh",
+        "passed": true,
+        "content_hash": "sha256:a04a98f6e5a9d860626d0ad6181ab125cfb4dc8608506df90564d7552c8d52ad"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "sim/pdk-smoke/tb_pdk_smoke.cir.in",
+        "passed": true,
+        "content_hash": "sha256:cd7b50da95542f3e476ea55fc019c8268dbb2abb850d1d64c10f3ab0e842a71c"
+      },
+      {
+        "check": "command",
+        "role": "cold_start",
+        "argv": [
+          "sim/pdk-smoke/run_smoke.sh"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "pin",
+        "role": "pdk",
+        "passed": true,
+        "value": {
+          "name": "IHP-Open-PDK",
+          "revision": "v0.3.0 tarball sha256:f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+        }
+      },
+      {
+        "check": "pin",
+        "role": "tools",
+        "passed": true,
+        "value": {
+          "klt": "0.8.0",
+          "ngspice": "ngspice-46",
+          "osdi": "OpenVAF-Reloaded v24.0.1mob (sim/pdk.json osdi_toolchain)"
+        }
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/attest/item9-analog.inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"
+    }
+  }
+}

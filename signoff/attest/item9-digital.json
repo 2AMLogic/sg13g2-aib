@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 9,
+  "summary": "T1 item 9 (Testbenches shipped): 9/9 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/attest/item9-digital.inventory.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 9,
+    "passed_count": 9,
+    "checks": [
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "sim/rtl-synth/run_synth.sh",
+        "passed": true,
+        "content_hash": "sha256:f7a2b5e05575beb8b6c13a0a350e2d5c17cb15b192b929ecd1930b09600a0fee"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/run_tb.py",
+        "passed": true,
+        "content_hash": "sha256:3516f910be0ce60cdad78308daa9255f460774154268d8d19b00f218191f02e4"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/tb_datapath.v",
+        "passed": true,
+        "content_hash": "sha256:5782a557360e1120a03872e1d9892d9a5cdde1dad3aff5a1d4782b408a10c803"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/tb_top.v",
+        "passed": true,
+        "content_hash": "sha256:03269f0abdf662c1d7796b8c01dca5de6a1a6cdac72ff2335d3be7bbadc01d5c"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/test_datapath.py",
+        "passed": true,
+        "content_hash": "sha256:6b96f942a79816978cd4d363e89ae3dbfbdef0268434978c36f24c85bc42337a"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/test_shift_redundancy.py",
+        "passed": true,
+        "content_hash": "sha256:c4d1a1669701ac77be258a9810525a0e8c5cafac075da95a2f6f9747ccdcd798"
+      },
+      {
+        "check": "command",
+        "role": "cold_start",
+        "argv": [
+          "/usr/bin/python3",
+          "verification/run_tb.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "pin",
+        "role": "pdk",
+        "passed": true,
+        "value": {
+          "name": "IHP-Open-PDK",
+          "revision": "v0.3.0 tarball sha256:f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+        }
+      },
+      {
+        "check": "pin",
+        "role": "tools",
+        "passed": true,
+        "value": {
+          "cocotb": "2.1.0",
+          "iverilog": "13.0",
+          "klt": "0.8.0",
+          "yosys": "0.67"
+        }
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/attest/item9-digital.inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"
+    }
+  }
+}
