@@ -1,0 +1,15 @@
+{
+  "engine": "klayout",
+  "layout": {
+    "netlist": "../aib_datapath.gate.spice",
+    "top": "aib_datapath"
+  },
+  "reference": {
+    "netlist": "aib_datapath.rewired.v",
+    "top": "aib_datapath",
+    "form": "gate-level-verilog",
+    "library": "sg13g2_stdcell",
+    "pdk": "ihp-sg13g2"
+  },
+  "options": {}
+}

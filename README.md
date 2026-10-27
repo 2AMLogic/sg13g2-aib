@@ -12,7 +12,7 @@ on the analog side and Yosys/OpenROAD on the digital side.
 The spec ([`spec/target-spec.md`](spec/target-spec.md), ratified by #2) is the
 reference. The data-path RTL and its cocotb benches exist, as do the analog I/O
 cells (`design/`) and a structural-check-only I/O column stream (`layout/`); no
-DRC, LVS, extraction, PVT or channel simulation exists yet, and the T1 signoff record
+DRC, extraction, PVT or channel simulation exists yet, and LVS matches for the data path but not for the I/O cells, and the T1 signoff record
 ([`signoff/`](signoff/README.md)) reads `unmet` for every item not yet cited.
 
 **Built agent-native.** Every specification, decision record, testbench, and
@@ -81,7 +81,7 @@ simulated end to end over the channel model → I/O column DRC-clean →
 assembled and LVS-clean → post-layout re-verification → shuttle seat →
 measured silicon. **Current position: spec ratified; digital data-path
 verification, PDK/synthesis smoke, analog I/O cells and a structurally checked
-I/O column stream (no DRC/LVS/extraction, no PVT or channel simulation).**
+I/O column stream (data-path LVS matches; I/O-cell LVS reports mismatch; no DRC/extraction, no PVT or channel simulation).**
 
 ## Reproducing results
 

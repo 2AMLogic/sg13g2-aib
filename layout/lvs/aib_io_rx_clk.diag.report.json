@@ -1,0 +1,270 @@
+{
+  "schema_version": 2,
+  "engine": "klayout",
+  "layout": {
+    "path": "layout/aib_io_column.gds",
+    "scope": "repo"
+  },
+  "label_layers": {
+    "metal0": [
+      8,
+      1
+    ],
+    "metal1": [
+      10,
+      1
+    ],
+    "metal2": [
+      30,
+      1
+    ],
+    "metal5": [
+      126,
+      1
+    ],
+    "metal6": [
+      126,
+      1
+    ]
+  },
+  "reference": "aib_io_rx_clk.diag.ref.spice",
+  "top": "aib_io_rx_clk",
+  "reference_top": "AIB_IO_RX_CLK",
+  "reference_conversion": {
+    "form": "subckt-call",
+    "deck": "sg13g2",
+    "device_map": null
+  },
+  "parameter_tolerance": null,
+  "options": {
+    "combine_devices": false,
+    "combine_devices_per_circuit": null,
+    "combine_devices_max_attempts": 5,
+    "flatten_layout": false,
+    "flatten_reference": false,
+    "netgen_setup": null,
+    "parameter_tolerance": null,
+    "compare_parameters": null,
+    "power_connectivity": null,
+    "anchor_top_level_pins": null,
+    "strict_top_level_pin_count": false,
+    "compare_mos_flavour": false,
+    "supply_nets": [
+      "GND",
+      "VCC",
+      "VDD",
+      "VGND",
+      "VPWR",
+      "VSS"
+    ],
+    "finfet_bulk": null
+  },
+  "hints_applied": null,
+  "constant_nets_applied": null,
+  "status": "match",
+  "power_connectivity": {
+    "status": "unchecked",
+    "reason": "reference.form is 'subckt-call', whose reference netlist carries its own power/ground pins and nets -- they take part in the ordinary compare, so this check (which exists to cover the signal-only 'gate-level-verilog' form) does not apply",
+    "power_pins": [],
+    "power_pins_derivation": null,
+    "instance_count": 0,
+    "expected_nets": null,
+    "unchecked_expected_pins": [],
+    "findings": [],
+    "finding_count": 0
+  },
+  "body_verification": {
+    "status": "verified",
+    "reason": null,
+    "device_classes": [],
+    "device_count": 0,
+    "findings": [],
+    "finding_count": 0
+  },
+  "device_parameter_coverage": [
+    {
+      "class": "rppd",
+      "device_kind": "resistor",
+      "layout_devices": 2,
+      "reference_devices": 2,
+      "compared": [],
+      "not_compared": [
+        {
+          "parameter": "R",
+          "reason": "placeholder_value"
+        },
+        {
+          "parameter": "L",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "W",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "A",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "P",
+          "reason": "secondary"
+        }
+      ]
+    }
+  ],
+  "mismatch_count": 2,
+  "error_count": 0,
+  "category_counts": {
+    "device.geometry_not_compared": 1,
+    "device.placeholder_value": 1
+  },
+  "category_error_counts": {},
+  "counts": {
+    "nets": {
+      "layout": 8,
+      "reference": 8,
+      "matched": 8
+    },
+    "devices": {
+      "layout": 66,
+      "reference": 66,
+      "matched": 66
+    },
+    "pins": {
+      "layout": 6,
+      "reference": 6,
+      "matched": 6
+    }
+  },
+  "device_classes": [
+    "nfet",
+    "pfet",
+    "cap_cmim",
+    "rfcmim",
+    "cap_cmomi",
+    "cap_cmomf",
+    "resistor",
+    "dantenna",
+    "dpantenna"
+  ],
+  "environment": {
+    "engine": "klayout",
+    "engine_version": "0.30.12",
+    "netgen_binary": null,
+    "layout_sha256": "fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f",
+    "reference_sha256": "2eed5613ccd1b8536f839c09c127291678b5ab8076d93e9ce3db94aa4f1a50a8",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": "0.30.12",
+    "pdk": null,
+    "deck": {
+      "name": "sg13g2",
+      "content_hash": "sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
+      "released": true
+    },
+    "input": {
+      "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f",
+      "role": "layout"
+    },
+    "klayout_version_mismatch": false
+  },
+  "mismatches": [
+    {
+      "category": "device.geometry_not_compared",
+      "severity": "warning",
+      "description": "device class 'rppd' is a resistor class, whose ['A', 'L', 'P', 'W'] parameter(s) KLayout declares *secondary*: kdb.NetlistComparer compares primary parameters only, so none of them took part in this compare and each is NOT verified -- this resistor's geometry could differ between the two sides by any amount and this run would still report 'match'. No parameter of this class was compared at all: the remaining parameter(s) were separately excluded from this run (see the device.placeholder_value/device.parameter_excluded entries), so the two sides were paired on topology alone. Name them in options.compare_parameters to compare them (see docs/cli/lvs.md, 'device.geometry_not_compared')",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "rppd"
+      },
+      "property": null,
+      "details": {
+        "device_kind": "resistor",
+        "compared_parameters": [],
+        "not_compared_parameters": [
+          "A",
+          "L",
+          "P",
+          "W"
+        ],
+        "layout_devices": 2,
+        "reference_devices": 2
+      },
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.placeholder_value",
+      "severity": "warning",
+      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 2 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 2 instance(s), R 294.222333000997) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
+      "side": "reference",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "RPPD"
+      },
+      "property": null,
+      "details": {
+        "parameter": "R",
+        "device_kind": "resistor",
+        "reference_devices": 2,
+        "layout_devices": 2,
+        "layout_values": [
+          294.222333000997
+        ]
+      },
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    }
+  ],
+  "net_correspondence": [
+    {
+      "layout": "\\$8",
+      "reference": "ARX/M1",
+      "pin": false
+    },
+    {
+      "layout": "\\$7",
+      "reference": "BRX/M1",
+      "pin": false
+    },
+    {
+      "layout": "DOUT",
+      "reference": "DOUT",
+      "pin": true
+    },
+    {
+      "layout": "DOUT",
+      "reference": "DOUT$1",
+      "pin": true
+    },
+    {
+      "layout": "PAD",
+      "reference": "PAD",
+      "pin": true
+    },
+    {
+      "layout": "PAD",
+      "reference": "PAD$1",
+      "pin": true
+    },
+    {
+      "layout": "VDDIO",
+      "reference": "VDDIO",
+      "pin": true
+    },
+    {
+      "layout": "VSS",
+      "reference": "VSS",
+      "pin": true
+    }
+  ]
+}

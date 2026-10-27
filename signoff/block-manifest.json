@@ -16,6 +16,7 @@
    "file": "signoff/attest/item2-digital.json",
    "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
   },
+    "4.digital": {"file": "layout/lvs/digital.report.json"},
     "5.digital": [
       {"file": "signoff/attest/item5-digital/fv_shift_redundancy.json"},
       {"file": "signoff/attest/item5-digital/fv_datapath_n20.json"},
