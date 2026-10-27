@@ -3,11 +3,11 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions) and item 9 (both
-partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)" and
-"Item 9 attestation"); every other row reads `unmet` / `no_evidence`, which is the honest
-state until evidence is cited. Evidence paths resolve against the working directory, so always
-grade from the repo root.
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog` and item 9
+(both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
+"Item 2 (layout, analog)" and "Item 9 attestation"); every other row reads `unmet` / `no_evidence`, which
+is the honest state until evidence is cited. Evidence paths resolve against the working directory,
+so always grade from the repo root.
 
 The grader version is pinned in one place, `signoff/KLT_VERSION`; the CI
 workflow reads it too. Do not use a dev-build `klt` to generate the record.
@@ -51,6 +51,21 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 1 \
 ```
 
 The manifest cites the envelope under `1.analog` with the inventory file's sha256.
+
+## Item 2 (layout, analog)
+
+klt 0.8.0 has no `--attest 2`, so `layout/attest_item2.py` writes
+`attest/item2-analog.json`: it regenerates `layout/aib_io_column.gds` into a scratch
+directory, requires the same geometry digest as the committed stream and a passing
+`layout/check_io_column.py`, and only then writes the envelope (a `provenance.regeneration`
+claim with `hash_kind: geometry`). The manifest cites it under `2.analog` with the
+stream's sha256 (`provenance.input.content_hash`). The envelope is not DRC, LVS or
+extraction evidence; see `layout/README.md`. Regenerate after any `layout/` change, then
+re-cite the hash and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+```
 
 ## Item 9 attestation
 
