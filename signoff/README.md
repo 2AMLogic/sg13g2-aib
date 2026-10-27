@@ -3,11 +3,11 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), `1.analog` and items 9 and 10 (both
-partitions) read `met` (see "Attest item 1", "Item 9 attestation" and "Item 10
-attestation"); every other row reads `unmet` / `no_evidence`, which is the honest
-state until evidence is cited. Evidence paths
-resolve against the working directory, so always grade from the repo root.
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog` and items 9
+and 10 (both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
+"Item 2 (layout, analog)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+`unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
+against the working directory, so always grade from the repo root.
 
 The grader version is pinned in one place, `signoff/KLT_VERSION`; the CI
 workflow reads it too. Do not use a dev-build `klt` to generate the record.
@@ -21,7 +21,21 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff \
   --manifest signoff/block-manifest.json --format json > signoff/block-manifest.signoff.json
 ```
 
-Commit the result. Never hand-edit the record.
+Run it from the repo root, as CI does: the grader opens each `file` in the
+manifest relative to the working directory, not the manifest's directory, so
+the manifest's `file` paths are repo-root-relative. Run from anywhere else,
+item 1 grades `unmet` / `unreadable_evidence`. Commit the result. Never
+hand-edit the record.
+
+## Item 1 / digital attestation
+
+Item 1 is graded from an artifact-anchored `generic` envelope written by
+`scripts/ci/check_design_sources.py`. `attest/item1-digital.inventory.json`
+lists the RTL sources and the `klt synthesize` request, report, script and
+netlist (`design/synth/`) with sha256 each. `attest/item1-digital.attest.json`
+declares `t1_item: 1` and pins the inventory's hash; the manifest key
+`1.digital` cites it with the same hash. `scripts/ci/check_design_sources.py
+--regenerate` rewrites all three; then regenerate the record (above).
 
 ## Attest item 1 (analog)
 
@@ -37,6 +51,21 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 1 \
 ```
 
 The manifest cites the envelope under `1.analog` with the inventory file's sha256.
+
+## Item 2 (layout, analog)
+
+klt 0.8.0 has no `--attest 2`, so `layout/attest_item2.py` writes
+`attest/item2-analog.json`: it regenerates `layout/aib_io_column.gds` into a scratch
+directory, requires the same geometry digest as the committed stream and a passing
+`layout/check_io_column.py`, and only then writes the envelope (a `provenance.regeneration`
+claim with `hash_kind: geometry`). The manifest cites it under `2.analog` with the
+stream's sha256 (`provenance.input.content_hash`). The envelope is not DRC, LVS or
+extraction evidence; see `layout/README.md`. Regenerate after any `layout/` change, then
+re-cite the hash and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+```
 
 ## Item 9 attestation
 
@@ -101,6 +130,12 @@ makes the CI `--check` exit 3 (`drifted`).
 - `sim/` records (files under a `records/` or `corners/` directory) are
   append-only against the PR base, or the pre-push SHA on a push: added
   files pass, modified, deleted or renamed ones fail;
+- `scripts/ci/check_design_sources.py`: every inventory file re-hashes, the RTL
+  sources match the synthesis report's input hash, the netlist matches its
+  `netlist_sha256`, and the envelope and manifest pin the current inventory;
+  edited RTL or a stale netlist fails. It does not re-hash the standard-cell
+  liberty (no PDK on the runner); `klt synthesize --check <report> [--rerun]`
+  covers that locally (`design/README.md`);
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 

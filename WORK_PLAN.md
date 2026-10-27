@@ -26,18 +26,21 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#46**: T1 item 10 (repo hygiene): item 10 inventory, attest envelope, and README spec table update
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
+- **#35**: T1 item 1 (design sources, analog): schematics and derived netlists for the TX driver, RX receiver and forwarded-clock I/O cells
+- **#36**: T1 item 1 (design sources, digital): commit the aib_datapath gate-level netlist with a freshness check and attest it
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#47**: feat: add analog I/O-cell schematics, netlists and item-1 attestation
 
 ## Approved (Awaiting Merge)
 
@@ -52,6 +55,11 @@ Issues carrying `loom:curated`.
 - **#3**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)*
 - **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)*
+- **#35**: T1 item 1 (design sources, analog): schematics and derived netlists for the TX driver, RX receiver and forwarded-clock I/O cells *(curated)*
+- **#36**: T1 item 1 (design sources, digital): commit the aib_datapath gate-level netlist with a freshness check and attest it *(curated)*
+- **#43**: T1 item 5 (corner verification, digital): multi-corner klt sta and the RTL functional suite for the data path *(curated)*
+- **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition *(curated)*
+- **#46**: T1 item 10 (repo hygiene): item 10 inventory, attest envelope, and README spec table update *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -68,11 +76,11 @@ _None._
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
 | Important | 1 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 0 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 3 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 3 |
+| Curated | 8 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->

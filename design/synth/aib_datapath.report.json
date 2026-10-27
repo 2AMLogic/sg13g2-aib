@@ -1,0 +1,102 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "aib_datapath",
+  "run_id": "run-2080128096d444afaa0672134a2e026a",
+  "status": "ok",
+  "instance_count": 262,
+  "area_um2": 9228.0384,
+  "sequential_area_um2": 7838.208,
+  "instance_counts_by_type": {
+    "sg13g2_buf_8": 2,
+    "sg13g2_dfrbpq_1": 160,
+    "sg13g2_inv_1": 20,
+    "sg13g2_inv_2": 20,
+    "sg13g2_mux2_1": 60
+  },
+  "leakage_power_nw": 470.0308600000001,
+  "leakage_by_type_nw": {
+    "sg13g2_buf_8": 3.3707800000000003,
+    "sg13g2_dfrbpq_1": 2.3842600000000003,
+    "sg13g2_inv_1": 0.30652100000000004,
+    "sg13g2_inv_2": 0.6128640000000001,
+    "sg13g2_mux2_1": 1.057
+  },
+  "timing": {
+    "source": "abc_stime",
+    "wire_load": null,
+    "critical_path_ps": 404.23,
+    "delay_target_ps": null
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed, so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [
+      "sg13g2_lgcp_1",
+      "sg13g2_sighold",
+      "sg13g2_slgcp_1",
+      "sg13g2_sdfbbp_1",
+      "sg13g2_dfrbp_2"
+    ],
+    "effective": [
+      "sg13g2_lgcp_1",
+      "sg13g2_sighold",
+      "sg13g2_slgcp_1",
+      "sg13g2_sdfbbp_1",
+      "sg13g2_dfrbp_2"
+    ],
+    "validated": null,
+    "engine_supports_dont_use": true
+  },
+  "warnings": {
+    "total": 0,
+    "by_category": {},
+    "representatives": []
+  },
+  "netlist_path": {
+    "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1",
+  "script_path": {
+    "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/synth_aib_datapath.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/synth_aib_datapath.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.7.0",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "ihp-sg13g2",
+      "source": "PDK_ROOT environment variable",
+      "version": null
+    },
+    "deck": {
+      "name": "sg13g2_stdcell__slow_1p08V_125C",
+      "content_hash": "sha256:1ac6a0301184b3a8aa1a4a01910967f624c8e869517777f529985f11f04588c3",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:3e9741e974bbd9e450e7797a454bb7bfe0fb7680f721a01a2e4f8deb5e6ff379",
+      "role": "source"
+    }
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}
