@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 1,
+  "summary": "T1 item 1 (Design sources): 21/21 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/attest/item1-analog.inventory.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 21,
+    "passed_count": 21,
+    "checks": [
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_pad_esd.sch",
+        "passed": true,
+        "content_hash": "sha256:32b90ad51a0303000bd53bdbf03252f96ae021975f92faba5d0c09f0fdd77877"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_pad_esd.sym",
+        "passed": true,
+        "content_hash": "sha256:faec5ca76a2cf9b3ebd41beaadc768b10a937267cad93acb66fdb7af84a4ef89"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_rx_clk.sch",
+        "passed": true,
+        "content_hash": "sha256:e6c3f1ef5cbf82ea49b83e8aacca20db3e2fa99542b04ab2212825558a5bdce3"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_rx_clk.sym",
+        "passed": true,
+        "content_hash": "sha256:130645113f2c0259a0eb83782ec7e106f48405b10adcf7740699536311bb28d9"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_rx_data.sch",
+        "passed": true,
+        "content_hash": "sha256:81de2401c83db5f14b86d325828b608fdc8f0a67a1e809f751df9245657a35ea"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_rx_data.sym",
+        "passed": true,
+        "content_hash": "sha256:f2429c002d765a623b15027a235473620ea37f350b38104bbd62acd88fcce6db"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_tx_clk.sch",
+        "passed": true,
+        "content_hash": "sha256:3afeb1d04e15cd68deafcfbde8b0ecf55ff462bb6eff0be3bca2da6996c62a54"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_tx_clk.sym",
+        "passed": true,
+        "content_hash": "sha256:8239d6882bd53cf4b97b3fd83f74b69d5a1b1455323e69564abbca578c73110a"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_tx_data.sch",
+        "passed": true,
+        "content_hash": "sha256:5d0960d17cf9dd966954258051c2bd17157d1005c96fb4ad186f1af4d161e5c5"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/aib_tx_data.sym",
+        "passed": true,
+        "content_hash": "sha256:d799facc36e3b7c2504e84dd6dc018856aa2bef06624681cd453cb8e9a0381c0"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/xschemrc",
+        "passed": true,
+        "content_hash": "sha256:db0e0f6c702da6e275c4e4c2505b72206a463aab9cc78dfb2c928a8e6f7865e0"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/aib_pad_esd.spice",
+        "passed": true,
+        "content_hash": "sha256:985466eb999d20e6ba7680713a092e72d296474cb4c05c4fdc9cb2c4ff1b2731"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/aib_rx_clk.spice",
+        "passed": true,
+        "content_hash": "sha256:0e53de36f4d0d2585452746bb2cb5d35e7c8b0801cdf597efe1dbb7bc01b5b2d"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/aib_rx_data.spice",
+        "passed": true,
+        "content_hash": "sha256:43f326de980bc5a817d6235ab5402de4aa02886619ead25e7e60c41dfef99eab"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/aib_tx_clk.spice",
+        "passed": true,
+        "content_hash": "sha256:a021e1978343064a64ce8f73cdc3e3d5a5e1d299db69663b7b276d9e1708c41f"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/aib_tx_data.spice",
+        "passed": true,
+        "content_hash": "sha256:300d4ed967aa5437a27f34481a386d57f3b19c875707ba6ddc9cd4fb1a238ab9"
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/aib_pad_esd.spice",
+        "generator": "klt netlist",
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_pad_esd.sch",
+          "-o",
+          "design/aib_pad_esd.spice",
+          "--check"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/aib_rx_clk.spice",
+        "generator": "klt netlist",
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_rx_clk.sch",
+          "-o",
+          "design/aib_rx_clk.spice",
+          "--check"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/aib_rx_data.spice",
+        "generator": "klt netlist",
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_rx_data.sch",
+          "-o",
+          "design/aib_rx_data.spice",
+          "--check"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/aib_tx_clk.spice",
+        "generator": "klt netlist",
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_tx_clk.sch",
+          "-o",
+          "design/aib_tx_clk.spice",
+          "--check"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/aib_tx_data.spice",
+        "generator": "klt netlist",
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_tx_data.sch",
+          "-o",
+          "design/aib_tx_data.spice",
+          "--check"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/attest/item1-analog.inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"
+    }
+  }
+}
