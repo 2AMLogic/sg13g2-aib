@@ -103,3 +103,9 @@ jobs:
             klt signoff --attest 9 --inventory "signoff/attest/item9-$p.inventory.json" \
               --check "signoff/attest/item9-$p.json" --format json > /dev/null
           done
+
+      - name: Re-attest item 10 against the committed envelope
+        run: |
+          # The inventoried checkers run for real here (PDK-free); the envelope must reproduce.
+          klt signoff --attest 10 --inventory signoff/attest/item10.inventory.json \
+            --check signoff/attest/item10.json --format json > /dev/null
