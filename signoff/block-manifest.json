@@ -16,6 +16,8 @@
    "file": "signoff/attest/item2-digital.json",
    "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
   },
+    "3.analog": {"file": "layout/records/20261027T063033Z/drc_analog.json", "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"},
+    "3.digital": {"file": "layout/records/20261027T063033Z/drc_digital.json", "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"},
     "5.digital": [
       {"file": "signoff/attest/item5-digital/fv_shift_redundancy.json"},
       {"file": "signoff/attest/item5-digital/fv_datapath_n20.json"},
@@ -27,5 +29,115 @@
     "9.digital": {"file": "signoff/attest/item9-digital.json", "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"},
     "10.analog": {"file": "signoff/attest/item10.json", "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"},
     "10.digital": {"file": "signoff/attest/item10.json", "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"}
+  },
+  "claims": {
+    "3": {
+      "analog": {
+        "report": "layout/records/20261027T063033Z/drc_analog.json",
+        "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
+        "status": "clean",
+        "violation_count": 0,
+        "coverage.layers_in_stream_without_rules": [
+          "9/0",
+          "10/1",
+          "10/2",
+          "28/0",
+          "30/1",
+          "40/0",
+          "63/0",
+          "99/31",
+          "111/0",
+          "126/1",
+          "128/0",
+          "189/0"
+        ],
+        "coverage.rules_skipped": [
+          "metal5.enclosing.mim.1",
+          "mim.enclosing.topvia1.1",
+          "nwell.enclosing.nactiv.1",
+          "nwell.enclosing.nactiv.dig.1",
+          "nwell.enclosing.nactiv.hv.1",
+          "nwell.space.nactiv.1",
+          "nwell.space.nactiv.dig.1",
+          "nwell.space.nactiv.hv.1",
+          "topmetal1.enclosing.topvia2.1",
+          "topmetal2.enclosing.topvia2.1",
+          "topmetal2.space.1",
+          "topmetal2.width.1",
+          "topvia2.space.1",
+          "topvia2.width.1"
+        ],
+        "coverage.deck_scope": [
+          "Act",
+          "Cnt",
+          "Gat",
+          "M1",
+          "M2",
+          "M3",
+          "M4",
+          "M5",
+          "MIM",
+          "NW",
+          "TM1",
+          "TM2",
+          "TV1",
+          "TV2",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "pSD"
+        ]
+      },
+      "digital": {
+        "report": "layout/records/20261027T063033Z/drc_digital.json",
+        "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
+        "status": "clean",
+        "violation_count": 0,
+        "coverage.layers_in_stream_without_rules": [
+          "8/2",
+          "8/25",
+          "30/2",
+          "30/25",
+          "63/0",
+          "99/31",
+          "134/2",
+          "134/25",
+          "189/4"
+        ],
+        "coverage.rules_skipped": [
+          "metal5.enclosing.mim.1",
+          "mim.enclosing.topvia1.1",
+          "nwell.enclosing.nactiv.1",
+          "nwell.enclosing.nactiv.dig.1",
+          "nwell.enclosing.nactiv.hv.1",
+          "nwell.space.nactiv.1",
+          "nwell.space.nactiv.dig.1",
+          "nwell.space.nactiv.hv.1"
+        ],
+        "coverage.deck_scope": [
+          "Act",
+          "Cnt",
+          "Gat",
+          "M1",
+          "M2",
+          "M3",
+          "M4",
+          "M5",
+          "MIM",
+          "NW",
+          "TM1",
+          "TM2",
+          "TV1",
+          "TV2",
+          "V1",
+          "V2",
+          "V3",
+          "V4",
+          "pSD"
+        ]
+      },
+      "disclosure": "Clean means no violation of the rules the curated sg13g2 deck evaluates; it is not full sg13g2 DRC signoff. The deck does not transcribe the latch-up rules (LU.a, LU.c, LU.c1, LU.d, LU.d1) or the pad rules (Pad.a1, Pad.aR, Pad.bR, Pad.d, Pad.d1R, Pad.dR, Pad.gR, Pad.jR, Pad.kR; coverage.unmodeled_rules), and has no ESD rules at all. The net-aware NW.b1 is not checked (coverage.unchecked_rules). The nwell-to-nactiv enclosure and spacing rules are skipped (rules_skipped). ESD/pad layers with no deck rule: the passivation opening 9/0 (analog stream, in layers_in_stream_without_rules) and every pad-rule layer outside the curated set. The aib_pad_esd structure and the pad opening are therefore covered only by the generic Activ, GatPoly, well, metal and via rules on their base layers. The native-deck (klayout engine) run was not made. Violation-free here says nothing about latch-up or pad-rule compliance."
+    }
   }
 }
