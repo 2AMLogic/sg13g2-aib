@@ -1,0 +1,11 @@
+* tb_ctl_ch.cir -- POSITIVE CONTROL for the bench: tb_ch.cir with a TX copy whose output PMOS is fixed (control/).
+* The channel model includes its own far-end load (cfar); not added again here.
+* Nominal channel (kr = kc = 1); the +-20 % R/C spread of channel-model.md is not on this grid.
+.include ../../spec/channel/channel_rc.cir
+.include control/aib_tx_data_ctl.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.subckt link txp rxp gnd
+Xch txp rxp gnd chan_rlc len_mm=3
+.ends link
+.include tb_body.inc

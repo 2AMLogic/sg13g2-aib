@@ -51,3 +51,64 @@ models built by the pinned OpenVAF-R. The PDK's `versions.txt` documents 43.
 root), the cell counts and the exit code; there is no timing and no area claim. Each
 run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
 `record.json`, append-only like the other records.
+
+## channel-eye
+
+`sim/channel-eye/` is the PVT-FULL channel-transient family of the T1 item 5 (analog)
+campaign (#42, #53): PRBS-7 at 1 Gb/s through four lanes (data A, its complement B, and the
+clk/clkb forwarded-clock pair), each `aib_tx_data` -> `aib_pad_esd` -> link ->
+`aib_pad_esd` -> `aib_rx_data` (`.include`d from `design/`, never copied). Rows:
+T-01 (bit transfer: DOUT edge count over one PRBS period), T-18 (best 0.40 UI window of
+the RX-pin eye, height >= 90 mV), T-09 (overshoot/undershoot peak and dwell, four RX
+pins), T-26 (supply energy per bit of TX, RX and the clock lane shared over N = 20
+wires; **simulated**, the record says so), and the single-instance halves of T-15
+(opposite-polarity edges on A/B) and T-16 (data edge to center-aligned clock edge, nominal
+0.5 UI). The array and Monte Carlo halves of T-14/T-15/T-16 are #44's.
+
+Two separate requests keep the claims apart: `request_ch_1g.json` is **CH-3MM-RC**
+(`spec/channel/channel_rc.cir`, nominal kr = kc = 1); `request_tc_1g.json` is the **L2
+wire-bond loopback** of `spec/test-configuration.md` (2 nH per wire, 0.5 pF per pin,
+declared). TC grades only T-09 (expected to fail there; recorded, not relaxed); its T-01 and
+T-26 are report-only, and T-15/T-16/T-18 are not observable in L2 and are not requested.
+`gen_channel_eye.py` writes `prbs7_stim.inc` and the requests (`--check` for staleness);
+the 75 CH measurements are generated, not hand-written.
+
+```bash
+python3 -I sim/channel-eye/test_channel_eye.py        # generator + post-processor self-tests
+cd sim/channel-eye && klt sim request_ch_1g.json --dry-run   # 45 corners
+sim/channel-eye/run_channel_eye.sh ch                 # batch fleet; writes records/<UTC>-ch/
+sim/channel-eye/run_channel_eye.sh tc
+```
+
+Corners: `mos_{tt,ss,ff,sf,fs}` x VDDIO 1.08/1.20/1.32 V x -40/27/125 C; the resistor and
+diode sections follow the MOS corner (tt/sf/fs: `res_typ`/`dio_tt`, ss: `res_wcs`/`dio_ss`,
+ff: `res_bcs`/`dio_ff`). Six supply sources (A/B/clock, TX/RX) sweep together so the energy
+of each block is separable.
+
+**Status: no 45-corner record exists yet, and no row is claimed.** Findings from bringing
+the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
+
+1. *`design/aib_tx_data.spice` output PMOS does not conduct.* `XMp ... w=1u ng=28` sources
+   no current with the PDK v0.3.0 PSP103 model: with a 10 kohm load, `sg13_lv_pmos
+   w=1u` conducts for ng <= 10, is weak at ng = 12 and dead for ng >= 16, while `w=2u ng=14`
+   works. With DIN high the pad stays at ~0 V. Every row therefore fails at every corner
+   until the cell is fixed (#35's files; not edited here). `control/aib_tx_data_ctl.spice`
+   is a diagnostic copy with that one device changed to `w=2u ng=14` (same 28 um total) and
+   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**.
+2. *Even with that copy the four-lane transient does not complete.* At the first clock
+   edge the solve aborts (`Timestep too small ... trouble with node "vdd_crx#branch"`,
+   ~0.83 ns). Single-lane isolation runs of 3 ns: TX -> channel -> RX without the pad ESD
+   cell completes; the pad ESD cell with the RX completes; TX + ESD + channel + ESD + RX did
+   not finish in 11 min. The pad ESD path is the suspect; the cause is not isolated.
+3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
+   so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
+   most 3 units (fleet job ceiling 3600 s).
+4. *Tooling.* The fleet runner is klt 0.7.0 and refuses the pinned 0.8.0 client, so the
+   requests set `batch.runner_version_check: "warn"`; a 0.7.0 client lacks `--dry-run`,
+   `--report-out` and rejects `osdi_preload` on the batch backend. Fleet launches were
+   refused at times by the instance cap (`batch_concurrency_cap`).
+
+T-15 note: lanes A and B carry complementary data, so the measured skew is the
+rise/fall (opposite-polarity) arrival difference of one instance, not a layout skew.
+T-16 note: the clock is launched center aligned, so the graded quantity is the deviation
+of the data-to-clock arrival delay from the nominal 0.5 UI.
