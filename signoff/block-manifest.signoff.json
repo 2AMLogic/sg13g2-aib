@@ -9,7 +9,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 3,
+  "t1_met_count": 4,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7",
   "build": {
@@ -81,10 +81,35 @@
       "partition_boundary": "I/O cells: data TX driver and RX receiver, clk/clkb forwarded-clock driver and receiver, pad/ESD structure; cells aib_tx_data, aib_rx_data, aib_tx_clk, aib_rx_clk, aib_pad_esd (design/); nets PAD, PADI, CLK_PAD, CLKB_PAD, VDDIO, VSS",
       "text": "committed GDS/OASIS, reproducibly generated or with documented provenance.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/attest/item2-analog.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:25fcdcd89ee3f0ebc2a372208e784dede8efdaceaab2017b793bb5188e3525ab",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 2,
+          "path": {
+            "path": "layout/aib_io_column.gds",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:25fcdcd89ee3f0ebc2a372208e784dede8efdaceaab2017b793bb5188e3525ab",
+          "input_verified": true,
+          "summary": "T1 item 2 (Layout): committed stream regenerates to identical geometry from layout/gen_io_column.py and passes the structural checks in layout/check_io_column.py; not DRC, LVS or extraction evidence",
+          "source": "layout/aib_io_column.gds",
+          "regeneration": {
+            "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
+            "regenerated_hash": "sha256:22504249b723fc53d646f9fa435d7e306a7a6943d20352b7d270e575f53a6bc2",
+            "executed_by_klt": false,
+            "hash_kind": "geometry"
+          }
+        }
+      }
     },
     {
       "tier": "T1",
