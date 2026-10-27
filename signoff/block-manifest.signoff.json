@@ -108,7 +108,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f",
+        "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -117,13 +117,13 @@
             "path": "layout/aib_io_column.gds",
             "scope": "repo"
           },
-          "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f",
+          "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
           "input_verified": true,
           "summary": "T1 item 2 (Layout): committed stream regenerates to identical geometry from layout/gen_io_column.py and passes the structural checks in layout/check_io_column.py; not DRC, LVS or extraction evidence",
           "source": "layout/aib_io_column.gds",
           "regeneration": {
             "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-            "regenerated_hash": "sha256:9e85d5d25dd2999f4e6b58decf99249b144f3b914dfbe1f821e362fd63c0f6fa",
+            "regenerated_hash": "sha256:51f849180ee7513b46423782e91b9ab4dff68eae9ecff73fbedc656eaefe9691",
             "executed_by_klt": false,
             "hash_kind": "geometry"
           }
@@ -180,11 +180,11 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "layout/records/20261027T063033Z/drc_analog.json",
+        "file": "layout/records/20261027T072103Z/drc_analog.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
-        "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f",
+        "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
         "input_verified": true,
         "exit_status": 0,
         "coverage": {

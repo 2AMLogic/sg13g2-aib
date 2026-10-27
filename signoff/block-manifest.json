@@ -11,12 +11,12 @@
       "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095"
     },
     "1.analog": {"file": "signoff/attest/item1-analog.json", "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"},
-    "2.analog": {"file": "signoff/attest/item2-analog.json", "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"},
+    "2.analog": {"file": "signoff/attest/item2-analog.json", "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6"},
     "2.digital": {
    "file": "signoff/attest/item2-digital.json",
    "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
   },
-    "3.analog": {"file": "layout/records/20261027T063033Z/drc_analog.json", "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"},
+    "3.analog": {"file": "layout/records/20261027T072103Z/drc_analog.json", "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6"},
     "3.digital": {"file": "layout/records/20261027T063033Z/drc_digital.json", "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"},
     "4.digital": {"file": "layout/lvs/digital.report.json"},
     "5.digital": [
@@ -34,7 +34,7 @@
   "claims": {
     "3": {
       "analog": {
-        "report": "layout/records/20261027T063033Z/drc_analog.json",
+        "report": "layout/records/20261027T072103Z/drc_analog.json",
         "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
         "status": "clean",
         "violation_count": 0,

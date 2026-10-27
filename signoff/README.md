@@ -94,8 +94,8 @@ records stay. Re-check with `klt drc --check <report>`.
 `4.digital` cites the `klt lvs` report `layout/lvs/digital.report.json` directly (an `lvs`-kind
 check: `status: match` and `power_connectivity.status` not `mismatch`; here both are `match`).
 `4.analog` cites nothing and reads `unmet` / `no_evidence`: the four per-cell reports are all
-`mismatch`, and item 4 takes one report per partition (2AMLogic/klayout-tools#4354). Details, the
-two layout differences behind the mismatch, and the commands are in
+`match` (issue #70), but item 4 takes one report per partition (2AMLogic/klayout-tools#4354). Details, the
+two layout differences behind the earlier mismatch, and the commands are in
 [`layout/lvs/README.md`](../layout/lvs/README.md). The report's relative paths resolve against the
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
 re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.

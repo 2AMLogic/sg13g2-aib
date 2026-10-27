@@ -94,14 +94,14 @@ def r3(v):
 TX_DEVICES = [
     ("Mi1p", "pmos", 2.0, 0.13, 1, dict(D="OEB", G="OE", S="VDDIO")),
     ("Mi1n", "nmos", 1.0, 0.13, 1, dict(D="OEB", G="OE", S="VSS")),
-    ("Mnd1p", "pmos", 4.0, 0.13, 2, dict(D="GP", G="DIN", S="VDDIO")),
-    ("Mnd2p", "pmos", 4.0, 0.13, 2, dict(D="GP", G="OE", S="VDDIO")),
-    ("Mnd1n", "nmos", 4.0, 0.13, 2, dict(D="GP", G="DIN", S="NA")),
-    ("Mnd2n", "nmos", 4.0, 0.13, 2, dict(D="NA", G="OE", S="VSS")),
-    ("Mnr1p", "pmos", 4.0, 0.13, 2, dict(D="NB", G="DIN", S="VDDIO")),
-    ("Mnr2p", "pmos", 4.0, 0.13, 2, dict(D="GN", G="OEB", S="NB")),
-    ("Mnr1n", "nmos", 2.0, 0.13, 2, dict(D="GN", G="DIN", S="VSS")),
-    ("Mnr2n", "nmos", 2.0, 0.13, 2, dict(D="GN", G="OEB", S="VSS")),
+    ("Mnd1p", "pmos", 2.0, 0.13, 2, dict(D="GP", G="DIN", S="VDDIO")),
+    ("Mnd2p", "pmos", 2.0, 0.13, 2, dict(D="GP", G="OE", S="VDDIO")),
+    ("Mnd1n", "nmos", 2.0, 0.13, 2, dict(D="GP", G="DIN", S="NA")),
+    ("Mnd2n", "nmos", 2.0, 0.13, 2, dict(D="NA", G="OE", S="VSS")),
+    ("Mnr1p", "pmos", 2.0, 0.13, 2, dict(D="NB", G="DIN", S="VDDIO")),
+    ("Mnr2p", "pmos", 2.0, 0.13, 2, dict(D="GN", G="OEB", S="NB")),
+    ("Mnr1n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="DIN", S="VSS")),
+    ("Mnr2n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="OEB", S="VSS")),
     ("Mp", "pmos", 1.0, 0.13, 28, dict(D="PAD", G="GP", S="VDDIO")),
     ("Mn", "nmos", 1.0, 0.13, 14, dict(D="PAD", G="GN", S="VSS")),
     ("Mpu", "pmos", 2.0, 0.13, 1, dict(D="PUX", G="PUN", S="VDDIO")),
@@ -112,10 +112,10 @@ TX_RES = [
     ("Rpd", 0.5, 24.0, "PAD", "PDX"),
 ]
 RX_DEVICES = [
-    ("Mi1p", "pmos", 2.5, 0.13, 2, dict(D="N1", G="PADI", S="VDDIO")),
-    ("Mi1n", "nmos", 1.0, 0.13, 2, dict(D="N1", G="PADI", S="VSS")),
-    ("Mi2p", "pmos", 4.0, 0.13, 2, dict(D="DOUT", G="N1", S="VDDIO")),
-    ("Mi2n", "nmos", 2.0, 0.13, 2, dict(D="DOUT", G="N1", S="VSS")),
+    ("Mi1p", "pmos", 1.25, 0.13, 2, dict(D="N1", G="PADI", S="VDDIO")),
+    ("Mi1n", "nmos", 0.5, 0.13, 2, dict(D="N1", G="PADI", S="VSS")),
+    ("Mi2p", "pmos", 2.0, 0.13, 2, dict(D="DOUT", G="N1", S="VDDIO")),
+    ("Mi2n", "nmos", 1.0, 0.13, 2, dict(D="DOUT", G="N1", S="VSS")),
 ]
 # aib_pad_esd: diodes (anode, cathode), clamp, series resistor.
 ESD_DIODES = [
@@ -127,9 +127,9 @@ ESD_DIODES = [
 ESD_MN2 = ("Mn2", "nmos", 1.0, 0.13, 1, dict(D="PADI", G="VSS", S="VSS"))
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
 ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
-# Table w is the drawn finger width. These devices carry the total width
-# (w_finger * ng) in the netlist; the check compares against that total.
-TOTAL_W_DEVICES = {"Mp", "Mn", "Mclamp"}
+# Table w is the drawn finger width for every device. The netlists carry the
+# total width (w_finger * ng; the IHP model derives a finger as w/ng), and the
+# check compares w * ng against that total for every device.
 
 
 def check_against_netlists(design_dir):
@@ -161,7 +161,7 @@ def check_against_netlists(design_dir):
                 if fix and exp in fix:
                     exp = fix[exp]
                 assert got[pin] == exp, (name, pin, got[pin], exp)
-            w_net = w * ng if name in TOTAL_W_DEVICES else w
+            w_net = w * ng
             assert abs(num(kv["w"]) - w_net) < 1e-9 and abs(num(kv["l"]) - l) < 1e-9, name
             assert int(kv["ng"]) == ng, name
 
@@ -631,7 +631,7 @@ def build_unit(layout, name, tx):
         dict(D="VDDIO", G="VSS", S="VSS"), "Mclamp", gate_row=band_row + 6)
     # Resd (2 um x 2 um) and the secondary diodes.
     rppd(ctx, "Resd", 2.0, 2.0, r3(xr + 1.6), band_row + 15, "PAD", "PADI")
-    c_dp2 = col_of(49.5)
+    c_dp2 = col_of(51.6)   # clear of the clamp bulk tap (shared node at 49.5)
     diode(ctx, "Dp2", "p", 2.0, c_dp2, band_row + 3, "PADI", "VDDIO")
     mos(ctx, "nmos", 1.0, 0.13, 1, r3(gx(c_dp2) - 0.6), band_row + 8,
         dict(D="PADI", G="VSS", S="VSS"), "Mn2", gate_row=band_row + 11)
