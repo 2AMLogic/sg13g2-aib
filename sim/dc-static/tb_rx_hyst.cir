@@ -1,0 +1,7 @@
+* T-11: receiver hysteresis. The input is swept as a fraction of VDDIO (Vfr)
+* upward and then downward; dnorm is the receiver output normalised to VDDIO so
+* the 50 % crossing is a literal level in every supply corner.
+Vfr fr 0 dc 0
+Bpin_r pad_r 0 V=v(fr)*v(vddio)
+Xrx_r pad_r dout_r vddio 0 aib_rx_data
+Bdn dnorm 0 V=v(dout_r)/v(vddio)
