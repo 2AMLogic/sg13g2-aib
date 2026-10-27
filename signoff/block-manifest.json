@@ -12,6 +12,10 @@
     },
     "1.analog": {"file": "signoff/attest/item1-analog.json", "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"},
     "2.analog": {"file": "signoff/attest/item2-analog.json", "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"},
+    "2.digital": {
+   "file": "signoff/attest/item2-digital.json",
+   "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
+  },
     "5.digital": [
       {"file": "signoff/attest/item5-digital/fv_shift_redundancy.json"},
       {"file": "signoff/attest/item5-digital/fv_datapath_n20.json"},

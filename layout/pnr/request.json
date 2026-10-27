@@ -1,0 +1,28 @@
+{
+  "engine": "openroad",
+  "netlist": "../../design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+  "hdl_toplevel": "aib_datapath",
+  "pdk": {"cell_library": "sg13g2_stdcell", "corner": "slow_1p08V_125C"},
+  "floorplan": {
+    "method": "utilization",
+    "utilization_pct": 38,
+    "aspect_ratio": 1.0,
+    "core_margin_um": 4.0,
+    "site": "CoreSite"
+  },
+  "io": {"layer_h": "Metal3", "layer_v": "Metal2"},
+  "power": {
+    "power_net": "VDD",
+    "ground_net": "VSS",
+    "straps": [
+      {"layer": "Metal1", "width_um": 0.44, "pitch_um": 7.56, "offset_um": 0, "followpins": true},
+      {"layer": "TopMetal1", "width_um": 2.2, "pitch_um": 75.6, "offset_um": 13.6, "spacing_um": 4.0},
+      {"layer": "TopMetal2", "width_um": 2.2, "pitch_um": 75.6, "offset_um": 13.6, "spacing_um": 4.0}
+    ]
+  },
+  "constraints": {"clock_port": "clk", "clock_period_ns": 2.0},
+  "post_route_spef": true,
+  "post_route_sdf": true,
+  "seed": 1,
+  "target_stage": "route"
+}

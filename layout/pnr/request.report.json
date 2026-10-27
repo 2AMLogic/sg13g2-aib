@@ -1,0 +1,1888 @@
+{
+  "schema_version": 1,
+  "engine": "openroad",
+  "engine_version": "26Q3-1510-g6cb3f2b704",
+  "engine_logs": [
+    {
+      "invocation_id": "69d2dbfefca54198978e781fc4b769af",
+      "script_name": "pnr_aib_datapath_floorplan.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_floorplan.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "a5b2bf5740e55471c65655baac3117f299be329aad02ef1ba26f25927b17ee5a",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_floorplan_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/69d2dbfefca54198978e781fc4b769af",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/69d2dbfefca54198978e781fc4b769af/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/69d2dbfefca54198978e781fc4b769af/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/69d2dbfefca54198978e781fc4b769af/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "e6f1953ea0904ed28826363ede184453",
+      "script_name": "pnr_aib_datapath_place.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_place.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "90788c745d8309f78d5be20f61ac14f746d0c7a3209e635595ed86bb8ee36219",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_place_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/e6f1953ea0904ed28826363ede184453",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/e6f1953ea0904ed28826363ede184453/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/e6f1953ea0904ed28826363ede184453/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/e6f1953ea0904ed28826363ede184453/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "2dc3c264eb3543fcb265480083c81dc5",
+      "script_name": "pnr_aib_datapath_cts.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_cts.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "f380c1604e0989bb7652e07946192fe2caf5d19332a5fa72596b0343bdd23ea5",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_cts_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/2dc3c264eb3543fcb265480083c81dc5",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/2dc3c264eb3543fcb265480083c81dc5/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/2dc3c264eb3543fcb265480083c81dc5/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/2dc3c264eb3543fcb265480083c81dc5/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "549297b8554b4c1090c830113af45711",
+      "script_name": "pnr_aib_datapath_route.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "4790f71a8d06dbe79b39f7f37c8901099f2a331b7f3108b6cc4cb8544c15a3d6",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/549297b8554b4c1090c830113af45711",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/549297b8554b4c1090c830113af45711/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/549297b8554b4c1090c830113af45711/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/549297b8554b4c1090c830113af45711/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "f4cf426999a64cf2ae15e52a0249dcda",
+      "script_name": "pnr_aib_datapath_route_corners.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corners.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "da4dcfdc5c213f6e5fe63bbb8cb7fa85427aba8767df34b617936c3c5cda75fc",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corners_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/f4cf426999a64cf2ae15e52a0249dcda",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/f4cf426999a64cf2ae15e52a0249dcda/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/f4cf426999a64cf2ae15e52a0249dcda/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/f4cf426999a64cf2ae15e52a0249dcda/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "b1bfdd708bce4624ba22c497cd3267a6",
+      "script_name": "pnr_aib_datapath_route_corner_fast_1p32V_m40C.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corner_fast_1p32V_m40C.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "765795980071e620606a2df28bdb8f0ba98111bb026be9f77fb10bf4278b7ca3",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corner_fast_1p32V_m40C_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b1bfdd708bce4624ba22c497cd3267a6",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b1bfdd708bce4624ba22c497cd3267a6/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b1bfdd708bce4624ba22c497cd3267a6/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b1bfdd708bce4624ba22c497cd3267a6/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "eb3f61f749e7417c81d49282a8b3e760",
+      "script_name": "pnr_aib_datapath_route_corner_fast_1p65V_m40C.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corner_fast_1p65V_m40C.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "f4dd91aa727713b03288407c3f6fd85483f64aef3ad77fff871c22bbd50f04b1",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corner_fast_1p65V_m40C_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/eb3f61f749e7417c81d49282a8b3e760",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/eb3f61f749e7417c81d49282a8b3e760/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/eb3f61f749e7417c81d49282a8b3e760/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/eb3f61f749e7417c81d49282a8b3e760/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "1ccc4c79531d4027b5c3354c281d3b3b",
+      "script_name": "pnr_aib_datapath_route_corner_slow_1p08V_125C.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corner_slow_1p08V_125C.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "4f58ba6c090563d2136d277a2f7487e272d5b7178fed3abb8bb307b5b22b334f",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corner_slow_1p08V_125C_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/1ccc4c79531d4027b5c3354c281d3b3b",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/1ccc4c79531d4027b5c3354c281d3b3b/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/1ccc4c79531d4027b5c3354c281d3b3b/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/1ccc4c79531d4027b5c3354c281d3b3b/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "b8a24ca09a844219985aac4ae787e29c",
+      "script_name": "pnr_aib_datapath_route_corner_slow_1p35V_125C.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corner_slow_1p35V_125C.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "29fb919700fd09f381d7a479b318e34ddf692196bc7bb981852d8e0d4e6c75b1",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corner_slow_1p35V_125C_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b8a24ca09a844219985aac4ae787e29c",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b8a24ca09a844219985aac4ae787e29c/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b8a24ca09a844219985aac4ae787e29c/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/b8a24ca09a844219985aac4ae787e29c/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "4ba3ce9a173641469e91f122e6b08c3e",
+      "script_name": "pnr_aib_datapath_route_corner_typ_1p20V_25C.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corner_typ_1p20V_25C.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "4fed0dbf1d0b448b80e9b434929bae0b109f2a3f1c99c83739c951e224f9d267",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corner_typ_1p20V_25C_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/4ba3ce9a173641469e91f122e6b08c3e",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/4ba3ce9a173641469e91f122e6b08c3e/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/4ba3ce9a173641469e91f122e6b08c3e/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/4ba3ce9a173641469e91f122e6b08c3e/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "0eedb9b67be24d6f9583e1d0e9511e0f",
+      "script_name": "pnr_aib_datapath_route_corner_typ_1p50V_25C.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_corner_typ_1p50V_25C.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "01419f99c7b7a8fc46c09b2698a0c0824fb892b04495a3f5c388f22a8953bcab",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_corner_typ_1p50V_25C_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/0eedb9b67be24d6f9583e1d0e9511e0f",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/0eedb9b67be24d6f9583e1d0e9511e0f/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/0eedb9b67be24d6f9583e1d0e9511e0f/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/0eedb9b67be24d6f9583e1d0e9511e0f/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "055c48a053304faea7472cca55f667e8",
+      "script_name": "pnr_aib_datapath_route_spef.tcl",
+      "script_path": {
+        "path": "layout/pnr/.klt/place-and-route/pnr_aib_datapath_route_spef.tcl",
+        "scope": "repo"
+      },
+      "script_sha256": "8824eb8603ff9c4d8b4606d279399b2f9fbb2c980f11d3f1b734bb734c66fd57",
+      "metrics_path": {
+        "path": "layout/pnr/.klt/place-and-route/aib_datapath_route_spef_metrics.json",
+        "scope": "repo"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/055c48a053304faea7472cca55f667e8",
+        "scope": "repo"
+      },
+      "stdout_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/055c48a053304faea7472cca55f667e8/stdout.log",
+        "scope": "repo"
+      },
+      "stderr_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/055c48a053304faea7472cca55f667e8/stderr.log",
+        "scope": "repo"
+      },
+      "metadata_path": {
+        "path": "layout/pnr/.klt/place-and-route/openroad-logs/055c48a053304faea7472cca55f667e8/invocation.json",
+        "scope": "repo"
+      },
+      "retention_errors": []
+    }
+  ],
+  "hdl_toplevel": "aib_datapath",
+  "netlist": {
+    "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+    "scope": "repo"
+  },
+  "status": "ok",
+  "stage_reached": "route",
+  "seed": 1,
+  "coverage": {
+    "metal_density_fill": {
+      "status": "unsupported",
+      "inserted": false,
+      "reason": "no metal density fill is inserted at any stage; standard-cell gap fillers are not metal fill"
+    },
+    "density_compliance": {
+      "status": "unsupported",
+      "evaluated": false,
+      "reason": "metal density rules are not evaluated by place-and-route; a zero route_drc_violation_count does not imply density compliance"
+    }
+  },
+  "interconnect_corner": "nom",
+  "die_area_um2": 26841.9,
+  "core_area_um2": 23442,
+  "utilization_pct": 57.3839,
+  "wirelength_um": 20674,
+  "worst_slack_ns": 0.49367,
+  "total_negative_slack_ns": 0,
+  "fmax_mhz": 1531.51,
+  "setup_violation_count": 0,
+  "hold_violation_count": 0,
+  "nominal_hold_slack_ns": 0.46256,
+  "antenna_violation_count": 0,
+  "route_drc_violation_count": 0,
+  "estimated_power_mw": 6.2685,
+  "clock_skew_ns": 0.04419,
+  "worst_setup_slack_ns": 0.49367,
+  "worst_hold_slack_ns": 0.14082,
+  "corners": [
+    {
+      "name": "fast_1p32V_m40C",
+      "setup_slack_ns": 0.79539,
+      "hold_slack_ns": 0.19376,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0
+    },
+    {
+      "name": "fast_1p65V_m40C",
+      "setup_slack_ns": 0.86005,
+      "hold_slack_ns": 0.14082,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0
+    },
+    {
+      "name": "slow_1p08V_125C",
+      "setup_slack_ns": 0.49367,
+      "hold_slack_ns": 0.46387,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0
+    },
+    {
+      "name": "slow_1p35V_125C",
+      "setup_slack_ns": 0.69204,
+      "hold_slack_ns": 0.29779,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0
+    },
+    {
+      "name": "typ_1p20V_25C",
+      "setup_slack_ns": 0.69042,
+      "hold_slack_ns": 0.29309,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0
+    },
+    {
+      "name": "typ_1p50V_25C",
+      "setup_slack_ns": 0.79964,
+      "hold_slack_ns": 0.19889,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0
+    }
+  ],
+  "congestion": {
+    "global_route": {
+      "total_overflow": 0,
+      "max_horizontal_overflow": 0,
+      "max_vertical_overflow": 0,
+      "usage_pct": 10.69,
+      "max_layer_usage_pct": 25.99,
+      "overflow_per_layer": {
+        "Metal1": {
+          "resource": 0,
+          "demand": 0,
+          "usage_pct": 0.0,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        },
+        "Metal2": {
+          "resource": 6829,
+          "demand": 1775,
+          "usage_pct": 25.99,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        },
+        "Metal3": {
+          "resource": 8087,
+          "demand": 1541,
+          "usage_pct": 19.06,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        },
+        "Metal4": {
+          "resource": 6829,
+          "demand": 49,
+          "usage_pct": 0.72,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        },
+        "Metal5": {
+          "resource": 8007,
+          "demand": 0,
+          "usage_pct": 0.0,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        },
+        "TopMetal1": {
+          "resource": 947,
+          "demand": 0,
+          "usage_pct": 0.0,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        },
+        "TopMetal2": {
+          "resource": 777,
+          "demand": 0,
+          "usage_pct": 0.0,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "total_overflow": 0
+        }
+      },
+      "routed_net_count": 419,
+      "max_gcell_usage_pct": null
+    },
+    "detailed_route": {
+      "first_iteration_drc_violation_count": 217,
+      "iteration_count": 4,
+      "drc_violations_per_iteration": [
+        217,
+        48,
+        50,
+        0
+      ],
+      "converged": true
+    },
+    "completeness": {
+      "signal_net_count": 268,
+      "unrouted_net_count": 0,
+      "partially_routed_net_count": null
+    },
+    "placement": {
+      "total_routing_overflow": 0.0,
+      "overflowed_tile_count": 0,
+      "final_weighted_congestion": 0.4287
+    },
+    "null_reasons": {
+      "global_route.max_gcell_usage_pct": "OpenROAD's global router reports usage per routing layer, not per GCell",
+      "completeness.partially_routed_net_count": "OpenROAD exposes no per-net connectivity check; only nets with no routed wire at all are counted"
+    }
+  },
+  "max_transition_violation_count": 0,
+  "max_capacitance_violation_count": 0,
+  "max_transition_violation_count_vs_library": 0,
+  "max_capacitance_violation_count_vs_library": 0,
+  "timing_status": "constrained",
+  "stages": [
+    {
+      "name": "floorplan",
+      "die_area_um2": 26841.9,
+      "core_area_um2": 23442,
+      "utilization_pct": 39.3653,
+      "worst_slack_ns": 0.54688,
+      "total_negative_slack_ns": 0,
+      "timing_status": "constrained"
+    },
+    {
+      "name": "place",
+      "die_area_um2": 26841.9,
+      "core_area_um2": 23442,
+      "utilization_pct": 39.4272,
+      "worst_slack_ns": 0.54327,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 11705.4,
+      "fmax_mhz": 1577.04,
+      "estimated_power_mw": 2.4006,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "nominal_hold_slack_ns": 0.45513,
+      "timing_status": "constrained"
+    },
+    {
+      "name": "cts",
+      "die_area_um2": 26841.9,
+      "core_area_um2": 23442,
+      "utilization_pct": 57.3607,
+      "worst_slack_ns": 0.56636,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 18163.1,
+      "fmax_mhz": 1533.13,
+      "estimated_power_mw": 6.195,
+      "clock_skew_ns": 0.04969,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "nominal_hold_slack_ns": 0.4582,
+      "timing_status": "constrained"
+    },
+    {
+      "name": "route",
+      "die_area_um2": 26841.9,
+      "core_area_um2": 23442,
+      "utilization_pct": 57.3839,
+      "worst_slack_ns": 0.49367,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 20674,
+      "fmax_mhz": 1531.51,
+      "estimated_power_mw": 6.2685,
+      "clock_skew_ns": 0.04419,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "nominal_hold_slack_ns": 0.46256,
+      "antenna_violation_count": 0,
+      "route_drc_violation_count": 0,
+      "worst_setup_slack_ns": 0.49367,
+      "worst_hold_slack_ns": 0.14082,
+      "corners": [
+        {
+          "name": "fast_1p32V_m40C",
+          "setup_slack_ns": 0.79539,
+          "hold_slack_ns": 0.19376,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0,
+          "max_transition_violation_count_vs_library": 0,
+          "max_capacitance_violation_count_vs_library": 0
+        },
+        {
+          "name": "fast_1p65V_m40C",
+          "setup_slack_ns": 0.86005,
+          "hold_slack_ns": 0.14082,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0,
+          "max_transition_violation_count_vs_library": 0,
+          "max_capacitance_violation_count_vs_library": 0
+        },
+        {
+          "name": "slow_1p08V_125C",
+          "setup_slack_ns": 0.49367,
+          "hold_slack_ns": 0.46387,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0,
+          "max_transition_violation_count_vs_library": 0,
+          "max_capacitance_violation_count_vs_library": 0
+        },
+        {
+          "name": "slow_1p35V_125C",
+          "setup_slack_ns": 0.69204,
+          "hold_slack_ns": 0.29779,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0,
+          "max_transition_violation_count_vs_library": 0,
+          "max_capacitance_violation_count_vs_library": 0
+        },
+        {
+          "name": "typ_1p20V_25C",
+          "setup_slack_ns": 0.69042,
+          "hold_slack_ns": 0.29309,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0,
+          "max_transition_violation_count_vs_library": 0,
+          "max_capacitance_violation_count_vs_library": 0
+        },
+        {
+          "name": "typ_1p50V_25C",
+          "setup_slack_ns": 0.79964,
+          "hold_slack_ns": 0.19889,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0,
+          "max_transition_violation_count_vs_library": 0,
+          "max_capacitance_violation_count_vs_library": 0
+        }
+      ],
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0,
+      "max_transition_violation_count_vs_library": 0,
+      "max_capacitance_violation_count_vs_library": 0,
+      "congestion": {
+        "global_route": {
+          "total_overflow": 0,
+          "max_horizontal_overflow": 0,
+          "max_vertical_overflow": 0,
+          "usage_pct": 10.69,
+          "max_layer_usage_pct": 25.99,
+          "overflow_per_layer": {
+            "Metal1": {
+              "resource": 0,
+              "demand": 0,
+              "usage_pct": 0.0,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            },
+            "Metal2": {
+              "resource": 6829,
+              "demand": 1775,
+              "usage_pct": 25.99,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            },
+            "Metal3": {
+              "resource": 8087,
+              "demand": 1541,
+              "usage_pct": 19.06,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            },
+            "Metal4": {
+              "resource": 6829,
+              "demand": 49,
+              "usage_pct": 0.72,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            },
+            "Metal5": {
+              "resource": 8007,
+              "demand": 0,
+              "usage_pct": 0.0,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            },
+            "TopMetal1": {
+              "resource": 947,
+              "demand": 0,
+              "usage_pct": 0.0,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            },
+            "TopMetal2": {
+              "resource": 777,
+              "demand": 0,
+              "usage_pct": 0.0,
+              "max_horizontal_overflow": 0,
+              "max_vertical_overflow": 0,
+              "total_overflow": 0
+            }
+          },
+          "routed_net_count": 419,
+          "max_gcell_usage_pct": null
+        },
+        "detailed_route": {
+          "first_iteration_drc_violation_count": 217,
+          "iteration_count": 4,
+          "drc_violations_per_iteration": [
+            217,
+            48,
+            50,
+            0
+          ],
+          "converged": true
+        },
+        "completeness": {
+          "signal_net_count": 268,
+          "unrouted_net_count": 0,
+          "partially_routed_net_count": null
+        },
+        "placement": {
+          "total_routing_overflow": 0.0,
+          "overflowed_tile_count": 0,
+          "final_weighted_congestion": 0.4287
+        },
+        "null_reasons": {
+          "global_route.max_gcell_usage_pct": "OpenROAD's global router reports usage per routing layer, not per GCell",
+          "completeness.partially_routed_net_count": "OpenROAD exposes no per-net connectivity check; only nets with no routed wire at all are counted"
+        }
+      },
+      "timing_status": "constrained"
+    }
+  ],
+  "macros": [],
+  "def_path": "/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-38/layout/pnr/.klt/place-and-route/aib_datapath.def",
+  "pins": [
+    {
+      "name": "VDD",
+      "edge": "north",
+      "x_um": 81.84,
+      "y_um": 102.96,
+      "layer": "TopMetal2"
+    },
+    {
+      "name": "VSS",
+      "edge": "north",
+      "x_um": 81.84,
+      "y_um": 96.76,
+      "layer": "TopMetal2"
+    },
+    {
+      "name": "clk",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 29.82,
+      "layer": "Metal3"
+    },
+    {
+      "name": "l1",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 34.86,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rst_n",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 82.74,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_clk",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 83.58,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[0]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 84.42,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[10]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 70.14,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[11]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 55.02,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[12]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 86.1,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[13]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 40.74,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[14]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 80.22,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[15]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 87.78,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[16]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 54.18,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[17]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 89.46,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[18]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 79.38,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[19]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 90.3,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[1]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 91.14,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[2]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 53.34,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[3]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 78.54,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[4]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 92.82,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[5]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 76.02,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[6]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 94.5,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[7]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 52.5,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[8]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 39.9,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q0[9]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 96.18,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[0]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 97.02,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[10]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 48.3,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[11]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 51.66,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[12]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 98.7,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[13]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 34.02,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[14]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 30.66,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[15]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 100.38,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[16]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 50.82,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[17]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 102.06,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[18]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 75.18,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[19]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 99.54,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[1]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 39.06,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[2]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 49.98,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[3]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 74.34,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[4]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 105.42,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[5]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 106.26,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[6]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 107.1,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[7]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 49.14,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[8]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 107.94,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_q1[9]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 108.78,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[0]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 103.74,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[10]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 72.66,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[11]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 110.46,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[12]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 31.5,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[13]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 111.3,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[14]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 71.82,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[15]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 112.98,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[16]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 38.22,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[17]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 47.46,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[18]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 70.98,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[19]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 95.34,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[1]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 65.1,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[2]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 117.18,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[3]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 37.38,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[4]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 114.66,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[5]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 113.82,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[6]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 86.94,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[7]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 46.62,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[8]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 33.18,
+      "layer": "Metal3"
+    },
+    {
+      "name": "rx_wire[9]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 118.86,
+      "layer": "Metal3"
+    },
+    {
+      "name": "sdr",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 120.54,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[0]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 68.46,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[10]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 121.38,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[11]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 104.58,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[12]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 116.34,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[13]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 67.62,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[14]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 101.22,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[15]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 122.22,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[16]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 45.78,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[17]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 66.78,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[18]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 123.06,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[19]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 123.9,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[1]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 36.54,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[2]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 65.94,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[3]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 124.74,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[4]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 88.62,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[5]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 125.58,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[6]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 44.94,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[7]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 85.26,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[8]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 126.42,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d0[9]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 81.9,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[0]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 64.26,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[10]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 127.26,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[11]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 63.42,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[12]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 128.1,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[13]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 61.74,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[14]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 128.94,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[15]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 115.5,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[16]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 69.3,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[17]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 62.58,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[18]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 44.1,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[19]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 131.46,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[1]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 132.3,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[2]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 55.86,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[3]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 76.86,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[4]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 35.7,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[5]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 130.62,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[6]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 60.9,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[7]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 43.26,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[8]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 97.86,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_d1[9]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 133.14,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[0]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 60.06,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[10]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 91.98,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[11]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 77.7,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[12]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 93.66,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[13]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 59.22,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[14]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 32.34,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[15]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 133.98,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[16]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 42.42,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[17]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 58.38,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[18]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 112.14,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[19]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 118.02,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[1]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 129.78,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[2]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 57.54,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[3]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 81.06,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[4]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 109.62,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[5]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 102.9,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[6]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 56.7,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[7]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 41.58,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[8]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 119.7,
+      "layer": "Metal3"
+    },
+    {
+      "name": "tx_wire[9]",
+      "edge": "west",
+      "x_um": 0.36,
+      "y_um": 73.5,
+      "layer": "Metal3"
+    }
+  ],
+  "unrouted_def_path": null,
+  "gds_path": "/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-38/layout/pnr/.klt/place-and-route/aib_datapath.gds",
+  "layer_map": {
+    "path": "/home/ubuntu/share/pdk/ihp-sg13g2/libs.tech/klayout/tech/sg13g2.map",
+    "resolution": "family"
+  },
+  "def_net_names": {
+    "single_pin_markers": 0,
+    "unresolved_single_pin_nets": []
+  },
+  "min_area_repair": {
+    "status": "skipped",
+    "reason": "the curated deck for PDK variant 'ihp-sg13g2' carries no plain minimum-area rule on any routed-net layer",
+    "patches": 0,
+    "repaired": 0,
+    "remaining": 0,
+    "rules": [],
+    "unrepaired": []
+  },
+  "verilog_path": "/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-38/layout/pnr/.klt/place-and-route/aib_datapath.v",
+  "spef_sta": {
+    "spef_path": "/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-38/layout/pnr/.klt/place-and-route/aib_datapath_route.spef",
+    "sdf_path": "/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-38/layout/pnr/.klt/place-and-route/aib_datapath_route.sdf",
+    "worst_slack_ns": 0.50908,
+    "total_negative_slack_ns": 0,
+    "timing_status": "constrained",
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "nets_annotated": 241,
+    "nets_total": 2238,
+    "design_nets_annotated": 241,
+    "design_nets_total": 421,
+    "annotation_complete": false,
+    "annotation_warning": "only 241 of 421 nets in the linked design are named by this SPEF -- the slack/violation values in this block are NOT a real-parasitics measurement to the extent annotation is missing, and should not be compared against the top-level estimate_parasitics-derived fields as if they were. See docs/cli/place-and-route.md's 'Net-name correlation' subsection."
+  },
+  "power": {
+    "preset": null,
+    "pdn": true,
+    "global_connect": true,
+    "power_net": "VDD",
+    "ground_net": "VSS",
+    "tapcell_master": null,
+    "endcap_master": null,
+    "tapcell_distance_um": null,
+    "filler_masters": [
+      "sg13g2_fill_1",
+      "sg13g2_fill_2"
+    ],
+    "straps": [
+      {
+        "layer": "Metal1",
+        "spacing_um": null
+      },
+      {
+        "layer": "TopMetal1",
+        "spacing_um": 4.0
+      },
+      {
+        "layer": "TopMetal2",
+        "spacing_um": 4.0
+      }
+    ],
+    "connects": [
+      {
+        "layers": [
+          "Metal1",
+          "TopMetal1"
+        ],
+        "max_columns": null,
+        "ongrid": null,
+        "split_cuts": null
+      },
+      {
+        "layers": [
+          "TopMetal1",
+          "TopMetal2"
+        ],
+        "max_columns": null,
+        "ongrid": null,
+        "split_cuts": null
+      }
+    ],
+    "row_rail": {
+      "emitted": false,
+      "layer": null,
+      "power_net": null,
+      "ground_net": null,
+      "filler_masters": []
+    },
+    "placed": {
+      "evidence": "def",
+      "def_path": "/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-38/layout/pnr/.klt/place-and-route/aib_datapath.def",
+      "unavailable_reason": null,
+      "status": "complete",
+      "missing": [],
+      "components": 3172,
+      "tapcells": 0,
+      "endcaps": 0,
+      "fillers": 2802,
+      "special_nets": [
+        {
+          "name": "VDD",
+          "use": "POWER",
+          "followpin_segments": 20,
+          "stripe_segments": 208,
+          "other_segments": 40,
+          "stripe_layers": [
+            "TopMetal2",
+            "TopMetal1",
+            "Metal5",
+            "Metal4",
+            "Metal3",
+            "Metal2",
+            "Metal1"
+          ],
+          "vias": 204
+        },
+        {
+          "name": "VSS",
+          "use": "GROUND",
+          "followpin_segments": 21,
+          "stripe_segments": 218,
+          "other_segments": 42,
+          "stripe_layers": [
+            "TopMetal2",
+            "TopMetal1",
+            "Metal5",
+            "Metal4",
+            "Metal3",
+            "Metal2",
+            "Metal1"
+          ],
+          "vias": 214
+        }
+      ]
+    }
+  },
+  "warnings": [],
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "ihp-sg13g2",
+      "source": "PDK_ROOT environment variable",
+      "version": "fetched:0.3.0"
+    },
+    "deck": {
+      "name": "sg13g2_stdcell__slow_1p08V_125C",
+      "content_hash": "sha256:1ac6a0301184b3a8aa1a4a01910967f624c8e869517777f529985f11f04588c3",
+      "released": false,
+      "path": {
+        "path": null,
+        "scope": "external"
+      }
+    },
+    "input": {
+      "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1",
+      "role": "netlist"
+    }
+  }
+}
