@@ -7,6 +7,9 @@ matching).
 **Status of this stream: it exists, regenerates, and passes structural checks. It is not
 DRC, LVS or extraction evidence.** Those are separate issues (#39, #40, #42).
 
+The digital partition's routed stream (`klt place-and-route` of the synthesized data path) is
+in [`pnr/`](pnr/README.md).
+
 ## Files
 
 | File | What |

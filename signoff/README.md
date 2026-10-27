@@ -3,9 +3,9 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `5.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `5.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
 
@@ -65,6 +65,19 @@ re-cite the hash and regenerate the record:
 
 ```bash
 uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+```
+
+## Item 2 (layout, digital)
+
+`layout/attest_item2_digital.py` writes `attest/item2-digital.json`, a `generic` envelope
+anchored on the routed GDS `layout/pnr/.klt/place-and-route/aib_datapath.gds` (the P&R report
+itself is item 11 evidence, so item 2 cannot cite it). It refuses to write unless
+`layout/pnr/request.report.json` is `ok`, `stage_reached: route`, `power.pdn: true`. The manifest
+cites it under `2.digital` with the stream's sha256. Regenerate after re-running P&R
+(`layout/pnr/README.md`), then re-cite the hash and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2_digital.py [--check]
 ```
 
 ## Item 5 / digital evidence

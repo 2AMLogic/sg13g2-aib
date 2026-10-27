@@ -9,7 +9,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 8,
+  "t1_met_count": 9,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7",
   "build": {
@@ -138,10 +138,35 @@
       "partition_boundary": "synthesized data path: lane mux, shift redundancy, DDR registers; rtl/aib_datapath.v, driving the analog cells' DIN, OE, PUN, PD, CLK_D, CLKB_D and reading DOUT, CLK_O, CLKB_O",
       "text": "committed routed GDS/OASIS from place-and-route, reproducibly generated from the gate-level netlist (P&R script/flow committed, not a one-off hand edit). For the same full-custom sub-case, this item is satisfied instead by the Analog column's artifact: committed GDS/OASIS, reproducibly generated or with documented provenance \u2014 hand-drawn layout, not P&R output.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/attest/item2-digital.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 2,
+          "path": {
+            "path": "layout/pnr/.klt/place-and-route/aib_datapath.gds",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9",
+          "input_verified": true,
+          "summary": "T1 item 2 (Layout, digital): routed GDS from klt place-and-route of the item 1 netlist, regenerated to identical geometry by the full --rerun check; report route_drc_violation_count=0 antenna_violation_count=0; not DRC or LVS evidence",
+          "source": "layout/pnr/request.report.json",
+          "regeneration": {
+            "generator": "PDK_ROOT=<pdk root> uvx --from klayout-tools==$(cat signoff/KLT_VERSION) klt place-and-route layout/pnr/request.json --pdk ihp-sg13g2 --format json > layout/pnr/request.report.json",
+            "regenerated_hash": "sha256:92a8f99a155e7aa89fb04975d071e94e5b88b7886ec2313cd0130d3c36d94ee0",
+            "executed_by_klt": false,
+            "hash_kind": "geometry"
+          }
+        }
+      }
     },
     {
       "tier": "T1",
