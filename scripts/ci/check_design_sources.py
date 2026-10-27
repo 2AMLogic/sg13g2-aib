@@ -96,7 +96,7 @@ def regenerate(root: Path, t05_commit: str) -> None:
     (root / ENVELOPE).write_text(json.dumps(env, indent=2) + "\n")
     man = load(root / MANIFEST)
     man.setdefault("evidence", {})[MANIFEST_KEY] = {
-        "file": "attest/item1-digital.attest.json",
+        "file": ENVELOPE,
         "content_hash": h,
     }
     (root / MANIFEST).write_text(json.dumps(man, indent=2) + "\n")

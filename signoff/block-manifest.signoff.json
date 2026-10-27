@@ -41,7 +41,7 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "attest/item1-digital.attest.json",
+        "file": "signoff/attest/item1-digital.attest.json",
         "command": null,
         "kind": "generic",
         "check_status": "pass",

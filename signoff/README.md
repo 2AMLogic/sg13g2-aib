@@ -14,12 +14,15 @@ workflow reads it too. Do not use a dev-build `klt` to generate the record.
 From the repo root (`klt signoff` exits 3 while rows are unmet; that is expected):
 
 ```bash
-cd signoff
-uvx --from "klayout-tools==$(cat KLT_VERSION)" klt signoff \
-  --manifest block-manifest.json --format json > block-manifest.signoff.json
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff \
+  --manifest signoff/block-manifest.json --format json > signoff/block-manifest.signoff.json
 ```
 
-Commit the result. Never hand-edit the record.
+Run it from the repo root, as CI does: the grader opens each `file` in the
+manifest relative to the working directory, not the manifest's directory, so
+the manifest's `file` paths are repo-root-relative. Run from anywhere else,
+item 1 grades `unmet` / `unreadable_evidence`. Commit the result. Never
+hand-edit the record.
 
 ## Item 1 / digital attestation
 
