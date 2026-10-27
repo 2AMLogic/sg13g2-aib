@@ -52,7 +52,8 @@ Each cell is a `.sch` plus `.sym`; the `.spice` next to it is derived with
 
 **What this directory claims: the sources exist and the netlists are fresh.** Every
 size is a first-cut placeholder and nothing here has been simulated, so no spec
-row is claimed met. Known open point: an inverter receiver's threshold moves with
+row is claimed met. `w` is the total width over `ng` fingers; every finger is at or above the
+0.15 um minimum (`XMp` 28u/28, `XMn` 14u/14, `Mclamp` 40u/20). Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;
 the Monte Carlo testbench decides. Simulation, layout, LVS and the I/O-cell
 assembly are separate issues. The forwarded-clock alignment (DLL) is out of scope.

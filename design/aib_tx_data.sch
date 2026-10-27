@@ -63,12 +63,12 @@ C {lab_pin.sym} 880 370 0 0 {name=l37 lab=GN}
 C {lab_pin.sym} 840 400 0 0 {name=l38 lab=OEB}
 C {lab_pin.sym} 880 430 0 0 {name=l39 lab=VSS}
 C {lab_pin.sym} 880 400 0 0 {name=l40 lab=VSS}
-C {sg13g2_pr/sg13_lv_pmos.sym} 1080 400 0 0 {name=Mp model=sg13_lv_pmos w=1u l=0.13u ng=28 m=1}
+C {sg13g2_pr/sg13_lv_pmos.sym} 1080 400 0 0 {name=Mp model=sg13_lv_pmos w=28u l=0.13u ng=28 m=1}
 C {lab_pin.sym} 1100 430 0 0 {name=l41 lab=PAD}
 C {lab_pin.sym} 1060 400 0 0 {name=l42 lab=GP}
 C {lab_pin.sym} 1100 370 0 0 {name=l43 lab=VDDIO}
 C {lab_pin.sym} 1100 400 0 0 {name=l44 lab=VDDIO}
-C {sg13g2_pr/sg13_lv_nmos.sym} 1300 400 0 0 {name=Mn model=sg13_lv_nmos w=1u l=0.13u ng=14 m=1}
+C {sg13g2_pr/sg13_lv_nmos.sym} 1300 400 0 0 {name=Mn model=sg13_lv_nmos w=14u l=0.13u ng=14 m=1}
 C {lab_pin.sym} 1320 370 0 0 {name=l45 lab=PAD}
 C {lab_pin.sym} 1280 400 0 0 {name=l46 lab=GN}
 C {lab_pin.sym} 1320 430 0 0 {name=l47 lab=VSS}
