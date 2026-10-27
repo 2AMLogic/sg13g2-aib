@@ -9,7 +9,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 1,
+  "t1_met_count": 3,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7",
   "build": {
@@ -34,7 +34,7 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "attest/item1-analog.json",
+        "file": "signoff/attest/item1-analog.json",
         "command": null,
         "kind": "generic",
         "check_status": "pass",
@@ -271,10 +271,35 @@
       "partition_boundary": "I/O cells: data TX driver and RX receiver, clk/clkb forwarded-clock driver and receiver, pad/ESD structure; cells aib_tx_data, aib_rx_data, aib_tx_clk, aib_rx_clk, aib_pad_esd (design/); nets PAD, PADI, CLK_PAD, CLKB_PAD, VDDIO, VSS",
       "text": "every claimed measurement's testbench committed, with a documented cold-start invocation a third party can run; pinned PDK revision.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/attest/item9-analog.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 9,
+          "path": {
+            "path": "signoff/attest/item9-analog.inventory.json",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155",
+          "input_verified": true,
+          "summary": "T1 item 9 (Testbenches shipped): 5/5 attestation checks passed (klt signoff --attest)",
+          "source": "signoff/attest/item9-analog.inventory.json",
+          "attestation": {
+            "producer": "klt signoff --attest",
+            "inventory_schema_version": 1,
+            "check_count": 5,
+            "passed_count": 5
+          }
+        }
+      }
     },
     {
       "tier": "T1",
@@ -284,10 +309,35 @@
       "partition_boundary": "synthesized data path: lane mux, shift redundancy, DDR registers; rtl/aib_datapath.v, driving the analog cells' DIN, OE, PUN, PD, CLK_D, CLKB_D and reading DOUT, CLK_O, CLKB_O",
       "text": "every claimed measurement's testbench committed, with a documented cold-start invocation a third party can run; pinned PDK revision.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/attest/item9-digital.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 9,
+          "path": {
+            "path": "signoff/attest/item9-digital.inventory.json",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30",
+          "input_verified": true,
+          "summary": "T1 item 9 (Testbenches shipped): 9/9 attestation checks passed (klt signoff --attest)",
+          "source": "signoff/attest/item9-digital.inventory.json",
+          "attestation": {
+            "producer": "klt signoff --attest",
+            "inventory_schema_version": 1,
+            "check_count": 9,
+            "passed_count": 9
+          }
+        }
+      }
     },
     {
       "tier": "T1",
