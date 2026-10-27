@@ -7,10 +7,11 @@ gate-level netlist.
 | Partition | Result | Row |
 |---|---|---|
 | Digital (`aib_datapath`) | `status: match`, `power_connectivity.status: match` | `4.digital` reads `met` |
-| Analog (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | **`status: mismatch`** on all four cells | `4.analog` stays `unmet` / `no_evidence` (nothing cited) |
+| Analog (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | `status: match` on all four cells (stream regenerated, issue #70; the earlier stream was `mismatch`) | `4.analog` stays `unmet` / `no_evidence`: item 4 takes one report per partition (2AMLogic/klayout-tools#4354), so the four reports are not cited |
 
-The analog mismatch is reported as one. The layout generator, the item 1 sources and the P&R flow are
-not changed to make LVS pass (issue #40, "Out of Scope").
+Issue #40 recorded the analog result as a mismatch and did not change the generator. Issue #70 fixed the
+generator (below) and re-ran all four compares against the same, unchanged reference netlists; the
+reports here are those re-runs. The item 1 sources, `gen_reference.py` and the P&R flow are unchanged.
 
 ## Files
 
@@ -39,7 +40,7 @@ K="uvx --from klayout-tools==$(cat signoff/KLT_VERSION)"
 python3 -I layout/lvs/gen_reference.py --check
 export PDK_ROOT=<path containing ihp-sg13g2>              # digital only
 cd layout/lvs
-$K klt lvs aib_io_tx.request.json --format json > aib_io_tx.report.json      # exit 3: mismatch
+$K klt lvs aib_io_tx.request.json --format json > aib_io_tx.report.json      # exit 0: match
 $K klt lvs digital.request.json --format json > digital.report.json          # exit 0: match
 $K klt lvs --check digital.report.json                                        # exit 0
 $K klt lvs --check aib_io_tx.report.json --rerun                              # exit 0 (the report is reproduced)
@@ -89,7 +90,7 @@ devices. The drawn layout does not carry labels on the datatype the deck reads b
 writes datatype 1), so the requests pass `layout.label_layers`; with it the pins extract as named
 (TX: `DIN OE PAD PD PUN VDDIO VSS`).
 
-The compare reports `mismatch` on all four cells. Two differences between the drawn layout and the item 1
+The compare on the stream drawn for #40 reported `mismatch` on all four cells (that run is in git history, commit `1226ed8`). Two differences between the drawn layout and the item 1
 schematic explain it; each was isolated by a *diagnostic* reference (`gen_reference.py --diagnostic`)
 that changes only that difference, and with both applied all four cells report `match` (`*.diag.report.json`,
 `device` counts equal on both sides: 89, 33, 178, 66). The diagnostic is a localisation, not a result:
@@ -107,16 +108,25 @@ nothing is claimed against it.
    `Mnr2p`, `Mnr1n`, `Mnr2n`) and the four RX devices (`Mi1p`, `Mi1n`, `Mi2p`, `Mi2n`), all `ng = 2`. Those
    are drawn twice as wide as simulated.
 
-Both belong to the layout stream (`layout/gen_io_column.py`) and are filed as a follow-up on this
-repository rather than fixed here.
+Both were fixed in `layout/gen_io_column.py` (issue #70); the reference netlists were not touched:
+
+1. Cause: the clamp's bulk tap and the secondary diode `Dp2` were placed on the same router node, so
+   the tap's `VSS` Metal1 overlapped the `Dp2` plate (`PADI`). `Dp2` and `Mn2` moved right, clear of the
+   tap. `layout/check_io_column.py` now fails on this merge in the old stream (resistor end on a rail,
+   found from the wire connectivity of unlabelled shapes too).
+2. The generator table carries the finger width for every device and the self-check compares
+   `w * ng` with the netlist `w` for all of them (it was three devices).
+
+The `*.diag.*` files are the localisation recorded against the old stream. They are kept as the
+record of that diagnosis and no longer reproduce (`--check` reports drift on the layout hash); they
+are not evidence about the current stream.
 
 Not covered, and so not claimed:
 
 - The resistor value and `L`/`W` are not compared: the `rppd` card in a `subckt-call` reference carries
   a placeholder `R`, and a resistor's `L`/`W` are secondary parameters (`device.placeholder_value`,
   `device.geometry_not_compared` warnings in every analog report).
-- The 24-slot column (`aib_io_column_tx`/`_rx`, top `aib_io_column`) was not compared. The cell-level
-  runs do not match, so a column run would only repeat the same two differences.
+- The 24-slot column (`aib_io_column_tx`/`_rx`, top `aib_io_column`) was not compared; only the four cells are.
 - A second engine (`netgen`) was not run.
 - `klt signoff` item 4 accepts one report per partition (2AMLogic/klayout-tools#4354), so the four
   per-cell reports cannot be cited together. They are not cited, and `4.analog` stays `unmet`.

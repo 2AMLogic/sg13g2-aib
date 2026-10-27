@@ -15,11 +15,11 @@
         "path": "layout/aib_io_column.gds",
         "scope": "repo"
       },
-      "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"
+      "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6"
     },
     "regeneration": {
       "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-      "regenerated_hash": "sha256:9e85d5d25dd2999f4e6b58decf99249b144f3b914dfbe1f821e362fd63c0f6fa",
+      "regenerated_hash": "sha256:51f849180ee7513b46423782e91b9ab4dff68eae9ecff73fbedc656eaefe9691",
       "hash_kind": "geometry"
     }
   }
