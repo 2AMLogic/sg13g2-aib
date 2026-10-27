@@ -1,0 +1,18 @@
+** sch_path: design/aib_rx_clk.sch
+.subckt aib_rx_clk CLK_PAD CLKB_PAD CLK_O CLKB_O VDDIO VSS
+*.PININFO CLK_PAD:I CLKB_PAD:I CLK_O:O CLKB_O:O VDDIO:B VSS:B
+Xclk CLK_PAD CLK_O VDDIO VSS aib_rx_data
+Xclkb CLKB_PAD CLKB_O VDDIO VSS aib_rx_data
+.ends
+
+* expanding   symbol:  aib_rx_data.sym # of pins=4
+** sym_path: design/aib_rx_data.sym
+** sch_path: design/aib_rx_data.sch
+.subckt aib_rx_data PAD DOUT VDDIO VSS
+*.PININFO PAD:I DOUT:O VDDIO:B VSS:B
+XMi1p M1 PAD VDDIO VDDIO sg13_lv_pmos w=2.5u l=0.13u ng=2 m=1
+XMi1n M1 PAD VSS VSS sg13_lv_nmos w=1u l=0.13u ng=2 m=1
+XMi2p DOUT M1 VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMi2n DOUT M1 VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
+.ends
+

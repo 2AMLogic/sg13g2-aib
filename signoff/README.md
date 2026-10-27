@@ -3,9 +3,10 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), items 9 and 10 read `met` for
-both partitions (see "Item 9 attestation" and "Item 10 attestation"); every other row reads `unmet` /
-`no_evidence`, which is the honest state until evidence is cited. Evidence paths
+rows (11 items x analog and digital partitions), `1.analog` and items 9 and 10 (both
+partitions) read `met` (see "Attest item 1", "Item 9 attestation" and "Item 10
+attestation"); every other row reads `unmet` / `no_evidence`, which is the honest
+state until evidence is cited. Evidence paths
 resolve against the working directory, so always grade from the repo root.
 
 The grader version is pinned in one place, `signoff/KLT_VERSION`; the CI
@@ -21,6 +22,21 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff \
 ```
 
 Commit the result. Never hand-edit the record.
+
+## Attest item 1 (analog)
+
+`attest/item1-analog.inventory.json` lists the design sources and derived
+netlists; `attest/item1-analog.json` is the envelope `klt signoff --attest 1`
+produced from it (needs klt >= 0.8.0, so the pin). The freshness commands are
+`local_only` because CI has no xschem or PDK. Regenerate after any `design/`
+edit, then re-cite the new `content_hash` in the manifest and regenerate the record:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 1 \
+  --inventory signoff/attest/item1-analog.inventory.json -o signoff/attest/item1-analog.json
+```
+
+The manifest cites the envelope under `1.analog` with the inventory file's sha256.
 
 ## Item 9 attestation
 
@@ -65,6 +81,10 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 10 \
 
 Then update the two `content_hash` values for item 10 in the manifest and
 regenerate the record.
+
+Re-attest as the last step, after `README.md` and `.github/workflows/ci.yml`
+are final: both are hashed into the envelope, so any later edit to either
+makes the CI `--check` exit 3 (`drifted`).
 
 ## What CI checks (`.github/workflows/ci.yml`)
 
