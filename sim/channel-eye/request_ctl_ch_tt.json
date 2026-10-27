@@ -1,0 +1,631 @@
+{
+  "engine": "ngspice",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "netlist": "tb_ctl_ch.cir",
+  "backend": "batch",
+  "corners": {
+    "process": [
+      {
+        "name": "mos_tt",
+        "sections": [
+          "mos_tt",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vdd_atx": [
+        1.2
+      ],
+      "vdd_arx": [
+        1.2
+      ],
+      "vdd_btx": [
+        1.2
+      ],
+      "vdd_brx": [
+        1.2
+      ],
+      "vdd_ctx": [
+        1.2
+      ],
+      "vdd_crx": [
+        1.2
+      ]
+    },
+    "temperature_c": [
+      27
+    ]
+  },
+  "analysis": {
+    "kind": "tran",
+    "args": "2p 141n 0 5p"
+  },
+  "measurements": [
+    {
+      "spec_row": "T-01",
+      "unit": "count",
+      "expr": "mean(abs((v(douta)-0.5*v(vdd_arx) gt 0)[1,length(time)-1]-(v(douta)-0.5*v(vdd_arx) gt 0)[0,length(time)-2])*(time[1,length(time)-1] ge 14e-9)*(time[1,length(time)-1] lt 141e-9))*(length(time)-1)",
+      "limits": {
+        "min": 63.5,
+        "max": 64.5
+      },
+      "name": "t01_dout_edges_a"
+    },
+    {
+      "spec_row": "T-01",
+      "unit": "count",
+      "expr": "mean(abs((v(doutb)-0.5*v(vdd_brx) gt 0)[1,length(time)-1]-(v(doutb)-0.5*v(vdd_brx) gt 0)[0,length(time)-2])*(time[1,length(time)-1] ge 14e-9)*(time[1,length(time)-1] lt 141e-9))*(length(time)-1)",
+      "limits": {
+        "min": 63.5,
+        "max": 64.5
+      },
+      "name": "t01_dout_edges_b"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 0)*(((time*1e12)%1000) lt 400)))",
+      "name": "eye_win_00"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 50)*(((time*1e12)%1000) lt 450)))",
+      "name": "eye_win_01"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 100)*(((time*1e12)%1000) lt 500)))",
+      "name": "eye_win_02"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 150)*(((time*1e12)%1000) lt 550)))",
+      "name": "eye_win_03"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 200)*(((time*1e12)%1000) lt 600)))",
+      "name": "eye_win_04"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 250)*(((time*1e12)%1000) lt 650)))",
+      "name": "eye_win_05"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 300)*(((time*1e12)%1000) lt 700)))",
+      "name": "eye_win_06"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 350)*(((time*1e12)%1000) lt 750)))",
+      "name": "eye_win_07"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 400)*(((time*1e12)%1000) lt 800)))",
+      "name": "eye_win_08"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 450)*(((time*1e12)%1000) lt 850)))",
+      "name": "eye_win_09"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 500)*(((time*1e12)%1000) lt 900)))",
+      "name": "eye_win_10"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 550)*(((time*1e12)%1000) lt 950)))",
+      "name": "eye_win_11"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*(((time*1e12)%1000) ge 600)*(((time*1e12)%1000) lt 1000)))",
+      "name": "eye_win_12"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 650)+(((time*1e12)%1000) lt 50))))",
+      "name": "eye_win_13"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 700)+(((time*1e12)%1000) lt 100))))",
+      "name": "eye_win_14"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 750)+(((time*1e12)%1000) lt 150))))",
+      "name": "eye_win_15"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 800)+(((time*1e12)%1000) lt 200))))",
+      "name": "eye_win_16"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 850)+(((time*1e12)%1000) lt 250))))",
+      "name": "eye_win_17"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 900)+(((time*1e12)%1000) lt 300))))",
+      "name": "eye_win_18"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "vecmin(abs(v(rxa)-0.5*v(vdd_arx))+10*(1-(time ge 14e-9)*(time lt 141e-9)*((((time*1e12)%1000) ge 950)+(((time*1e12)%1000) lt 350))))",
+      "name": "eye_win_19"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_win_00+eye_win_01+abs(eye_win_00-eye_win_01))/2",
+      "name": "eye_mx_01"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_01+eye_win_02+abs(eye_mx_01-eye_win_02))/2",
+      "name": "eye_mx_02"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_02+eye_win_03+abs(eye_mx_02-eye_win_03))/2",
+      "name": "eye_mx_03"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_03+eye_win_04+abs(eye_mx_03-eye_win_04))/2",
+      "name": "eye_mx_04"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_04+eye_win_05+abs(eye_mx_04-eye_win_05))/2",
+      "name": "eye_mx_05"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_05+eye_win_06+abs(eye_mx_05-eye_win_06))/2",
+      "name": "eye_mx_06"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_06+eye_win_07+abs(eye_mx_06-eye_win_07))/2",
+      "name": "eye_mx_07"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_07+eye_win_08+abs(eye_mx_07-eye_win_08))/2",
+      "name": "eye_mx_08"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_08+eye_win_09+abs(eye_mx_08-eye_win_09))/2",
+      "name": "eye_mx_09"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_09+eye_win_10+abs(eye_mx_09-eye_win_10))/2",
+      "name": "eye_mx_10"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_10+eye_win_11+abs(eye_mx_10-eye_win_11))/2",
+      "name": "eye_mx_11"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_11+eye_win_12+abs(eye_mx_11-eye_win_12))/2",
+      "name": "eye_mx_12"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_12+eye_win_13+abs(eye_mx_12-eye_win_13))/2",
+      "name": "eye_mx_13"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_13+eye_win_14+abs(eye_mx_13-eye_win_14))/2",
+      "name": "eye_mx_14"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_14+eye_win_15+abs(eye_mx_14-eye_win_15))/2",
+      "name": "eye_mx_15"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_15+eye_win_16+abs(eye_mx_15-eye_win_16))/2",
+      "name": "eye_mx_16"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_16+eye_win_17+abs(eye_mx_16-eye_win_17))/2",
+      "name": "eye_mx_17"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_17+eye_win_18+abs(eye_mx_17-eye_win_18))/2",
+      "name": "eye_mx_18"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "(eye_mx_18+eye_win_19+abs(eye_mx_18-eye_win_19))/2",
+      "name": "eye_h_best_v"
+    },
+    {
+      "unit": "count",
+      "spec_row": "T-18",
+      "expr": "((eye_win_00 ge 0.09)+(eye_win_01 ge 0.09)+(eye_win_02 ge 0.09)+(eye_win_03 ge 0.09)+(eye_win_04 ge 0.09)+(eye_win_05 ge 0.09)+(eye_win_06 ge 0.09)+(eye_win_07 ge 0.09)+(eye_win_08 ge 0.09)+(eye_win_09 ge 0.09)+(eye_win_10 ge 0.09)+(eye_win_11 ge 0.09)+(eye_win_12 ge 0.09)+(eye_win_13 ge 0.09)+(eye_win_14 ge 0.09)+(eye_win_15 ge 0.09)+(eye_win_16 ge 0.09)+(eye_win_17 ge 0.09)+(eye_win_18 ge 0.09)+(eye_win_19 ge 0.09))",
+      "limits": {
+        "min": 1
+      },
+      "name": "t18_eye_windows_open"
+    },
+    {
+      "unit": "V",
+      "spec_row": "T-18",
+      "expr": "eye_h_best_v",
+      "limits": {
+        "min": 0.09
+      },
+      "name": "t18_eye_height_ok_v"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(vecmax(v(rxa))-vecmax(v(vdd_arx)))/vecmax(v(vdd_arx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_over_a"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(0-vecmin(v(rxa)))/vecmax(v(vdd_arx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_under_a"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_over_a INTEG par('u(v(rxa)-1.25*v(vdd_arx))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_over_a"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_under_a INTEG par('u(-0.25*v(vdd_arx)-v(rxa))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_under_a"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(vecmax(v(rxb))-vecmax(v(vdd_brx)))/vecmax(v(vdd_brx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_over_b"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(0-vecmin(v(rxb)))/vecmax(v(vdd_brx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_under_b"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_over_b INTEG par('u(v(rxb)-1.25*v(vdd_brx))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_over_b"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_under_b INTEG par('u(-0.25*v(vdd_brx)-v(rxb))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_under_b"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(vecmax(v(rxc))-vecmax(v(vdd_crx)))/vecmax(v(vdd_crx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_over_c"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(0-vecmin(v(rxc)))/vecmax(v(vdd_crx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_under_c"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_over_c INTEG par('u(v(rxc)-1.25*v(vdd_crx))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_over_c"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_under_c INTEG par('u(-0.25*v(vdd_crx)-v(rxc))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_under_c"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(vecmax(v(rxcb))-vecmax(v(vdd_crx)))/vecmax(v(vdd_crx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_over_cb"
+    },
+    {
+      "unit": "ratio",
+      "spec_row": "T-09",
+      "expr": "(0-vecmin(v(rxcb)))/vecmax(v(vdd_crx))",
+      "limits": {
+        "max": 0.25
+      },
+      "name": "t09_under_cb"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_over_cb INTEG par('u(v(rxcb)-1.25*v(vdd_crx))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_over_cb"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-09",
+      "spice": ".meas tran t09_dwell_under_cb INTEG par('u(-0.25*v(vdd_crx)-v(rxcb))') FROM=14n TO=141n",
+      "limits": {
+        "max": 4e-10
+      },
+      "name": "t09_dwell_under_cb"
+    },
+    {
+      "unit": "J",
+      "spec_row": "T-26",
+      "spice": ".meas tran t26_energy_per_bit_simulated_j INTEG par('-(v(vdd_atx)*i(vdd_atx)+v(vdd_arx)*i(vdd_arx)+(v(vdd_ctx)*i(vdd_ctx)+v(vdd_crx)*i(vdd_crx))/20)/127') FROM=14n TO=141n",
+      "limits": {
+        "max": 1e-12
+      },
+      "name": "t26_energy_per_bit_simulated_j"
+    },
+    {
+      "unit": "J",
+      "spec_row": "T-26",
+      "spice": ".meas tran e_lane_a_tx_j INTEG par('-(v(vdd_atx)*i(vdd_atx))') FROM=14n TO=141n",
+      "name": "e_lane_a_tx_j"
+    },
+    {
+      "unit": "J",
+      "spec_row": "T-26",
+      "spice": ".meas tran e_lane_a_rx_j INTEG par('-(v(vdd_arx)*i(vdd_arx))') FROM=14n TO=141n",
+      "name": "e_lane_a_rx_j"
+    },
+    {
+      "unit": "J",
+      "spec_row": "T-26",
+      "spice": ".meas tran e_clock_lane_j INTEG par('-(v(vdd_ctx)*i(vdd_ctx)+v(vdd_crx)*i(vdd_crx))') FROM=14n TO=141n",
+      "name": "e_clock_lane_j"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-15",
+      "spice": ".meas tran t15_ar_bf_long TRIG v(dsa) VAL=0 RISE=6 TARG v(dsb) VAL=0 FALL=6",
+      "limits": {
+        "min": -6e-11,
+        "max": 6e-11
+      },
+      "name": "t15_ar_bf_long"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-15",
+      "spice": ".meas tran t15_ar_bf_short TRIG v(dsa) VAL=0 RISE=9 TARG v(dsb) VAL=0 FALL=9",
+      "limits": {
+        "min": -6e-11,
+        "max": 6e-11
+      },
+      "name": "t15_ar_bf_short"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-15",
+      "spice": ".meas tran t15_af_br_long TRIG v(dsa) VAL=0 FALL=6 TARG v(dsb) VAL=0 RISE=6",
+      "limits": {
+        "min": -6e-11,
+        "max": 6e-11
+      },
+      "name": "t15_af_br_long"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-15",
+      "spice": ".meas tran t15_af_br_short TRIG v(dsa) VAL=0 FALL=7 TARG v(dsb) VAL=0 RISE=7",
+      "limits": {
+        "min": -6e-11,
+        "max": 6e-11
+      },
+      "name": "t15_af_br_short"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_dr_cr_long TRIG v(dsa) VAL=0 RISE=28 TARG v(csig) VAL=0 RISE=58",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_dr_cr_long"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_dr_cr_short TRIG v(dsa) VAL=0 RISE=18 TARG v(csig) VAL=0 RISE=39",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_dr_cr_short"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_dr_cf_long TRIG v(dsa) VAL=0 RISE=6 TARG v(csig) VAL=0 FALL=14",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_dr_cf_long"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_dr_cf_short TRIG v(dsa) VAL=0 RISE=9 TARG v(csig) VAL=0 FALL=21",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_dr_cf_short"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_df_cr_long TRIG v(dsa) VAL=0 FALL=27 TARG v(csig) VAL=0 RISE=55",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_df_cr_long"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_df_cr_short TRIG v(dsa) VAL=0 FALL=7 TARG v(csig) VAL=0 RISE=15",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_df_cr_short"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_df_cf_long TRIG v(dsa) VAL=0 FALL=6 TARG v(csig) VAL=0 FALL=11",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_df_cf_long"
+    },
+    {
+      "unit": "s",
+      "spec_row": "T-16",
+      "spice": ".meas tran t16_df_cf_short TRIG v(dsa) VAL=0 FALL=19 TARG v(csig) VAL=0 FALL=39",
+      "limits": {
+        "min": 4.7e-10,
+        "max": 5.3e-10
+      },
+      "name": "t16_df_cf_short"
+    }
+  ],
+  "batch": {
+    "runner_version_check": "warn"
+  },
+  "options": {
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ],
+    "timeout_s": 2400
+  }
+}
