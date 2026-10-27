@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 1,
+  "source": "scripts/ci/check_design_sources.py --regenerate",
+  "summary": "Design-source inventory for the digital partition: RTL sources, klt synthesize request/report, and the gate-level netlist derived from them, each pinned by sha256.",
+  "provenance": {
+    "input": {
+      "path": {
+        "path": "signoff/attest/item1-digital.inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095"
+    }
+  }
+}

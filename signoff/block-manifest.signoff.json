@@ -9,7 +9,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 3,
+  "t1_met_count": 4,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7",
   "build": {
@@ -68,10 +68,29 @@
       "partition_boundary": "synthesized data path: lane mux, shift redundancy, DDR registers; rtl/aib_datapath.v, driving the analog cells' DIN, OE, PUN, PD, CLK_D, CLKB_D and reading DOUT, CLK_O, CLKB_O",
       "text": "committed RTL sources plus the synthesized gate-level netlist derived from them, regenerated on design change. For a hand-captured full-custom digital partition (no RTL, no synthesis step \u2014 see \"Full-custom digital sub-case\" above), this item is satisfied instead by the Analog column's artifact: committed schematic sources (or generator) plus the netlist derived from them, regenerated on design change, with every logic gate captured as a schematic exactly like an analog partition's.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/attest/item1-digital.attest.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 1,
+          "path": {
+            "path": "signoff/attest/item1-digital.inventory.json",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095",
+          "input_verified": true,
+          "summary": "Design-source inventory for the digital partition: RTL sources, klt synthesize request/report, and the gate-level netlist derived from them, each pinned by sha256.",
+          "source": "scripts/ci/check_design_sources.py --regenerate"
+        }
+      }
     },
     {
       "tier": "T1",
