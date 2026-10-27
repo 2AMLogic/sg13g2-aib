@@ -118,6 +118,22 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    marginal rather than tied to one parameter; a bench option does not clear it and a cell
    change in `design/` (#35's lineage) is not made here. Not established: whether the
    PSP/OSDI side or the diode card is at fault, and any other corner.
+   **Candidate `XDn2` variants (issue #60, same corner, local, serial, 150 s cap per run,
+   ngspice-47 with OSDI; `bisect_esd.py` writes `v_*`/`vb_*`).** Baseline `b10` aborts at
+   2.298 ns in <1 s. `dantenna` 1u x 1u, 0.78u x 0.78u (minimum), and 2u x 2u behind a 100 ohm
+   or 1 kohm `rppd`: no abort but no completion in 150 s (crawl), so not usable. A
+   grounded-gate `sg13_lv_nmos w=1u l=0.13u` with its drain on `PADI` (`XMn2`, the drain
+   junction as the diode) completes in <1 s with the ESD cell on the TX side only
+   (`vmax` RX pin 1.147 V) and on both pads (1.108 V). Chosen; `design/aib_pad_esd.*` carries it.
+   *Design-risk note (reduced ESD is a named risk).* DC at `mos_tt` 27 C, model only: the old
+   `dantenna` forward branch is series-resistance limited (5.6 uA at -1 V, 0.19 uA at -0.7 V);
+   `XMn2` carries 3.7 mA at -1 V and 0.10 mA at -0.7 V, and leaks 24 pA vs 86 pA at +1.1 V.
+   So the model-level clamp to VSS at `PADI` is stronger, not weaker; no ESD level (T-25) or
+   capacitance (T-24) is claimed, and an NMOS drain junction is not a characterised ESD
+   structure in the PDK. The four-lane transient and other corners are not re-run here (fleet,
+   #53). These results are the test configuration (pad ESD in the loop), not the modeled
+   channel. Local host note: `/usr/bin/ngspice` 42 cannot load the OSDI v0.4 models; the
+   variant runs used an ngspice-47 build.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).

@@ -11,6 +11,10 @@ rules; never loop them in parallel). Variants:
                           XResd XDp2 XDn2)
   sub_<k>                 b10 with XDn2 replaced by a 1e15 ohm resistor ("res") or a 1 fF
                           capacitor ("cap"): control for "the element is electrical"
+  v_<k>                   b10 with XDn2 replaced by a candidate (VARIANTS below): smaller
+                          dantenna, series resistor ahead of it, gate-grounded NMOS drain
+                          junction. Only the XDn2 line changes. vb_<k> is the same with the
+                          cell on both pads (TX and RX side).
 
 Usage: bisect_esd.py OUTDIR [PDK_ROOT]
 """
@@ -21,6 +25,13 @@ REPO = Path(__file__).resolve().parents[2]
 OUT = Path(sys.argv[1]).resolve()
 PDK = Path(sys.argv[2] if len(sys.argv) > 2 else "~/share/pdk").expanduser() / "ihp-sg13g2/libs.tech/ngspice"
 ESD = (REPO / "design/aib_pad_esd.spice").read_text()
+VARIANTS = {
+    "l1": "XDn2 VSS PADI dantenna l=1u w=1u",
+    "min": "XDn2 VSS PADI dantenna l=0.78u w=0.78u",
+    "r100": "XRs2 PADI PADX VSS rppd w=0.5u l=2u m=1 b=0\nXDn2 VSS PADX dantenna l=2u w=2u",
+    "r1k": "XRs2 PADI PADX VSS rppd w=0.5u l=19u m=1 b=0\nXDn2 VSS PADX dantenna l=2u w=2u",
+    "nmos": "XMn2 PADI VSS VSS VSS sg13_lv_nmos w=1u l=0.13u ng=1 m=1",
+}
 ELEMS = ["XDp1", "XDn1", "XMclamp", "XResd", "XDp2", "XDn2"]
 
 
@@ -72,6 +83,11 @@ def main():
         f = OUT / f"esd_sub_{k}.spice"
         f.write_text("\n".join(rep if l.startswith("XDn2 ") else l for l in ESD.splitlines()) + "\n")
         (OUT / f"sub_{k}.cir").write_text(netlist(f"sub_{k}", 1, 0, f))
+    for k, rep in VARIANTS.items():
+        f = OUT / f"esd_v_{k}.spice"
+        f.write_text("\n".join(rep if l.startswith("XDn2 ") else l for l in ESD.splitlines()) + "\n")
+        (OUT / f"v_{k}.cir").write_text(netlist(f"v_{k}", 1, 0, f))
+        (OUT / f"vb_{k}.cir").write_text(netlist(f"vb_{k}", 1, 1, f))
     print(f"bisect_esd.py: wrote {len(list(OUT.glob('*.cir')))} netlists to {OUT}")
 
 
