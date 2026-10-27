@@ -1,0 +1,9 @@
+{
+  "sources": [
+    "../../rtl/aib_tx_slice.v",
+    "../../rtl/aib_rx_slice.v",
+    "../../rtl/aib_datapath.v"
+  ],
+  "hdl_toplevel": "aib_datapath",
+  "pdk": {"cell_library": "sg13g2_stdcell", "corner": "slow_1p08V_125C"}
+}

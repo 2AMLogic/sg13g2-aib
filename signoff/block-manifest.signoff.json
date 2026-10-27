@@ -5,7 +5,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 0,
+  "t1_met_count": 1,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:4c67ffc59128482d00f7d87cf446b6a96b9ab0c41ae5234098244e3052033335",
   "build": {
@@ -37,10 +37,29 @@
       "partition": "digital",
       "text": "committed RTL sources plus the synthesized gate-level netlist derived from them, regenerated on design change. For a hand-captured full-custom digital partition (no RTL, no synthesis step \u2014 see \"Full-custom digital sub-case\" above), this item is satisfied instead by the Analog column's artifact: committed schematic sources (or generator) plus the netlist derived from them, regenerated on design change, with every logic gate captured as a schematic exactly like an analog partition's.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "attest/item1-digital.attest.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 1,
+          "path": {
+            "path": "signoff/attest/item1-digital.inventory.json",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095",
+          "input_verified": true,
+          "summary": "Design-source inventory for the digital partition: RTL sources, klt synthesize request/report, and the gate-level netlist derived from them, each pinned by sha256.",
+          "source": "scripts/ci/check_design_sources.py --regenerate"
+        }
+      }
     },
     {
       "tier": "T1",

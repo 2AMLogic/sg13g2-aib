@@ -1,5 +1,10 @@
 {
   "block": "sg13g2-aib",
   "kind": "mixed-signal",
-  "evidence": {}
+  "evidence": {
+    "1.digital": {
+      "file": "attest/item1-digital.attest.json",
+      "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095"
+    }
+  }
 }
