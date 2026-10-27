@@ -5,7 +5,8 @@ I/O cell and I/O column stream for T1 item 2 (layout, analog partition). Rows: T
 matching).
 
 **Status of this stream: it exists, regenerates, and passes structural checks. It is not
-DRC, LVS or extraction evidence.** Those are separate issues (#39, #40, #42).
+LVS or extraction evidence.** Those are separate issues (#40, #42). DRC is recorded in
+[`records/`](#drc-records).
 
 The digital partition's routed stream (`klt place-and-route` of the synthesized data path) is
 in [`pnr/`](pnr/README.md).
@@ -86,13 +87,28 @@ bounding box of a cell that is defined to be 55 x 100 um (the `prBoundary`) says
 cell was drawn to that box; the contents are what must fit, and they do (every drawn
 shape is inside it).
 
-Not established by this stream, each its own issue: DRC (#39), LVS (#40), ERC (#41),
+Not established by this stream, each its own issue: LVS (#40), ERC (#41),
 extracted parasitics and skew (#42, #44), the ESD level T-25 (diode and clamp drawn at
 the schematic sizes, but supply and discharge-path metal widths are not sized for 0.5 A,
 and the deck has no pad or ESD coverage, 2AMLogic/klayout-tools#3854), T-24 pad
-capacitance. `klt drc --deck sg13g2` on the unit cells reports 0 violations, but that deck
-is unreleased and partial (12 stream layers unchecked, pad and latch-up rules not
-modelled), so it is a smoke result, not evidence.
+capacitance. The DRC result is in [DRC records](#drc-records); it comes from a partial
+curated deck and says nothing about pad, ESD or latch-up rules.
+
+## DRC records
+
+`records/<utc-stamp>/` holds the verbatim `klt drc --deck sg13g2 --format json` reports (pinned
+grader, `signoff/KLT_VERSION`), one per partition, append-only: add a new stamped directory on
+a re-run, never edit an old one. Each is cited under `3.analog` / `3.digital` in
+`signoff/block-manifest.json`, with the coverage disclosure in `claims."3"`.
+
+| Stamp | Report | Input | Status |
+|---|---|---|---|
+| `20261027T063033Z` | `drc_analog.json` | `aib_io_column.gds` (analog, all top cells) | clean, 0 violations |
+| `20261027T063033Z` | `drc_digital.json` | `pnr/.klt/place-and-route/aib_datapath.gds` (digital) | clean, 0 violations |
+
+Clean is not full signoff: the curated deck does not model the pad (`Pad.*`) or latch-up
+(`LU.*`) rules and has no ESD rules, so the pad opening and ESD structure are checked only by
+the generic base-layer rules. Check a report with `klt drc --check <report>`.
 
 Tool gaps met: `klt signoff --attest` has no item 2 producer
 (2AMLogic/klayout-tools#4188, #4221), so `attest_item2.py` writes the envelope;

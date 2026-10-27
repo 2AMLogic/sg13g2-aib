@@ -3,7 +3,8 @@
 `klt place-and-route` of the item 1 gate-level netlist (`design/synth/`, run
 `run-2080128096d444afaa0672134a2e026a`, N = 20) onto `sg13g2_stdcell`, floorplan through
 detailed route, with a `power` block. **P&R-tool output. It is not DRC, LVS or signoff timing
-evidence**: DRC/LVS of this stream belong to #39/#40, STA corners to #43.
+evidence**: DRC of this stream is in [`../records/`](../README.md#drc-records) (`klt drc`, not
+this tool's own route DRC), LVS belongs to #40, STA corners to #43.
 
 | File | What |
 |---|---|

@@ -3,7 +3,7 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `5.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `5.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
@@ -79,6 +79,15 @@ cites it under `2.digital` with the stream's sha256. Regenerate after re-running
 ```bash
 uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2_digital.py [--check]
 ```
+
+## Item 3 (DRC)
+
+`layout/records/<stamp>/drc_{analog,digital}.json` are verbatim `klt drc --deck sg13g2 --format json`
+reports, one per partition, from the pinned grader and cited under `3.analog` / `3.digital` with
+the input stream's sha256. `claims."3"` in the manifest quotes `coverage.layers_in_stream_without_rules`,
+`coverage.rules_skipped` and `coverage.deck_scope` per partition and discloses the unmodeled pad,
+latch-up and ESD rules. A re-run adds a new stamped directory and a re-cited manifest; old
+records stay. Re-check with `klt drc --check <report>`.
 
 ## Item 5 / digital evidence
 
