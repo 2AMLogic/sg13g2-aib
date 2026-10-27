@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 10,
+  "summary": "T1 item 10 (Repo hygiene): 5/5 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/attest/item10.inventory.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 5,
+    "passed_count": 5,
+    "checks": [
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": ".github/workflows/ci.yml",
+        "passed": true,
+        "content_hash": "sha256:abd21a250559b82c78952e8b42a00ab92ddaaee24c884394b850174ee4a831ca"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "LICENSE",
+        "passed": true,
+        "content_hash": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "README.md",
+        "passed": true,
+        "content_hash": "sha256:e1b77b37f4ec147495cdb05b4b96350e44753aef070d5d3300908e9d1e68e44e"
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "checker-self-test",
+        "argv": [
+          "/usr/bin/python3",
+          "-I",
+          "scripts/ci/test_checkers.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "evidence-format",
+        "argv": [
+          "/usr/bin/python3",
+          "-I",
+          "scripts/ci/check_evidence_format.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/attest/item10.inventory.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"
+    }
+  }
+}

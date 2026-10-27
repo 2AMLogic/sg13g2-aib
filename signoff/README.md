@@ -3,8 +3,8 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 9 reads `met` for both
-partitions (see "Item 9 attestation"); every other row reads `unmet` /
+rows (11 items x analog and digital partitions), items 9 and 10 read `met` for
+both partitions (see "Item 9 attestation" and "Item 10 attestation"); every other row reads `unmet` /
 `no_evidence`, which is the honest state until evidence is cited. Evidence paths
 resolve against the working directory, so always grade from the repo root.
 
@@ -48,6 +48,24 @@ Both cold starts are `local_only`, so CI skips them under `--check`.
 Inventories cover only the benches that exist today; extend them (and re-attest)
 as new benches land.
 
+## Item 10 attestation
+
+`attest/item10.inventory.json` lists the hygiene artifacts (README, LICENSE, the
+CI workflow) and the PDK-free checks (`scripts/ci/test_checkers.py`,
+`scripts/ci/check_evidence_format.py`); `attest/item10.json` is the envelope
+`klt signoff --attest 10` wrote from it. One envelope is cited under both
+`10.analog` and `10.digital`, with the inventory's `content_hash`. The RTL
+benches are not repeated here: they are the item 9 cold start and run in the CI
+`rtl` job. From the repo root:
+
+```bash
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 10 \
+  --inventory signoff/attest/item10.inventory.json -o signoff/attest/item10.json
+```
+
+Then update the two `content_hash` values for item 10 in the manifest and
+regenerate the record.
+
 ## What CI checks (`.github/workflows/ci.yml`)
 
 - the pinned grader re-grades the manifest (exit 0 or 3 only) and the output
@@ -55,6 +73,7 @@ as new benches land.
 - each item-9 envelope re-attests with `--check` (inventoried file hashes, pins
   and the committed cold-start outcome; the cold-start commands themselves are
   skipped, they need the PDK, ngspice and Icarus);
+- the item-10 envelope re-attests with `--check`, re-running its two checkers;
 - each evidence directory (`spec design rtl verification sim layout
   measurements`) has a `README.md`;
 - each `sim/**/records/<stamp>/record.json` has `record`, `utc_stamp` and
