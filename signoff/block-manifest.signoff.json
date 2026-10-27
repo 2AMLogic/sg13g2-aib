@@ -9,7 +9,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 7,
+  "t1_met_count": 8,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7",
   "build": {
@@ -220,10 +220,92 @@
       "notes": [
         "Both require the spec table itself to be ratified \u2014 verdicts against a draft spec are provisional by construction."
       ],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+        "command": null,
+        "kind": "functional-verification",
+        "check_status": "pass",
+        "content_hash": null,
+        "input_verified": null,
+        "exit_status": 0
+      },
+      "citations_graded": [
+        {
+          "citation": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+          "status": "met",
+          "reason": null
+        },
+        {
+          "citation": "signoff/attest/item5-digital/fv_datapath_n20.json",
+          "status": "met",
+          "reason": null
+        },
+        {
+          "citation": "signoff/attest/item5-digital/fv_datapath_n8.json",
+          "status": "met",
+          "reason": null
+        },
+        {
+          "citation": "signoff/attest/item5-digital/sta_clk.json",
+          "status": "met",
+          "reason": null
+        },
+        {
+          "citation": "signoff/attest/item5-digital/sta_rx_clk.json",
+          "status": "met",
+          "reason": null
+        }
+      ],
+      "citations": [
+        {
+          "file": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+          "command": null,
+          "kind": "functional-verification",
+          "check_status": "pass",
+          "content_hash": null,
+          "input_verified": null,
+          "exit_status": 0
+        },
+        {
+          "file": "signoff/attest/item5-digital/fv_datapath_n20.json",
+          "command": null,
+          "kind": "functional-verification",
+          "check_status": "pass",
+          "content_hash": null,
+          "input_verified": null,
+          "exit_status": 0
+        },
+        {
+          "file": "signoff/attest/item5-digital/fv_datapath_n8.json",
+          "command": null,
+          "kind": "functional-verification",
+          "check_status": "pass",
+          "content_hash": null,
+          "input_verified": null,
+          "exit_status": 0
+        },
+        {
+          "file": "signoff/attest/item5-digital/sta_clk.json",
+          "command": null,
+          "kind": "sta",
+          "check_status": "ok",
+          "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1",
+          "input_verified": true,
+          "exit_status": 0
+        },
+        {
+          "file": "signoff/attest/item5-digital/sta_rx_clk.json",
+          "command": null,
+          "kind": "sta",
+          "check_status": "ok",
+          "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1",
+          "input_verified": true,
+          "exit_status": 0
+        }
+      ]
     },
     {
       "tier": "T1",

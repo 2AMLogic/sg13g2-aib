@@ -19,3 +19,13 @@ A negative control must require exactly 1.
 - `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and L1
   (L1 with a decoy on `rx_wire`), mode switch, and the TX/RX cycle-accounting tests.
 - `tb_datapath.v`: bench top; zero-delay wire, `rx_clk` = `clk` delayed a quarter cycle.
+
+## `klt functional-verification` requests (`klt/`)
+
+The same benches through the pinned `klt` (T1 item 5, digital): `shift_redundancy.json`
+(T-05, 81 tests), `datapath_n20.json` and `datapath_n8.json` (T-02, T-03, T-27, T-29),
+and the negative controls `neg_shift_edge.json` and `neg_extra_stage.json`, which must
+exit 3. `klt/run_evidence.py` runs all of them plus the STA and writes the envelopes
+to `signoff/attest/item5-digital/` (see `signoff/README.md`). The klt verdict comes
+from `results.xml`; `run_tb.py` stays the quick local runner. Running klt directly
+needs the extra: `uvx --from "klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION)" klt functional-verification verification/klt/<name>.json -o <dir>`.

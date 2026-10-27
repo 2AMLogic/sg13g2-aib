@@ -1,0 +1,25 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "../../rtl/aib_tx_slice.v",
+    "../../rtl/aib_rx_slice.v",
+    "../../rtl/aib_datapath.v",
+    "../tb_datapath.v"
+  ],
+  "hdl_toplevel": "tb_datapath",
+  "testbench": {
+    "module": "test_datapath",
+    "search_path": ".."
+  },
+  "options": {
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1
+  },
+  "parameters": {
+    "N": 20
+  }
+}

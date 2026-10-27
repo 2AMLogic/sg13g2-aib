@@ -1,0 +1,6 @@
+{
+  "verilog": ".klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+  "hdl_toplevel": "aib_datapath",
+  "pdk": {"cell_library": "sg13g2_stdcell", "corners": ["slow_1p08V_125C", "fast_1p32V_m40C"]},
+  "constraints": {"clock_port": "clk", "clock_period_ns": 2.0}
+}

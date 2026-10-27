@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "tb_datapath",
+  "testbench": "test_datapath",
+  "status": "fail",
+  "test_count": 8,
+  "passed_count": 6,
+  "failed_count": 2,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "ddr_round_trip",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.047
+    },
+    {
+      "name": "sdr_round_trip",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.042
+    },
+    {
+      "name": "l1_round_trip_ddr",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.045
+    },
+    {
+      "name": "l1_round_trip_sdr",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.043
+    },
+    {
+      "name": "l1_ignores_rx_wire",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.046
+    },
+    {
+      "name": "mode_switch",
+      "status": "passed",
+      "sim_time_ns": 11710.5,
+      "real_time_s": 0.136
+    },
+    {
+      "name": "latency_ddr",
+      "status": "failed",
+      "sim_time_ns": 294.0,
+      "real_time_s": 0.002,
+      "error_type": "AssertionError",
+      "error_message": "TX sequential latency 5 UI exceeds 3 UI (T-27)\nassert 5 <= 3"
+    },
+    {
+      "name": "latency_sdr",
+      "status": "failed",
+      "sim_time_ns": 71.0,
+      "real_time_s": 0.001,
+      "error_type": "AssertionError",
+      "error_message": "TX sequential latency 4 UI exceeds 3 UI (T-27)\nassert 4 <= 3"
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.1.0",
+    "results_xml": "results_icarus.xml",
+    "test_log": "test_icarus.log",
+    "build_log": "build_icarus.log",
+    "random_seed": 1,
+    "source_defines": {},
+    "initial_state": null,
+    "sdf": null
+  }
+}

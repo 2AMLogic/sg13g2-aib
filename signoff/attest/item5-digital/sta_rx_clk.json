@@ -1,0 +1,321 @@
+{
+  "schema_version": 2,
+  "engine": "openroad",
+  "engine_version": "26Q3-1510-g6cb3f2b704",
+  "hdl_toplevel": "aib_datapath",
+  "status": "ok",
+  "def_path": null,
+  "verilog_path": {
+    "path": "design/synth/.klt/synthesize/run-2080128096d444afaa0672134a2e026a/aib_datapath_synth.v",
+    "scope": "repo"
+  },
+  "geometry_source": "netlist_estimate",
+  "wire_load_model": null,
+  "wire_load_mode": null,
+  "clock_mode": "ideal",
+  "spef_path": null,
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "ihp-sg13g2",
+      "source": "PDK_ROOT environment variable",
+      "version": "fetched:0.3.0"
+    },
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1",
+      "role": "netlist"
+    }
+  },
+  "corners": [
+    {
+      "corner": "slow_1p08V_125C",
+      "engine_log": {
+        "invocation_id": "6177f94bd4a74de18f75558c348fa621",
+        "script_name": "sta_aib_datapath_synth__slow_1p08V_125C.tcl",
+        "script_path": {
+          "path": "design/synth/.klt/sta/sta_aib_datapath_synth__slow_1p08V_125C.tcl",
+          "scope": "repo"
+        },
+        "script_sha256": "80e20c275bc95795d27ad1bc340e5408681ca843e4d1e17a13a58fbd3d3f3bc2",
+        "metrics_path": {
+          "path": "design/synth/.klt/sta/aib_datapath_synth__slow_1p08V_125C_metrics.json",
+          "scope": "repo"
+        },
+        "outcome": "exited",
+        "returncode": 0,
+        "directory": {
+          "path": "design/synth/.klt/sta/openroad-logs/6177f94bd4a74de18f75558c348fa621",
+          "scope": "repo"
+        },
+        "stdout_path": {
+          "path": "design/synth/.klt/sta/openroad-logs/6177f94bd4a74de18f75558c348fa621/stdout.log",
+          "scope": "repo"
+        },
+        "stderr_path": {
+          "path": "design/synth/.klt/sta/openroad-logs/6177f94bd4a74de18f75558c348fa621/stderr.log",
+          "scope": "repo"
+        },
+        "metadata_path": {
+          "path": "design/synth/.klt/sta/openroad-logs/6177f94bd4a74de18f75558c348fa621/invocation.json",
+          "scope": "repo"
+        },
+        "retention_errors": []
+      },
+      "worst_slack_ns": 0.5676,
+      "total_negative_slack_ns": 0,
+      "worst_hold_slack_ns": 0.28861,
+      "total_negative_hold_slack_ns": 0,
+      "fmax_mhz": 2312.68,
+      "timing_status": "constrained",
+      "constraint_completeness": {
+        "status": "incomplete",
+        "unconstrained_endpoints": {
+          "status": "ok",
+          "count": 180,
+          "sample": [
+            "rx_q0[0]",
+            "rx_q0[10]",
+            "rx_q0[11]",
+            "rx_q0[12]",
+            "rx_q0[13]",
+            "rx_q0[14]",
+            "rx_q0[15]",
+            "rx_q0[16]",
+            "rx_q0[17]",
+            "rx_q0[18]",
+            "rx_q0[19]",
+            "rx_q0[1]",
+            "rx_q0[2]",
+            "rx_q0[3]",
+            "rx_q0[4]",
+            "rx_q0[5]",
+            "rx_q0[6]",
+            "rx_q0[7]",
+            "rx_q0[8]",
+            "rx_q0[9]"
+          ],
+          "truncated": true,
+          "reason": null
+        },
+        "unclocked_registers": {
+          "status": "ok",
+          "count": 80,
+          "sample": [
+            "g_wire[0].u_tx/_5_/CLK",
+            "g_wire[0].u_tx/_6_/CLK",
+            "g_wire[0].u_tx/_7_/CLK",
+            "g_wire[0].u_tx/_8_/CLK",
+            "g_wire[10].u_tx/_5_/CLK",
+            "g_wire[10].u_tx/_6_/CLK",
+            "g_wire[10].u_tx/_7_/CLK",
+            "g_wire[10].u_tx/_8_/CLK",
+            "g_wire[11].u_tx/_5_/CLK",
+            "g_wire[11].u_tx/_6_/CLK",
+            "g_wire[11].u_tx/_7_/CLK",
+            "g_wire[11].u_tx/_8_/CLK",
+            "g_wire[12].u_tx/_5_/CLK",
+            "g_wire[12].u_tx/_6_/CLK",
+            "g_wire[12].u_tx/_7_/CLK",
+            "g_wire[12].u_tx/_8_/CLK",
+            "g_wire[13].u_tx/_5_/CLK",
+            "g_wire[13].u_tx/_6_/CLK",
+            "g_wire[13].u_tx/_7_/CLK",
+            "g_wire[13].u_tx/_8_/CLK"
+          ],
+          "truncated": true,
+          "reason": null
+        },
+        "sample_limit": 20
+      },
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "worst_setup_path": {
+        "status": "ok",
+        "check_type": "setup",
+        "engine_check_role": "setup",
+        "startpoint": "g_wire[0].u_rx/_4_/Q",
+        "endpoint": "g_wire[0].u_rx/_3_/D",
+        "slack_ns": 0.5676,
+        "consistent_with_aggregate": true,
+        "reason": null
+      },
+      "worst_hold_path": {
+        "status": "ok",
+        "check_type": "hold",
+        "engine_check_role": "hold",
+        "startpoint": "g_wire[0].u_rx/_5_/Q",
+        "endpoint": "g_wire[0].u_rx/_2_/D",
+        "slack_ns": 0.28861,
+        "consistent_with_aggregate": true,
+        "reason": null
+      },
+      "clock_skew_ns": 0.02269,
+      "estimated_power_mw": 2.1643,
+      "power_basis": {
+        "activity_source": "engine_default",
+        "activity": null,
+        "duty": null,
+        "parasitics": "estimate_only"
+      },
+      "spef_annotation": null,
+      "electrical_checks": null,
+      "clock_propagation": null,
+      "sdf": null,
+      "deck": {
+        "name": "sg13g2_stdcell__slow_1p08V_125C",
+        "content_hash": "sha256:1ac6a0301184b3a8aa1a4a01910967f624c8e869517777f529985f11f04588c3",
+        "released": false,
+        "path": {
+          "path": null,
+          "scope": "external"
+        }
+      }
+    },
+    {
+      "corner": "fast_1p32V_m40C",
+      "engine_log": {
+        "invocation_id": "28e68e03a2f04137b31d46b64cbccaee",
+        "script_name": "sta_aib_datapath_synth__fast_1p32V_m40C.tcl",
+        "script_path": {
+          "path": "design/synth/.klt/sta/sta_aib_datapath_synth__fast_1p32V_m40C.tcl",
+          "scope": "repo"
+        },
+        "script_sha256": "446e4f6eaf74a2dfc147cfa3457b8ddbfad04af5831639464c31fadd6bd816e2",
+        "metrics_path": {
+          "path": "design/synth/.klt/sta/aib_datapath_synth__fast_1p32V_m40C_metrics.json",
+          "scope": "repo"
+        },
+        "outcome": "exited",
+        "returncode": 0,
+        "directory": {
+          "path": "design/synth/.klt/sta/openroad-logs/28e68e03a2f04137b31d46b64cbccaee",
+          "scope": "repo"
+        },
+        "stdout_path": {
+          "path": "design/synth/.klt/sta/openroad-logs/28e68e03a2f04137b31d46b64cbccaee/stdout.log",
+          "scope": "repo"
+        },
+        "stderr_path": {
+          "path": "design/synth/.klt/sta/openroad-logs/28e68e03a2f04137b31d46b64cbccaee/stderr.log",
+          "scope": "repo"
+        },
+        "metadata_path": {
+          "path": "design/synth/.klt/sta/openroad-logs/28e68e03a2f04137b31d46b64cbccaee/invocation.json",
+          "scope": "repo"
+        },
+        "retention_errors": []
+      },
+      "worst_slack_ns": 0.82312,
+      "total_negative_slack_ns": 0,
+      "worst_hold_slack_ns": 0.12318,
+      "total_negative_hold_slack_ns": 0,
+      "fmax_mhz": 5653.69,
+      "timing_status": "constrained",
+      "constraint_completeness": {
+        "status": "incomplete",
+        "unconstrained_endpoints": {
+          "status": "ok",
+          "count": 180,
+          "sample": [
+            "rx_q0[0]",
+            "rx_q0[10]",
+            "rx_q0[11]",
+            "rx_q0[12]",
+            "rx_q0[13]",
+            "rx_q0[14]",
+            "rx_q0[15]",
+            "rx_q0[16]",
+            "rx_q0[17]",
+            "rx_q0[18]",
+            "rx_q0[19]",
+            "rx_q0[1]",
+            "rx_q0[2]",
+            "rx_q0[3]",
+            "rx_q0[4]",
+            "rx_q0[5]",
+            "rx_q0[6]",
+            "rx_q0[7]",
+            "rx_q0[8]",
+            "rx_q0[9]"
+          ],
+          "truncated": true,
+          "reason": null
+        },
+        "unclocked_registers": {
+          "status": "ok",
+          "count": 80,
+          "sample": [
+            "g_wire[0].u_tx/_5_/CLK",
+            "g_wire[0].u_tx/_6_/CLK",
+            "g_wire[0].u_tx/_7_/CLK",
+            "g_wire[0].u_tx/_8_/CLK",
+            "g_wire[10].u_tx/_5_/CLK",
+            "g_wire[10].u_tx/_6_/CLK",
+            "g_wire[10].u_tx/_7_/CLK",
+            "g_wire[10].u_tx/_8_/CLK",
+            "g_wire[11].u_tx/_5_/CLK",
+            "g_wire[11].u_tx/_6_/CLK",
+            "g_wire[11].u_tx/_7_/CLK",
+            "g_wire[11].u_tx/_8_/CLK",
+            "g_wire[12].u_tx/_5_/CLK",
+            "g_wire[12].u_tx/_6_/CLK",
+            "g_wire[12].u_tx/_7_/CLK",
+            "g_wire[12].u_tx/_8_/CLK",
+            "g_wire[13].u_tx/_5_/CLK",
+            "g_wire[13].u_tx/_6_/CLK",
+            "g_wire[13].u_tx/_7_/CLK",
+            "g_wire[13].u_tx/_8_/CLK"
+          ],
+          "truncated": true,
+          "reason": null
+        },
+        "sample_limit": 20
+      },
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "worst_setup_path": {
+        "status": "ok",
+        "check_type": "setup",
+        "engine_check_role": "setup",
+        "startpoint": "g_wire[0].u_rx/_4_/Q",
+        "endpoint": "g_wire[0].u_rx/_3_/D",
+        "slack_ns": 0.82312,
+        "consistent_with_aggregate": true,
+        "reason": null
+      },
+      "worst_hold_path": {
+        "status": "ok",
+        "check_type": "hold",
+        "engine_check_role": "hold",
+        "startpoint": "g_wire[0].u_rx/_5_/Q",
+        "endpoint": "g_wire[0].u_rx/_2_/D",
+        "slack_ns": 0.12318,
+        "consistent_with_aggregate": true,
+        "reason": null
+      },
+      "clock_skew_ns": 0.01276,
+      "estimated_power_mw": 3.1859,
+      "power_basis": {
+        "activity_source": "engine_default",
+        "activity": null,
+        "duty": null,
+        "parasitics": "estimate_only"
+      },
+      "spef_annotation": null,
+      "electrical_checks": null,
+      "clock_propagation": null,
+      "sdf": null,
+      "deck": {
+        "name": "sg13g2_stdcell__fast_1p32V_m40C",
+        "content_hash": "sha256:f191a3132d0f2f59ca2721884cdb1d8360c8fbf3e0012056af62583dd69ae701",
+        "released": false,
+        "path": {
+          "path": null,
+          "scope": "external"
+        }
+      }
+    }
+  ]
+}
