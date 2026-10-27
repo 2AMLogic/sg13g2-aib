@@ -51,3 +51,9 @@ models built by the pinned OpenVAF-R. The PDK's `versions.txt` documents 43.
 root), the cell counts and the exit code; there is no timing and no area claim. Each
 run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
 `record.json`, append-only like the other records.
+
+## dc-static
+
+`sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner
+`klt sim` request (batch backend). Testbenches and request only so far: the fleet runner
+predates `analysis_steps`, so no record exists. See `sim/dc-static/README.md`.

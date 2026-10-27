@@ -1,0 +1,21 @@
+* T-07 / T-28 / T-24: the pin with the driver tristated.
+* Control levels are fractions of VDDIO (Voef/Vdinf/Vpunf/Vpdf) so one request
+* tracks every supply corner. Default state: output disabled, DIN low, weak
+* pull-up off (PUN high), weak pull-down off (PD low).
+* The pin is forced by Bpin through the zero-volt series source Vacp, whose
+* current is the pin current (positive = into the forcing side from the pad)
+* and which carries the AC stimulus for the capacitance steps.
+Voef oef 0 dc 0
+Vdinf dinf 0 dc 0
+Vpunf punf 0 dc 1
+Vpdf pdf 0 dc 0
+Boe oe_p 0 V=v(oef)*v(vddio)
+Bdin din_p 0 V=v(dinf)*v(vddio)
+Bpun pun_p 0 V=v(punf)*v(vddio)
+Bpd pd_p 0 V=v(pdf)*v(vddio)
+Vpf pf 0 dc 0
+Bpin pb 0 V=v(pf)*v(vddio)
+Vacp pad_p pb dc 0 ac 0
+Xesd_p pad_p padi_p vddio 0 aib_pad_esd
+Xtx_p din_p oe_p pun_p pd_p pad_p vddio 0 aib_tx_data
+Xrx_p padi_p dout_p vddio 0 aib_rx_data
