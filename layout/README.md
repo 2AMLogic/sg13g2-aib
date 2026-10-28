@@ -111,8 +111,8 @@ Clean is not full signoff: the curated deck does not model the pad (`Pad.*`) or 
 (`LU.*`) rules and has no ESD rules, so the pad opening and ESD structure are checked only by
 the generic base-layer rules. Check a report with `klt drc --check <report>`.
 
-LVS (#40, #70, [`lvs/`](lvs/README.md)): the digital partition and all four analog cells match against
-their item 1 netlists. The first analog run mismatched (the extracted `PADI` net was the `VSS` net, and
+LVS (#40, #70, [`lvs/`](lvs/README.md)): the digital partition, all four analog cells and the whole
+analog column (`4.analog`) match against their item 1 netlists. The first analog run mismatched (the extracted `PADI` net was the `VSS` net, and
 twelve `ng = 2` devices were drawn at the netlist total `w` per finger); #70 fixed the generator and
 re-ran. DRC was re-run on the regenerated stream: [`records/20261027T072103Z`](#drc-records).
 
