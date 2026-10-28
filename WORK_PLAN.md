@@ -33,6 +33,7 @@ Issues currently being built (`loom:building`).
 
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
 - **#67**: Remove bisect_esd.py: stale #60 probe silently emits mislabelled netlists
+- **#82**: T1 item 8 (characterization report): per-row aggregated report over all 30 T- rows, both partitions
 
 ## PRs Awaiting Review
 
@@ -45,6 +46,7 @@ PRs waiting on Judge (`loom:review-requested`).
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#32**: spec: propose two-signal shift with both spares at one end (T-05, DR-0016)
+- **#86**: feat: generate CI-checked characterization report for T1 item 8
 
 ## Proposed
 
@@ -58,7 +60,6 @@ Issues carrying `loom:curated`.
 - **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26) *(curated)*
 - **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02) *(curated)*
 - **#60**: aib_pad_esd: XDn2 dantenna on the inner pad node aborts the channel transient (Timestep too small) *(curated)*
-- **#80**: T1 item 7 (post-layout verification, digital): SDF-annotated functional run on the routed aib_datapath netlist *(curated)*
 - **#82**: T1 item 8 (characterization report): per-row aggregated report over all 30 T- rows, both partitions *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -77,10 +78,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 3 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 10 |
+| Approved PRs awaiting merge | 2 |
+| Curated | 9 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
