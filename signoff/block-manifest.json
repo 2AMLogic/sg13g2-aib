@@ -27,6 +27,7 @@
       {"file": "signoff/attest/item5-digital/sta_clk.json"},
       {"file": "signoff/attest/item5-digital/sta_rx_clk.json"}
     ],
+    "7.digital": {"file": "signoff/attest/item7-digital/fv_post_route.json"},
     "8.analog": {"file": "signoff/attest/item8.json", "content_hash": "sha256:0253fafa107a556288275258cd50ac25ed4885a03e8ba2a65dac9c25e8376055"},
     "8.digital": {"file": "signoff/attest/item8.json", "content_hash": "sha256:0253fafa107a556288275258cd50ac25ed4885a03e8ba2a65dac9c25e8376055"},
     "9.analog": {"file": "signoff/attest/item9-analog.json", "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"},
