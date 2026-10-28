@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "note": "Maps spec rows (spec/target-spec.md, T-01..T-30) to committed records. A row with no entry reads not-yet-measured. Add an entry when its record lands; never edit a spec target to make a row pass. Fields: record (repo path), field (dotted path; [name=X] picks a list item by its name), op (>= <= ==), value or value_field (sibling field of the same record), corner, scope (CH, TC, BOTH or n/a), basis (what the number is), note.",
+  "rows": {
+    "T-05": [
+      {
+        "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+        "field": "passed_count",
+        "op": "==",
+        "value_field": "test_count",
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, every single-fault position (81 cases)",
+        "note": "RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured."
+      },
+      {
+        "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+        "field": "failed_count",
+        "op": "==",
+        "value": 0,
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, failing cases",
+        "note": "Repair claim in CH needs an assembly; the mux function is what this record covers."
+      }
+    ],
+    "T-27": [
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=latency_ddr].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (cycle accounting)",
+        "scope": "BOTH",
+        "basis": "RTL simulation, N = 20, DDR latency testbench",
+        "note": "The record carries the testbench verdict, not the cycle count."
+      }
+    ]
+  }
+}
