@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-28
 
+- **PR #86**: feat: generate CI-checked characterization report for T1 item 8
+- **Issue #82** (closed): T1 item 8 (characterization report): per-row aggregated report over all 30 T- rows, both partitions
 - **PR #85**: feat: cite SDF-annotated post-route functional run as 7.digital
 - **Issue #80** (closed): T1 item 7 (post-layout verification, digital): SDF-annotated functional run on the routed aib_datapath netlist
 - **PR #77**: feat(erc): add klt erc supply specs and reports for I/O cells and data path; cite item 11
