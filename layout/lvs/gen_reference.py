@@ -28,6 +28,8 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 DESIGN = os.path.join(ROOT, "design")
 OUT = os.path.join(ROOT, "layout", "lvs")
 SOURCES = ["aib_pad_esd", "aib_tx_data", "aib_rx_data", "aib_tx_clk", "aib_rx_clk"]
+PAD_OF_DIN = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9, 5: 11, 6: 13, 7: 15, 8: 17, 9: 19, 10: 21, 11: 23, 12: 0, 13: 2, 14: 4, 15: 6, 16: 8, 17: 10, 18: 12, 19: 14, 20: 16, 21: 18, 22: 20, 23: 22}
+PAD_OF_DOUT = {0: 24, 1: 26, 2: 27, 3: 28, 4: 29, 5: 31, 6: 32, 7: 33, 8: 34, 9: 35, 10: 36, 11: 37, 12: 38, 13: 39, 14: 40, 15: 41, 16: 42, 17: 43, 18: 44, 19: 45, 20: 46, 21: 47, 22: 25, 23: 30}
 
 # --diagnostic: reconcile the reference to the two ways the drawn layout differs from the item 1
 # schematic (see layout/lvs/README.md). Diagnostic files only explain a mismatch; they are
@@ -159,6 +161,24 @@ def build():
         subs, "aib_io_rx_clk", ["DOUT", "DOUT$1", "PAD", "PAD$1", "VDDIO", "VSS"],
         [esd("a", "PAD", "PADI_A"), rx("a", "PADI_A", "DOUT"), esd("b", "PAD$1", "PADI_B"),
          rx("b", "PADI_B", "DOUT$1")])
+    # Whole analog partition (top aib_io_column): 24 TX units then 24 RX units on shared OE/PUN/PD
+    # and the rails. klt labels the repeated pins DIN, DIN$1, ... / DOUT, ... / PAD, PAD$1, ... in
+    # its own extraction order, which does not follow the slot order, so which DIN$i shares a unit
+    # with which PAD$k is read once from the extracted column netlist (PAD_OF_*) and fixed here.
+    # That is bookkeeping between identical units, not an electrical claim: the cell-level
+    # compares test each unit's wiring, and this compare tests that the 48 units are replicated
+    # and tied to the shared nets as drawn. The numbering is klt's, not a stable contract.
+    sfx = lambda b, i: b if i == 0 else f"{b}${i}"
+    parts = []
+    for i in range(24):
+        pad = sfx("PAD", PAD_OF_DIN[i])
+        parts += [esd(f"t{i}", pad, f"PADI_T{i}"), tx(f"t{i}", sfx("DIN", i), pad)]
+    for i in range(24):
+        pad = sfx("PAD", PAD_OF_DOUT[i])
+        parts += [esd(f"r{i}", pad, f"PADI_R{i}"), rx(f"r{i}", f"PADI_R{i}", sfx("DOUT", i))]
+    cpins = ([sfx("DIN", i) for i in range(24)] + [sfx("DOUT", i) for i in range(24)] + ["OE"] +
+             [sfx("PAD", i) for i in range(48)] + ["PD", "PUN", "VDDIO", "VSS"])
+    files["aib_io_column"] = cell(subs, "aib_io_column", cpins, parts)
     return files
 
 

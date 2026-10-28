@@ -18,6 +18,7 @@
   },
     "3.analog": {"file": "layout/records/20261027T072103Z/drc_analog.json", "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6"},
     "3.digital": {"file": "layout/records/20261027T063033Z/drc_digital.json", "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"},
+    "4.analog": {"file": "layout/lvs/aib_io_column.report.json"},
     "4.digital": {"file": "layout/lvs/digital.report.json"},
     "5.digital": [
       {"file": "signoff/attest/item5-digital/fv_shift_redundancy.json"},

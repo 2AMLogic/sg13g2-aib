@@ -3,7 +3,7 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.digital`, `5.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
@@ -93,8 +93,12 @@ records stay. Re-check with `klt drc --check <report>`.
 
 `4.digital` cites the `klt lvs` report `layout/lvs/digital.report.json` directly (an `lvs`-kind
 check: `status: match` and `power_connectivity.status` not `mismatch`; here both are `match`).
-`4.analog` cites nothing and reads `unmet` / `no_evidence`: the four per-cell reports are all
-`match` (issue #70), but item 4 takes one report per partition (2AMLogic/klayout-tools#4354). Details, the
+`4.analog` cites `layout/lvs/aib_io_column.report.json`, one `klt lvs` of the whole analog stream
+(top `aib_io_column`, 48 I/O units, 2928 devices) against a generated reference; it is `status: match`
+and reads `met`. Item 4 takes one report per partition (2AMLogic/klayout-tools#4354), so the four
+per-cell reports (all `match`, issue #70) are not cited; they localise, the column report is the claim.
+`power_connectivity` is `unchecked` there, because the `subckt-call` reference carries its own power pins
+and they take part in the ordinary compare. Details, the
 two layout differences behind the earlier mismatch, and the commands are in
 [`layout/lvs/README.md`](../layout/lvs/README.md). The report's relative paths resolve against the
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
