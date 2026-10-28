@@ -3,9 +3,9 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `11.analog` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
 
@@ -207,6 +207,17 @@ makes the CI `--check` exit 3 (`drifted`).
   covers that locally (`design/README.md`);
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
+
+## Item 11 (power delivery)
+
+`11.analog` cites `layout/erc/io_cells.erc-report.json` plus item 4's analog LVS report and
+reads `met`. `11.digital` cites `layout/erc/aib_datapath.erc-report.json`, the digital LVS report
+and the P&R response (`layout/pnr/request.report.json`), and reads `unmet` with reason `no_pdn`
+(klt 0.8.0): the routed result has `power.pdn: true` but `power.tapcell_master: null` and no
+tapcells, because the standard-cell library ships no tapcell or endcap master. The P&R request
+and the grader are not changed to force it. Upstream: `2AMLogic/klayout-tools#4199` (closed
+2026-10-27); which klt release carries the fix was not traced, and the pin was not bumped (a
+newer klt is a separate pin-bump issue). Evidence and caveats: `layout/erc/README.md`.
 
 ## What CI does not check
 
