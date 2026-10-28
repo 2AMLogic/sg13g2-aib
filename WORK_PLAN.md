@@ -32,7 +32,6 @@ Human-approved issues ready for implementation (`loom:issue`).
 Issues currently being built (`loom:building`).
 
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
-- **#41**: T1 item 11 (power delivery, structural): klt erc supply specs for the I/O cells and the data path
 - **#67**: Remove bisect_esd.py: stale #60 probe silently emits mislabelled netlists
 
 ## PRs Awaiting Review
@@ -46,7 +45,6 @@ PRs waiting on Judge (`loom:review-requested`).
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#32**: spec: propose two-signal shift with both spares at one end (T-05, DR-0016)
-- **#77**: feat(erc): supply specs and reports for item 11, analog met
 
 ## Proposed
 
@@ -55,12 +53,13 @@ Issues carrying `loom:curated`.
 - **#3**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)*
 - **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)*
-- **#41**: T1 item 11 (power delivery, structural): klt erc supply specs for the I/O cells and the data path *(curated)*
 - **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition *(curated)*
 - **#52**: T1 item 5 (analog) family: DC static characteristics PVT-FULL (T-06/T-07/T-08/T-11/T-24/T-28) *(curated)*
 - **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26) *(curated)*
 - **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02) *(curated)*
 - **#60**: aib_pad_esd: XDn2 dantenna on the inner pad node aborts the channel transient (Timestep too small) *(curated)*
+- **#80**: T1 item 7 (post-layout verification, digital): SDF-annotated functional run on the routed aib_datapath netlist *(curated)*
+- **#82**: T1 item 8 (characterization report): per-row aggregated report over all 30 T- rows, both partitions *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -78,10 +77,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 3 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 2 |
-| Curated | 9 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 10 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
