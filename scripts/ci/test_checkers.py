@@ -15,6 +15,7 @@ HERE = Path(__file__).resolve().parent
 FMT = HERE / "check_evidence_format.py"
 APP = HERE / "check_sim_append_only.py"
 SRC = HERE / "check_design_sources.py"
+GEN = HERE / "gen_characterization_report.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -133,6 +134,71 @@ class AppendOnlyTests(unittest.TestCase):
 
     def test_missing_base_falls_back_detects_edit(self):
         self.assertNotEqual(self.scenario_missing_base(lambda r: (r / self.REC).write_text("{}")), 0)
+
+
+class CharacterizationReportTests(unittest.TestCase):
+    """The item 8 report and envelope must reproduce; a stale or tampered one must fail."""
+    FILES = ("spec/target-spec.md", "measurements/row-evidence.json", "measurements/characterization-report.md",
+             "signoff/attest/item8.json", "signoff/block-manifest.json", "layout/pnr/request.report.json",
+             "signoff/attest/item5-digital")
+
+    def scenario(self, change=None, *args):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for f in self.FILES:
+                dst = root / f
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                if (REPO / f).is_dir():
+                    shutil.copytree(REPO / f, dst)
+                else:
+                    shutil.copy(REPO / f, dst)
+            if change:
+                change(root)
+            return run(GEN, "--root", root, *args)
+
+    def test_committed_report_is_fresh(self):
+        self.assertEqual(self.scenario(None, "--check").returncode, 0)
+
+    def test_report_edit_without_repin_fails(self):
+        def edit(r):
+            p = r / "measurements/characterization-report.md"
+            p.write_text(p.read_text() + "x")
+        self.assertNotEqual(self.scenario(edit, "--check").returncode, 0)
+
+    def test_stale_manifest_hash_fails(self):
+        def edit(r):
+            p = r / "signoff/block-manifest.json"
+            p.write_text(p.read_text().replace('"8.analog": {"file": "signoff/attest/item8.json", "content_hash": "sha256:0',
+                                               '"8.analog": {"file": "signoff/attest/item8.json", "content_hash": "sha256:1'))
+        self.assertNotEqual(self.scenario(edit, "--check").returncode, 0)
+
+    def test_changed_record_makes_report_stale(self):
+        def edit(r):
+            p = r / "signoff/attest/item5-digital/sta_clk.json"
+            p.write_text(p.read_text().replace("1647.47", "1647.48"))
+        self.assertNotEqual(self.scenario(edit, "--check").returncode, 0)
+
+    def test_failing_row_writes_fail_envelope(self):
+        def edit(r):
+            p = r / "signoff/attest/item5-digital/fv_shift_redundancy.json"
+            d = json.loads(p.read_text())
+            d["failed_count"] = 1
+            p.write_text(json.dumps(d))
+            self.assertEqual(run(GEN, "--root", r).returncode, 0)
+            self.assertEqual(json.loads((r / "signoff/attest/item8.json").read_text())["status"], "fail")
+        self.assertNotEqual(self.scenario(edit, "--check").returncode, 0)
+
+    def test_row_without_record_is_listed(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for f in self.FILES:
+                dst = root / f
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copytree(REPO / f, dst) if (REPO / f).is_dir() else shutil.copy(REPO / f, dst)
+            run(GEN, "--root", root)
+            rows = [l for l in (root / "measurements/characterization-report.md").read_text().splitlines() if l.startswith("| T-")]
+            self.assertEqual(len(rows), 30)
+            self.assertIn("not-yet-measured", rows[0])
 
 
 class DesignSourcesTests(unittest.TestCase):
