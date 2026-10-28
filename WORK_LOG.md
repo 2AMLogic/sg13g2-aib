@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-28
 
+- **PR #85**: feat: cite SDF-annotated post-route functional run as 7.digital
+- **Issue #80** (closed): T1 item 7 (post-layout verification, digital): SDF-annotated functional run on the routed aib_datapath netlist
 - **PR #77**: feat(erc): add klt erc supply specs and reports for I/O cells and data path; cite item 11
 - **Issue #41** (closed): T1 item 11 (power delivery, structural): klt erc supply specs for the I/O cells and the data path
 - **PR #75**: feat(lvs): cite a whole-column analog LVS report for the item 4 analog row
