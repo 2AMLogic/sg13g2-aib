@@ -1,0 +1,26 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "../../layout/pnr/.klt/place-and-route/aib_datapath.v",
+    "@PDK_ROOT@/ihp-sg13g2/libs.ref/sg13g2_stdcell/verilog/sg13g2_udp.v",
+    "@PDK_ROOT@/ihp-sg13g2/libs.ref/sg13g2_stdcell/verilog/sg13g2_stdcell.v",
+    "../tb_datapath_postroute.v"
+  ],
+  "hdl_toplevel": "tb_datapath_postroute",
+  "testbench": {
+    "module": "test_datapath",
+    "search_path": ".."
+  },
+  "options": {
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1,
+    "sdf": {
+      "file": "@SDF@",
+      "corner": "max"
+    }
+  }
+}

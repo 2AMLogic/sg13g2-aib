@@ -3,9 +3,9 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `11.analog` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `11.analog` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
 
@@ -135,6 +135,42 @@ Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate
 ```bash
 PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ```
+
+## Item 7 / digital evidence
+
+`attest/item7-digital/fv_post_route.json` is the existing cocotb suite
+(`verification/test_datapath.py`, unchanged) run through `klt functional-verification` on
+the **post-route** netlist with the routed SDF annotated (8/8). It is cited under `7.digital`.
+Inputs, pinned by sha256 in `run_evidence.py` (the run refuses if either changes):
+`layout/pnr/.klt/place-and-route/aib_datapath.v` `a27bec23…` and `aib_datapath_route.sdf`
+`3e8edd07…`, plus the `sg13g2_stdcell` Verilog models from `PDK_ROOT`. The SDF is one corner,
+`slow_1p08V_125C` (1.08 V, 125 C), the binding corner; klt's `corner: max` selects its
+min:typ:max column. There is no second SDF, so no fast-corner post-route run exists.
+
+- **Negative control** (`fv_neg_post_route_timing`, committed, **not cited**; klt exit 3, 1/8):
+  the same run on a copy of the SDF in which every delay of the mux driving `tx_wire[0]`
+  is 12 ns, longer than the 10 ns test period. It fails for that reason (round trips lose
+  bit-exactness and the TX marker never reaches the wire); only `l1_ignores_rx_wire` still passes.
+- **Derived SDF.** `aib_datapath_route.tb.sdf` is the routed SDF with one mechanical edit:
+  every `(INSTANCE ...)` is prefixed with `dut`, because the bench instantiates the netlist as
+  `dut` and klt annotates at the bench top. `aib_datapath_route.tb.neg_timing.sdf` adds the
+  inflated arc. `run_evidence.py` regenerates both from the committed SDF.
+- **Bench.** `verification/tb_datapath_postroute.v` is `tb_datapath.v` with `N` fixed at 20
+  (klt rejects `request.parameters` together with `options.sdf`, and the routed netlist has no
+  `N`) and no parameter list (klt's SDF wrapper needs a plain `module` declaration). It also holds
+  `tx_d0`/`tx_d1` for 1 ns after the clock edge. The suite moves them on the edge; the routed clock
+  tree delays the edge at the registers, so without the hold the stimulus races it (observed: the
+  latency tests never saw their marker). That is a declared input-hold assumption of the bench,
+  not a result about the netlist, and it is not timed by any STA here.
+- **Dropped by the simulator** (recorded in the envelope's `environment.sdf.dropped`): all 159
+  `TIMINGCHECK` sections (Icarus does not implement them, so setup/hold/recovery/width limits are
+  **not** checked against the SDF; the evidence is delay-annotated function, not timing closure), and
+  41 `INTERCONNECT` entries from bit-selected top-level inputs, all zero-delay. `annotated: true`,
+  `partial: true`.
+- Not shown: skew across a real I/O column, the TX-to-RX channel (zero-delay wire, `rx_clk` a fixed
+  quarter cycle behind `clk`), or any fast-corner behaviour.
+
+Regenerate with the Item 5 command (it now also writes this directory).
 
 ## Item 9 attestation
 
