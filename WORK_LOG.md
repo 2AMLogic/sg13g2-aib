@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-28
 
+- **PR #77**: feat(erc): add klt erc supply specs and reports for I/O cells and data path; cite item 11
+- **Issue #41** (closed): T1 item 11 (power delivery, structural): klt erc supply specs for the I/O cells and the data path
 - **PR #75**: feat(lvs): cite a whole-column analog LVS report for the item 4 analog row
 - **Issue #40** (closed): T1 item 4 (LVS clean): LVS of the I/O cells against their schematics and of the data path with power_connectivity
 
