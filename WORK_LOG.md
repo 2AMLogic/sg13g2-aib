@@ -4,6 +4,11 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-27
 
+- **PR #73**: fix(layout): finger widths from netlist totals; clear clamp tap from PADI diode so analog LVS matches
+- **PR #71**: feat(layout): LVS of the data path (match) and the I/O cells (mismatch)
+- **PR #69**: feat(signoff): record per-partition klt drc reports and cite as T1 item 3
+- **Issue #70** (closed): layout: I/O cell stream differs from the item 1 netlists (PADI on VSS, ng=2 finger width)
+- **Issue #39** (closed): T1 item 3 (DRC clean): klt drc on the I/O-cell and data-path layouts with coverage disclosed
 - **PR #66**: feat(layout): routed aib_datapath from klt place-and-route with item 2 digital attestation
 - **PR #64**: fix(design): swap pad-ESD secondary NMOS-side diode to a grounded-gate NMOS junction
 - **Issue #38** (closed): T1 item 2 (layout, digital): place-and-route aib_datapath to a committed routed GDS with a PDN
