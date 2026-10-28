@@ -20,6 +20,7 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#40**: T1 item 4 (LVS clean): LVS of the I/O cells against their schematics and of the data path with power_connectivity
 
 ## Ready
 
@@ -32,15 +33,14 @@ Human-approved issues ready for implementation (`loom:issue`).
 Issues currently being built (`loom:building`).
 
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
-- **#38**: T1 item 2 (layout, digital): place-and-route aib_datapath to a committed routed GDS with a PDN
-- **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02)
-- **#60**: aib_pad_esd: XDn2 dantenna on the inner pad node aborts the channel transient (Timestep too small)
+- **#40**: T1 item 4 (LVS clean): LVS of the I/O cells against their schematics and of the data path with power_connectivity
+- **#67**: Remove bisect_esd.py: stale #60 probe silently emits mislabelled netlists
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#72**: chore(sim): remove stale pad-ESD bisect probe
 
 ## Approved (Awaiting Merge)
 
@@ -55,7 +55,6 @@ Issues carrying `loom:curated`.
 - **#3**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)*
 - **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)*
-- **#38**: T1 item 2 (layout, digital): place-and-route aib_datapath to a committed routed GDS with a PDN *(curated)*
 - **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition *(curated)*
 - **#52**: T1 item 5 (analog) family: DC static characteristics PVT-FULL (T-06/T-07/T-08/T-11/T-24/T-28) *(curated)*
 - **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26) *(curated)*
@@ -76,12 +75,12 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
-| Important | 1 |
+| Important | 2 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 4 |
-| PRs awaiting review | 0 |
+| In Progress (`loom:building`) | 3 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 9 |
+| Curated | 8 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
