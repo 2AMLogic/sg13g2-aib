@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-28
+
+- **PR #75**: feat(lvs): cite a whole-column analog LVS report for the item 4 analog row
+- **Issue #40** (closed): T1 item 4 (LVS clean): LVS of the I/O cells against their schematics and of the data path with power_connectivity
+
 ### 2026-10-27
 
 - **PR #73**: fix(layout): finger widths from netlist totals; clear clamp tap from PADI diode so analog LVS matches
