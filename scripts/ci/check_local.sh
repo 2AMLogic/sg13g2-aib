@@ -6,6 +6,7 @@ cd "$(dirname "$0")/../.."
 
 python3 -I scripts/ci/test_checkers.py
 python3 -I scripts/ci/check_evidence_format.py
+python3 -I scripts/ci/check_item7_sdf.py
 
 # Same base as CI's pull_request run; empty base is skipped by the checker.
 base="$(git merge-base origin/main HEAD 2>/dev/null || true)"
