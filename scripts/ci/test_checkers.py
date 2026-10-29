@@ -16,6 +16,7 @@ FMT = HERE / "check_evidence_format.py"
 APP = HERE / "check_sim_append_only.py"
 SRC = HERE / "check_design_sources.py"
 GEN = HERE / "gen_characterization_report.py"
+SDF7 = HERE / "check_item7_sdf.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -241,6 +242,57 @@ class DesignSourcesTests(unittest.TestCase):
             p = r / "signoff/block-manifest.json"
             m = json.loads(p.read_text())
             m["evidence"]["1.digital"]["content_hash"] = "sha256:" + "0" * 64
+            p.write_text(json.dumps(m))
+        self.assertNotEqual(self.check(edit), 0)
+
+
+class Item7SdfTests(unittest.TestCase):
+    """The derived SDFs must reproduce from the pinned source; drift must fail."""
+
+    def check(self, mutate=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for d in ("verification/klt", "signoff/attest/item7-digital", "layout/pnr/.klt/place-and-route"):
+                (root / d).mkdir(parents=True)
+            shutil.copy(REPO / "verification/klt/run_evidence.py", root / "verification/klt/run_evidence.py")
+            shutil.copy(REPO / "signoff/KLT_VERSION", root / "signoff/KLT_VERSION")
+            shutil.copy(REPO / "signoff/block-manifest.json", root / "signoff/block-manifest.json")
+            shutil.copy(REPO / "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf",
+                        root / "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf")
+            for f in (REPO / "signoff/attest/item7-digital").glob("*.sdf"):
+                shutil.copy(f, root / "signoff/attest/item7-digital" / f.name)
+            if mutate:
+                mutate(root)
+            return run(SDF7, "--root", root).returncode
+
+    def test_good(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_edited_derived_sdf_fails(self):
+        def edit(r):
+            with open(r / "signoff/attest/item7-digital/aib_datapath_route.tb.sdf", "a") as f:
+                f.write("\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_edited_source_sdf_fails(self):
+        def edit(r):
+            with open(r / "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf", "a") as f:
+                f.write("\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_stale_pin_fails(self):
+        def edit(r):
+            p = r / "signoff/block-manifest.json"
+            m = json.loads(p.read_text())
+            m["derived_inputs"]["7.digital"]["files"][0]["content_hash"] = "sha256:" + "0" * 64
+            p.write_text(json.dumps(m))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_missing_pins_fail(self):
+        def edit(r):
+            p = r / "signoff/block-manifest.json"
+            m = json.loads(p.read_text())
+            del m["derived_inputs"]
             p.write_text(json.dumps(m))
         self.assertNotEqual(self.check(edit), 0)
 

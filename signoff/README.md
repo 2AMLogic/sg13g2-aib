@@ -154,7 +154,13 @@ min:typ:max column. There is no second SDF, so no fast-corner post-route run exi
 - **Derived SDF.** `aib_datapath_route.tb.sdf` is the routed SDF with one mechanical edit:
   every `(INSTANCE ...)` is prefixed with `dut`, because the bench instantiates the netlist as
   `dut` and klt annotates at the bench top. `aib_datapath_route.tb.neg_timing.sdf` adds the
-  inflated arc. `run_evidence.py` regenerates both from the committed SDF.
+  inflated arc. `run_evidence.py` regenerates both from the committed SDF. Both are kept as
+  committed evidence inputs and pinned by sha256 in the manifest's `derived_inputs."7.digital"`
+  block, with the routed SDF they derive from (a separate key because the grader reads every
+  `evidence` entry as an envelope). `python3 -I scripts/ci/check_item7_sdf.py` (PDK-free, run in CI)
+  fails if the routed SDF is not the pinned one, if regeneration does not reproduce the committed
+  bytes, or if the committed bytes differ from the pins. If a P&R re-run changes the routed SDF,
+  re-cite `PNR_SHA256`, the SDFs and the pins together.
 - **Bench.** `verification/tb_datapath_postroute.v` is `tb_datapath.v` with `N` fixed at 20
   (klt rejects `request.parameters` together with `options.sdf`, and the routed netlist has no
   `N`) and no parameter list (klt's SDF wrapper needs a plain `module` declaration). It also holds

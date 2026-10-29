@@ -44,6 +44,16 @@
       {"file": "layout/pnr/request.report.json"}
     ]
   },
+  "derived_inputs": {
+    "7.digital": {
+      "generator": "verification/klt/run_evidence.py",
+      "source": {"file": "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf", "content_hash": "sha256:3e8edd07efd747d5e6bb6db8b7fb38d13b7dba2607e25617d084ae6b02e24545"},
+      "files": [
+        {"file": "signoff/attest/item7-digital/aib_datapath_route.tb.sdf", "content_hash": "sha256:8f22f9ab3b82859cdf0d63b75ef57e7822207c280da9625e5ba4efc4e7a08232", "cited_by": "signoff/attest/item7-digital/fv_post_route.json"},
+        {"file": "signoff/attest/item7-digital/aib_datapath_route.tb.neg_timing.sdf", "content_hash": "sha256:b400cd47577099f6fb4dcad0cf13c92c6f64e9035b33c947bca983d3e2f3eb2b", "cited_by": "signoff/attest/item7-digital/fv_neg_post_route_timing.json"}
+      ]
+    }
+  },
   "claims": {
     "3": {
       "analog": {
