@@ -2,6 +2,12 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-30
+
+- **PR #72**: chore(sim): remove stale pad-ESD bisect probe
+- **Issue #67** (closed): Remove bisect_esd.py: stale #60 probe silently emits mislabelled netlists
+- **Issue #60** (closed): aib_pad_esd: XDn2 dantenna on the inner pad node aborts the channel transient (Timestep too small)
+
 ### 2026-10-29
 
 - **PR #90**: feat: pin derived item-7 SDFs in the manifest and check they reproduce
