@@ -101,7 +101,7 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    cell completes; the pad ESD cell with the RX completes; TX + ESD + channel + ESD + RX did
    not finish in 11 min. The pad ESD path is the suspect; the cause is not isolated.
    **Bisect (issue #60, one corner `mos_tt` 1.20 V 27 C, local, an unrecorded debug probe;
-   `bisect_esd.py` regenerates the netlists).** Driver check on `main` @ `85832ba`: with
+   the netlists came from a probe script, `bisect_esd.py`, at commit `a540af4`, no longer in the tree).** Driver check on `main` @ `85832ba`: with
    DIN = OE = VDDIO the pad is 1.1999 V into 1 Mohm and 1.1918 V into 10 kohm, so finding 1
    is fixed by `5584f0b`. One lane, 3 ns, `tran 2p 3n 0 5p`: no ESD cell completes in 1 s;
    ESD on the TX side only aborts at 2.30 ns, on the RX side only at 0.82 ns, on both at
@@ -119,7 +119,7 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    change in `design/` (#35's lineage) is not made here. Not established: whether the
    PSP/OSDI side or the diode card is at fault, and any other corner.
    **Candidate `XDn2` variants (issue #60, same corner, local, serial, 150 s cap per run,
-   ngspice-47 with OSDI; `bisect_esd.py` writes `v_*`/`vb_*`).** Baseline `b10` aborts at
+   ngspice-47 with OSDI; the `v_*`/`vb_*` netlists came from `bisect_esd.py` at commit `a540af4`, no longer in the tree).** Baseline `b10` aborts at
    2.298 ns in <1 s. `dantenna` 1u x 1u, 0.78u x 0.78u (minimum), and 2u x 2u behind a 100 ohm
    or 1 kohm `rppd`: no abort but no completion in 150 s (crawl), so not usable. A
    grounded-gate `sg13_lv_nmos w=1u l=0.13u` with its drain on `PADI` (`XMn2`, the drain
