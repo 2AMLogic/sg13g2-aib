@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-10-31
+
+- **PR #96**: docs: record cell-level aib_pad_esd bisect of the channel-eye abort
+- **PR #95**: docs: record four-lane channel-eye abort bisect results
+
 ### 2026-10-30
 
 - **PR #72**: chore(sim): remove stale pad-ESD bisect probe
