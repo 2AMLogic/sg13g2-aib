@@ -134,6 +134,38 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    #53). These results are the test configuration (pad ESD in the loop), not the modeled
    channel. Local host note: `/usr/bin/ngspice` 42 cannot load the OSDI v0.4 models; the
    variant runs used an ngspice-47 build.
+   **Four-lane abort bisect (issue #94, fleet, `klt` 0.8.0, `--backend batch`, one corner
+   `mos_tt` / all supplies 1.20 V / 27 C, `main` @ `3c031e9`; unrecorded debug probes, no
+   PVT record).** The four-lane CH (`klt-sim-e77210c8bec8`) and TC (`klt-sim-1a7716fd7b44`)
+   requests abort with `timestep_too_small` (CH at 22.4664 ns, TC at 5.69152 ns). The probes
+   are `tb_ch.cir` / `tb_tc.cir` with lanes deleted from a copy of `tb_body.inc` (same 141 ns
+   `tran 2p 141n 0 5p`, one scratch measurement; the 45-corner requests are unchanged).
+   | Probe | Job | Result |
+   |---|---|---|
+   | CH, lane A only | `klt-sim-881a4cb2c152` | abort at 22.4664 ns, `vdd_arx#branch` |
+   | CH, lanes A+B | `klt-sim-0d4b3f644ae7` | abort at 22.4664 ns, `vdd_brx#branch` |
+   | CH, lanes C+CB only (the shared `vdd_crx` pair) | `klt-sim-6e3aaf599c15` | completes, 141 ns |
+   | CH, lane A, TX-side `aib_pad_esd` replaced by 1 mohm | `klt-sim-d5dc022168c7` | completes |
+   | CH, lane A, RX-side `aib_pad_esd` replaced by 1 mohm | `klt-sim-a88d7f1f4a40` | completes |
+   | TC, lane A only | `klt-sim-9a51a802416f` | abort at 22.7029 ns, `vdd_arx#branch` |
+   | TC, lanes C+CB only | `klt-sim-87b22d364017` | completes |
+   Measured: (1) the shared `vdd_crx` supply is not the cause in CH: the C+CB pair alone
+   completes, and a single data lane aborts with no shared supply at all, so splitting
+   `vdd_crx`/`vdd_cbrx` in `tb_body.inc` would not clear it. (2) The abort sits in the data
+   lane, at the same instant with one lane or two (22.4664 ns), 1.4 ns after the first fall
+   that ends the 7-UI run of ones (UI 14-20, fall at 21 ns); the alternating clock lanes
+   never see such a run. (3) With either pad-ESD cell removed from the lane the transient
+   completes, so the abort needs the ESD cell on both pads in the loop, as the #60 bisect
+   found for the earlier `XDn2`. The `XMn2` replacement is therefore not shown to be clean
+   in a long-run PRBS bench; the earlier 3 ns one-lane check never reached such a run.
+   Not established: which `aib_pad_esd` element is marginal now (`XMn2` vs the
+   `dpantenna` / `dantenna` / `rppd` / clamp devices), why the four-lane TC aborts at 5.69 ns
+   while lane A alone aborts at 22.7 ns (the lane subsets A and C+CB do not reproduce the
+   early abort, so it depends on the full lane set), any other corner, and whether the
+   marginality is the PSP/OSDI model or the cell. Conclusion for #53: its Revision step 1
+   is **not** satisfied; a bench partition does not fix it, and the next step is a cell-level
+   bisect of `aib_pad_esd` on lane A (this stimulus) through the `design/` path. No bound
+   changed, nothing under `design/` or `spec/` edited, no grid submitted.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
