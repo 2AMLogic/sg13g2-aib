@@ -237,6 +237,40 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    made; a fix is a `design/` change (diode type or geometry, with `layout/lvs/*.ref.spice`
    updated together) and is not made here. Conclusion for #53: Revision step 1 is still
    **not** satisfied. No bound changed, no grid submitted.
+   **Grounded-gate NMOS in place of `XDn1` (issue #94 increment 1, fleet, `klt` 0.8.1,
+   `--backend batch`, `main` @ `3f99254`; unrecorded scratch probes, not a PVT record).**
+   Scratch cell copies in `channel-eye/scratch94/` (`design/` untouched) replace `XDn1`
+   (PAD to VSS `dantenna` 10u x 10u) with an `sg13_lv_nmos` whose drain is `PAD` and whose
+   gate, source and bulk are `VSS` (the #60 `XMn2` pattern): variant a `w=20u l=0.13u ng=10`,
+   variant b `w=4u l=0.13u ng=2`. All rows `mos_tt` / 1.20 V / 27 C unless stated.
+   | Probe | Job | Result |
+   |---|---|---|
+   | lane A, CH, variant a, `tran 2p 45n` | `klt-sim-0157da63ede9` | completes, 1.9 s (committed cell aborts at 22.4664 ns) |
+   | lane A, CH, variant b, `tran 2p 45n` | `klt-sim-b740292bc20f` | completes, 2.1 s |
+   | four-lane CH, variant a, full 141 ns | `klt-sim-1cb0be38d989` | status `fail`, **no abort**; 75/75 measurements returned |
+   | four-lane TC, variant a, full 141 ns | `klt-sim-62bafaaa6a88` | status `pass`; 22/22 measurements returned |
+   | four-lane CH, variant a, `mos_ss` 1.08 V -40 C | `klt-sim-d297e7a8bc69` | status `fail`, no abort; 75/75 returned |
+   | four-lane TC, variant a, `mos_ss` 1.08 V -40 C | `klt-sim-208ed55fedb5` | status `pass`; 22/22 returned |
+   Measured: (1) the candidate clears the abort on every bench that aborted: lane A, and the
+   full four-lane CH and TC runs complete all 141 ns (about 22 s of ngspice, against the ~1100 s
+   estimate in item 3 above, which was measured before this change) at both corners. This is
+   an NMOS drain junction used as the diode at model level, the same substitution #60 made for
+   `XDn2`; it is not a characterised ESD structure and no T-24/T-25 claim is made. (2) T-01 edge
+   counts are 64 on both lanes in all four full runs (limits 63.5-64.5), and the `.meas INTEG`
+   rows (T-09 dwell, T-26) and T-15/T-16 return values. (3) The CH status `fail` is a measurement
+   limit, not a solver failure: `t16_df_cr_long` and `t16_df_cf_long` miss their limit by 1.8 and
+   2.0 ps at `mos_tt` (margins -1.787 ps / -1.960 ps) and also fail at `mos_ss` 1.08 V -40 C;
+   every other CH row, including T-18 eye height (0.411 V), T-26 (0.425 pJ/bit simulated) and
+   T-15, passes at both corners. The `df_*_long` rows are a property of the cell and channel,
+   not of this probe, and are for #53 to judge; nothing was loosened. TC rows are the
+   test-configuration (L2 wire-bond loopback) rows, CH rows the modeled die-to-die channel.
+   Not established: that variant a or b is the right ESD structure (the choice is a T-25
+   question for the operator); the full `mos_*`/supply/temperature grid; Monte Carlo. This
+   is increment 1 only: no `design/`, `layout/` or `spec/` change was made, so LVS/DRC are
+   unchanged and **AC 1 is met only for the scratch cell, not for the committed design**.
+   #53 Revision step 1 is therefore still not satisfied on `main`; increment 2 (the `design/`
+   change with `gen_io_column.py`, GDS, `layout/lvs` references, LVS and DRC) is next. No bound
+   changed, no 45-corner grid submitted.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
