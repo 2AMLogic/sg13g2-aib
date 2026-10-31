@@ -1,0 +1,15 @@
+* tb_tc.cir -- TC, L2 wire-bond loopback (spec/test-configuration.md), four lanes (tb_body.inc).
+* Declared assumptions (placeholders until the shuttle packaging is known): 2 nH per bond
+* wire, two wires in the loop; 0.5 pF pad + package + board stub per pin. The PDK
+* bond pad (sg13g2_bondpad) has no electrical content in v0.3.0, so nothing else is modelled.
+* This is NOT the channel: no claim made from this netlist is a CH claim.
+.include ../../../design/aib_tx_data.spice
+.include ../../../design/aib_rx_data.spice
+.include esd_b.spice
+.subckt link txp rxp gnd
+Cpin1 txp gnd 0.5p
+Lw1   txp mid 2n
+Lw2   mid rxp 2n
+Cpin2 rxp gnd 0.5p
+.ends link
+.include body_full.inc

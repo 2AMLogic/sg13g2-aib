@@ -1,0 +1,73 @@
+{
+ "engine": "ngspice",
+ "models": {
+  "pdk": "ihp-sg13g2",
+  "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+ },
+ "netlist": "ch_esd_b_body_a.cir",
+ "backend": "batch",
+ "corners": {
+  "process": [
+   {
+    "name": "mos_tt",
+    "sections": [
+     "mos_tt",
+     {
+      "lib": "libs.tech/ngspice/models/cornerRES.lib",
+      "section": "res_typ"
+     },
+     {
+      "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+      "section": "dio_tt"
+     }
+    ]
+   }
+  ],
+  "supply_v": {
+   "vdd_atx": [
+    1.2
+   ],
+   "vdd_arx": [
+    1.2
+   ],
+   "vdd_btx": [
+    1.2
+   ],
+   "vdd_brx": [
+    1.2
+   ],
+   "vdd_ctx": [
+    1.2
+   ],
+   "vdd_crx": [
+    1.2
+   ]
+  },
+  "temperature_c": [
+   27
+  ]
+ },
+ "analysis": {
+  "kind": "tran",
+  "args": "2p 45n 0 5p"
+ },
+ "measurements": [
+  {
+   "unit": "V",
+   "name": "scratch_max",
+   "expr": "vecmax(v(douta))"
+  }
+ ],
+ "batch": {
+  "runner_version_check": "warn"
+ },
+ "options": {
+  "osdi_preload": [
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+  ],
+  "timeout_s": 2400
+ }
+}
