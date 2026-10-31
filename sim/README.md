@@ -198,6 +198,45 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    fix. Conclusion for #53: Revision step 1 is still **not** satisfied. The next step is a
    stimulus-side bisect (PWL edge / source node `pa_09` behaviour past 22 ns) before touching the
    cell again. No bound changed, no grid submitted.
+   **Stimulus-side bisect (issue #94, fleet, `klt` 0.8.0, `--backend batch`, one corner
+   `mos_tt` / 1.20 V / 27 C, `main` @ `1078396`; unrecorded debug probes, no PVT record).**
+   Lane A only, CH channel, `tran 2p 45n 0 5p`, scratch copies of `prbs7_stim.inc` and (for
+   the `5u x 20u` rows) `aib_pad_esd.spice`; `design/`, `spec/`, the committed bench and
+   requests are untouched. The stimulus changes are diagnostics, not channel-model inputs: the
+   declared 100 ps ramp and PRBS-7 stream stay what the committed requests use.
+   | Probe (lane A, CH) | `XDn1` 10u x 10u (as drawn) | `XDn1` 5u x 20u |
+   |---|---|---|
+   | committed PRBS-7, 100 ps ramp | abort 22.4664 ns, `xa.xesdr.xdn1.d1#internal` (`klt-sim-7059dbe2a56b`) | abort 29.4206 ns, `vdd_arx#branch` (`klt-sim-63b1f487e6df`) |
+   | same bits, 50 ps ramp | abort 29.386 ns (`klt-sim-32667c6f4ab7`) | not run |
+   | same bits, 200 ps ramp | abort 3.5358 ns (`klt-sim-fee49e070122`) | not run |
+   | same bits, 400 ps ramp | abort 7.661 ns, `vdd_arx#branch` (`klt-sim-7dea7e9df817`) | abort 7.661 ns (`klt-sim-51d455a6aa44`) |
+   | `1010...` (every UI toggles), 100 ps ramp | completes 45 ns (`klt-sim-9c95ac34c065`) | completes 45 ns (`klt-sim-c2238d878e4e`) |
+   | `110110...` (one-UI lows), 100 ps ramp | completes 45 ns (`klt-sim-7ddb11ffa08b`) | not run |
+   | `100100...` (two-UI lows), 100 ps ramp | abort 5.4208 ns, `vdd_arx#branch` (`klt-sim-3e0648a837f3`) | not run |
+   Pad envelope just before the unchanged-cell abort (`klt-sim-b791d878d2b1`, 20-22.4 ns):
+   `rxa` 0.042 to 1.208 V, TX pad 0.041 to 1.205 V, RX `rxi` 0.043 to 1.207 V, TX `txi`
+   0.006 to 1.236 V. The 200 ps case (`klt-sim-3b4ad6427781`, 2.5-3.5 ns) has the same low
+   level, 0.042 V.
+   Measured: (1) Lane A alone reproduces the abort time of the four-lane benches exactly
+   (29.4206 ns for the `5u x 20u` cell, 22.4664 ns unchanged), so the abort is intrinsic to
+   one lane; the node `pa_09` named in the four-lane reports did not appear in any lane-A run
+   (which names `xa.xesdr.xdn1.d1#internal` or `vdd_arx#branch`) and is **not** shown to be a
+   stimulus-source node. (2) The pad never goes below ~0.04 V or above ~1.24 V before the abort,
+   so the `dantenna` is never forward biased and no overshoot is being clamped: this is not a
+   physical clamp event. (3) The abort time is not monotonic in the edge rate (50 / 100 / 200 /
+   400 ps ramps abort at 29.4 / 22.5 / 3.5 / 7.7 ns) and the unchanged geometry and the
+   `5u x 20u` geometry abort at the same 7.661 ns with a 400 ps ramp: a numerical marginality
+   in the time step on the `dantenna`/`rppd` node, not a stimulus threshold. (4) It needs a
+   pad that stays low for two or more UI after a fall (`100100...` aborts, `110110...` and
+   `1010...` complete); in these probes the abort comes 1.2-1.4 ns after the end of such a
+   fall. It is history dependent: the committed stream has two-UI lows at 2.1-4.0 ns that
+   pass.
+   Not established: whether it is the PSP/OSDI `dantenna` model near zero bias in series with
+   `rppd` or the ngspice-46 step control on that node; any other corner; whether a different
+   diode type clears it (the #60 variants crawled). A bench edit cannot fix it and none was
+   made; a fix is a `design/` change (diode type or geometry, with `layout/lvs/*.ref.spice`
+   updated together) and is not made here. Conclusion for #53: Revision step 1 is still
+   **not** satisfied. No bound changed, no grid submitted.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
