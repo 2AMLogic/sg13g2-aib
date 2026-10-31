@@ -166,6 +166,38 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    is **not** satisfied; a bench partition does not fix it, and the next step is a cell-level
    bisect of `aib_pad_esd` on lane A (this stimulus) through the `design/` path. No bound
    changed, nothing under `design/` or `spec/` edited, no grid submitted.
+   **Cell-level `aib_pad_esd` bisect (issue #94, fleet, `klt` 0.8.0, `--backend batch`, one
+   corner `mos_tt` / 1.20 V / 27 C, `main` @ `c3f3f65`; unrecorded debug probes, no PVT record).**
+   Lane A only, CH stimulus and channel, both lane-A `aib_pad_esd` instances replaced by a
+   scratch copy with one element changed (scratch copies only; `design/` untouched);
+   `tran 2p 24n 0 5p`, one scratch measurement (`vecmax(v(douta))`). "Completes" means it passed
+   22.4664 ns and reached 24 ns, not that it would survive 141 ns.
+   | Probe (both pad-ESD cells) | Job | Result |
+   |---|---|---|
+   | unchanged cell (control) | `klt-sim-ead411c70b7c` | abort 22.4664 ns, node `xesdr.xdn1.d1#internal` |
+   | `XDn1` removed | `klt-sim-992cdbae733c` | completes to 24 ns |
+   | `XResd` replaced by 1 mohm | `klt-sim-494cd46dbadd` | completes to 24 ns |
+   | `XMclamp` removed | `klt-sim-82799cc6d272` | abort 22.4664 ns, same node (clamp not involved) |
+   | `XDp1` / `XDp2` / `XMn2` removed | `klt-sim-1fe34ddf7807` / `-d47a63aeadbc` / `-d2ca69614614` | abort earlier (3.32 / 3.46 / 7.46 ns, `vdd_arx#branch`): these clamp the overshoot, so removal is a different failure and says nothing about the 22.47 ns one |
+   | `XDn1` `l=5u w=20u` (same 100 um2) | `klt-sim-0203bb24dda9` | completes to 24 ns |
+   | `XDn1` `l=5u w=5u m=4` / `l=3.16u w=3.16u m=10` | `klt-sim-add17770a9e4` / `-4254fe4da764` | abort 3.46 / 3.46 ns (`vdd_arx#branch` / TX `xdn1.d1#internal`) |
+   | four-lane CH, `XDn1` `l=5u w=20u`, full 141 ns bench | `klt-sim-6a9f70cebf67` | abort 29.4206 ns, node `pa_09` |
+   | four-lane TC, same cell | `klt-sim-039e35b4f3f7` | abort 22.7033 ns, node `pa_09` |
+   Measured: (1) the 22.4664 ns abort is localised to the `dantenna` `XDn1` (PAD to VSS, 10u x 10u)
+   in series with the `rppd` `XResd`: the trouble node is the RX-side `XDn1` internal diode node,
+   and removing `XDn1` or collapsing `XResd` clears it, while removing the clamp does not move it.
+   (2) The `dantenna` model is geometry-sensitive: the same 100 um2 as 5u x 20u moves the lane-A
+   abort past 24 ns, and the same area as m=4 or m=10 aborts at 3.5 ns. (3) That geometry change
+   is **not a fix**: on the full four-lane bench CH only moves from 22.4664 to 29.4206 ns and TC
+   stays at 22.70 ns, and both now report the stimulus node `pa_09` (a PWL source node, not a cell
+   node), so the lane-A 24 ns "completes" rows are not evidence of convergence over 141 ns.
+   Not established: why the abort moves to `pa_09`; whether it is the PSP/OSDI `dantenna` model
+   with the PWL stimulus breakpoints, or a real overshoot the ESD diode is clamping; any other
+   corner. No `design/` or `spec/` change was made: a `dantenna` geometry change would also alter
+   the drawn diode and the `layout/lvs/*.ref.spice` references (`A=100P P=40U`) and was not a
+   fix. Conclusion for #53: Revision step 1 is still **not** satisfied. The next step is a
+   stimulus-side bisect (PWL edge / source node `pa_09` behaviour past 22 ns) before touching the
+   cell again. No bound changed, no grid submitted.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
