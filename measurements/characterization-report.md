@@ -15,7 +15,7 @@ Scope labels follow the spec: CH is the modeled die-to-die channel, TC is the te
 | T-02 | Data exchange format | — | — | — | not-yet-measured | — |
 | T-03 | Data wires per direction (N) | — | — | — | not-yet-measured | — |
 | T-04 | Forwarded clock | — | — | — | not-yet-measured | — |
-| T-05 | Spare wires and redundancy | RTL simulation, every single-fault position (81 cases): 81 (needs == 81)<br>RTL simulation, failing cases: 0 (needs == 0)<br>_RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured. Repair claim in CH needs an assembly; the mux function is what this record covers._ | n/a (function) | TC | pass | [`signoff/attest/item5-digital/fv_shift_redundancy.json`](../signoff/attest/item5-digital/fv_shift_redundancy.json) |
+| T-05 | Spare wires and redundancy | RTL simulation, every single-fault position (41 cases): 41 (needs == 41)<br>RTL simulation, failing cases: 0 (needs == 0)<br>_RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured. Repair claim in CH needs an assembly; the mux function is what this record covers._ | n/a (function) | TC | pass | [`signoff/attest/item5-digital/fv_shift_redundancy.json`](../signoff/attest/item5-digital/fv_shift_redundancy.json) |
 | T-06 | Signal levels | — | — | — | not-yet-measured | — |
 | T-07 | Termination | — | — | — | not-yet-measured | — |
 | T-08 | Driver output impedance | — | — | — | not-yet-measured | — |

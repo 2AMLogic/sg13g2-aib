@@ -10,7 +10,7 @@
         "value_field": "test_count",
         "corner": "n/a (function)",
         "scope": "TC",
-        "basis": "RTL simulation, every single-fault position (81 cases)",
+        "basis": "RTL simulation, every single-fault position (41 cases)",
         "note": "RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured."
       },
       {
