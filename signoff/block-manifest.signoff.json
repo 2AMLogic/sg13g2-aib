@@ -76,7 +76,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095",
+        "content_hash": "sha256:ba6b68c8c451ba81cc6b6574212930ec394c3e6b951f809fcd36967293904dfa",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -85,7 +85,7 @@
             "path": "signoff/attest/item1-digital.inventory.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095",
+          "content_hash": "sha256:ba6b68c8c451ba81cc6b6574212930ec394c3e6b951f809fcd36967293904dfa",
           "input_verified": true,
           "summary": "Design-source inventory for the digital partition: RTL sources, klt synthesize request/report, and the gate-level netlist derived from them, each pinned by sha256.",
           "source": "scripts/ci/check_design_sources.py --regenerate"
@@ -542,7 +542,7 @@
         "kind": "generic",
         "check_status": "pass",
         "content_hash": "sha256:0253fafa107a556288275258cd50ac25ed4885a03e8ba2a65dac9c25e8376055",
-        "input_verified": true,
+        "input_verified": false,
         "exit_status": 0
       }
     },
@@ -563,7 +563,7 @@
         "kind": "generic",
         "check_status": "pass",
         "content_hash": "sha256:0253fafa107a556288275258cd50ac25ed4885a03e8ba2a65dac9c25e8376055",
-        "input_verified": true,
+        "input_verified": false,
         "exit_status": 0
       }
     },
