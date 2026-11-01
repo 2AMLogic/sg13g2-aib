@@ -3,51 +3,37 @@
 ## shift_redundancy.v: T-05 shift-redundancy remap (one 20 + 2 channel direction)
 
 `tx_remap` / `rx_remap` implement the mux **function** only (test configuration;
-repair on a real channel is CH and is not shown here, DR-0003). Wires 0..21:
-wire 0 = spare A, wires 1..20 = data bits 0..19 with no fault, wire 21 = spare B.
-Inputs `en` (0 = no fault), `dir` (0 = shift toward spare A, 1 = toward spare B),
-`pos` (0..19, the data position whose wire is faulty).
+repair on a real channel is CH and is not shown here, DR-0003). They follow DR-0016
+(two-signal shift, both spares at one end). Wires 0..21: wires 0..19 = data bits 0..19
+with no fault, wires 20 and 21 = the two spares. Inputs `en` (0 = no fault) and `pos`
+(0..19, the wire that is faulty). A fault at `pos` moves bits `pos..19` up two wires
+(bit k to wire k + 2); bits below `pos` stay put; the faulty wire `pos` and wire
+`pos + 1` are undriven (TX) / ignored (RX). There is no direction input.
 
 ### Case-count definition (T-05 "20 x 2 cases per direction")
 
-Read as 20 fault positions x 2 shift directions = 40 per channel direction,
-80 for the two channel directions (TX->RX and RX->TX), plus the no-fault case.
-Faults on a spare wire and double faults are outside the 80 (DR-0003).
+Read as 20 fault positions x 2 channel directions (TX->RX and RX->TX) = 40, plus the
+no-fault case = 41 tests. Faults on a spare wire and double faults are outside the 40
+(DR-0003, DR-0016). The bench also checks, per position, from the TX wires, that the
+bit-to-wire map is injective, stays inside wires 0..21 and avoids wires `pos` and
+`pos + 1`.
 
-### Checked against AIB 1.2 section 3.3.1 (does not match)
+### Relation to AIB 1.2 section 3.3.1
 
-Read against AIB 1.2 at pin `096a970` (`spec/README.md`): section 3.3.1, Figures 43
-and 44, and section 3.3.1.1. The module **does not match** the pattern those
-describe. Two differences, both of which are findings, not yet changes:
+Read against AIB 1.2 at pin `096a970` (`spec/README.md`): section 3.3.1 reroutes a
+faulty signal two signals away toward the spares, and DR-0016 adopts that two-signal
+shift with both spares at one end of the channel. This module implements DR-0016. No
+conformance is claimed. Section 3.3.1.1 (neighbour cells can take a rerouted signal;
+spares configurable as input or output) is cell-level behaviour and is not exercised
+by this mux; neither is RX input-disable or TX standby on the vacated wires.
 
-1. **Shift distance.** Section 3.3.1 reroutes a faulty signal "two signals away",
-   and Figure 43 draws each reroute hopping over one cell. This module moves each
-   shifted bit by one wire (T-05 and DR-0003 already say "two positions"; the RTL
-   does not).
-2. **Spare placement and direction.** Section 3.3.1 provides two spares per
-   channel, and Figures 43 and 44 put them between the two halves with the shift
-   in each half running toward them. This module has one spare at each end of a
-   single 20-wire direction and lets `dir` pick the side. A shift of two wires
-   cannot be built in the 22-wire layout above (nominal wire k + 1 plus two runs
-   past wire 21), so the fix is a layout change, not a constant.
+**Scope of the evidence.** This is the `RTL` leg of T-05 only, in the test
+configuration: it shows the mux function, not repair on a real channel, and not the
+added load and delay of the mux (no SIM leg). The synthesized netlist under
+`design/` predates the mux and does not contain it.
 
-Section 3.3.1.1 (neighbour cells can take a rerouted signal; spares configurable as
-input or output) is cell-level behaviour and is not exercised by this mux.
-
-**The "x 2" case count is not confirmed.** The specification gives no "20 x 2" per
-direction: one direction per fault position, toward the spares, with the two spares
-shared by the channel. The 80 stays as defined above only until a decision record
-settles the layout. Faults on spares and double faults are unchanged (section 3.3.1,
-DR-0003).
-
-The RTL and bench are **not** changed here: the 80-case definition and the 20 + 2
-per-direction layout both live in the ratified spec (T-05, DR-0003), so a change
-needs a decision record first. Until then this RTL validates a one-wire shift, not
-the AIB pattern, and T-05 `RTL` evidence must not be cited as validating the AIB
-shift.
-
-`INJECT_BUG_SHIFT_EDGE` (negative control): TX skips the spare-B shift at
-position 19.
+`INJECT_BUG_SHIFT_EDGE` (negative control): TX skips the shift at
+position 19 (bit 19 stays on the faulty wire).
 
 ## aib_datapath.v: T-02 DDR/SDR serializer, deserializer, T-29 L1 select, T-27 latency
 
