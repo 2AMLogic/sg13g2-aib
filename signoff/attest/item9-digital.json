@@ -38,7 +38,7 @@
         "role": "testbench",
         "path": "verification/tb_top.v",
         "passed": true,
-        "content_hash": "sha256:03269f0abdf662c1d7796b8c01dca5de6a1a6cdac72ff2335d3be7bbadc01d5c"
+        "content_hash": "sha256:1fb4ef267b0defb3a8c1c42a289584fc09cab06ad0324e28e981441672679f72"
       },
       {
         "check": "present",
@@ -52,7 +52,7 @@
         "role": "testbench",
         "path": "verification/test_shift_redundancy.py",
         "passed": true,
-        "content_hash": "sha256:c4d1a1669701ac77be258a9810525a0e8c5cafac075da95a2f6f9747ccdcd798"
+        "content_hash": "sha256:428bb5ab27a196ceba35a5ba14a44a4d0dbe7add2278737c3fb52af5f7d6157e"
       },
       {
         "check": "command",

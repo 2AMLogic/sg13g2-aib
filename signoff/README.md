@@ -108,13 +108,13 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 
 `attest/item5-digital/` holds the verbatim `klt` envelopes, cited as a list under
 `5.digital` (the grader requires both kinds): three `klt functional-verification` runs
-(`fv_shift_redundancy` 81/81, `fv_datapath_n20` and `fv_datapath_n8` 8/8) and two
+(`fv_shift_redundancy` 41/41, `fv_datapath_n20` and `fv_datapath_n8` 8/8) and two
 `klt sta` runs (`sta_clk`, `sta_rx_clk`), each over `slow_1p08V_125C` and
 `fast_1p32V_m40C` at a 2.0 ns period (T-01, 500 MHz). Requests live in
 `verification/klt/` and `design/synth/aib_datapath.sta_*.json`.
 
 - The two negative controls (`fv_neg_shift_edge`, `fv_neg_extra_stage`) are committed
-  but **not cited**: they must fail (klt exit 3), and do (79/81, 6/8).
+  but **not cited**: they must fail (klt exit 3), and do (39/41, 6/8).
 - STA is `geometry_source: netlist_estimate` (the `klt synthesize` netlist, ideal wires,
   no SPEF). It is not post-route; re-run after #38. The netlist predates the T-05 mux
   decision (#29 / PR #32), so it does not contain the mux; re-synthesize and re-run

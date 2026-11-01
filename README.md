@@ -91,7 +91,7 @@ ngspice or Yosys and run on a worker.
 
 ```bash
 # RTL: cocotb + Icarus (pip install "cocotb>=2.0,<3"; iverilog on PATH)
-python3 verification/run_tb.py                                   # shift redundancy, 81/81
+python3 verification/run_tb.py                                   # shift redundancy, 41/41
 python3 verification/run_tb.py --bench datapath --param N=20     # 8/8
 python3 verification/run_tb.py --bench datapath --param N=8      # 8/8
 

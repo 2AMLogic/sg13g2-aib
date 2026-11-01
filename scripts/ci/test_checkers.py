@@ -169,8 +169,14 @@ class CharacterizationReportTests(unittest.TestCase):
     def test_stale_manifest_hash_fails(self):
         def edit(r):
             p = r / "signoff/block-manifest.json"
-            p.write_text(p.read_text().replace('"8.analog": {"file": "signoff/attest/item8.json", "content_hash": "sha256:0',
-                                               '"8.analog": {"file": "signoff/attest/item8.json", "content_hash": "sha256:1'))
+            before = p.read_text()
+            d = json.loads(before)
+            entry = d["evidence"]["8.analog"]
+            h = entry["content_hash"]
+            # flip the last hex digit: independent of layout and leading digit
+            entry["content_hash"] = h[:-1] + ("0" if h[-1] != "0" else "1")
+            p.write_text(json.dumps(d, indent=2) + "\n")
+            self.assertNotEqual(p.read_text(), before)
         self.assertNotEqual(self.scenario(edit, "--check").returncode, 0)
 
     def test_changed_record_makes_report_stale(self):

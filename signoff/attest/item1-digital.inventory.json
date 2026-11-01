@@ -31,7 +31,7 @@
     },
     {
       "path": "rtl/shift_redundancy.v",
-      "sha256": "sha256:47ec522b18c4309d0872e3e060ac985ec9673419ed58176629158890f6d0bad3"
+      "sha256": "sha256:02d34f722d1fd3e3216350d0cc513934500e354d3bbe248ab87808007f1acf82"
     },
     {
       "path": "design/synth/aib_datapath.synth.json",
