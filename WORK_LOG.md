@@ -2,8 +2,14 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-01
+
+- **PR #101**: Bump Repo Skills 0.24.7 -> 0.25.1
+
 ### 2026-10-31
 
+- **PR #100**: docs: record grounded-gate NMOS scratch probe that clears the channel-eye abort
+- **PR #98**: docs: record stimulus-side bisect of the channel-eye abort (lane-A intrinsic, numerical, not an overshoot)
 - **PR #96**: docs: record cell-level aib_pad_esd bisect of the channel-eye abort
 - **PR #95**: docs: record four-lane channel-eye abort bisect results
 
