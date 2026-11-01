@@ -110,3 +110,6 @@ results.xml
 
 # sim/pdk-smoke records are committed evidence (append-only), so they escape *.log
 !sim/pdk-smoke/records/**/*.log
+
+# Repo Skills Codex-side machine-local install metadata (never committed)
+.agents/skills/repo/.install-local.json
