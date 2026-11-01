@@ -2,7 +2,7 @@
 
 cocotb + Icarus benches. Needs `iverilog` and `cocotb` (2.x); no PDK, no klt.
 
-    python3 verification/run_tb.py                                  # expect exit 0, 81/81
+    python3 verification/run_tb.py                                  # expect exit 0, 41/41
     python3 verification/run_tb.py --define INJECT_BUG_SHIFT_EDGE=1 # expect exit 1
 
 Run it with plain `python3`, not `-I` (isolated mode hides a user-site cocotb).
@@ -14,7 +14,7 @@ A negative control must require exactly 1.
     python3 verification/run_tb.py --bench datapath --param N=20    # also N=8; expect exit 0, 8/8
     python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1   # expect exit 1
 
-- `test_shift_redundancy.py`: T-05 `RTL` row, all 80 single-fault cases plus no-fault.
+- `test_shift_redundancy.py`: T-05 `RTL` row, all 40 single-fault cases (20 positions x 2 channel directions, both vacated wires faulted) plus no-fault.
 - `tb_top.v`: bench top with fault injection (X, stuck-0, stuck-1) on the wires.
 - `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and L1
   (L1 with a decoy on `rx_wire`), mode switch, and the TX/RX cycle-accounting tests.
@@ -23,7 +23,7 @@ A negative control must require exactly 1.
 ## `klt functional-verification` requests (`klt/`)
 
 The same benches through the pinned `klt` (T1 item 5, digital): `shift_redundancy.json`
-(T-05, 81 tests), `datapath_n20.json` and `datapath_n8.json` (T-02, T-03, T-27, T-29),
+(T-05, 41 tests), `datapath_n20.json` and `datapath_n8.json` (T-02, T-03, T-27, T-29),
 and the negative controls `neg_shift_edge.json` and `neg_extra_stage.json`, which must
 exit 3. `klt/run_evidence.py` runs all of them plus the STA and writes the envelopes
 to `signoff/attest/item5-digital/` (see `signoff/README.md`). The klt verdict comes

@@ -13,7 +13,7 @@
     "corner": "slow_1p08V_125C"
   },
   "rtl_revision": {
-    "shift_redundancy_v_last_commit": "42fa21ca9fa178a70b06cea249bd5a17eb8eec13",
+    "shift_redundancy_v_last_commit": "4f8a6740415426e42fe8ecea6db72904f6cd9e46",
     "note": "rtl/shift_redundancy.v is not instantiated by aib_datapath; the netlist does not depend on it. Re-synthesize after the T-05 decision (#29, PR #32)."
   },
   "files": [
@@ -31,7 +31,7 @@
     },
     {
       "path": "rtl/shift_redundancy.v",
-      "sha256": "sha256:47ec522b18c4309d0872e3e060ac985ec9673419ed58176629158890f6d0bad3"
+      "sha256": "sha256:4ea69d21ef6ef15cc0c7fd4a8a6e3bf939a7edf58b06c28b60cebf11ff8ab224"
     },
     {
       "path": "design/synth/aib_datapath.synth.json",
