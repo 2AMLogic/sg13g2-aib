@@ -13,32 +13,33 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-_None._
+- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ## Important
 
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
-- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#98**: docs: record stimulus-side bisect of the channel-eye abort (lane-A intrinsic, numerical, not an overshoot)
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -72,11 +73,11 @@ _None._
 | Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 1 |
-| Very important | 0 |
-| Important | 1 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 1 |
+| Very important | 1 |
+| Important | 2 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
 | Curated | 8 |
 | Architect / Hermit proposals | 0 |
