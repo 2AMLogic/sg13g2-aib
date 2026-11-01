@@ -4,6 +4,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-01
 
+- **PR #32**: spec: propose two-signal shift with both spares at one end (T-05, DR-0016)
 - **PR #101**: Bump Repo Skills 0.24.7 -> 0.25.1
 
 ### 2026-10-31
