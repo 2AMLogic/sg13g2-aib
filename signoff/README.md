@@ -94,7 +94,7 @@ records stay. Re-check with `klt drc --check <report>`.
 `4.digital` cites the `klt lvs` report `layout/lvs/digital.report.json` directly (an `lvs`-kind
 check: `status: match` and `power_connectivity.status` not `mismatch`; here both are `match`).
 `4.analog` cites `layout/lvs/aib_io_column.report.json`, one `klt lvs` of the whole analog stream
-(top `aib_io_column`, 48 I/O units, 2928 devices) against a generated reference; it is `status: match`
+(top `aib_io_column`, 48 I/O units, 3360 devices) against a generated reference; it is `status: match`
 and reads `met`. Item 4 takes one report per partition (2AMLogic/klayout-tools#4354), so the four
 per-cell reports (all `match`, issue #70) are not cited; they localise, the column report is the claim.
 `power_connectivity` is `unchecked` there, because the `subckt-call` reference carries its own power pins

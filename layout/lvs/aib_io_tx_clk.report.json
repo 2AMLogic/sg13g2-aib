@@ -126,9 +126,9 @@
       "matched": 25
     },
     "devices": {
-      "layout": 178,
-      "reference": 178,
-      "matched": 178
+      "layout": 196,
+      "reference": 196,
+      "matched": 196
     },
     "pins": {
       "layout": 9,
@@ -151,8 +151,8 @@
     "engine": "klayout",
     "engine_version": "0.30.12",
     "netgen_binary": null,
-    "layout_sha256": "97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
-    "reference_sha256": "0d0cee37ac2dbd0413a0cb5570d647b234d32127291fc4532a7ef204c2a4d24d",
+    "layout_sha256": "2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
+    "reference_sha256": "7727b542f22eee18d5d6ab5292a881ab6c0728ed307851990bad54e9cc3bbf2b",
     "extracted_netlist": null
   },
   "provenance": {
@@ -165,7 +165,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+      "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
       "role": "layout"
     },
     "klayout_version_mismatch": false
@@ -228,12 +228,12 @@
   ],
   "net_correspondence": [
     {
-      "layout": "\\$9",
+      "layout": "\\$8",
       "reference": "ATX/GN",
       "pin": false
     },
     {
-      "layout": "\\$10",
+      "layout": "\\$9",
       "reference": "ATX/GP",
       "pin": false
     },
@@ -243,32 +243,32 @@
       "pin": false
     },
     {
-      "layout": "\\$12",
+      "layout": "\\$11",
       "reference": "ATX/NB",
       "pin": false
     },
     {
-      "layout": "\\$11",
+      "layout": "\\$10",
       "reference": "ATX/OEB",
       "pin": false
     },
     {
-      "layout": "\\$21",
+      "layout": "\\$20",
       "reference": "ATX/PDX",
       "pin": false
     },
     {
-      "layout": "\\$20",
+      "layout": "\\$21",
       "reference": "ATX/PUX",
       "pin": false
     },
     {
-      "layout": "\\$15",
+      "layout": "\\$14",
       "reference": "BTX/GN",
       "pin": false
     },
     {
-      "layout": "\\$13",
+      "layout": "\\$12",
       "reference": "BTX/GP",
       "pin": false
     },
@@ -278,7 +278,7 @@
       "pin": false
     },
     {
-      "layout": "\\$14",
+      "layout": "\\$13",
       "reference": "BTX/NB",
       "pin": false
     },
@@ -323,12 +323,12 @@
       "pin": true
     },
     {
-      "layout": "\\$5",
+      "layout": "\\$3",
       "reference": "PADI_A",
       "pin": false
     },
     {
-      "layout": "\\$8",
+      "layout": "\\$7",
       "reference": "PADI_B",
       "pin": false
     },

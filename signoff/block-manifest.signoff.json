@@ -108,7 +108,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+        "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -117,13 +117,13 @@
             "path": "layout/aib_io_column.gds",
             "scope": "repo"
           },
-          "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+          "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
           "input_verified": true,
           "summary": "T1 item 2 (Layout): committed stream regenerates to identical geometry from layout/gen_io_column.py and passes the structural checks in layout/check_io_column.py; not DRC, LVS or extraction evidence",
           "source": "layout/aib_io_column.gds",
           "regeneration": {
             "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-            "regenerated_hash": "sha256:51f849180ee7513b46423782e91b9ab4dff68eae9ecff73fbedc656eaefe9691",
+            "regenerated_hash": "sha256:39691300a0e44574fcb7908f9f19bde3cd8220a8db337134deaadabd6ae9cbec",
             "executed_by_klt": false,
             "hash_kind": "geometry"
           }
@@ -180,11 +180,11 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "layout/records/20261027T072103Z/drc_analog.json",
+        "file": "layout/records/20261102T164758Z/drc_analog.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
-        "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+        "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
         "input_verified": true,
         "exit_status": 0,
         "coverage": {
@@ -323,7 +323,7 @@
         "command": null,
         "kind": "lvs",
         "check_status": "match",
-        "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+        "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
         "input_verified": true,
         "exit_status": 0
       }
@@ -738,7 +738,7 @@
         "command": null,
         "kind": "erc",
         "check_status": "not_checked",
-        "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+        "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
         "input_verified": true,
         "exit_status": 0,
         "parts": [
@@ -747,7 +747,7 @@
             "command": null,
             "kind": "erc",
             "check_status": "not_checked",
-            "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+            "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
             "input_verified": true,
             "exit_status": 0
           },
@@ -756,7 +756,7 @@
             "command": null,
             "kind": "lvs",
             "check_status": "match",
-            "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+            "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
             "input_verified": true,
             "exit_status": 0
           }

@@ -7,7 +7,7 @@ gate-level netlist.
 | Partition | Result | Row |
 |---|---|---|
 | Digital (`aib_datapath`) | `status: match`, `power_connectivity.status: match` | `4.digital` reads `met` |
-| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 2928 / 2928 devices, 341 / 341 nets, 101 / 101 pins | `4.analog` reads `met`, citing `aib_io_column.report.json` |
+| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 3360 / 3360 devices, 341 / 341 nets, 101 / 101 pins | `4.analog` reads `met`, citing `aib_io_column.report.json` |
 | Analog, per cell (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | `status: match` on all four (stream regenerated, issue #70; the earlier stream was `mismatch`) | not cited: item 4 takes one report per partition (2AMLogic/klayout-tools#4354) |
 
 Issue #40 recorded the analog result as a mismatch and did not change the generator. Issue #70 fixed the
@@ -86,7 +86,8 @@ not transistors. Results:
 ## Analog
 
 Device recognition (the question the issue asked first): the `sg13g2` deck extracts every device in the
-drawn cells, including the ESD structure. For `aib_io_tx`: `dantenna` 1, `dpantenna` 2, `rppd` 3, and the
+drawn cells, including the ESD structure. (As first recorded, for `aib_io_tx`: `dantenna` 1;
+since issue #94 the PAD-to-VSS element `Mn1` is a grounded-gate `nfet` and the `dantenna` count is 0.) For `aib_io_tx`: `dantenna` 1, `dpantenna` 2, `rppd` 3, and the
 clamp NMOS fingers among 45 `nfet`. No device is left unrecognised, so no deck gap is filed for the ESD
 devices. The drawn layout does not carry labels on the datatype the deck reads by default (the generator
 writes datatype 1), so the requests pass `layout.label_layers`; with it the pins extract as named
@@ -126,7 +127,7 @@ are not evidence about the current stream.
 Column compare (issue #40, the `4.analog` citation): `aib_io_column.request.json` extracts the top
 cell (the TX column then the RX column; spares and the clk/clkb pair are ordinary units) and compares
 it to a reference of 24 TX and 24 RX units on shared `OE`/`PUN`/`PD`/`VDDIO`/`VSS`, built by the same
-`gen_reference.py` from the same item 1 netlists. Result: `status: match`, devices 2928/2928, nets
+`gen_reference.py` from the same item 1 netlists. Result: `status: match`, devices 3360/3360, nets
 341/341, pins 101/101; warnings `device.geometry_not_compared`, `device.placeholder_value` (the
 `rppd` value is not compared, as in the cell reports) and 45 `topology` entries (listed in the report).
 `--check` exits 0 and `--check --rerun` exits 0. The negative control (`neg/`) reports `mismatch`
@@ -148,3 +149,17 @@ Not covered, and so not claimed:
 - A second engine (`netgen`) was not run.
 - `klt signoff` item 4 accepts one report per partition (2AMLogic/klayout-tools#4354), so the four
   per-cell reports cannot be cited together; the column report is cited instead.
+
+## Issue #94: `Mn1` replaces the `Dn1` diode
+
+`design/aib_pad_esd.spice` now has `XMn1` (grounded-gate `sg13_lv_nmos`, `w=20u l=0.13u ng=10`, drain `PAD`)
+in place of the `dantenna` `XDn1`, because the 141 ns four-lane channel-eye bench aborted on `XDn1`
+(`sim/README.md`, issue #94). `gen_io_column.py` draws it as ten 2 um fingers, the references were
+regenerated (`gen_reference.py`, `--check` clean), and the five compares were re-run with klt 0.8.0:
+column `match` (3360/3360 devices, 341/341 nets, 101/101 pins), the four cells `match`;
+`--check --rerun` exits 0 on all five. The negative control was rebuilt on the new reference (one
+`device.unmatched`, exit 3). The `*.diag.*` files are untouched history and do not reproduce.
+For `aib_io_tx_clk` and `aib_io_rx_clk` the numbering klt gives the repeated `DIN`/`DOUT` labels
+changed with the layout, so which label shares a unit with `PAD` is now set by `CLK_DIN` / `CLK_DOUT`
+in `gen_reference.py` (read by trying both pairings; the wrong one reports `device.unmatched` on
+the receiver output stage and nothing else). Bookkeeping between identical units, not an electrical claim.
