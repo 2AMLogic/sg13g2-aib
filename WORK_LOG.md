@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-01
 
+- **PR #108**: feat(rtl): rewrite T-05 shift remap to DR-0016 layout, state 22-cell span
+- **Issue #105** (closed): T-05 after DR-0016: rewrite the RTL to the two-signal shift with both spares at one end, and state the 22-cell span in the clock-tree record
 - **PR #32**: spec: propose two-signal shift with both spares at one end (T-05, DR-0016)
 - **PR #101**: Bump Repo Skills 0.24.7 -> 0.25.1
 

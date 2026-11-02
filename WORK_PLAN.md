@@ -26,14 +26,13 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
-- **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
 - **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
 
 ## PRs Awaiting Review
 
@@ -76,8 +75,8 @@ _None._
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 1 |
-| Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 0 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 9 |
