@@ -6,9 +6,11 @@
 #   sim/channel-eye/run_channel_eye.sh control  # bench positive control, one corner, fixed-PMOS TX copy (not design evidence)
 #
 # Every run is a `klt sim` request on the batch fleet; there is no local loop and no
-# fallback: a failed submit is reported and the script exits non-zero. 45 corners x ~1100 s
-# of ngspice each (now ~25 s) is split into jobs of 1 unit: the fleet rejects more with timeout_s 2400 under its
-# 3600 s whole-job ceiling. Writes a new, never-overwritten record under
+# fallback: a failed submit is reported and the script exits non-zero. The 45 corners are
+# split into jobs of 1 unit each: with timeout_s 2400 the fleet rejects more per job
+# (batch_max_units_per_job_invalid). Per-corner ngspice cost was ~1100 s before the Mn1
+# change and about 22 s after it (sim/README.md, channel-eye section, items 3 and the
+# "Measured" paragraph). Writes a new, never-overwritten record under
 # sim/channel-eye/records/<UTC>-<kind>/. Needs PDK_ROOT (see sim/README.md) and uvx.
 set -euo pipefail
 

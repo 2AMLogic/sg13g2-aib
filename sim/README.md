@@ -311,6 +311,10 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
+   *Correction (PR #113):* the script now uses 1 unit per job, because with `timeout_s` 2400
+   the fleet rejects more (`batch_max_units_per_job_invalid`); the "at most 3 units" above
+   is the superseded behaviour, kept as history. The ~1100 s corner cost is also superseded
+   (about 22 s per full run, see Measured above).
 4. *Tooling.* The fleet runner is klt 0.7.0 and refuses the pinned 0.8.0 client, so the
    requests set `batch.runner_version_check: "warn"`; a 0.7.0 client lacks `--dry-run`,
    `--report-out` and rejects `osdi_preload` on the batch backend. Fleet launches were
