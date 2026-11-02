@@ -28,6 +28,8 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 DESIGN = os.path.join(ROOT, "design")
 OUT = os.path.join(ROOT, "layout", "lvs")
 SOURCES = ["aib_pad_esd", "aib_tx_data", "aib_rx_data", "aib_tx_clk", "aib_rx_clk"]
+CLK_DIN = ("DIN$1", "DIN")      # the DIN label that shares a unit with PAD, PAD$1 in the drawn tx pair
+CLK_DOUT = ("DOUT$1", "DOUT")    # same for the rx pair
 PAD_OF_DIN = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9, 5: 11, 6: 13, 7: 15, 8: 17, 9: 19, 10: 21, 11: 23, 12: 0, 13: 2, 14: 4, 15: 6, 16: 8, 17: 10, 18: 12, 19: 14, 20: 16, 21: 18, 22: 20, 23: 22}
 PAD_OF_DOUT = {0: 24, 1: 26, 2: 27, 3: 28, 4: 29, 5: 31, 6: 32, 7: 33, 8: 34, 9: 35, 10: 36, 11: 37, 12: 38, 13: 39, 14: 40, 15: 41, 16: 42, 17: 43, 18: 44, 19: 45, 20: 46, 21: 47, 22: 25, 23: 30}
 
@@ -152,15 +154,16 @@ def build():
     files["aib_io_rx"] = cell(subs, "aib_io_rx", ["DOUT", "PAD", "VDDIO", "VSS"],
                               [esd("", "PAD", "PADI"), rx("", "PADI", "DOUT")])
     # clk/clkb pair: two units sharing OE/PUN/PD and the rails. klt names the repeated labels
-    # DIN, DIN$1 and PAD, PAD$1; DIN pairs with PAD and DIN$1 with PAD$1.
+    # DIN, DIN$1 and PAD, PAD$1 in its own extraction order, which is not stable: it is re-read from
+    # the extracted pair after any layout change (CLK_PAD_OF_*, read from the compare of the drawn pair).
     files["aib_io_tx_clk"] = cell(
         subs, "aib_io_tx_clk", ["DIN", "DIN$1", "OE", "PAD", "PAD$1", "PD", "PUN", "VDDIO", "VSS"],
-        [esd("a", "PAD", "PADI_A"), tx("a", "DIN", "PAD"), esd("b", "PAD$1", "PADI_B"),
-         tx("b", "DIN$1", "PAD$1")])
+        [esd("a", "PAD", "PADI_A"), tx("a", CLK_DIN[0], "PAD"), esd("b", "PAD$1", "PADI_B"),
+         tx("b", CLK_DIN[1], "PAD$1")])
     files["aib_io_rx_clk"] = cell(
         subs, "aib_io_rx_clk", ["DOUT", "DOUT$1", "PAD", "PAD$1", "VDDIO", "VSS"],
-        [esd("a", "PAD", "PADI_A"), rx("a", "PADI_A", "DOUT"), esd("b", "PAD$1", "PADI_B"),
-         rx("b", "PADI_B", "DOUT$1")])
+        [esd("a", "PAD", "PADI_A"), rx("a", "PADI_A", CLK_DOUT[0]), esd("b", "PAD$1", "PADI_B"),
+         rx("b", "PADI_B", CLK_DOUT[1])])
     # Whole analog partition (top aib_io_column): 24 TX units then 24 RX units on shared OE/PUN/PD
     # and the rails. klt labels the repeated pins DIN, DIN$1, ... / DOUT, ... / PAD, PAD$1, ... in
     # its own extraction order, which does not follow the slot order, so which DIN$i shares a unit

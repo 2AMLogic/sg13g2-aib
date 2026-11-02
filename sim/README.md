@@ -271,6 +271,31 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    #53 Revision step 1 is therefore still not satisfied on `main`; increment 2 (the `design/`
    change with `gen_io_column.py`, GDS, `layout/lvs` references, LVS and DRC) is next. No bound
    changed, no 45-corner grid submitted.
+   **Committed cell (issue #94 increment 2, fleet, `klt` 0.8.0, `--backend batch`, single unit
+   each; unrecorded probes, not a PVT record).** `design/aib_pad_esd.spice` now carries the
+   increment 1 variant a as `XMn1` (`sg13_lv_nmos w=20u l=0.13u ng=10`, drain `PAD`, gate, source
+   and bulk `VSS`) in place of the `dantenna` `XDn1`; layout, references and LVS/DRC changed
+   with it (`layout/lvs/README.md`). The unmodified `tb_ch.cir` / `tb_tc.cir` were probed
+   (`req_commit_{ch,tc}_{tt,ss}.json`, derived from the increment 1 requests with only the
+   netlist replaced), full 141 ns bench:
+   | Probe | Job | Result |
+   |---|---|---|
+   | CH, `mos_tt` 1.20 V 27 C | `klt-sim-949909e6cbbf` | no abort, 25.7 s; status `fail`; 75/75 returned |
+   | TC, `mos_tt` 1.20 V 27 C | `klt-sim-5c43c36cb843` | status `pass`; 22/22 returned, 27.9 s |
+   | CH, `mos_ss` 1.08 V -40 C | `klt-sim-a5239641b9b8` | no abort, 25.4 s; status `fail`; 75/75 returned |
+   | TC, `mos_ss` 1.08 V -40 C | `klt-sim-ea93d09c0e0a` | status `pass`; 22/22 returned, 28.4 s |
+   Measured: the abort is gone on the committed cell at both corners for both benches; T-01 edge
+   counts are 64 on both lanes in all four runs (limits 63.5-64.5); the `.meas INTEG` rows
+   (T-09 dwell, T-26: 0.425 pJ/bit CH and 0.518 pJ/bit TC at `mos_tt`, simulated) and T-15/T-16
+   return values; T-18 eye height 0.411 V (`mos_tt`) / 0.322 V (`mos_ss`) on CH. The CH `fail` is
+   the same measurement limit as in increment 1, not a solver failure: `t16_df_cr_long` and
+   `t16_df_cf_long` miss by 1.8 / 2.0 ps at `mos_tt` and by 26.5 / 26.7 ps at `mos_ss`; nothing
+   was loosened and the rows are for #53 to judge. CH rows hold for the modeled channel; TC rows
+   are the test configuration. The fix is a cell change, not a bench change, and no limit moved.
+   Not established: the full 45-corner grid (not submitted, #53); Monte Carlo; that the NMOS
+   drain junction is the right ESD structure (a T-25 question, no T-24/T-25 claim is made).
+   #53 Revision step 1 (a single-corner probe that completes) is satisfied on the committed
+   design at these two corners.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).

@@ -120,10 +120,10 @@ RX_DEVICES = [
 # aib_pad_esd: diodes (anode, cathode), clamp, series resistor.
 ESD_DIODES = [
     ("Dp1", "p", 10.0, "PAD", "VDDIO"),    # p+ in nwell: anode PAD, nwell VDDIO
-    ("Dn1", "n", 10.0, "PAD", "VSS"),      # n+ in psub: cathode PAD, substrate VSS
     ("Dp2", "p", 2.0, "PADI", "VDDIO"),
 ]
 # Secondary NMOS-side element: grounded-gate NMOS junction (D=PADI, G=S=B=VSS), not a diode.
+ESD_MN1 = ("Mn1", "nmos", 2.0, 0.13, 10, dict(D="PAD", G="VSS", S="VSS"))
 ESD_MN2 = ("Mn2", "nmos", 1.0, 0.13, 1, dict(D="PADI", G="VSS", S="VSS"))
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
 ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
@@ -179,10 +179,11 @@ def check_against_netlists(design_dir):
             assert nodes[:2] == [a, b] and nodes[2] == "dpantenna", name
         else:
             assert nodes[:2] == [b, a] and nodes[2] == "dantenna", name
-    nodes, kv = esd[ESD_MN2[0]]
-    assert nodes[:4] == ["PADI", "VSS", "VSS", "VSS"] and nodes[4].endswith(ESD_MN2[1]), ESD_MN2[0]
-    assert abs(num(kv["w"]) - ESD_MN2[2] * ESD_MN2[4]) < 1e-9 and abs(num(kv["l"]) - ESD_MN2[3]) < 1e-9, ESD_MN2[0]
-    assert int(kv["ng"]) == ESD_MN2[4], ESD_MN2[0]
+    for tbl, drain in ((ESD_MN1, "PAD"), (ESD_MN2, "PADI")):
+        nodes, kv = esd[tbl[0]]
+        assert nodes[:4] == [drain, "VSS", "VSS", "VSS"] and nodes[4].endswith(tbl[1]), tbl[0]
+        assert abs(num(kv["w"]) - tbl[2] * tbl[4]) < 1e-9 and abs(num(kv["l"]) - tbl[3]) < 1e-9, tbl[0]
+        assert int(kv["ng"]) == tbl[4], tbl[0]
     nodes, kv = esd["Resd"]
     assert nodes[:2] == ["PAD", "PADI"] and abs(num(kv["w"]) - 2.0) < 1e-9
     tx = parse(os.path.join(design_dir, "aib_tx_data.spice"))
@@ -619,10 +620,12 @@ def build_unit(layout, name, tx):
 
     # --- ESD block (aib_pad_esd) --------------------------------------------
     band_row = 5
-    # Dn1 / Dp1 / clamp / Resd / small diodes, left to right, one band.
+    # Mn1 / Dp1 / clamp / Resd / small diodes, left to right, one band.
     c_dn1 = col_of(3.2 + 5.8)
     r_dn1 = band_row + 8
-    diode(ctx, "Dn1", "n", 10.0, c_dn1, r_dn1, "PAD", "VSS")
+    # Mn1: grounded-gate nmos w=2 l=0.13 ng=10 (D=PAD, G=S=B=VSS), the PAD-to-VSS drain-junction diode.
+    mos(ctx, "nmos", 2.0, 0.13, 10, 4.4, band_row + 5,
+        dict(D="PAD", G="VSS", S="VSS"), "Mn1", gate_row=band_row + 8)
     c_dp1 = col_of(gx(c_dn1) + 5.8 + 1.6 + 6.05)
     diode(ctx, "Dp1", "p", 10.0, c_dp1, r_dn1, "PAD", "VDDIO")
     xr = gx(c_dp1) + 6.4

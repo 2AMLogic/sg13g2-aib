@@ -126,9 +126,9 @@
       "matched": 6
     },
     "devices": {
-      "layout": 33,
-      "reference": 33,
-      "matched": 33
+      "layout": 42,
+      "reference": 42,
+      "matched": 42
     },
     "pins": {
       "layout": 4,
@@ -151,8 +151,8 @@
     "engine": "klayout",
     "engine_version": "0.30.12",
     "netgen_binary": null,
-    "layout_sha256": "97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
-    "reference_sha256": "9ccb4006ecc7770aa572cb72b6e80e9691daff9a579e0a0db54c488b8e750a52",
+    "layout_sha256": "2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
+    "reference_sha256": "871a5905cf979b14d09299c061dd3251194ec22102c7c2322fa9455e43f6e86c",
     "extracted_netlist": null
   },
   "provenance": {
@@ -165,7 +165,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:97c8c35d25bd18d7ac6a91f431be273701dc6bb8501041cd5adb584e9b391ce6",
+      "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
       "role": "layout"
     },
     "klayout_version_mismatch": false

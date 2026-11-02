@@ -1,6 +1,7 @@
 v {xschem version=3.4.7 file_version=1.3
 * aib_pad_esd -- pad protection structure for one AIB-class I/O pin.
-* Topology only: primary diode pair + rail clamp at PAD, series resistor
+* Topology only: primary pair + rail clamp at PAD (Dp1 to VDDIO; Mn1 to VSS, a
+* grounded-gate NMOS used as its drain-junction diode, see sim/README.md), series resistor
 * to the core node PADI, small secondary diode pair at PADI (Dp2 to VDDIO; Mn2 to VSS, a
 * grounded-gate NMOS used as its drain-junction diode, see sim/README.md). Thin-oxide
 * devices only (T-06). Sizes are first-cut placeholders; no ESD level
@@ -15,9 +16,11 @@ E {}
 C {sg13g2_pr/dpantenna.sym} 200 200 0 0 {name=Dp1 model=dpantenna l=10u w=10u spiceprefix=X}
 C {lab_pin.sym} 200 230 0 0 {name=l1 lab=PAD}
 C {lab_pin.sym} 200 170 0 0 {name=l2 lab=VDDIO}
-C {sg13g2_pr/dantenna.sym} 420 200 0 0 {name=Dn1 model=dantenna l=10u w=10u spiceprefix=X}
-C {lab_pin.sym} 420 230 0 0 {name=l3 lab=VSS}
-C {lab_pin.sym} 420 170 0 0 {name=l4 lab=PAD}
+C {sg13g2_pr/sg13_lv_nmos.sym} 420 200 0 0 {name=Mn1 model=sg13_lv_nmos w=20u l=0.13u ng=10 m=1}
+C {lab_pin.sym} 440 170 0 0 {name=l3 lab=PAD}
+C {lab_pin.sym} 400 200 0 0 {name=l4 lab=VSS}
+C {lab_pin.sym} 440 230 0 0 {name=l17 lab=VSS}
+C {lab_pin.sym} 440 200 0 0 {name=l18 lab=VSS}
 C {sg13g2_pr/sg13_lv_nmos.sym} 640 200 0 0 {name=Mclamp model=sg13_lv_nmos w=40u l=0.35u ng=20 m=1}
 C {lab_pin.sym} 660 170 0 0 {name=l5 lab=VDDIO}
 C {lab_pin.sym} 620 200 0 0 {name=l6 lab=VSS}
