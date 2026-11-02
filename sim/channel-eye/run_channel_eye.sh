@@ -6,9 +6,11 @@
 #   sim/channel-eye/run_channel_eye.sh control  # bench positive control, one corner, fixed-PMOS TX copy (not design evidence)
 #
 # Every run is a `klt sim` request on the batch fleet; there is no local loop and no
-# fallback: a failed submit is reported and the script exits non-zero. 45 corners x ~1100 s
-# of ngspice each is split into jobs of at most 3 units so none outruns the fleet's
-# 3600 s whole-job ceiling. Writes a new, never-overwritten record under
+# fallback: a failed submit is reported and the script exits non-zero. The 45 corners are
+# split into jobs of 1 unit each: with timeout_s 2400 the fleet rejects more per job
+# (batch_max_units_per_job_invalid). Per-corner ngspice cost was ~1100 s before the Mn1
+# change and about 22 s after it (sim/README.md, channel-eye section, items 3 and the
+# "Measured" paragraph). Writes a new, never-overwritten record under
 # sim/channel-eye/records/<UTC>-<kind>/. Needs PDK_ROOT (see sim/README.md) and uvx.
 set -euo pipefail
 
@@ -33,13 +35,16 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REC="${HERE}/records/${STAMP}-${kind}"
 [[ -e "${REC}" ]] && { echo "run_channel_eye.sh: ${REC} exists (records are append-only)" >&2; exit 4; }
 mkdir -p "${REC}"
-WORK="$(mktemp -d)"; trap 'rm -rf "${WORK}"' EXIT
+WORK="$(mktemp -d)"
+# keep the work dir when the fleet leaves jobs unlaunched, so `klt sim ... --resume -o ${WORK}/out` can finish it
+trap '[[ -n "${KEEP_WORK:-}" ]] || rm -rf "${WORK}"' EXIT
 
 cd "${HERE}"
 rc=0
-"${KLT[@]}" sim "${req}" --backend batch --max-units-per-job 3 -o "${WORK}/out" \
+"${KLT[@]}" sim "${req}" --backend batch --max-units-per-job 1 -o "${WORK}/out" \
   --report-out "${REC}/report.json.gz" --format json > "${WORK}/stdout" 2> "${WORK}/stderr" || rc=$?
 # progress lines name the fleet bucket (an account id): keep them out of the record
+grep -q 'never launched' "${WORK}/stderr" && { KEEP_WORK=1; echo "run_channel_eye.sh: PARTIAL: fleet left jobs unlaunched; resume dir ${WORK}/out" >&2; }
 sed -E 's#s3://[^ /]+#s3://<bucket>#g' "${WORK}/stderr" > "${REC}/klt.stderr"
 # exit 0 = every limit met, 3 = some limit failed (a result), 4 = unmeasurable corners (a result);
 # anything else is a tool/fleet error: report it, do not fall back to a local run.

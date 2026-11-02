@@ -296,9 +296,25 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    drain junction is the right ESD structure (a T-25 question, no T-24/T-25 claim is made).
    #53 Revision step 1 (a single-corner probe that completes) is satisfied on the committed
    design at these two corners.
+   **45-corner submit attempt (issue #53, 2026-11-02, `main` @ `918ece4`, fleet only; no
+   record written, no row claimed).** `run_channel_eye.sh ch` and `tc` were rejected at first
+   submit (`batch_max_units_per_job_invalid`: with `timeout_s` 2400 the fleet allows 1 unit per
+   job, not 3); the script now uses 1. Re-run as 45 one-unit jobs each, the fleet launched only
+   part of them (`... submitted but never launched`): first attempt CH 15/45 and TC 18/45
+   corners ran, second attempt 5 and 7. `--resume` raised TC to 38/45 corners done, then the
+   remaining 7 jobs stayed `no status.json yet` for over 20 min; CH `--resume` failed with
+   `resume_fingerprint_mismatch`. Partial results are not a PVT record and were not committed.
+   Of the CH corners that did run in the first attempt, 9 returned status `fail`
+   (the `t16_df_*_long` limits seen above) and 6 `pass`; TC 18 of 18 `pass`. Same fleet
+   capacity symptom as reported on #54. The script now keeps its resume directory when jobs
+   are left unlaunched.
 3. *Cost.* About 8 s of ngspice per ns of stimulus (`mos_tt`): ~1100 s for one 141 ns corner,
    so 45 corners are ~14 serial hours; `run_channel_eye.sh` splits them into jobs of at
    most 3 units (fleet job ceiling 3600 s).
+   *Correction (PR #113):* the script now uses 1 unit per job, because with `timeout_s` 2400
+   the fleet rejects more (`batch_max_units_per_job_invalid`); the "at most 3 units" above
+   is the superseded behaviour, kept as history. The ~1100 s corner cost is also superseded
+   (about 22 s per full run, see Measured above).
 4. *Tooling.* The fleet runner is klt 0.7.0 and refuses the pinned 0.8.0 client, so the
    requests set `batch.runner_version_check: "warn"`; a 0.7.0 client lacks `--dry-run`,
    `--report-out` and rejects `osdi_preload` on the batch backend. Fleet launches were
