@@ -2,8 +2,14 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-03
+
+- **PR #114**: chore(sim): drop variant-b scratch94 probe inputs, keep variant a
+- **Issue #111** (closed): Remove sim/channel-eye/scratch94: superseded #94 probe inputs (~2960 lines)
+
 ### 2026-11-02
 
+- **PR #113**: fix(sim): run channel-eye grid as one-unit batch jobs and keep resume dir
 - **PR #110**: fix(design): replace pad-ESD Dn1 dantenna with grounded-gate NMOS Mn1 so the channel-eye transient completes
 - **Issue #94** (closed): channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
