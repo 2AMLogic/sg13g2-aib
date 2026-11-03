@@ -242,7 +242,8 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    Scratch cell copies in `channel-eye/scratch94/` (`design/` untouched) replace `XDn1`
    (PAD to VSS `dantenna` 10u x 10u) with an `sg13_lv_nmos` whose drain is `PAD` and whose
    gate, source and bulk are `VSS` (the #60 `XMn2` pattern): variant a `w=20u l=0.13u ng=10`,
-   variant b `w=4u l=0.13u ng=2`. All rows `mos_tt` / 1.20 V / 27 C unless stated.
+   variant b `w=4u l=0.13u ng=2` (variant b is the lane A probe row only; its scratch copies were dropped
+   from the repo per the #111 operator ruling, and only variant a is kept). All rows `mos_tt` / 1.20 V / 27 C unless stated.
    | Probe | Job | Result |
    |---|---|---|
    | lane A, CH, variant a, `tran 2p 45n` | `klt-sim-0157da63ede9` | completes, 1.9 s (committed cell aborts at 22.4664 ns) |
