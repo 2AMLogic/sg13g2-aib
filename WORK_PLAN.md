@@ -13,20 +13,20 @@ _None._
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
+_None._
 
 ## Important
 
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26)
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
-- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ## In Progress
 
@@ -58,11 +58,10 @@ Issues carrying `loom:curated`.
 - **#52**: T1 item 5 (analog) family: DC static characteristics PVT-FULL (T-06/T-07/T-08/T-11/T-24/T-28) *(curated)*
 - **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26) *(curated)*
 - **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02) *(curated)*
-- **#94**: channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-_None._
+- **#103**: Remove superseded LVS diagnostic set and --diagnostic generator path *(hermit)*
 
 ## Epics
 
@@ -73,13 +72,13 @@ _None._
 | Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Very important | 1 |
-| Important | 1 |
-| Ready (`loom:issue`) | 2 |
+| Very important | 0 |
+| Important | 2 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 9 |
-| Architect / Hermit proposals | 0 |
+| Curated | 8 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
