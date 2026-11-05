@@ -2,6 +2,13 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-05
+
+- **PR #121**: refactor(signoff): build item 2 envelopes with klt signoff --attest 2
+- **PR #119**: feat(signoff): pin klt 0.9.0 and grade item 11 digital met
+- **Issue #120** (closed): Replace hand-built item 2 attest scripts with klt signoff --attest 2 (available in pinned 0.9.0)
+- **Issue #83** (closed): T1 item 11 (power delivery, digital): re-grade 11.digital under the klt release carrying klayout-tools#4199 (tapless PDN)
+
 ### 2026-11-03
 
 - **PR #114**: chore(sim): drop variant-b scratch94 probe inputs, keep variant a
