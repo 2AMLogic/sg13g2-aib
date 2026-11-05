@@ -7,33 +7,33 @@
    "role": "gate"
   },
   {
-   "name": "metal1",
+   "name": "Metal1",
    "layer": "8/0",
    "label_layer": "8/25"
   },
   {
-   "name": "metal2",
+   "name": "Metal2",
    "layer": "10/0"
   },
   {
-   "name": "metal3",
+   "name": "Metal3",
    "layer": "30/0",
    "label_layer": "30/25"
   },
   {
-   "name": "metal4",
+   "name": "Metal4",
    "layer": "50/0"
   },
   {
-   "name": "metal5",
+   "name": "Metal5",
    "layer": "67/0"
   },
   {
-   "name": "topmetal1",
+   "name": "TopMetal1",
    "layer": "126/0"
   },
   {
-   "name": "topmetal2",
+   "name": "TopMetal2",
    "layer": "134/0",
    "label_layer": "134/25"
   }
@@ -44,55 +44,55 @@
    "layer": "6/0",
    "between": [
     "gate",
-    "metal1"
+    "Metal1"
    ]
   },
   {
    "name": "via1",
    "layer": "19/0",
    "between": [
-    "metal1",
-    "metal2"
+    "Metal1",
+    "Metal2"
    ]
   },
   {
    "name": "via2",
    "layer": "29/0",
    "between": [
-    "metal2",
-    "metal3"
+    "Metal2",
+    "Metal3"
    ]
   },
   {
    "name": "via3",
    "layer": "49/0",
    "between": [
-    "metal3",
-    "metal4"
+    "Metal3",
+    "Metal4"
    ]
   },
   {
    "name": "via4",
    "layer": "66/0",
    "between": [
-    "metal4",
-    "metal5"
+    "Metal4",
+    "Metal5"
    ]
   },
   {
    "name": "topvia1",
    "layer": "125/0",
    "between": [
-    "metal5",
-    "topmetal1"
+    "Metal5",
+    "TopMetal1"
    ]
   },
   {
    "name": "topvia2",
    "layer": "133/0",
    "between": [
-    "topmetal1",
-    "topmetal2"
+    "TopMetal1",
+    "TopMetal2"
    ]
   }
  ],
@@ -115,7 +115,7 @@
    "tap_requires": [
     "14/0"
    ],
-   "connect_to": "metal1",
+   "connect_to": "Metal1",
    "net": "VSS"
   },
   {
@@ -244,7 +244,7 @@
      155.16
     ]
    ],
-   "connect_to": "metal1",
+   "connect_to": "Metal1",
    "net": "VDD"
   }
  ]

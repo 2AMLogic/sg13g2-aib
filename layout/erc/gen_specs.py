@@ -77,17 +77,30 @@ def ntap_boxes(gds, top_name, whole_polygons):
     return boxes, extra
 
 
-def spec(supply, ground, labels, boxes):
+# The PDK's own metal names, as `klt place-and-route` reports them in `power.straps[].layer`.
+# Item 11 (klt >= 0.9.0) matches those strings exactly against the spec's stackup names, so the
+# digital spec, which is graded against a P&R response, uses them; the I/O-column spec has no P&R
+# response and keeps the lowercase names.
+PDK_NAMES = {"metal1": "Metal1", "metal2": "Metal2", "metal3": "Metal3", "metal4": "Metal4",
+             "metal5": "Metal5", "topmetal1": "TopMetal1", "topmetal2": "TopMetal2"}
+
+
+def spec(supply, ground, labels, boxes, pdk_names=False):
+    n = (lambda name: PDK_NAMES.get(name, name)) if pdk_names else (lambda name: name)
+    stack = stackup(labels)
+    for entry in stack:
+        entry["name"] = n(entry["name"])
+    vias = [dict(v, between=[n(x) for x in v["between"]]) for v in VIAS]
     return {
-        "stackup": stackup(labels),
-        "vias": VIAS,
+        "stackup": stack,
+        "vias": vias,
         "nets": [{"name": supply, "kind": "supply"}, {"name": ground, "kind": "supply"}],
         "ties": [
             {"name": "psub_" + ground.lower(), "well_layer": None,
              "well_complement_of": "31/0", "tap_layer": "1/0", "tap_requires": ["14/0"],
-             "connect_to": "metal1", "net": ground},
+             "connect_to": n("metal1"), "net": ground},
             {"name": "nwell_" + supply.lower(), "well_layer": "31/0", "tap_layer": "1/0",
-             "tap_boxes": boxes, "connect_to": "metal1", "net": supply},
+             "tap_boxes": boxes, "connect_to": n("metal1"), "net": supply},
         ],
     }
 
@@ -106,5 +119,6 @@ write("layout/erc/io_cells.erc-spec.json",
       extra)
 boxes, extra = ntap_boxes(DP_GDS, DP_TOP, whole_polygons=True)
 write("layout/erc/aib_datapath.erc-spec.json",
-      spec("VDD", "VSS", {"metal1": "8/25", "metal3": "30/25", "topmetal2": "134/25"}, boxes),
+      spec("VDD", "VSS", {"metal1": "8/25", "metal3": "30/25", "topmetal2": "134/25"}, boxes,
+           pdk_names=True),
       extra)

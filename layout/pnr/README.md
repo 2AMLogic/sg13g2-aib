@@ -20,7 +20,7 @@ The OpenROAD checkpoints (`*.odb`), the 6 MB parasitics deck, per-corner metrics
 not committed. The report still names them; they regenerate. The report's `*_path` fields hold
 the absolute path of the worktree that produced it; the files sit at the repo paths above.
 
-## Measured (report `status: ok`, `stage_reached: route`, `openroad 26Q3-1510-g6cb3f2b704`, klt 0.8.0)
+## Measured (report `status: ok`, `stage_reached: route`, `openroad 26Q3-1510-g6cb3f2b704`, klt 0.9.0)
 
 Request corner `slow_1p08V_125C`, clock `clk` at 2.0 ns (T-01, 500 MHz; `rx_clk` is not
 constrained, `klt place-and-route` takes one clock).
@@ -34,14 +34,15 @@ constrained, `klt place-and-route` takes one clock).
 | worst setup / hold slack over the 6 shipped liberty corners | 0.494 ns / 0.141 ns |
 | `power.pdn` / `power.global_connect` | true / true |
 | `power.tapcell_master` / `endcap_master` | null / null (the library ships neither) |
+| `power.tapless` | true (klt 0.9.0 states it for `sg13g2_stdcell`) |
 
 Slacks are the tool's estimates from global-route parasitics. The post-route SPEF pass
 (`spef_sta`) annotated 241 of 421 design nets (`annotation_complete: false`), so its slack
 (0.509 ns) is a cross-check only, and the SPEF/SDF are not timing signoff.
 
-**Item 11 (digital) will not read `met` from this run**: the grader asks for a named
-`power.tapcell_master` and this library has none. Not weakened locally; the gap is already tracked upstream as
-`2AMLogic/klayout-tools#4199` (item 11 grades a built PDN `no_pdn` on a tapless library).
+**Item 11 (digital)** reads `met` from this run under klt 0.9.0: the library ships no
+tapcell master, and the grader accepts `power.tapless: true` in its place
+(`2AMLogic/klayout-tools#4199`). Under klt 0.8.0 it read `no_pdn`. The request is unchanged.
 
 ## Reproduce and check
 

@@ -26,8 +26,11 @@ Result: each supply resolves to one island; no `erc.unconnected_net`, `erc.suppl
   (`status: not_checked`) while `erc_status` is `clean`; item 11 grades `erc_status`.
 - **Seeded check.** Clearing every Via2 shape in a scratch copy of the I/O column makes the
   analog spec report 313 `erc.missing_tie` findings, so the spec measures what it claims.
-- **Digital row stays `unmet`** (`no_pdn`): the routed result has no tapcell master. See
-  `signoff/README.md`.
+- **Digital stackup names are the PDK's** (`Metal1`..`TopMetal2`), not lowercase: item 11 under
+  klt 0.9.0 matches the P&R response's `power.straps[].layer` against them as exact strings, and
+  a mismatch grades `supply_spec_incomplete`. The I/O-column spec has no P&R response and keeps
+  lowercase names. The routed result has no tapcell master (the library ships none); item 11
+  accepts `power.tapless: true`. See `signoff/README.md`.
 
 ## Reproduce
 
