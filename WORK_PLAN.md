@@ -62,6 +62,7 @@ Issues carrying `loom:curated`.
 ## Proposed (Architect / Hermit)
 
 - **#103**: Remove superseded LVS diagnostic set and --diagnostic generator path *(hermit)*
+- **#117**: Remove sim/channel-eye/req_commit_*.json: single-corner copies of request_*_1g.json (~1758 lines) *(hermit)*
 
 ## Epics
 
@@ -79,6 +80,6 @@ _None._
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 8 |
-| Architect / Hermit proposals | 1 |
+| Architect / Hermit proposals | 2 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
