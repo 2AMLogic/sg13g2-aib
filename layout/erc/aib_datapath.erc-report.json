@@ -73,22 +73,32 @@
       "erc.net_connectivity:[\"VSS\"]"
     ],
     "skipped": [],
-    "inapplicable": [],
+    "inapplicable": [
+      {
+        "id": "erc.supply_short",
+        "reason": "substrate_continuity_not_modelled"
+      }
+    ],
     "unknown": [],
     "nothing_checked": false,
     "nothing_checked_reasons": [],
+    "missing_tie_checked": true,
     "checked_by_assertion": [
       "erc.missing_tie:[\"nwell_vdd\"]"
     ],
     "checked_by_well_assertion": [
       "erc.missing_tie:[\"psub_vss\"]"
     ],
-    "layers_in_stream_without_declaration": [],
+    "layers_in_stream_without_declaration": [
+      "63/0"
+    ],
     "well_assertion_coverage": []
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.8.0",
+    "klt_version": "0.9.0",
+    "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
+    "klt_reinstall_spec": "klayout-tools==0.9.0",
     "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
@@ -101,23 +111,23 @@
       "role": "layout"
     },
     "spec": {
-      "content_hash": "sha256:fc3b3cfeb622b1dc6d536f2d16f99132c66cb78020cae0685286fc6205c029b8"
+      "content_hash": "sha256:a91b4091a529163aa09e88ac364955c3bb01b657e73cbdf8f8e43bffa28a2ef2"
     },
     "devices": [],
     "net_exclusions": [],
     "label_layers": [
       {
-        "name": "metal1",
+        "name": "Metal1",
         "label_layer": "8/25",
         "label_text_count": 7523
       },
       {
-        "name": "metal3",
+        "name": "Metal3",
         "label_layer": "30/25",
         "label_text_count": 125
       },
       {
-        "name": "topmetal2",
+        "name": "TopMetal2",
         "label_layer": "134/25",
         "label_text_count": 2
       }

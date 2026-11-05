@@ -17,7 +17,7 @@
         "role": "source",
         "path": "design/aib_pad_esd.sch",
         "passed": true,
-        "content_hash": "sha256:fc8c8b1fb75de5d0d8fab4c43ba91879bd79afe3b331c4a3fa4ee4e1426aaaf2"
+        "content_hash": "sha256:ee7db17f87b79313a4782eba2b24dd8f6230e35629e8aae771c632596f1ff267"
       },
       {
         "check": "present",
@@ -94,7 +94,7 @@
         "role": "derived",
         "path": "design/aib_pad_esd.spice",
         "passed": true,
-        "content_hash": "sha256:c2fb18fe5f61e986c3a30c6b62012b35a3ccea2ea43ca8c663c1dd96679bb7e1"
+        "content_hash": "sha256:f600ebb17b3ba57454b07c7eccfbebcf58f465441b6375cd047e693f3b5b84db"
       },
       {
         "check": "present",
@@ -227,16 +227,133 @@
     ]
   },
   "provenance": {
-    "klt_version": "0.8.0",
+    "klt_version": "0.9.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
     "input": {
-      "path": {
-        "path": "signoff/attest/item1-analog.inventory.json",
-        "scope": "repo"
-      },
-      "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"
+      "paths": [
+        {
+          "path": {
+            "path": "design/aib_pad_esd.sch",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:ee7db17f87b79313a4782eba2b24dd8f6230e35629e8aae771c632596f1ff267"
+        },
+        {
+          "path": {
+            "path": "design/aib_pad_esd.spice",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:f600ebb17b3ba57454b07c7eccfbebcf58f465441b6375cd047e693f3b5b84db"
+        },
+        {
+          "path": {
+            "path": "design/aib_pad_esd.sym",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:faec5ca76a2cf9b3ebd41beaadc768b10a937267cad93acb66fdb7af84a4ef89"
+        },
+        {
+          "path": {
+            "path": "design/aib_rx_clk.sch",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:e6c3f1ef5cbf82ea49b83e8aacca20db3e2fa99542b04ab2212825558a5bdce3"
+        },
+        {
+          "path": {
+            "path": "design/aib_rx_clk.spice",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:0e53de36f4d0d2585452746bb2cb5d35e7c8b0801cdf597efe1dbb7bc01b5b2d"
+        },
+        {
+          "path": {
+            "path": "design/aib_rx_clk.sym",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:130645113f2c0259a0eb83782ec7e106f48405b10adcf7740699536311bb28d9"
+        },
+        {
+          "path": {
+            "path": "design/aib_rx_data.sch",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:81de2401c83db5f14b86d325828b608fdc8f0a67a1e809f751df9245657a35ea"
+        },
+        {
+          "path": {
+            "path": "design/aib_rx_data.spice",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:43f326de980bc5a817d6235ab5402de4aa02886619ead25e7e60c41dfef99eab"
+        },
+        {
+          "path": {
+            "path": "design/aib_rx_data.sym",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:f2429c002d765a623b15027a235473620ea37f350b38104bbd62acd88fcce6db"
+        },
+        {
+          "path": {
+            "path": "design/aib_tx_clk.sch",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:3afeb1d04e15cd68deafcfbde8b0ecf55ff462bb6eff0be3bca2da6996c62a54"
+        },
+        {
+          "path": {
+            "path": "design/aib_tx_clk.spice",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:d2bdf119e914678106c566674093ccc54b75174d76592851cfd98db57dce32ad"
+        },
+        {
+          "path": {
+            "path": "design/aib_tx_clk.sym",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:8239d6882bd53cf4b97b3fd83f74b69d5a1b1455323e69564abbca578c73110a"
+        },
+        {
+          "path": {
+            "path": "design/aib_tx_data.sch",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:ab6667ef5c32c8d5e0f4fd2f7af71ab765c5c4f93e88f0b831d5a65f770e2c86"
+        },
+        {
+          "path": {
+            "path": "design/aib_tx_data.spice",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:adf7d751f8645148fe68be97b8d1ade38a2eadbf5432e05eed059c570850d2d7"
+        },
+        {
+          "path": {
+            "path": "design/aib_tx_data.sym",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:d799facc36e3b7c2504e84dd6dc018856aa2bef06624681cd453cb8e9a0381c0"
+        },
+        {
+          "path": {
+            "path": "design/xschemrc",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:db0e0f6c702da6e275c4e4c2505b72206a463aab9cc78dfb2c928a8e6f7865e0"
+        },
+        {
+          "path": {
+            "path": "signoff/attest/item1-analog.inventory.json",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"
+        }
+      ],
+      "content_hash": "sha256:a3446e26f35fc6bf40ea9f2552ac7ba632b1782ad19f7cb3d17ad77cb80c10e7"
     }
   }
 }

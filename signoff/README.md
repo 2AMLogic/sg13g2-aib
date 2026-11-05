@@ -3,7 +3,7 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
@@ -267,12 +267,28 @@ makes the CI `--check` exit 3 (`drifted`).
 
 `11.analog` cites `layout/erc/io_cells.erc-report.json` plus item 4's analog LVS report and
 reads `met`. `11.digital` cites `layout/erc/aib_datapath.erc-report.json`, the digital LVS report
-and the P&R response (`layout/pnr/request.report.json`), and reads `unmet` with reason `no_pdn`
-(klt 0.8.0): the routed result has `power.pdn: true` but `power.tapcell_master: null` and no
-tapcells, because the standard-cell library ships no tapcell or endcap master. The P&R request
-and the grader are not changed to force it. Upstream: `2AMLogic/klayout-tools#4199` (closed
-2026-10-27); which klt release carries the fix was not traced, and the pin was not bumped (a
-newer klt is a separate pin-bump issue). Evidence and caveats: `layout/erc/README.md`.
+and the P&R response (`layout/pnr/request.report.json`), and reads `met` (klt 0.9.0). The
+standard-cell library ships no tapcell or endcap master, so the routed result has `power.pdn: true`,
+`power.tapcell_master: null` and no tapcells; klt 0.9.0 (`2AMLogic/klayout-tools#4199`, fixed by
+klayout-tools PR #4250) grades that as `met` when the P&R response states `power.tapless: true`,
+which `klt place-and-route` 0.9.0 emits for `sg13g2_stdcell`. Under klt 0.8.0 the row read
+`no_pdn`. Getting to `met` took three steps, none of which changes the P&R request or relaxes a
+check: the P&R report was regenerated under 0.9.0 (same request; the routed GDS, DEF and
+netlist reproduce byte-identically), the digital `klt erc` spec's stackup names were changed to
+the PDK's own `Metal1`..`TopMetal2` (0.9.0 matches `power.straps[].layer` against them exactly;
+`layout/erc/gen_specs.py`), and the ERC report was re-run. Evidence and caveats:
+`layout/erc/README.md`.
+
+## Re-pin to klt 0.9.0
+
+The pin went from 0.8.0 to 0.9.0. Besides item 11 (digital), 0.9.0 binds the item 1 analog
+envelope to every file in its input set, and the committed envelope had been generated from an
+older `design/aib_pad_esd.sch` / `.spice`, which 0.8.0 did not detect (`klt signoff --attest 1
+--check` on 0.8.0 already reported drift). `1.analog` therefore read `stale_evidence` until the
+envelope was regenerated and the manifest re-cited with the new input-set digest. The
+`item2-analog` and `item2-digital` envelopes were rewritten for the new `klt_version`. The
+`signoff/attest/` envelopes not named here were not regenerated; they still record the klt that
+produced them.
 
 ## What CI does not check
 

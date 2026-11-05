@@ -6,7 +6,7 @@
   "summary": "T1 item 2 (Layout): committed stream regenerates to identical geometry from layout/gen_io_column.py and passes the structural checks in layout/check_io_column.py; not DRC, LVS or extraction evidence",
   "source": "layout/aib_io_column.gds",
   "provenance": {
-    "klt_version": "0.8.0",
+    "klt_version": "0.9.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
