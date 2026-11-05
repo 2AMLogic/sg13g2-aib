@@ -54,30 +54,30 @@ The manifest cites the envelope under `1.analog` with the inventory file's sha25
 
 ## Item 2 (layout, analog)
 
-klt 0.8.0 has no `--attest 2`, so `layout/attest_item2.py` writes
-`attest/item2-analog.json`: it regenerates `layout/aib_io_column.gds` into a scratch
+`layout/attest_item2.py analog` writes `attest/item2-analog.json` through
+`klt signoff --attest 2`: it first regenerates `layout/aib_io_column.gds` into a scratch
 directory, requires the same geometry digest as the committed stream and a passing
-`layout/check_io_column.py`, and only then writes the envelope (a `provenance.regeneration`
-claim with `hash_kind: geometry`). The manifest cites it under `2.analog` with the
+`layout/check_io_column.py`, and only then passes klt that digest (`--hash-kind geometry`);
+klt builds the envelope. The manifest cites it under `2.analog` with the
 stream's sha256 (`provenance.input.content_hash`). The envelope is not DRC, LVS or
 extraction evidence; see `layout/README.md`. Regenerate after any `layout/` change, then
 re-cite the hash and regenerate the record:
 
 ```bash
-uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py analog [--check]
 ```
 
 ## Item 2 (layout, digital)
 
-`layout/attest_item2_digital.py` writes `attest/item2-digital.json`, a `generic` envelope
-anchored on the routed GDS `layout/pnr/.klt/place-and-route/aib_datapath.gds` (the P&R report
+`layout/attest_item2.py digital` writes `attest/item2-digital.json` through
+`klt signoff --attest 2`, anchored on the routed GDS `layout/pnr/.klt/place-and-route/aib_datapath.gds` (the P&R report
 itself is item 11 evidence, so item 2 cannot cite it). It refuses to write unless
 `layout/pnr/request.report.json` is `ok`, `stage_reached: route`, `power.pdn: true`. The manifest
 cites it under `2.digital` with the stream's sha256. Regenerate after re-running P&R
 (`layout/pnr/README.md`), then re-cite the hash and regenerate the record:
 
 ```bash
-uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2_digital.py [--check]
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py digital [--check]
 ```
 
 ## Item 3 (DRC)
@@ -286,7 +286,8 @@ envelope to every file in its input set, and the committed envelope had been gen
 older `design/aib_pad_esd.sch` / `.spice`, which 0.8.0 did not detect (`klt signoff --attest 1
 --check` on 0.8.0 already reported drift). `1.analog` therefore read `stale_evidence` until the
 envelope was regenerated and the manifest re-cited with the new input-set digest. The
-`item2-analog` and `item2-digital` envelopes were rewritten for the new `klt_version`. The
+`item2-analog` and `item2-digital` envelopes were rewritten for the new `klt_version`, then
+rebuilt with `klt signoff --attest 2` (see issue 120), which populates `klayout_version`. The
 `signoff/attest/` envelopes not named here were not regenerated; they still record the klt that
 produced them.
 
