@@ -52,7 +52,7 @@ K="uvx --from klayout-tools==$(cat signoff/KLT_VERSION)"
 $K klt place-and-route layout/pnr/request.json --pdk ihp-sg13g2 --format json > layout/pnr/request.report.json
 $K klt place-and-route --check layout/pnr/request.report.json layout/pnr/request.json --pdk ihp-sg13g2          # cheap: exit 0
 $K klt place-and-route --check layout/pnr/request.report.json layout/pnr/request.json --pdk ihp-sg13g2 --rerun  # full
-$K python -I layout/attest_item2_digital.py     # rewrites signoff/attest/item2-digital.json
+$K python -I layout/attest_item2.py digital     # rewrites signoff/attest/item2-digital.json
 ```
 
 Recorded results (2026-10-27): the cheap `--check` exits 0 (input and deck hashes match). The

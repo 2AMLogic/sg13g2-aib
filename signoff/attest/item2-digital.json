@@ -3,11 +3,39 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 2,
-  "summary": "T1 item 2 (Layout, digital): routed GDS from klt place-and-route of the item 1 netlist, regenerated to identical geometry by the full --rerun check; report route_drc_violation_count=0 antenna_violation_count=0; not DRC or LVS evidence",
-  "source": "layout/pnr/request.report.json",
+  "summary": "T1 item 2 (Layout): 3/3 attestation checks passed (klt signoff --attest)",
+  "source": "layout/pnr/.klt/place-and-route/aib_datapath.gds",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 3,
+    "passed_count": 3,
+    "checks": [
+      {
+        "check": "stream_readable",
+        "role": "layout",
+        "passed": true,
+        "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
+      },
+      {
+        "check": "top_cell_non_empty",
+        "role": "layout",
+        "passed": true,
+        "top_cells": [
+          "aib_datapath"
+        ]
+      },
+      {
+        "check": "dbu_on_grid",
+        "role": "layout",
+        "passed": true,
+        "dbu": 0.001
+      }
+    ]
+  },
   "provenance": {
     "klt_version": "0.9.0",
-    "klayout_version": null,
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": null,
     "input": {

@@ -19,7 +19,7 @@ in [`pnr/`](pnr/README.md).
 | `aib_io_column.gds` | committed stream, written by the generator (no timestamps, byte-reproducible) |
 | `check_io_column.py` | structural checks: unit cell 55 x 100 um, column length, mirror symmetry about the column centre, gap-free abutment, no device shape under the pad opening |
 | `record_stats.py` | writes `stats/`: `klt stats` JSON per cell and `stats/t22-t23.json` |
-| `attest_item2.py` | writes `../signoff/attest/item2-analog.json` after regenerating and checking |
+| `attest_item2.py` | runs the regenerate-and-check work, then writes `../signoff/attest/item2-analog.json` (and `item2-digital.json`) with `klt signoff --attest 2` |
 
 Provenance: every shape comes from `gen_io_column.py`; nothing is hand-drawn. Device
 type, W, L, ng and the net on each terminal are repeated from `design/*.spice` in the
@@ -35,7 +35,7 @@ $K python -I layout/gen_io_column.py -o layout/aib_io_column.gds
 $K klt diff layout/aib_io_column.gds <(git show HEAD:layout/aib_io_column.gds)   # equal after a clean regenerate
 $K python -I layout/check_io_column.py layout/aib_io_column.gds
 python3 -I layout/record_stats.py
-$K python -I layout/attest_item2.py            # rewrites signoff/attest/item2-analog.json
+$K python -I layout/attest_item2.py analog     # rewrites signoff/attest/item2-analog.json
 ```
 
 CI has no klayout stack wired for this, so the generator run is not CI-checked; CI re-grades
@@ -117,8 +117,7 @@ analog column (`4.analog`) match against their item 1 netlists. The first analog
 twelve `ng = 2` devices were drawn at the netlist total `w` per finger); #70 fixed the generator and
 re-ran. DRC was re-run on the regenerated stream: [`records/20261027T072103Z`](#drc-records).
 
-Tool gaps met: `klt signoff --attest` has no item 2 producer
-(2AMLogic/klayout-tools#4188, #4221), so `attest_item2.py` writes the envelope;
-the PDK PCell library cannot be loaded from the release tarball, so devices are drawn
+Tool gaps met: `klt signoff --attest 2` (2AMLogic/klayout-tools#4188, #4221) shipped in
+klt 0.9.0 and `attest_item2.py` now uses it; the PDK PCell library cannot be loaded from the release tarball, so devices are drawn
 from base layers (#4236); no symmetry or abutment check exists (#4237). `klt gen-compose`
 was not tried for the column.
