@@ -2,6 +2,13 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-06
+
+- **PR #124**: refactor(lvs): remove superseded --diagnostic generator path
+- **PR #123**: chore(sim): remove four regenerable single-corner request copies
+- **Issue #117** (closed): Remove sim/channel-eye/req_commit_*.json: single-corner copies of request_*_1g.json (~1758 lines)
+- **Issue #103** (closed): Remove superseded LVS diagnostic set and --diagnostic generator path
+
 ### 2026-11-05
 
 - **PR #121**: refactor(signoff): build item 2 envelopes with klt signoff --attest 2
