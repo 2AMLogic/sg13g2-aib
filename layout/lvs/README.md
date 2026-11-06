@@ -18,11 +18,11 @@ reports here are those re-runs. The item 1 sources, `gen_reference.py` and the P
 
 | File | What |
 |---|---|
-| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice`; `--check` compares to the committed files; `--diagnostic` writes the `*.diag.ref.spice` set |
+| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice`; `--check` compares to the committed files |
 | `<cell>.ref.spice` | reference for `aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`; each header carries the sha256 of every `design/*.spice` it was built from |
 | `<cell>.request.json`, `<cell>.report.json` | the `klt lvs` request and its `--format json` report, verbatim |
 | `aib_io_column.ref.spice`, `aib_io_column.request.json`, `aib_io_column.report.json` | the whole analog stream (all 48 units) against one generated reference; this is the report `4.analog` cites |
-| `<cell>.diag.*` | the same against the diagnostic reference (below). **Not a result reference.** |
+| `<cell>.diag.*` | the same against a diagnostic reference. **Superseded** by the layout fix (below): the generator path that wrote it is removed, the files are kept as recorded results and do not reproduce. **Not a result reference.** |
 | `aib_datapath.gate.spice`, `aib_datapath.extract.report.json` | layout side of the digital compare: `klt extract --abstract-cells 'sg13g2_*' --def-net-names` of the routed GDS |
 | `digital.request.json`, `digital.report.json` | digital request and report, verbatim |
 | `neg/` | negative controls: digital (the as-built netlist with one gate input rewired) and analog column (`aib_io_column.rewired.ref.spice`: one clamp finger gate moved from `VSS` to `VDDIO`), each with its report |
@@ -94,8 +94,8 @@ writes datatype 1), so the requests pass `layout.label_layers`; with it the pins
 (TX: `DIN OE PAD PD PUN VDDIO VSS`).
 
 The compare on the stream drawn for #40 reported `mismatch` on all four cells (that run is in git history, commit `1226ed8`). Two differences between the drawn layout and the item 1
-schematic explain it; each was isolated by a *diagnostic* reference (`gen_reference.py --diagnostic`)
-that changes only that difference, and with both applied all four cells report `match` (`*.diag.report.json`,
+schematic explain it; each was isolated by a *diagnostic* reference (written by a `--diagnostic` mode of `gen_reference.py`,
+since removed; see commit `1226ed8` for the localisation) that changes only that difference, and with both applied all four cells report `match` (`*.diag.report.json`,
 `device` counts equal on both sides: 89, 33, 178, 66). The diagnostic is a localisation, not a result:
 nothing is claimed against it.
 
