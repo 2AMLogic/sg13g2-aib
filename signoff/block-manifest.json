@@ -53,6 +53,13 @@
         "file": "signoff/attest/item5-digital/sta_rx_clk.json"
       }
     ],
+    "6.analog": {
+      "file": "sim/mc/records/20261108T035315Z-t10/yield.json",
+      "content_hash": "sha256:2db1f964470a8953ce8784820907d330873f383b14cbd3eee7203e77fe43ecac",
+      "rows": [
+        "T-10"
+      ]
+    },
     "6.digital": {
       "not_applicable": {
         "spec": {
@@ -109,6 +116,33 @@
       },
       {
         "file": "layout/pnr/request.report.json"
+      }
+    ]
+  },
+  "spec_rows": {
+    "6.analog": [
+      {
+        "id": "T-10"
+      },
+      {
+        "id": "T-13",
+        "gap": "no campaign yet; tracked in #136"
+      },
+      {
+        "id": "T-14",
+        "gap": "no campaign yet; tracked in #136"
+      },
+      {
+        "id": "T-15",
+        "gap": "no campaign yet; tracked in #137"
+      },
+      {
+        "id": "T-16",
+        "gap": "no campaign yet; tracked in #137"
+      },
+      {
+        "id": "T-19",
+        "gap": "no campaign yet; tracked in #138"
       }
     ]
   },

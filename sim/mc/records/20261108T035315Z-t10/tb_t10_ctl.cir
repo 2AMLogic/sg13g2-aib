@@ -1,0 +1,15 @@
+* T-10 negative control: the receiver's first-stage NMOS is made 4x narrower
+* (w=0.25u instead of 1u), a seeded design degradation that must move the
+* threshold out of the +-60 mV bound. A bench copy, not design evidence; the
+* design cell is NOT included here.
+Vddio vddio 0 dc 1.2
+Vfr fr 0 dc 0.5
+Bpin pad 0 V=v(fr)*v(vddio)
+.subckt aib_rx_data PAD DOUT VDDIO VSS
+XMi1p M1 PAD VDDIO VDDIO sg13_lv_pmos w=2.5u l=0.13u ng=2 m=1
+XMi1n M1 PAD VSS VSS sg13_lv_nmos w=0.25u l=0.13u ng=1 m=1
+XMi2p DOUT M1 VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMi2n DOUT M1 VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
+.ends
+Xrx pad dout vddio 0 aib_rx_data
+Bdn dnorm 0 V=v(dout)/v(vddio)

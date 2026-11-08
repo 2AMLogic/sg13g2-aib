@@ -66,6 +66,11 @@ jobs:
       - name: Check the committed netlist is fresh against the RTL and the attestation chain
         run: python3 -I scripts/ci/check_design_sources.py
 
+      - name: Check the item 6 digital not_applicable documents are fresh against the spec and the Monte Carlo requests against the generator
+        run: |
+          python3 -I scripts/ci/gen_item6_digital.py
+          python3 -I sim/mc/gen_mc.py --check
+
       - name: Check the derived item 7 SDFs are pinned and reproduce from the routed SDF
         run: python3 -I scripts/ci/check_item7_sdf.py
 
