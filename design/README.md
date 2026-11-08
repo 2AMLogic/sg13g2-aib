@@ -68,7 +68,8 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
 Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;
 the Monte Carlo testbench decides. Layout, LVS and the I/O-cell
-assembly are separate issues. The forwarded-clock alignment (DLL) is out of scope.
+assembly are separate issues; their committed artefacts under `layout/` predate DR-0017 and
+are stale against these netlists (regeneration: #140). The forwarded-clock alignment (DLL) is out of scope.
 
 ## Regenerate and check
 

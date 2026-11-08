@@ -74,9 +74,10 @@ The 5 x 5 point passed 45/45 on the fleet but with 0.64 fF of margin at pad = VD
 The limiting corner for T-24 differs from the one for Ron, so the probes above do not
 replace the 45-corner run.
 
-**What this costs.** `XDp1` is now 20 um^2, one fifth of the first-cut 100 um^2 and below the
-35 um^2 per diode of the 2kv-class model, which DR-0008 already says is short of 0.5 A by ohmic loss. No ESD-transient simulation
-has been run, so T-25 is neither shown nor refuted. See DR-0017.
+**What this costs.** `XDp1` is now 20 um^2, one fifth of the first-cut 100 um^2. It is not the 35 um^2 `diodevdd_2kv`/`diodevss_2kv` pad diode DR-0008 sized: `XDp1` is
+the `dpantenna` antenna-diode model (reverse-direction use, rs about 8.5 kohm at 20 um^2), so a T-25
+transient on it would not be credible. No ESD-transient simulation has been run, so T-25 is neither
+shown nor refuted. See DR-0017.
 
 ## Rows and measurements
 

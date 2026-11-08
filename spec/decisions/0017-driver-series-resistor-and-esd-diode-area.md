@@ -32,10 +32,15 @@ The first dc-static PVT-FULL run (`sim/dc-static/records/20261108T002904Z/`) fai
 ## What is not shown
 
 **T-25 is neither met nor failed by this record.** The primary diode is now 20 um^2, one
-fifth of the first-cut area and below the 35 um^2 per diode of the model DR-0008 already
-computed to be short of a 0.5 A pulse by ohmic loss alone. No clamp-transient `SIM` at the
-0.5 A pulse exists in this repo yet, so the claim "the ESD stage is adequate" is not made
-and the first-cut area was itself unverified. The series resistor `Resd` and `XMn1`, `XMclamp`
+fifth of the first-cut area. It is a different device from the one DR-0008 sized: DR-0008's
+35 um^2 per diode is the `diodevdd_2kv`/`diodevss_2kv` pad-diode model in `sg13g2_esd.lib`,
+while `XDp1` is the `dpantenna` model (`diodes.lib`), an antenna diode whose own header says it
+is designed for the reverse direction. Its area series resistance is rs = 1.728e5 per unit
+area, about 8.5 kohm at 20 um^2 (about 1.7 kohm even at the first-cut 100 um^2). So a T-25
+transient on this device type would not be credible, and the T-25 path likely needs the
+ESD-library diodes, which bears directly on the DR-0008 §2 fallback invoked below. No
+clamp-transient `SIM` at the 0.5 A pulse exists in this repo yet, so the claim "the ESD stage
+is adequate" is not made and the first-cut area was itself unverified. The series resistor `Resd` and `XMn1`, `XMclamp`
 are unchanged.
 
 If the T-25 transient `SIM` or the `LAYOUT` area check shows the reduced diode cannot carry
@@ -57,3 +62,14 @@ not a relaxation of T-24 or T-25.
 The series resistor and wider devices change the driver's output edge and the pin load seen
 by the dynamic rows. T-09 (overshoot/undershoot, #53) and the clock path (#54) must be run
 on these netlists; their earlier results, if any, do not carry over.
+
+**Layout, LVS and signoff evidence are stale (tracked in #140).** This record changes the
+analog netlists but not the committed layout. At this head `layout/gen_io_column.py` fails its
+own `check_against_netlists()` (Mp 28 fingers with D=PAD, Mn 14 fingers, Dp1 10.0 um, no
+`Rsp`/`Rsn`), the `layout/lvs/*.ref.spice` fail `gen_reference.py --check`, and the analog DRC
+and LVS records cited under signoff items `3.analog` / `4.analog` describe the old circuit.
+Those two citations are removed from `signoff/block-manifest.json` so the items grade unmet
+for this design, and the record is regenerated (`t1_met_count` 18 to 16). T-22 (pitch, a
+`LAYOUT` row) and the `LAYOUT` half of T-25 are not evaluated for the wider driver: 54 + 22
+fingers come to about 43 um of the ~54 um routable width before the two 10 um `rppd` legs are
+placed, which is not verified. Regeneration is issue #140.
