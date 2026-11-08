@@ -329,6 +329,26 @@ rise/fall (opposite-polarity) arrival difference of one instance, not a layout s
 T-16 note: the clock is launched center aligned, so the graded quantity is the deviation
 of the data-to-clock arrival delay from the nominal 0.5 UI.
 
+**Status update (2026-11-08): both 45-corner records exist.** The earlier "no record exists
+yet" paragraph and findings above are kept unchanged as evidence. On 2026-11-08, with
+`--wait-for-capacity 600` added to `run_channel_eye.sh` (the earlier unlaunched-job runs
+did not use it), each request ran as one multi-corner batch `klt sim` (45 jobs of 1 unit,
+about 23 s per corner, 45/45 corners with a status; job ids are in each record's
+`klt.stderr`, e.g. `klt-sim-ba2c0cbe6bc1`). No local grid was run and `design/` and `spec/`
+are untouched.
+
+- CH record `channel-eye/records/20261108T220323Z-ch/` (claims about the modeled channel
+  CH-3MM-RC): T-01, T-09, T-15, T-18 and T-26 pass at 45/45 corners. **T-16 fails** at 29 of
+  45 corners (`t16_df_cr_long` and `t16_df_cf_long`, 58 failing measurements; the window is
+  470-530 ps, 0.5 UI +/- 0.03 UI). Worst case `mos_ss`, 1.08 V, 125 C, where
+  `t16_df_cf_long` is 435 ps (65 ps from nominal against the 30 ps bound). The bound is not
+  relaxed. T-26 is **simulated** energy per bit (smallest margin `mos_ff`, 125 C, 0.555 pJ
+  against the 1 pJ bound); no measurement exists.
+- TC record `channel-eye/records/20261108T221445Z-tc/` (L2 wire-bond loopback, declared
+  values; a test-configuration result, never cited for a channel row): T-09 passes at 45/45
+  corners; T-01 and T-26 are report-only. The README's earlier expectation that T-09 would
+  fail in L2 did not occur in this run.
+
 ## dc-static
 
 `sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner
