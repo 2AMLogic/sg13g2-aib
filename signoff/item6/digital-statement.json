@@ -1,0 +1,30 @@
+{
+  "partition": "digital",
+  "rows": [
+    {
+      "id": "T-02",
+      "class": "rtl-format",
+      "reason": "Exchange format is a property of the RTL: data launched and captured on both clock edges, with an SDR test mode. Checked by RTL simulation of rtl/aib_datapath.v; the same inputs give the same outputs, no device variation enters."
+    },
+    {
+      "id": "T-03",
+      "class": "structural-count",
+      "reason": "Wire count N per direction is a structural parameter of the RTL (N = 20, fallback N = 8, instantiated lane by lane) and of the layout column; it is a count, not a measured quantity."
+    },
+    {
+      "id": "T-05",
+      "class": "enumerated-fault-function",
+      "reason": "Shift redundancy is a mux function. The check enumerates every single-fault position (20 per direction, 40 total, DR-0016) in RTL simulation and formal equivalence; the outcome is exact for each case, not a distribution."
+    },
+    {
+      "id": "T-27",
+      "class": "cycle-accounting",
+      "reason": "Sequential latency is counted in clock cycles on the RTL (TX input register to RX output register, 1.5 cycles each way); analog delays are excluded by the row itself."
+    },
+    {
+      "id": "T-29",
+      "class": "mode-function",
+      "reason": "Loopback modes L1 and L2 are selected by control inputs of the RTL; each mode is a fixed routing of enumerated signals, simulated per mode, with no variation dependence."
+    }
+  ]
+}

@@ -53,6 +53,18 @@
         "file": "signoff/attest/item5-digital/sta_rx_clk.json"
       }
     ],
+    "6.digital": {
+      "not_applicable": {
+        "spec": {
+          "file": "signoff/item6/digital-spec.json",
+          "content_hash": "sha256:3df286773459580f2544abbe211c384009ab422173a3d9308443c789e07f5a58"
+        },
+        "statement": {
+          "file": "signoff/item6/digital-statement.json",
+          "content_hash": "sha256:61bd5b77ddf08093c8b8481fa7372e02a3ed8d16633e09084f275194213331e2"
+        }
+      }
+    },
     "7.digital": {
       "file": "signoff/attest/item7-digital/fv_post_route.json"
     },
