@@ -20,7 +20,6 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
-- **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26)
 
 ## Ready
 
@@ -57,7 +56,6 @@ Issues carrying `loom:curated`.
 - **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)*
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares) *(curated)*
 - **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition *(curated)*
-- **#53**: T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26) *(curated)*
 - **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02) *(curated)*
 - **#130**: I/O cell fails DC static rows T-06 (loaded), T-08 and T-24 at PVT-FULL *(curated)*
 
@@ -75,12 +73,12 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
-| Important | 2 |
+| Important | 1 |
 | Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 8 |
+| Curated | 7 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->

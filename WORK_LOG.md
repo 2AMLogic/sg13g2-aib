@@ -4,7 +4,10 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-08
 
+- **PR #141**: sim: add 45-corner CH and TC channel-eye records
+- **PR #139**: sim: T-10 Monte Carlo campaign and item 6 digital not_applicable
 - **PR #131**: sim: record 45-corner dc-static PVT-FULL run
+- **Issue #53** (closed): T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26)
 
 ### 2026-11-07
 
