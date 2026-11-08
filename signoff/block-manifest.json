@@ -12,7 +12,7 @@
     },
     "1.analog": {
       "file": "signoff/attest/item1-analog.json",
-      "content_hash": "sha256:a3446e26f35fc6bf40ea9f2552ac7ba632b1782ad19f7cb3d17ad77cb80c10e7"
+      "content_hash": "sha256:ee521054c20cf0a9176b7c4fb1b61acc872bf1fee53110a7f7ab349fc0a837af"
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
