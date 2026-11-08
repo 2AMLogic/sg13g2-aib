@@ -41,7 +41,7 @@ trap '[[ -n "${KEEP_WORK:-}" ]] || rm -rf "${WORK}"' EXIT
 
 cd "${HERE}"
 rc=0
-"${KLT[@]}" sim "${req}" --backend batch --max-units-per-job 1 -o "${WORK}/out" \
+"${KLT[@]}" sim "${req}" --backend batch --max-units-per-job 1 --wait-for-capacity 600 -o "${WORK}/out" \
   --report-out "${REC}/report.json.gz" --format json > "${WORK}/stdout" 2> "${WORK}/stderr" || rc=$?
 # progress lines name the fleet bucket (an account id): keep them out of the record
 grep -q 'never launched' "${WORK}/stderr" && { KEEP_WORK=1; echo "run_channel_eye.sh: PARTIAL: fleet left jobs unlaunched; resume dir ${WORK}/out" >&2; }

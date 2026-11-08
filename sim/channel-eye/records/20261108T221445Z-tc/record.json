@@ -1,0 +1,43 @@
+{
+  "record": "channel-eye",
+  "utc_stamp": "20261108T221445Z",
+  "kind": "simulated",
+  "family": "tc",
+  "claim_scope": "TC (L2 wire-bond loopback, declared values)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-01": {
+      "verdict": "reported",
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "reported",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  },
+  "batch_job_id": null,
+  "runner_klt_version": null,
+  "energy_label": "T-26 energy per bit is SIMULATED; no measurement exists"
+}
