@@ -1,0 +1,53 @@
+{
+ "record": "dc-static",
+ "utc_stamp": "20261108T002904Z",
+ "pdk": {
+  "source": "IHP-GmbH/IHP-Open-PDK",
+  "release_tag": "v0.3.0",
+  "tarball_sha256": "f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+ },
+ "scope": "BOTH (channel and test configuration); no channel model used",
+ "request": "sim/dc-static/request.json",
+ "report": "report.json",
+ "batch_job_id": "klt-sim-abe0ec2c5d05",
+ "runner_klt_version": "0.9.0",
+ "client_klt_version": "0.9.2.dev256+gfa65c4315648",
+ "corners": 45,
+ "corner_status": {
+  "pass": 0,
+  "fail": 45,
+  "error": 0,
+  "inconclusive": 0
+ },
+ "t24_label": "extracted-capacitance estimate from model small-signal admittance at 500 MHz; no bond pad (PDK bondpad is an empty placeholder); post-layout PEX out of scope",
+ "rows": {
+  "T-06": {
+   "status": "fail",
+   "binding_corner": "ss/1.080V/125C",
+   "note": "unloaded passes 45/45; at 1 mA load VOH droop 0.1108 V (bound 0.1 V) at ss/1.080V/125C and 0.1000 V (marginal fail) at ss/1.080V/27C; VOL passes 45/45"
+  },
+  "T-07": {
+   "status": "pass",
+   "note": "tristate pin current <= 1 uA at all 45 corners and 3 pad voltages; structural half is the netlists"
+  },
+  "T-08": {
+   "status": "fail",
+   "binding_corner": "ss/1.080V/125C",
+   "note": "pull-up chord resistance 110.77 ohm (bound 40-80) at binding corner; pull-up fails at 12/45 corners (tt/1.08V 27C,125C; ss/1.08V -40,27,125C; ss/1.20V 27,125C; ss/1.32V 125C; fs/1.08V -40,27,125C; fs/1.20V 125C); pull-down fails at ss/1.08V/125C (86.10 ohm) and sf/1.08V/125C (80.99 ohm)"
+  },
+  "T-11": {
+   "status": "pass",
+   "note": "no hysteresis structure, 45/45"
+  },
+  "T-24": {
+   "status": "fail",
+   "binding_corner": "ss/1.080V/125C at pad=VDDIO (126.2 fF)",
+   "note": "fails 45/45 corners at every bias; lowest 102.24 fF (ff/1.320V/-40C, pad=0) vs <= 100 fF; worst per bias: pad=0 108.9 fF ss/1.08V/125C, pad=VDDIO/2 124.5 fF fs/1.32V/125C"
+  },
+  "T-28": {
+   "status": "pass",
+   "note": "leakage <= 1 uA and weak pull 10-20 kohm at 45/45 corners"
+  }
+ },
+ "spec_relaxed": false
+}
