@@ -50,12 +50,24 @@ SG13G2 devices only (T-06), unterminated outputs (T-07).
 Each cell is a `.sch` plus `.sym`; the `.spice` next to it is derived with
 `klt netlist`, never raw `xschem`. `xschemrc` carries the PDK search path.
 
-**What this directory claims: the sources exist and the netlists are fresh.** Every
-size is a first-cut placeholder and nothing here has been simulated, so no spec
-row is claimed met. `w` is the total width over `ng` fingers; every finger is at or above the
-0.15 um minimum (`XMp` 28u/28, `XMn` 14u/14, `Mclamp` 40u/20). Known open point: an inverter receiver's threshold moves with
+**What this directory claims: the sources exist and the netlists are fresh.** The output
+stage and the primary ESD diode were sized in issue #130 against the dc-static PVT-FULL run
+(`sim/dc-static/records/20261108T004350Z/`, T-06/T-07/T-08/T-11/T-24/T-28 pass at 45/45); every
+other size is still a first-cut placeholder. `w` is the total width over `ng` fingers; every
+finger is at or above the 0.15 um minimum.
+
+Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
+
+- `aib_tx_data`: `XMp` 54u/54 and `XMn` 22u/22 each drive PAD through a series `rppd`
+  (`XRsp`, `XRsn`, `w=10u l=0.5u`, about 18 ohm). The MOS Ron alone spreads 2.1-2.4x over
+  PVT-FULL, wider than T-08's 2x window, so no width closes it; the poly leg compresses it.
+- `aib_pad_esd`: `XDp1` is 4.5u x 4.5u (was 10u x 10u) because the wider driver and the
+  primary diode do not both fit T-24. **T-25 (ESD level) is not evaluated**: no ESD-transient
+  simulation exists. DR-0017 states the trade and what would reverse it.
+
+Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;
-the Monte Carlo testbench decides. Simulation, layout, LVS and the I/O-cell
+the Monte Carlo testbench decides. Layout, LVS and the I/O-cell
 assembly are separate issues. The forwarded-clock alignment (DLL) is out of scope.
 
 ## Regenerate and check

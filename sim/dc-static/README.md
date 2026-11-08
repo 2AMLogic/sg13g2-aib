@@ -6,23 +6,77 @@ x -40/27/125 C (`klt sim --dry-run` reports `unit_count: 45`). Each process corn
 bundle of the matching MOS, poly-resistor and diode sections, because the cells use `rppd`
 and the antenna diodes as well as the thin-oxide MOS devices.
 
-**Status: recorded.** 45-corner batch run `klt-sim-abe0ec2c5d05` (runner klt 0.9.0),
-record `records/20261108T002904Z/` (`report.json`, `record.json`). All 45 corners converged
-(none inconclusive). Result: **T-07, T-11, T-28 pass; T-06 (1 mA load), T-08 and T-24 fail.**
-The spec is not relaxed.
+**Status: recorded, two records (append-only).**
 
-| Row | Result | Binding corner |
+- `records/20261108T002904Z/` (batch `klt-sim-abe0ec2c5d05`): the first-cut cells. T-07, T-11,
+  T-28 pass; T-06 (1 mA load), T-08, T-24 fail (issue #130). Untouched.
+- `records/20261108T004350Z/` (batch `klt-sim-805dd59f1580`, runner klt 0.9.0): after the
+  #130 sizing study. **All six rows pass at 45/45 corners**, none inconclusive. The spec is
+  not relaxed. T-25 (ESD level) is not evaluated here; see "Joint driver/ESD sizing" and
+  DR-0017.
+
+| Row | First-cut cells (`...002904Z`) | After #130 (`...004350Z`) |
 |---|---|---|
-| T-06 | fail: loaded VOH droop 0.111 V (> 0.1 V) at ss/1.08 V/125 C; 0.100 V at ss/1.08 V/27 C. Unloaded and VOL pass 45/45 | ss/1.080V/125C |
-| T-07 | pass 45/45 | n/a |
-| T-08 | fail: pull-up 110.8 ohm (40-80) at ss/1.08 V/125 C, fails 12/45 corners; pull-down 86.1 ohm at ss/1.08 V/125 C and 81.0 ohm at sf/1.08 V/125 C | ss/1.080V/125C |
-| T-11 | pass 45/45 | n/a |
-| T-24 | fail 45/45 at every bias: 102.2 fF (ff/1.32 V/-40 C, pad 0) to 126.2 fF (ss/1.08 V/125 C, pad VDDIO). Extracted-capacitance estimate (no bond pad, no PEX) | ss/1.080V/125C |
-| T-28 | pass 45/45 | n/a |
+| T-06 | fail: loaded VOH droop 0.111 V at ss/1.08 V/125 C | pass: max 0.075 V (VOH), 0.073 V (VOL) |
+| T-07 | pass 45/45 | pass 45/45 |
+| T-08 | fail: pull-up 46.6-110.8 ohm, pull-down 40.3-86.1 ohm | pass: pull-up 42.9-75.1 ohm, pull-down 44.4-72.7 ohm |
+| T-11 | pass 45/45 | pass 45/45 |
+| T-24 | fail 45/45: 102.2-126.2 fF | pass: worst 84.2 / 96.4 / 90.3 fF at pad 0 / VDDIO/2 / VDDIO |
+| T-28 | pass 45/45 | pass 45/45 (weak pulls 11.6-15.3 kohm) |
 
-Failures are cell results (netlists are #35); filed separately, not fixed here. The 1 mA
-load and 1 uA thresholds below are Builder-chosen and still need ratification, and T-06
-loaded and T-08 depend on the 1 mA choice.
+T-24 is an extracted-capacitance estimate (no bond pad, no PEX). The 1 mA load and 1 uA
+thresholds below are Builder-chosen and still need ratification; T-06 loaded and T-08 depend on
+the 1 mA choice. The 1 mA load and 1 uA thresholds were not changed by #130.
+
+## Joint driver/ESD sizing (issue #130)
+
+Local single-corner probes (ss/1.08 V/125 C, the binding corner for Ron and for T-24, and
+ff/1.32 V/-40 C, the minimum-Ron corner), then the 45-corner fleet run above.
+
+**Why width alone cannot close T-08.** The MOS-only Ron spreads 46.6-110.8 ohm (2.38x) for
+pull-up and 40.3-86.1 ohm (2.14x) for pull-down over PVT-FULL, wider than the 2x window of
+40-80 ohm. Scaling the width to bring the maximum under 80 ohm puts the minimum under 40 ohm
+(for example 28u -> 56u gave 52.1 / 23.0 ohm at the two corners). A series `rppd` (about 18 ohm
+at `w=10u l=0.5u`; it barely moves with the `res_wcs`/`res_bcs` corner) in each output leg
+compresses the ratio, at the price of a wider output device (`XMp` 54u, `XMn` 22u).
+
+**T-24 breakdown at the binding corner (ss/1.08 V/125 C, first-cut cells, fF).** Each row is
+the drop in pin capacitance when that one element is removed from the netlist. The sum is
+not the total: removing an element also removes its junction-bias coupling.
+
+| Element removed | pad = 0 | pad = VDDIO/2 | pad = VDDIO |
+|---|---|---|---|
+| (none, total) | 108.9 | 119.3 | 126.2 |
+| `XDp1` primary diode (10u x 10u) | 57.2 | 63.5 | 75.0 |
+| `XMn1` grounded-gate NMOS (20u) | 13.4 | 11.7 | 10.6 |
+| `XMp` driver PMOS (28u) | 12.8 | 14.5 | 17.1 |
+| `XMn` driver NMOS (14u) | 9.4 | 8.2 | 7.4 |
+| `XResd` (removes receiver, `XDp2`, `XMn2`) | 9.0 | 14.1 | 8.7 |
+| `XMclamp` | 0 | 0 | 0 |
+
+The primary diode is 60% of the pin capacitance; widening the driver to fit T-08 adds about
+20 fF, so T-24 only closes by shrinking `XDp1`.
+
+**Probe table (local, single corner each; ss/1.08 V/125 C unless noted; cap at pad
+0 / VDDIO/2 / VDDIO).**
+
+| XMp / XMn (u) | Series R | `XDp1` | up / dn ohm (ss) | up / dn ohm (ff/1.32 V/-40 C) | Cap, ss (fF) |
+|---|---|---|---|---|---|
+| 28 / 14 | none | 10 x 10 | 110.8 / 86.1 | 46.6 / 40.3 | 108.9 / 119.3 / 126.2 |
+| 56 / 28 | none | 10 x 10 | 52.1 / 40.0 | 23.0 / 19.9 | 130.7 / 141.7 / 150.4 |
+| 52 / 24 | w=7u | 10 x 10 | 86.3 / 77.1 | 51.9 / 50.4 | 128.8 / 139.9 / 148.5 |
+| 54 / 22 | w=10u | 6 x 6 | 75.1 / 72.7 | 42.9 / 44.4 | 93.2 / 100.5 / 102.1 |
+| 54 / 22 | w=10u | 5.5 x 5.5 | 75.1 / 72.7 | 42.9 / 44.4 | 89.9 / 96.9 / 97.8 |
+| 54 / 22 | w=10u | 5 x 5 | 75.1 / 72.7 | 42.9 / 44.4 | 86.9 / 93.5 / 93.8 |
+
+The 5 x 5 point passed 45/45 on the fleet but with 0.64 fF of margin at pad = VDDIO/2 (fs/1.32 V/125 C,
+99.36 fF), which is not a margin; the recorded design uses `XDp1` 4.5 x 4.5 (worst 96.4 fF).
+The limiting corner for T-24 differs from the one for Ron, so the probes above do not
+replace the 45-corner run.
+
+**What this costs.** `XDp1` is now 20 um^2, one fifth of the first-cut 100 um^2 and below the
+35 um^2 per diode of the 2kv-class model, which DR-0008 already says is short of 0.5 A by ohmic loss. No ESD-transient simulation
+has been run, so T-25 is neither shown nor refuted. See DR-0017.
 
 ## Rows and measurements
 

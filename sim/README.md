@@ -333,5 +333,7 @@ of the data-to-clock arrival delay from the nominal 0.5 UI.
 
 `sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner
 `klt sim` request (batch backend). Record `records/20261108T002904Z/` (batch job
-`klt-sim-abe0ec2c5d05`): T-07, T-11 and T-28 pass at 45/45; T-06 (loaded), T-08 and T-24 fail,
-binding corner ss/1.08 V/125 C. T-24 is an extracted-capacitance estimate. See `sim/dc-static/README.md`.
+`klt-sim-abe0ec2c5d05`, first-cut cells): T-06 (loaded), T-08 and T-24 fail. Record
+`records/20261108T004350Z/` (batch job `klt-sim-805dd59f1580`, after the #130 sizing study):
+all six rows pass at 45/45. T-24 is an extracted-capacitance estimate; T-25 is not
+evaluated. See `sim/dc-static/README.md` and DR-0017.

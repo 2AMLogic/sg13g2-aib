@@ -13,7 +13,7 @@ K {}
 V {}
 S {}
 E {}
-C {sg13g2_pr/dpantenna.sym} 200 200 0 0 {name=Dp1 model=dpantenna l=10u w=10u spiceprefix=X}
+C {sg13g2_pr/dpantenna.sym} 200 200 0 0 {name=Dp1 model=dpantenna l=4.5u w=4.5u spiceprefix=X}
 C {lab_pin.sym} 200 230 0 0 {name=l1 lab=PAD}
 C {lab_pin.sym} 200 170 0 0 {name=l2 lab=VDDIO}
 C {sg13g2_pr/sg13_lv_nmos.sym} 420 200 0 0 {name=Mn1 model=sg13_lv_nmos w=20u l=0.13u ng=10 m=1}
