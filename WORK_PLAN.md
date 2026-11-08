@@ -27,6 +27,7 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition
 
 ## In Progress
 
@@ -75,7 +76,7 @@ _None._
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
 | Important | 2 |
-| Ready (`loom:issue`) | 1 |
+| Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
