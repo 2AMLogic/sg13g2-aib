@@ -5,7 +5,8 @@ evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
 rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable` and `6.analog` `unmet` / `check_failed` (see "Item 6");
+every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
 
@@ -26,6 +27,15 @@ manifest relative to the working directory, not the manifest's directory, so
 the manifest's `file` paths are repo-root-relative. Run from anywhere else,
 item 1 grades `unmet` / `unreadable_evidence`. Commit the result. Never
 hand-edit the record.
+
+## Item 6 (Monte Carlo)
+
+`6.digital` is a `not_applicable` outcome: `scripts/ci/gen_item6_digital.py --regenerate`
+derives `item6/digital-spec.json` (a ratified JSON row list for the five deterministic
+digital rows) from `spec/target-spec.md` and writes `item6/digital-statement.json`; the
+manifest binds both by hash. `6.analog` cites the `klt yield` reports under
+`sim/mc/records/` with `rows`, and `spec_rows."6"` declares all six STAT rows; rows
+without a campaign are declared gaps (see `sim/mc/README.md`), so analog stays `unmet`.
 
 ## Item 1 / digital attestation
 

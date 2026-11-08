@@ -10,6 +10,7 @@
   "t1_item_count": 22,
   "build_t1_item_count": 22,
   "t1_met_count": 16,
+  "t1_not_applicable_count": 1,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:08dcbfd2c3f2df152868d86c0ad2aa6a43d393b1d266f0b1e914cd8f0a329c58",
   "build": {
@@ -551,9 +552,52 @@
         "**Declare item 6 a gap** for the analog partition. The digital partition of the same block may still use `not_applicable`. **Several statistical rows, only some evidenced** (issue #2908): item 6 is a claim about *every* statistical row, so a manifest may declare the row set under `spec_rows.\"6\"` and cite one `klt yield` report per row set (`rows` on each citation). Item 6 grades `met` only when every declared row is covered by a passing citation against a ratified target. A row with no citation (`uncovered_rows`), a row declared a `gap` because no evidence can exist yet (`declared_gaps`), or a row declared `ratified: false` (`unratified_rows`, evidence against a proposed limit is provisional) grades `unmet` / `partial_coverage`, never `met`. Without a declaration the item grades as before; a `not_applicable` entry contradicts a declared row set and is `invalid_evidence`."
       ],
       "status": "unmet",
-      "reason": "no_evidence",
+      "reason": "check_failed",
       "graded_by_build": true,
-      "citation": null
+      "citation": null,
+      "citations_graded": [
+        {
+          "citation": "sim/mc/records/20261108T035315Z-t10/yield.json",
+          "rows": [
+            "T-10"
+          ],
+          "status": "unmet",
+          "reason": "check_failed"
+        }
+      ],
+      "detail": {
+        "failed_citations": [
+          "sim/mc/records/20261108T035315Z-t10/yield.json"
+        ],
+        "failed_rows": [
+          "T-10"
+        ],
+        "uncovered_rows": [],
+        "declared_gaps": [
+          {
+            "id": "T-13",
+            "gap": "no campaign yet; tracked in #136"
+          },
+          {
+            "id": "T-14",
+            "gap": "no campaign yet; tracked in #136"
+          },
+          {
+            "id": "T-15",
+            "gap": "no campaign yet; tracked in #137"
+          },
+          {
+            "id": "T-16",
+            "gap": "no campaign yet; tracked in #137"
+          },
+          {
+            "id": "T-19",
+            "gap": "no campaign yet; tracked in #138"
+          }
+        ],
+        "unratified_rows": [],
+        "row_sources": {}
+      }
     },
     {
       "tier": "T1",
@@ -566,10 +610,49 @@
         "**Add the missing statistical row(s)** to the block's spec through a decision record the operator ratifies, then supply Monte Carlo evidence (`klt yield`) for them. Where the PDK has no mismatch models, assumed mismatch is acceptable, labelled as such in the evidence.",
         "**Declare item 6 a gap** for the analog partition. The digital partition of the same block may still use `not_applicable`. **Several statistical rows, only some evidenced** (issue #2908): item 6 is a claim about *every* statistical row, so a manifest may declare the row set under `spec_rows.\"6\"` and cite one `klt yield` report per row set (`rows` on each citation). Item 6 grades `met` only when every declared row is covered by a passing citation against a ratified target. A row with no citation (`uncovered_rows`), a row declared a `gap` because no evidence can exist yet (`declared_gaps`), or a row declared `ratified: false` (`unratified_rows`, evidence against a proposed limit is provisional) grades `unmet` / `partial_coverage`, never `met`. Without a declaration the item grades as before; a `not_applicable` entry contradicts a declared row set and is `invalid_evidence`."
       ],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "not_applicable",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": null,
+      "not_applicable": {
+        "spec": {
+          "file": "signoff/item6/digital-spec.json",
+          "content_hash": "sha256:3df286773459580f2544abbe211c384009ab422173a3d9308443c789e07f5a58",
+          "status": "ratified",
+          "row_count": 5
+        },
+        "statement": {
+          "file": "signoff/item6/digital-statement.json",
+          "content_hash": "sha256:61bd5b77ddf08093c8b8481fa7372e02a3ed8d16633e09084f275194213331e2",
+          "rows": [
+            {
+              "id": "T-02",
+              "class": "rtl-format",
+              "reason": "Exchange format is a property of the RTL: data launched and captured on both clock edges, with an SDR test mode. Checked by RTL simulation of rtl/aib_datapath.v; the same inputs give the same outputs, no device variation enters."
+            },
+            {
+              "id": "T-03",
+              "class": "structural-count",
+              "reason": "Wire count N per direction is a structural parameter of the RTL (N = 20, fallback N = 8, instantiated lane by lane) and of the layout column; it is a count, not a measured quantity."
+            },
+            {
+              "id": "T-05",
+              "class": "enumerated-fault-function",
+              "reason": "Shift redundancy is a mux function. The check enumerates every single-fault position (20 per direction, 40 total, DR-0016) in RTL simulation and formal equivalence; the outcome is exact for each case, not a distribution."
+            },
+            {
+              "id": "T-27",
+              "class": "cycle-accounting",
+              "reason": "Sequential latency is counted in clock cycles on the RTL (TX input register to RX output register, 1.5 cycles each way); analog delays are excluded by the row itself."
+            },
+            {
+              "id": "T-29",
+              "class": "mode-function",
+              "reason": "Loopback modes L1 and L2 are selected by control inputs of the RTL; each mode is a fixed routing of enumerated signals, simulated per mode, with no variation dependence."
+            }
+          ]
+        }
+      }
     },
     {
       "tier": "T1",

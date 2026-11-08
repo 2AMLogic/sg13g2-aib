@@ -1,0 +1,201 @@
+{
+  "samples": "samples.json",
+  "limits": null,
+  "source": {
+    "kind": "sample-set",
+    "netlist": null,
+    "monte_carlo": null,
+    "provenance": {
+      "seed": 4410,
+      "draws_per_population": 120
+    },
+    "sample_count": 5400
+  },
+  "schema_version": 1,
+  "confidence": 0.95,
+  "target_ci_halfwidth": 0.01,
+  "min_samples": 2,
+  "status": "fail",
+  "measurement_count": 1,
+  "measurements": [
+    {
+      "name": "t10_offset_mv",
+      "unit": "mV",
+      "n": 5400,
+      "errored": 0,
+      "failed_unmeasurable": 0,
+      "censored": 0,
+      "inconclusive": 0,
+      "limits": {
+        "min": -60.0,
+        "max": 60.0,
+        "target_sigma": 3.0
+      },
+      "source_corners": [
+        "tt/1.080V/-40C",
+        "tt/1.080V/27C",
+        "tt/1.080V/125C",
+        "tt/1.200V/-40C",
+        "tt/1.200V/27C",
+        "tt/1.200V/125C",
+        "tt/1.320V/-40C",
+        "tt/1.320V/27C",
+        "tt/1.320V/125C",
+        "ss/1.080V/-40C",
+        "ss/1.080V/27C",
+        "ss/1.080V/125C",
+        "ss/1.200V/-40C",
+        "ss/1.200V/27C",
+        "ss/1.200V/125C",
+        "ss/1.320V/-40C",
+        "ss/1.320V/27C",
+        "ss/1.320V/125C",
+        "ff/1.080V/-40C",
+        "ff/1.080V/27C",
+        "ff/1.080V/125C",
+        "ff/1.200V/-40C",
+        "ff/1.200V/27C",
+        "ff/1.200V/125C",
+        "ff/1.320V/-40C",
+        "ff/1.320V/27C",
+        "ff/1.320V/125C",
+        "sf/1.080V/-40C",
+        "sf/1.080V/27C",
+        "sf/1.080V/125C",
+        "sf/1.200V/-40C",
+        "sf/1.200V/27C",
+        "sf/1.200V/125C",
+        "sf/1.320V/-40C",
+        "sf/1.320V/27C",
+        "sf/1.320V/125C",
+        "fs/1.080V/-40C",
+        "fs/1.080V/27C",
+        "fs/1.080V/125C",
+        "fs/1.200V/-40C",
+        "fs/1.200V/27C",
+        "fs/1.200V/125C",
+        "fs/1.320V/-40C",
+        "fs/1.320V/27C",
+        "fs/1.320V/125C"
+      ],
+      "distribution": {
+        "model": "normal",
+        "mean": 34.85148187444445,
+        "stddev": 22.600539155184784,
+        "min": -20.0372,
+        "max": 94.58632,
+        "median": 34.67622,
+        "skewness": 0.06991223126205103,
+        "excess_kurtosis": -0.5527974140807261,
+        "normality": {
+          "test": "anderson-darling",
+          "statistic": 18.76373133467796,
+          "critical_value": 0.787,
+          "significance": 0.05,
+          "verdict": "rejected"
+        }
+      },
+      "yield": {
+        "empirical": {
+          "method": "clopper-pearson",
+          "estimate": 0.8394444444444444,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.8293771920056019,
+            "high": 0.8491433797188421
+          },
+          "n": 5400
+        },
+        "normal": {
+          "method": "normal-delta",
+          "estimate": 0.86707635770964,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.8597846780237693,
+            "high": 0.8743680373955106
+          },
+          "n": 5400
+        },
+        "variance_reduced": null
+      },
+      "capability": {
+        "cp": 0.8849346408362919,
+        "cpk": 0.3709132475833912,
+        "cpk_confidence_interval": {
+          "low": 0.35960015131345513,
+          "high": 0.3822263438533273
+        },
+        "sigma_to_spec": 1.1127397427501737,
+        "sigma_to_spec_confidence_interval": {
+          "low": 1.0788004539403655,
+          "high": 1.146679031559982
+        },
+        "limiting_side": "upper"
+      },
+      "sample_size": {
+        "n": 5400,
+        "observed_ci_halfwidth": 0.009883093856620118,
+        "target_ci_halfwidth": 0.01,
+        "required_n": 5178,
+        "required_n_for_target": null,
+        "verdict": "sufficient",
+        "method": "normal-approximation",
+        "variance_reduced": null
+      },
+      "negative_control": {
+        "description": "receiver first-stage NMOS made 4x narrower (w=0.25u vs 1u): seeded degradation",
+        "n": 900,
+        "errored": 0,
+        "failed_unmeasurable": 0,
+        "censored": 0,
+        "yield": {
+          "empirical": {
+            "method": "clopper-pearson",
+            "estimate": 0.13444444444444445,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.11282747824898132,
+              "high": 0.15848531545268202
+            },
+            "n": 900
+          },
+          "normal": {
+            "method": "normal-delta",
+            "estimate": 0.12086995628365499,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.10382090253827565,
+              "high": 0.1379190100290343
+            },
+            "n": 900
+          },
+          "variance_reduced": null
+        },
+        "nominal_empirical_estimate": 0.8394444444444444,
+        "degradation_detected": true,
+        "verdict": "detected"
+      },
+      "analytic_cross_check": null,
+      "sampling": {
+        "strategy": "plain_random",
+        "replicates": null,
+        "effective_sample_size": null
+      },
+      "sigma_target": {
+        "k": 3.0,
+        "sigma_to_spec": 1.1127397427501737,
+        "lower_bound": 1.0788004539403655,
+        "gate": "lower_bound",
+        "met": false
+      },
+      "status": "fail",
+      "warnings": [
+        "measurement 't10_offset_mv': the sample set is not consistent with a normal distribution (Anderson-Darling A2* = 18.7637 > 0.787); treat the parametric yield estimate and Cpk as indicative only and prefer the empirical estimate",
+        "measurement 't10_offset_mv': samples were pooled across 45 originating corners; each corner is its own population, so the pooled estimate is a worst-case envelope rather than a distribution anyone sampled",
+        "measurement 't10_offset_mv': sigma_to_spec lower bound 1.0788 is below target_sigma 3"
+      ],
+      "spec_row": null
+    }
+  ],
+  "warnings": []
+}

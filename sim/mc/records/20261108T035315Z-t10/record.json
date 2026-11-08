@@ -1,0 +1,37 @@
+{
+  "record": "mc-t10",
+  "utc_stamp": "20261108T035315Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-10",
+  "claim_scope": "BOTH (receiver input stage; no channel model)",
+  "requests": {
+    "nominal": "request_t10.json",
+    "negative_control": "request_t10_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 120,
+    "seed": 4410,
+    "samples": 5400,
+    "negative_control_seed": 4411,
+    "negative_control_samples": 900
+  },
+  "result": {
+    "status": "fail",
+    "mean_mv": 34.85148187444445,
+    "sample_size_verdict": "sufficient",
+    "negative_control": "detected",
+    "negative_control_degradation_detected": true
+  },
+  "note": "T-10 FAILS: offset is +34.9 mV mean, 22.6 mV sigma over the pooled PVT-FULL grid (sigma-to-spec 1.11, target 3); about 16 % of draws fall outside +-60 mV. Recorded, not tuned; the spec is not relaxed."
+}
