@@ -6,9 +6,23 @@ x -40/27/125 C (`klt sim --dry-run` reports `unit_count: 45`). Each process corn
 bundle of the matching MOS, poly-resistor and diode sections, because the cells use `rppd`
 and the antenna diodes as well as the thin-oxide MOS devices.
 
-**Status: testbenches and request only. No record exists yet.** The 45-corner batch
-submit failed (see "Batch run" below), so nothing was graded and no `records/<stamp>/`
-was written. A failed submit is not a result.
+**Status: recorded.** 45-corner batch run `klt-sim-abe0ec2c5d05` (runner klt 0.9.0),
+record `records/20261108T002904Z/` (`report.json`, `record.json`). All 45 corners converged
+(none inconclusive). Result: **T-07, T-11, T-28 pass; T-06 (1 mA load), T-08 and T-24 fail.**
+The spec is not relaxed.
+
+| Row | Result | Binding corner |
+|---|---|---|
+| T-06 | fail: loaded VOH droop 0.111 V (> 0.1 V) at ss/1.08 V/125 C; 0.100 V at ss/1.08 V/27 C. Unloaded and VOL pass 45/45 | ss/1.080V/125C |
+| T-07 | pass 45/45 | n/a |
+| T-08 | fail: pull-up 110.8 ohm (40-80) at ss/1.08 V/125 C, fails 12/45 corners; pull-down 86.1 ohm at ss/1.08 V/125 C and 81.0 ohm at sf/1.08 V/125 C | ss/1.080V/125C |
+| T-11 | pass 45/45 | n/a |
+| T-24 | fail 45/45 at every bias: 102.2 fF (ff/1.32 V/-40 C, pad 0) to 126.2 fF (ss/1.08 V/125 C, pad VDDIO). Extracted-capacitance estimate (no bond pad, no PEX) | ss/1.080V/125C |
+| T-28 | pass 45/45 | n/a |
+
+Failures are cell results (netlists are #35); filed separately, not fixed here. The 1 mA
+load and 1 uA thresholds below are Builder-chosen and still need ratification, and T-06
+loaded and T-08 depend on the 1 mA choice.
 
 ## Rows and measurements
 
@@ -64,21 +78,15 @@ klt sim sim/dc-static/request.json --format json --report-out /tmp/dc-static-rep
 The second command goes to the batch fleet. A record is a new `records/<stamp>/` directory
 holding the report; never edit an earlier one.
 
-## Batch run
+## Batch run history
 
-Submit `klt-sim-1f8fa18f7a9f` (2026-10-27) failed on all 45 units: the fleet runner image
-is klt 0.7.0 and rejects the request ("request is missing required field: analysis")
-because it predates `analysis_steps[]`. The client reported
-`runner_request_features.missing: ["analysis_steps"]`. Per the host rule the grid was not
-run locally. Needs a runner image with `analysis_steps` (klayout-tools#3516 and siblings),
-or a rewrite as one request per analysis kind, which departs from the one-request shape
-of #52.
+- `klt-sim-1f8fa18f7a9f` (2026-10-27) failed on all 45 units: the fleet runner image was klt
+  0.7.0 and rejected the request ("request is missing required field: analysis") because it
+  predated `analysis_steps[]` (`runner_request_features.missing: ["analysis_steps"]`). Per the
+  host rule the grid was not run locally. Not a result.
+- `klt-sim-abe0ec2c5d05` (2026-11-08) on runner klt 0.9.0 (compatibility `match`): 45 units
+  ran. The job state is `failed` / exit 3 because rows failed (the verdict exit code), not a
+  runner crash. This is the recorded run.
 
-## Known finding from a single local probe (not a result)
-
-One corner (tt, 1.20 V, 27 C) was run locally as a debug probe and is not recorded.
-The driver does not drive: in this PDK the `w` of `sg13_lv_*` is the **total** width and
-`ng` the finger count, so `aib_tx_data` `XMp` (`w=1u ng=28`) and `XMn` (`w=1u ng=14`) are
-36 nm and 71 nm per finger, below the model minimum, and the pad floats at the first
-operating point. The first `op` then fails to converge, which is why
-`fail_on_diagnostic` is set. Cell netlists are out of scope here (#35); filed separately.
+An earlier local probe (tt, 1.20 V, 27 C) showed a floating pad because `w` of `sg13_lv_*` is
+the total width; fixed by #56/#58 and not repeated here.
