@@ -2,6 +2,10 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-08
+
+- **PR #131**: sim: record 45-corner dc-static PVT-FULL run
+
 ### 2026-11-07
 
 - **PR #128**: Bump Repo Skills 0.25.1 -> 0.25.10
