@@ -1,0 +1,14 @@
+** Variant of aib_pad_esd.spice for DR-0018 (issue #147): the primary diode XDp1
+** (dpantenna, antenna-diode model) is replaced by the PDK pad diode
+** diodevdd_2kv (sg13g2_esd.lib). Same subckt name and ports, so a testbench
+** selects it by including this file instead of aib_pad_esd.spice. Not the
+** committed netlist; adopted only if DR-0018 says so.
+.subckt aib_pad_esd PAD PADI VDDIO VSS
+*.PININFO PAD:B PADI:B VDDIO:B VSS:B
+XDp1 VDDIO PAD VSS diodevdd_2kv
+XMn1 PAD VSS VSS VSS sg13_lv_nmos w=20u l=0.13u ng=10 m=1
+XMclamp VDDIO VSS VSS VSS sg13_lv_nmos w=40u l=0.35u ng=20 m=1
+XResd PAD PADI VSS rppd w=2u l=2u m=1 b=0
+XDp2 PADI VDDIO dpantenna l=2u w=2u
+XMn2 PADI VSS VSS VSS sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+.ends
