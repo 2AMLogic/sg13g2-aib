@@ -8,6 +8,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 - **PR #139**: sim: T-10 Monte Carlo campaign and item 6 digital not_applicable
 - **PR #131**: sim: record 45-corner dc-static PVT-FULL run
 - **Issue #53** (closed): T1 item 5 (analog) family: channel eye, overshoot and energy PVT-FULL (T-01/T-09/T-18/T-26)
+- **Issue #52** (closed): T1 item 5 (analog) family: DC static characteristics PVT-FULL (T-06/T-07/T-08/T-11/T-24/T-28)
 
 ### 2026-11-07
 
