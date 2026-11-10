@@ -102,14 +102,16 @@ TX_DEVICES = [
     ("Mnr2p", "pmos", 2.0, 0.13, 2, dict(D="GN", G="OEB", S="NB")),
     ("Mnr1n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="DIN", S="VSS")),
     ("Mnr2n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="OEB", S="VSS")),
-    ("Mp", "pmos", 1.0, 0.13, 28, dict(D="PAD", G="GP", S="VDDIO")),
-    ("Mn", "nmos", 1.0, 0.13, 14, dict(D="PAD", G="GN", S="VSS")),
+    ("Mp", "pmos", 1.0, 0.13, 54, dict(D="DP", G="GP", S="VDDIO")),
+    ("Mn", "nmos", 1.0, 0.13, 22, dict(D="DN", G="GN", S="VSS")),
     ("Mpu", "pmos", 2.0, 0.13, 1, dict(D="PUX", G="PUN", S="VDDIO")),
     ("Mpd", "nmos", 1.0, 0.13, 1, dict(D="PDX", G="PD", S="VSS")),
 ]
 TX_RES = [
     ("Rpu", 0.5, 24.0, "PUX", "PAD"),
     ("Rpd", 0.5, 24.0, "PAD", "PDX"),
+    ("Rsp", 10.0, 0.5, "DP", "PAD"),     # DR-0017 series legs: driver drain -> PAD
+    ("Rsn", 10.0, 0.5, "DN", "PAD"),
 ]
 RX_DEVICES = [
     ("Mi1p", "pmos", 1.25, 0.13, 2, dict(D="N1", G="PADI", S="VDDIO")),
@@ -119,7 +121,7 @@ RX_DEVICES = [
 ]
 # aib_pad_esd: diodes (anode, cathode), clamp, series resistor.
 ESD_DIODES = [
-    ("Dp1", "p", 10.0, "PAD", "VDDIO"),    # p+ in nwell: anode PAD, nwell VDDIO
+    ("Dp1", "p", 4.5, "PAD", "VDDIO"),    # p+ in nwell: anode PAD, nwell VDDIO
     ("Dp2", "p", 2.0, "PADI", "VDDIO"),
 ]
 # Secondary NMOS-side element: grounded-gate NMOS junction (D=PADI, G=S=B=VSS), not a diode.
@@ -626,9 +628,9 @@ def build_unit(layout, name, tx):
     # Mn1: grounded-gate nmos w=2 l=0.13 ng=10 (D=PAD, G=S=B=VSS), the PAD-to-VSS drain-junction diode.
     mos(ctx, "nmos", 2.0, 0.13, 10, 4.4, band_row + 5,
         dict(D="PAD", G="VSS", S="VSS"), "Mn1", gate_row=band_row + 8)
-    c_dp1 = col_of(gx(c_dn1) + 5.8 + 1.6 + 6.05)
-    diode(ctx, "Dp1", "p", 10.0, c_dp1, r_dn1, "PAD", "VDDIO")
-    xr = gx(c_dp1) + 6.4
+    c_dp1 = col_of(gx(c_dn1) + 5.8 + 1.6 + 3.3)
+    diode(ctx, "Dp1", "p", 4.5, c_dp1, r_dn1, "PAD", "VDDIO")
+    xr = gx(c_dp1) + 3.65
     # Clamp: nmos w=2 l=0.35 ng=20 (D=VDDIO, G=VSS, S=VSS) -- drawn with its own l.
     mos(ctx, "nmos", 2.0, 0.35, 20, r3(xr + 1.4), band_row + 1,
         dict(D="VDDIO", G="VSS", S="VSS"), "Mclamp", gate_row=band_row + 6)
@@ -669,8 +671,8 @@ def build_tx(ctx, router):
         t, w, l, ng, nets = dev[nm]
         return mos(ctx, t, w, l, ng, r3(x), row, nets, nm, gate_row=grow)[0]
 
-    x = put("Mp", 5.0, 25, 27)
-    put("Mn", x + 2.5, 25, 27)
+    put("Mp", 5.0, 25, 27)
+    put("Mn", 28.0, 33)
     x = 3.5
     for nm in ("Mnd1p", "Mnd2p", "Mnr1p", "Mnr2p"):
         x = put(nm, x + 2.0, 33)
@@ -682,6 +684,8 @@ def build_tx(ctx, router):
         x = put(nm, x + 1.5, 53)
     rppd(ctx, "Rpu", 0.5, 24.0, 28.0, 56, "PUX", "PAD")
     rppd(ctx, "Rpd", 0.5, 24.0, 28.0, 58, "PAD", "PDX")
+    rppd(ctx, "Rsp", 10.0, 0.5, 45.0, 41, "DP", "PAD")
+    rppd(ctx, "Rsn", 10.0, 0.5, 50.5, 41, "DN", "PAD")
 
 
 def build_rx(ctx, router):

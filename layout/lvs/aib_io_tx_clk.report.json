@@ -70,6 +70,7 @@
     "instance_count": 0,
     "expected_nets": null,
     "unchecked_expected_pins": [],
+    "excluded_pins": [],
     "findings": [],
     "finding_count": 0
   },
@@ -85,8 +86,8 @@
     {
       "class": "rppd",
       "device_kind": "resistor",
-      "layout_devices": 6,
-      "reference_devices": 6,
+      "layout_devices": 10,
+      "reference_devices": 10,
       "compared": [],
       "not_compared": [
         {
@@ -121,14 +122,14 @@
   "category_error_counts": {},
   "counts": {
     "nets": {
-      "layout": 25,
-      "reference": 25,
-      "matched": 25
+      "layout": 29,
+      "reference": 29,
+      "matched": 29
     },
     "devices": {
-      "layout": 196,
-      "reference": 196,
-      "matched": 196
+      "layout": 268,
+      "reference": 268,
+      "matched": 268
     },
     "pins": {
       "layout": 9,
@@ -149,15 +150,17 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.12",
+    "engine_version": "0.30.13",
     "netgen_binary": null,
-    "layout_sha256": "2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
-    "reference_sha256": "7727b542f22eee18d5d6ab5292a881ab6c0728ed307851990bad54e9cc3bbf2b",
+    "layout_sha256": "cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+    "reference_sha256": "b5e32c2a584f58c3918b8acd1295369ace7471b9e1ce97c510ab8d31674394ed",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.8.0",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.0",
+    "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
+    "klt_reinstall_spec": "klayout-tools==0.9.0",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sg13g2",
@@ -165,10 +168,10 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
+      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
       "role": "layout"
     },
-    "klayout_version_mismatch": false
+    "klayout_version_mismatch": true
   },
   "mismatches": [
     {
@@ -192,8 +195,8 @@
           "P",
           "W"
         ],
-        "layout_devices": 6,
-        "reference_devices": 6
+        "layout_devices": 10,
+        "reference_devices": 10
       },
       "circuit": null,
       "instance": null,
@@ -202,7 +205,7 @@
     {
       "category": "device.placeholder_value",
       "severity": "warning",
-      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 6 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 6 instance(s), R 294.222333000997..12472.01581027668) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
+      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 10 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 10 instance(s), R 19.992204677193683..12472.01581027668) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
       "side": "reference",
       "net": null,
       "device": {
@@ -214,9 +217,10 @@
       "details": {
         "parameter": "R",
         "device_kind": "resistor",
-        "reference_devices": 6,
-        "layout_devices": 6,
+        "reference_devices": 10,
+        "layout_devices": 10,
         "layout_values": [
+          19.992204677193683,
           294.222333000997,
           12472.01581027668
         ]
@@ -228,72 +232,92 @@
   ],
   "net_correspondence": [
     {
-      "layout": "\\$8",
-      "reference": "ATX/GN",
+      "layout": "\\$16",
+      "reference": "ATX/DN",
       "pin": false
     },
     {
       "layout": "\\$9",
-      "reference": "ATX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$17",
-      "reference": "ATX/NA",
+      "reference": "ATX/DP",
       "pin": false
     },
     {
       "layout": "\\$11",
-      "reference": "ATX/NB",
+      "reference": "ATX/GN",
       "pin": false
     },
     {
-      "layout": "\\$10",
-      "reference": "ATX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$20",
-      "reference": "ATX/PDX",
+      "layout": "\\$8",
+      "reference": "ATX/GP",
       "pin": false
     },
     {
       "layout": "\\$21",
-      "reference": "ATX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$14",
-      "reference": "BTX/GN",
+      "reference": "ATX/NA",
       "pin": false
     },
     {
       "layout": "\\$12",
-      "reference": "BTX/GP",
+      "reference": "ATX/NB",
       "pin": false
     },
     {
-      "layout": "\\$18",
-      "reference": "BTX/NA",
+      "layout": "\\$17",
+      "reference": "ATX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$26",
+      "reference": "ATX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$24",
+      "reference": "ATX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$15",
+      "reference": "BTX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$10",
+      "reference": "BTX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$20",
+      "reference": "BTX/GN",
       "pin": false
     },
     {
       "layout": "\\$13",
-      "reference": "BTX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$16",
-      "reference": "BTX/OEB",
+      "reference": "BTX/GP",
       "pin": false
     },
     {
       "layout": "\\$22",
-      "reference": "BTX/PDX",
+      "reference": "BTX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$14",
+      "reference": "BTX/NB",
       "pin": false
     },
     {
       "layout": "\\$19",
+      "reference": "BTX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$23",
+      "reference": "BTX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$25",
       "reference": "BTX/PUX",
       "pin": false
     },
@@ -323,12 +347,12 @@
       "pin": true
     },
     {
-      "layout": "\\$3",
+      "layout": "\\$4",
       "reference": "PADI_A",
       "pin": false
     },
     {
-      "layout": "\\$7",
+      "layout": "\\$5",
       "reference": "PADI_B",
       "pin": false
     },

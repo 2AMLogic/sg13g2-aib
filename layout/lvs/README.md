@@ -7,7 +7,7 @@ gate-level netlist.
 | Partition | Result | Row |
 |---|---|---|
 | Digital (`aib_datapath`) | `status: match`, `power_connectivity.status: match` | `4.digital` reads `met` |
-| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 3360 / 3360 devices, 341 / 341 nets, 101 / 101 pins | `4.analog` reads `met`, citing `aib_io_column.report.json` |
+| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 4224 / 4224 devices, 389 / 389 nets, 101 / 101 pins (DR-0017 stream, #140) | `4.analog` reads `met`, citing `aib_io_column.report.json` |
 | Analog, per cell (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | `status: match` on all four (stream regenerated, issue #70; the earlier stream was `mismatch`) | not cited: item 4 takes one report per partition (2AMLogic/klayout-tools#4354) |
 
 Issue #40 recorded the analog result as a mismatch and did not change the generator. Issue #70 fixed the
@@ -163,3 +163,14 @@ For `aib_io_tx_clk` and `aib_io_rx_clk` the numbering klt gives the repeated `DI
 changed with the layout, so which label shares a unit with `PAD` is now set by `CLK_DIN` / `CLK_DOUT`
 in `gen_reference.py` (read by trying both pairings; the wrong one reports `device.unmatched` on
 the receiver output stage and nothing else). Bookkeeping between identical units, not an electrical claim.
+
+## Issue #140: DR-0017 regeneration
+
+`gen_io_column.py` now draws the DR-0017 driver (`Mp` 54 fingers, `Mn` 22, drains on `DP` / `DN`, series
+`rppd` legs `Rsp` / `Rsn`) and the 4.5 um `Dp1`. `gen_reference.py` regenerated all five references
+(`--check` clean). The five compares were re-run with klt 0.9.0: column `match` (4224/4224 devices,
+389/389 nets, 101/101 pins), `aib_io_tx` (134 devices), `aib_io_rx` (42), `aib_io_tx_clk` (268) and
+`aib_io_rx_clk` (84) `match`; `--check --rerun` exits 0 on the column and `aib_io_tx` reports (the other
+three were not re-run). The negative control was rebuilt on the new reference (one clamp finger gate
+`VSS` -> `VDDIO`): `mismatch`, one `device.unmatched`, exit 3. The sums above 3360 / 341 in the Issue #94
+section describe the earlier stream and are history.
