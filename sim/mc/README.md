@@ -63,7 +63,7 @@ per unit, against about 22 s per corner for the PRBS bench. Limits +-60 ps / +-3
 Both supplies of every block move together on the grid (`vdd_*` in lockstep, as the channel-eye grid).
 
 N from the `klt yield` sample-size verdict of a 20-draw pilot (confidence 0.95, CI half-width
-0.01): T-15 needs 170 (900 recorded, the pilot run itself); T-16 needs 1436, so 40 draws per corner
+0.01): T-15 needs 170 (900 recorded, the pilot run itself); T-16 needs 1318 (`required_n` in `record.json` and `yield.json`), so 40 draws per corner
 (1800) were run (verdict sufficient, observed half-width 0.0088). Negative control: an extra 500 fF
 at the degraded lane's receiver input (`edge_lane_deg.inc`, not design evidence), 900 samples each,
 detected for both rows. Both rows ran on the batch fleet (`--backend batch --wait-for-capacity 600`).
