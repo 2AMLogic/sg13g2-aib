@@ -53,13 +53,29 @@
         "file": "signoff/attest/item5-digital/sta_rx_clk.json"
       }
     ],
-    "6.analog": {
-      "file": "sim/mc/records/20261108T035315Z-t10/yield.json",
-      "content_hash": "sha256:2db1f964470a8953ce8784820907d330873f383b14cbd3eee7203e77fe43ecac",
-      "rows": [
-        "T-10"
-      ]
-    },
+    "6.analog": [
+      {
+        "file": "sim/mc/records/20261108T035315Z-t10/yield.json",
+        "content_hash": "sha256:2db1f964470a8953ce8784820907d330873f383b14cbd3eee7203e77fe43ecac",
+        "rows": [
+          "T-10"
+        ]
+      },
+      {
+        "file": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "content_hash": "sha256:3fd5be041efc841c14f4a72c8cb64a244615a1f930684a26bfd2f9b53121bba1",
+        "rows": [
+          "T-15"
+        ]
+      },
+      {
+        "file": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "content_hash": "sha256:30279e0d0d716ec384b9e7f4afb03466a8ab797c8df5544695fa654651f4b070",
+        "rows": [
+          "T-16"
+        ]
+      }
+    ],
     "6.digital": {
       "not_applicable": {
         "spec": {
@@ -133,12 +149,10 @@
         "gap": "no campaign yet; tracked in #136"
       },
       {
-        "id": "T-15",
-        "gap": "no campaign yet; tracked in #137"
+        "id": "T-15"
       },
       {
-        "id": "T-16",
-        "gap": "no campaign yet; tracked in #137"
+        "id": "T-16"
       },
       {
         "id": "T-19",

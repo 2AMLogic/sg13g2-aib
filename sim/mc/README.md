@@ -7,11 +7,12 @@ DR-0013). Simulated, pre-layout; post-layout re-runs follow #37.
 |---|---|---|
 | T-10 receiver threshold | **recorded, fails** | `records/20261108T035315Z-t10/` |
 | T-13, T-14 TX skew | not done | #136 |
-| T-15, T-16 RX skew (CH; TC reported separately) | not done | #137 |
+| T-15 RX data-to-data skew (CH) | **recorded, fails** | `records/20261110T113631Z-t15/` |
+| T-16 RX data-to-clock skew (CH) | **recorded, fails** | `records/20261110T113631Z-t16/` |
 | T-19 capture window | not done | #138 |
 
-The manifest declares all six under `spec_rows."6"`; the five open rows are declared
-`gap`s, so item 6 / analog stays `unmet` (reason `check_failed`: T-10 fails its limit).
+The manifest declares all six under `spec_rows."6.analog"`; the three open rows (T-13, T-14, T-19) are declared
+`gap`s, so item 6 / analog stays `unmet` (reason `check_failed`: T-10, T-15 and T-16 fail their limits).
 
 ## Method
 
@@ -48,6 +49,32 @@ seed 4411, detected.
 corner shift (N/P strength ratio), not mismatch. The spec is not relaxed; the cell is #35's. Note
 `klt yield` pools the 45 corners ("a worst-case envelope rather than a distribution anyone
 sampled"); a per-corner reading is not in this record.
+
+## T-15, T-16 (RX-input skew, CH)
+
+Single-edge benches over `spec/channel/channel_rc.cir` (CH-3MM-RC, nominal channel), the
+`sim/channel-eye` lane (`edge_lane.inc`: TX, pad ESD, channel, pad ESD, RX, 5 fF on DOUT) as
+subject. `tb_t15.cir`: lane A rises and complement lane B falls together; skew is B's falling
+minus A's rising mid-rail crossing of the RX pad node. `tb_t16.cir`: lane A rises, the
+center-aligned clock pair (`rxc - rxcb`) rises 500 ps later; the graded quantity is data-to-clock
+delay minus the nominal 0.5 UI. Measured cost is about 0.5 s (T-15) and 0.7 s (T-16) of ngspice
+per unit, against about 22 s per corner for the PRBS bench. Limits +-60 ps / +-30 ps, `target_sigma` 7
+(signed difference; see below). 45 corners, seeds 4415 / 4420, negative-control seeds 4416 / 4421.
+Both supplies of every block move together on the grid (`vdd_*` in lockstep, as the channel-eye grid).
+
+N from the `klt yield` sample-size verdict of a 20-draw pilot (confidence 0.95, CI half-width
+0.01): T-15 needs 170 (900 recorded, the pilot run itself); T-16 needs 1436, so 40 draws per corner
+(1800) were run (verdict sufficient, observed half-width 0.0088). Negative control: an extra 500 fF
+at the degraded lane's receiver input (`edge_lane_deg.inc`, not design evidence), 900 samples each,
+detected for both rows. Both rows ran on the batch fleet (`--backend batch --wait-for-capacity 600`).
+
+**Results: both fail the 7-sigma gate.** Pooled over the grid, T-15 has mean +31.9 ps and sigma 11.4 ps
+(sigma-to-spec 2.47 against 7; 0.4 % of draws outside +-60 ps, worst 62.6 ps); T-16 has mean +16.6 ps
+and sigma 6.6 ps (sigma-to-spec 2.03 against 7; 3.6 % outside +-30 ps, worst 37.1 ps). The mean is
+mostly systematic (rise/fall asymmetry across the channel and receiver, not mismatch), the
+distributions are skewed and the normality test rejects, so the empirical tail is the quantity to
+read. `klt yield` pools the 45 corners as for T-10. The limits are not relaxed. These are CH
+results only; the L2 loopback does not observe RX-input skew, so no TC value is recorded here.
 
 ## Assumptions for ratification (not in the spec)
 
