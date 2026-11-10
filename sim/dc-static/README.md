@@ -145,3 +145,14 @@ holding the report; never edit an earlier one.
 
 An earlier local probe (tt, 1.20 V, 27 C) showed a floating pad because `w` of `sg13_lv_*` is
 the total width; fixed by #56/#58 and not repeated here.
+
+## ESD pad diode against T-24 (DR-0018, issue #147)
+
+`tb_esd_diode.cir` + `request_esd_diode.json` extract pad C (0, VDDIO/2, VDDIO) and forward
+dynamic R of the `sg13g2_esd.lib` pad diodes and the `dpantenna` baseline at 45 corners.
+`design/aib_pad_esd_2kv.spice` swaps `XDp1` for `diodevdd_2kv`; `tb_dc_static_2kv.cir` +
+`request_2kv.json` re-run the dc-static set on it (the committed netlist is unchanged).
+Result: T-24 worst 108.9 fF against 100 fF; T-06/T-07/T-08/T-11/T-28 unchanged. Record
+`records/20261110T084631Z/`; decision `spec/decisions/0018-dedicated-esd-diode-capacitance-vs-t24.md`.
+Run both with `--wait-for-capacity 600`.
+

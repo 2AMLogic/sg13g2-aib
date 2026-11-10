@@ -1,0 +1,42 @@
+{
+ "record": "dc-static-esd-diode",
+ "utc_stamp": "20261110T084631Z",
+ "issue": "#147",
+ "decision_record": "spec/decisions/0018-dedicated-esd-diode-capacitance-vs-t24.md",
+ "pdk": {
+  "source": "IHP-GmbH/IHP-Open-PDK",
+  "release_tag": "v0.3.0",
+  "tarball_sha256": "f6afb7a8d2adf3e40acd3fd2c7892fc93510e6f760565409a8df2b5b242254fc"
+ },
+ "scope": "BOTH (channel and test configuration); no channel model used",
+ "client_klt_version": "0.9.2.dev428+g7a589b1895a3",
+ "append_only_note": "prior records 20261108T002904Z and 20261108T004350Z are untouched. The committed netlist design/aib_pad_esd.spice is NOT changed by this record.",
+ "runs": {
+  "report.json": {
+   "request": "sim/dc-static/request_2kv.json",
+   "netlist": "sim/dc-static/tb_dc_static_2kv.cir (includes design/aib_pad_esd_2kv.spice: XDp1 = diodevdd_2kv)",
+   "batch_job_id": "klt-sim-e473b4bb9e38",
+   "corners": 45,
+   "corner_status": {"pass": 0, "fail": 45, "error": 0, "inconclusive": 0},
+   "note": "all 45 corners fail, and only on T-24: it fails at pad = VDDIO/2 in 29 corners and at pad = VDDIO in 44 corners, and every corner fails at one or both; every other row passes at 45/45"
+  },
+  "esd-diode-report.json": {
+   "request": "sim/dc-static/request_esd_diode.json",
+   "netlist": "sim/dc-static/tb_esd_diode.cir",
+   "batch_job_id": "klt-sim-52caeffef9de",
+   "corners": 45,
+   "corner_status": {"pass": 45, "fail": 0, "error": 0, "inconclusive": 0},
+   "note": "extraction only, no limits"
+  }
+ },
+ "rows": {
+  "T-06": {"status": "pass", "note": "loaded droop max 0.0751 V (ss/1.08V/125C), VOL max 0.0727 V; identical to 20261108T004350Z (the diode swap does not touch the driver)"},
+  "T-08": {"status": "pass", "note": "pull-up 42.86-75.10 ohm, pull-down 44.38-72.75 ohm; identical to 20261108T004350Z"},
+  "T-24": {"status": "fail", "note": "worst 95.10 fF (pad=0, ss/1.08V/125C), 108.9 fF (pad=VDDIO/2, fs/1.32V/125C), 108.7 fF (pad=VDDIO, ss/1.08V/125C); bound 100 fF; fails 29/45 corners at VDDIO/2 and 44/45 at VDDIO; extracted-capacitance estimate only"},
+  "T-07": {"status": "pass", "note": "tristate pin current max 0.84 uA (ff/1.32V/125C), bound 1 uA; same as 20261108T004350Z"},
+  "T-28": {"status": "pass", "note": "weak pull 11.6-15.3 kohm"},
+  "T-11": {"status": "pass", "note": "no hysteresis structure"}
+ },
+ "t25_note": "T-25 is not evaluated: the 0.5 A clamp transient (SIM) and the LAYOUT area/current-path check are not run in this record. Forward dynamic resistance only is extracted (esd-diode-report.json).",
+ "spec_relaxed": false
+}

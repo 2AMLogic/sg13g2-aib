@@ -1,0 +1,46 @@
+* ESD pad-diode extraction: small-signal C vs pad bias and forward dynamic R.
+* Issue #147 / DR-0018. Devices: sg13g2_esd.lib diodevdd_2kv/diodevss_2kv and
+* the _4kv reference, plus the dpantenna 4.5u x 4.5u that DR-0017 put in the
+* netlist (XDp1), as the baseline.
+*
+* Units (sg13g2_esd.lib L22-L23, L29-L33, L47-L50): the diode instances carry
+* area=DEV_A (35 for 2kv, 70 for 4kv). `area` is the ngspice level-1 diode
+* multiplier, so cj0 and is scale by area and rs divides by it; it is NOT um^2
+* against a per-um^2 model. Hence diodevdd_2kv rs = 289.6/35 and
+* cj0 = 8.716e-16*35. The dpantenna (diodes.lib L80-L87) is the opposite:
+* DEV_A is in um^2 against per-um^2 models (dparea cj=8.252e-16 F/um^2).
+*
+* Each DUT has its own pad node, bias (fraction of VDDIO) and ac source; the
+* request sets the ac stimulus for exactly one DUT per step. Cap is read as in
+* tb_pin.cir. Vo* adds a forward overdrive (V) to the bias for the forward-R steps.
+Vddio vddio 0 dc 1.2
+* DUT a: diodevdd_2kv (anode PAD, cathode VDDIO)
+Vfa fa 0 dc 0
+Voa oa 0 dc 0
+Ba ba 0 V=v(fa)*v(vddio)+v(oa)
+Vaca pa ba dc 0 ac 0
+Xa vddio pa 0 diodevdd_2kv
+* DUT b: diodevss_2kv (anode VSS, cathode PAD)
+Vfb fb 0 dc 0
+Vob ob 0 dc 0
+Bb bb 0 V=v(fb)*v(vddio)+v(ob)
+Vacb pb bb dc 0 ac 0
+Xb vddio pb 0 diodevss_2kv
+* DUT c: diodevdd_4kv
+Vfc fc 0 dc 0
+Voc oc 0 dc 0
+Bc bc 0 V=v(fc)*v(vddio)+v(oc)
+Vacc pc bc dc 0 ac 0
+Xc vddio pc 0 diodevdd_4kv
+* DUT d: diodevss_4kv
+Vfd fd 0 dc 0
+Vod od 0 dc 0
+Bd bd 0 V=v(fd)*v(vddio)+v(od)
+Vacd pd bd dc 0 ac 0
+Xd vddio pd 0 diodevss_4kv
+* DUT e: dpantenna 4.5u x 4.5u (the DR-0017 XDp1), anode PAD, cathode VDDIO
+Vfe fe 0 dc 0
+Voe oe 0 dc 0
+Be be 0 V=v(fe)*v(vddio)+v(oe)
+Vace pe be dc 0 ac 0
+Xe pe vddio dpantenna l=4.5u w=4.5u

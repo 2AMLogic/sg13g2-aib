@@ -1,0 +1,984 @@
+{
+  "engine": "ngspice",
+  "netlist": "tb_esd_diode.cir",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "corners": {
+    "process": [
+      {
+        "name": "tt",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_tt"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "ss",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ss"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "ff",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ff"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_bcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "sf",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_sf"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "fs",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_fs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vddio": [
+        1.08,
+        1.2,
+        1.32
+      ]
+    },
+    "temperature_c": [
+      -40,
+      27,
+      125
+    ]
+  },
+  "analysis_steps": [
+    {
+      "name": "cap_a_0",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vaca.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_a_0_ff",
+          "expr": "vecmax(imag(-i(vaca)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_a_5",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0.5,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vaca.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_a_5_ff",
+          "expr": "vecmax(imag(-i(vaca)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_a_10",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 1,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vaca.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_a_10_ff",
+          "expr": "vecmax(imag(-i(vaca)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_b_0",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacb.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_b_0_ff",
+          "expr": "vecmax(imag(-i(vacb)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_b_5",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0.5,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacb.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_b_5_ff",
+          "expr": "vecmax(imag(-i(vacb)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_b_10",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 1,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacb.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_b_10_ff",
+          "expr": "vecmax(imag(-i(vacb)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_c_0",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacc.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_c_0_ff",
+          "expr": "vecmax(imag(-i(vacc)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_c_5",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0.5,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacc.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_c_5_ff",
+          "expr": "vecmax(imag(-i(vacc)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_c_10",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 1,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacc.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_c_10_ff",
+          "expr": "vecmax(imag(-i(vacc)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_d_0",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vacd.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_d_0_ff",
+          "expr": "vecmax(imag(-i(vacd)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_d_5",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0.5,
+        "Vfe": 0,
+        "Vacd.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_d_5_ff",
+          "expr": "vecmax(imag(-i(vacd)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_d_10",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 1,
+        "Vfe": 0,
+        "Vacd.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_d_10_ff",
+          "expr": "vecmax(imag(-i(vacd)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_e_0",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Vace.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_e_0_ff",
+          "expr": "vecmax(imag(-i(vace)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_e_5",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0.5,
+        "Vace.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_e_5_ff",
+          "expr": "vecmax(imag(-i(vace)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "cap_e_10",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 500meg 500meg"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 1,
+        "Vace.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "cpad_e_10_ff",
+          "expr": "vecmax(imag(-i(vace)))/(2*pi*500e6)*1e15",
+          "unit": "fF"
+        }
+      ]
+    },
+    {
+      "name": "fwd_a_2v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 1,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 2.0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_a_2v_a",
+          "expr": "abs(i(vaca))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_a_2v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 1,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 2.0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0,
+        "Vaca.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_a_2v_ohm",
+          "expr": "1/real(-i(vaca))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_a_3v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 1,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 3.0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_a_3v_a",
+          "expr": "abs(i(vaca))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_a_3v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 1,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 3.0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0,
+        "Vaca.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_a_3v_ohm",
+          "expr": "1/real(-i(vaca))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_b_2v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": -2.0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_b_2v_a",
+          "expr": "abs(i(vacb))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_b_2v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": -2.0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0,
+        "Vacb.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_b_2v_ohm",
+          "expr": "1/real(-i(vacb))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_b_3v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": -3.0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_b_3v_a",
+          "expr": "abs(i(vacb))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_b_3v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": -3.0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 0,
+        "Vacb.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_b_3v_ohm",
+          "expr": "1/real(-i(vacb))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_c_2v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 1,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 2.0,
+        "Vod": 0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_c_2v_a",
+          "expr": "abs(i(vacc))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_c_2v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 1,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 2.0,
+        "Vod": 0,
+        "Voe": 0,
+        "Vacc.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_c_2v_ohm",
+          "expr": "1/real(-i(vacc))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_c_3v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 1,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 3.0,
+        "Vod": 0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_c_3v_a",
+          "expr": "abs(i(vacc))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_c_3v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 1,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 3.0,
+        "Vod": 0,
+        "Voe": 0,
+        "Vacc.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_c_3v_ohm",
+          "expr": "1/real(-i(vacc))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_d_2v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": -2.0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_d_2v_a",
+          "expr": "abs(i(vacd))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_d_2v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": -2.0,
+        "Voe": 0,
+        "Vacd.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_d_2v_ohm",
+          "expr": "1/real(-i(vacd))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_d_3v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": -3.0,
+        "Voe": 0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_d_3v_a",
+          "expr": "abs(i(vacd))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_d_3v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 0,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": -3.0,
+        "Voe": 0,
+        "Vacd.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_d_3v_ohm",
+          "expr": "1/real(-i(vacd))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_e_2v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 1,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 2.0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_e_2v_a",
+          "expr": "abs(i(vace))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_e_2v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 1,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 2.0,
+        "Vace.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_e_2v_ohm",
+          "expr": "1/real(-i(vace))",
+          "unit": "ohm"
+        }
+      ]
+    },
+    {
+      "name": "fwd_e_3v",
+      "analysis": {
+        "kind": "op",
+        "args": ""
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 1,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 3.0
+      },
+      "measurements": [
+        {
+          "name": "ifwd_e_3v_a",
+          "expr": "abs(i(vace))",
+          "unit": "A"
+        }
+      ]
+    },
+    {
+      "name": "rdyn_e_3v",
+      "analysis": {
+        "kind": "ac",
+        "args": "lin 1 1k 1k"
+      },
+      "alter": {
+        "Vfa": 0,
+        "Vfb": 0,
+        "Vfc": 0,
+        "Vfd": 0,
+        "Vfe": 1,
+        "Voa": 0,
+        "Vob": 0,
+        "Voc": 0,
+        "Vod": 0,
+        "Voe": 3.0,
+        "Vace.ac": 1
+      },
+      "measurements": [
+        {
+          "name": "rdyn_e_3v_ohm",
+          "expr": "1/real(-i(vace))",
+          "unit": "ohm"
+        }
+      ]
+    }
+  ],
+  "options": {
+    "stage_model_inputs": true,
+    "fail_on_diagnostic": [
+      "nonconvergence"
+    ],
+    "timeout_s": 60,
+    "keep_artifacts": false
+  },
+  "backend": "batch",
+  "batch": {
+    "runner_version_check": "warn",
+    "capacity_wait_s": 600
+  }
+}
