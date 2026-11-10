@@ -17,6 +17,7 @@ APP = HERE / "check_sim_append_only.py"
 SRC = HERE / "check_design_sources.py"
 GEN = HERE / "gen_characterization_report.py"
 SDF7 = HERE / "check_item7_sdf.py"
+PNR_PINS = HERE / "check_pnr_pins.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -305,6 +306,59 @@ class Item7SdfTests(unittest.TestCase):
             del m["derived_inputs"]
             p.write_text(json.dumps(m))
         self.assertNotEqual(self.check(edit), 0)
+
+
+class PnrPinTests(unittest.TestCase):
+    """The committed routed SPEF and DEF must match their manifest pins."""
+
+    def check(self, mutate=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            pnr = root / "layout/pnr/.klt/place-and-route"
+            pnr.mkdir(parents=True)
+            (root / "signoff").mkdir()
+            shutil.copy(REPO / "signoff/block-manifest.json", root / "signoff/block-manifest.json")
+            for n in ("aib_datapath_route.spef", "aib_datapath.def"):
+                shutil.copy(REPO / "layout/pnr/.klt/place-and-route" / n, pnr / n)
+            if mutate:
+                mutate(root)
+            return run(PNR_PINS, "--root", root).returncode
+
+    def edit_manifest(self, fn):
+        def edit(r):
+            p = r / "signoff/block-manifest.json"
+            m = json.loads(p.read_text())
+            fn(m["derived_inputs"])
+            p.write_text(json.dumps(m))
+        return edit
+
+    def test_good(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_edited_spef_fails(self):
+        def edit(r):
+            with open(r / "layout/pnr/.klt/place-and-route/aib_datapath_route.spef", "a") as f:
+                f.write("\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_edited_def_fails(self):
+        def edit(r):
+            with open(r / "layout/pnr/.klt/place-and-route/aib_datapath.def", "a") as f:
+                f.write("\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_stale_pin_fails(self):
+        def stale(d):
+            d["pnr.digital"]["files"][0]["content_hash"] = "sha256:" + "0" * 64
+        self.assertNotEqual(self.check(self.edit_manifest(stale)), 0)
+
+    def test_missing_block_fails(self):
+        self.assertNotEqual(self.check(self.edit_manifest(lambda d: d.pop("pnr.digital"))), 0)
+
+    def test_one_file_pinned_fails(self):
+        def drop(d):
+            del d["pnr.digital"]["files"][1]
+        self.assertNotEqual(self.check(self.edit_manifest(drop)), 0)
 
 
 if __name__ == "__main__":

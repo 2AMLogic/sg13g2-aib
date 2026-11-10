@@ -170,7 +170,10 @@ min:typ:max column. There is no second SDF, so no fast-corner post-route run exi
   `evidence` entry as an envelope). `python3 -I scripts/ci/check_item7_sdf.py` (PDK-free, run in CI)
   fails if the routed SDF is not the pinned one, if regeneration does not reproduce the committed
   bytes, or if the committed bytes differ from the pins. If a P&R re-run changes the routed SDF,
-  re-cite `PNR_SHA256`, the SDFs and the pins together.
+  re-cite `PNR_SHA256`, the SDFs and the pins together. The routed SPEF and DEF from the same
+  P&R run (read by no item) are pinned the same way under `derived_inputs."pnr.digital"`;
+  `python3 -I scripts/ci/check_pnr_pins.py` fails if either differs from its pin, so a re-run
+  re-cites those too.
 - **Bench.** `verification/tb_datapath_postroute.v` is `tb_datapath.v` with `N` fixed at 20
   (klt rejects `request.parameters` together with `options.sdf`, and the routed netlist has no
   `N`) and no parameter list (klt's SDF wrapper needs a plain `module` declaration). It also holds

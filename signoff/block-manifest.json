@@ -179,6 +179,19 @@
           "cited_by": "signoff/attest/item7-digital/fv_neg_post_route_timing.json"
         }
       ]
+    },
+    "pnr.digital": {
+      "generator": "klt place-and-route (layout/pnr/request.json, seed 1)",
+      "files": [
+        {
+          "file": "layout/pnr/.klt/place-and-route/aib_datapath_route.spef",
+          "content_hash": "sha256:50e24939d074eb03d97949bd8971a4e2321fe4c22185fdc8a800e247b1925813"
+        },
+        {
+          "file": "layout/pnr/.klt/place-and-route/aib_datapath.def",
+          "content_hash": "sha256:05bb5bac32c3e6c77c8bd4cc5cb8d456ea5ef679e7673821a383a413f323487c"
+        }
+      ]
     }
   },
   "claims": {

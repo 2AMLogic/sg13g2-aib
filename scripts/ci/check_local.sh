@@ -7,6 +7,7 @@ cd "$(dirname "$0")/../.."
 python3 -I scripts/ci/test_checkers.py
 python3 -I scripts/ci/check_evidence_format.py
 python3 -I scripts/ci/check_item7_sdf.py
+python3 -I scripts/ci/check_pnr_pins.py
 python3 -I scripts/ci/gen_item6_digital.py
 python3 -I sim/mc/gen_mc.py --check
 
