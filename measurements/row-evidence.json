@@ -35,6 +35,28 @@
         "basis": "RTL simulation, N = 20, DDR latency testbench",
         "note": "The record carries the testbench verdict, not the cycle count."
       }
+    ],
+    "T-09": [
+      {
+        "record": "sim/channel-eye/records/20261110T082948Z-ch/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-09 measurements over 720 corner-measurements (DR-0017 driver, head 282a9d4)",
+        "note": "Simulated, not measured. Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level)."
+      },
+      {
+        "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "TC",
+        "basis": "simulated, failing T-09 measurements, L2 wire-bond loopback (reported separately from CH)",
+        "note": "Simulated, not measured. TC result only, not a CH claim. The spec expects TC to possibly fail the CH limit; here it did not."
+      }
     ]
   }
 }
