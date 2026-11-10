@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-10
 
+- **PR #155**: docs(sim): align T-16 required N in MC README with recorded 1318
+- **Issue #154** (closed): sim/mc: T-16 required N in README (1436) disagrees with record (1318)
 - **PR #153**: feat(sim): record T-15/T-16 RX skew Monte Carlo over the channel
 - **Issue #137** (closed): T1 item 6 (Monte Carlo): RX skew campaigns T-15/T-16 over the channel (klt yield)
 - **PR #150**: feat(sim): channel-eye CH/TC records on the DR-0017 driver, T-09 evidence
