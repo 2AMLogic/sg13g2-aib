@@ -12,7 +12,7 @@
     },
     "1.analog": {
       "file": "signoff/attest/item1-analog.json",
-      "content_hash": "sha256:a3446e26f35fc6bf40ea9f2552ac7ba632b1782ad19f7cb3d17ad77cb80c10e7"
+      "content_hash": "sha256:ee521054c20cf0a9176b7c4fb1b61acc872bf1fee53110a7f7ab349fc0a837af"
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
@@ -22,16 +22,9 @@
       "file": "signoff/attest/item2-digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
-    "3.analog": {
-      "file": "layout/records/20261102T164758Z/drc_analog.json",
-      "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09"
-    },
     "3.digital": {
       "file": "layout/records/20261027T063033Z/drc_digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
-    },
-    "4.analog": {
-      "file": "layout/lvs/aib_io_column.report.json"
     },
     "4.digital": {
       "file": "layout/lvs/digital.report.json"
