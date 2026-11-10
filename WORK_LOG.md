@@ -2,6 +2,16 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-10
+
+- **PR #150**: feat(sim): channel-eye CH/TC records on the DR-0017 driver, T-09 evidence
+- **PR #149**: sim: dedicated ESD diode fails T-24 by 8.9 fF; record DR-0018
+- **PR #148**: feat: regenerate I/O column layout for DR-0017 driver and ESD sizing
+- **PR #132**: design: size I/O driver and ESD diode jointly to close T-06/T-08/T-24
+- **Issue #147** (closed): T-25 ESD: decide the dedicated PDK ESD diode against T-24 pin-capacitance margin
+- **Issue #140** (closed): layout: regenerate I/O-cell layout, LVS references and analog DRC/LVS evidence for DR-0017 driver and diode
+- **Issue #130** (closed): I/O cell fails DC static rows T-06 (loaded), T-08 and T-24 at PVT-FULL
+
 ### 2026-11-08
 
 - **PR #141**: sim: add 45-corner CH and TC channel-eye records
