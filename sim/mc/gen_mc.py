@@ -18,14 +18,14 @@ OSDI = [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{m}.osdi"
         for m in ("psp103", "psp103_nqs", "r3_cmc", "mosvar")]
 
 
-def corners() -> dict:
+def corners(supplies=("vddio",)) -> dict:
     proc = []
     for c in ("tt", "ss", "ff", "sf", "fs"):
         proc.append({"name": c, "sections": [
             {"lib": LIBM, "section": f"mos_{c}_mismatch"},
             {"lib": "libs.tech/ngspice/models/cornerRES.lib", "section": RES[c]},
             {"lib": "libs.tech/ngspice/models/cornerDIO.lib", "section": "dio_tt"}]})
-    return {"process": proc, "supply_v": {"vddio": [1.08, 1.2, 1.32]},
+    return {"process": proc, "supply_v": {k: [1.08, 1.2, 1.32] for k in supplies},
             "temperature_c": [-40, 27, 125]}
 
 
@@ -39,7 +39,7 @@ def request(row: str, ctl: bool) -> dict:
         "engine": "ngspice",
         "netlist": spec["ctl_netlist"] if ctl else spec["netlist"],
         "models": {"pdk": "ihp-sg13g2", "lib": LIBM},
-        "corners": corners(),
+        "corners": corners(spec.get("supplies", ("vddio",))),
         "monte_carlo": {"n": spec["n_ctl" if ctl else "n"], "seed": spec["seed_ctl" if ctl else "seed"], "vary": "mismatch"},
         "analysis_steps": spec["steps"],
         "measurements": spec["top"],
@@ -59,6 +59,34 @@ ROWS["t10"] = {
                    {"name": "vddio_v", "expr": "v(vddio)[0]", "unit": "V"}]}],
     "top": [{"name": "t10_offset_mv", "expr": "(rx_up.vth_frac-0.5)*rx_up.vddio_v*1000", "unit": "mV",
              "limits": {"min": -60, "max": 60, "target_sigma": 3}}],
+}
+
+
+EDGE_SUPPLIES = ("vdd_atx", "vdd_arx", "vdd_btx", "vdd_brx", "vdd_ctx", "vdd_crx")
+
+
+def edge_step(meas_card: str, name: str) -> list:
+    return [{"name": "edge", "analysis": {"kind": "tran", "args": "2p 5n 0 5p"}, "alter": {},
+             "measurements": [{"name": name, "spice": meas_card, "unit": "s"}]}]
+
+
+# Single-edge RX-input skew benches (#137). The skew is the signed difference of two lane
+# crossings of the RX input at mid-rail (data lane A rising vs complement lane B falling for
+# T-15; data A rising vs the center-aligned clock csig=rxc-rxcb rising for T-16). Limits are the
+# row's bound with target_sigma 7 each side (sim/mc/README.md, "Assumptions for ratification").
+ROWS["t15"] = {
+    "netlist": "tb_t15.cir", "ctl_netlist": "tb_t15_ctl.cir", "n": 20, "n_ctl": 20, "seed": 4415, "seed_ctl": 4416,
+    "supplies": EDGE_SUPPLIES,
+    "steps": edge_step(".meas tran skew TRIG v(dsa) VAL=0 RISE=1 TARG v(dsb) VAL=0 FALL=1", "skew"),
+    "top": [{"name": "t15_skew_ps", "expr": "edge.skew*1e12", "unit": "ps",
+             "limits": {"min": -60, "max": 60, "target_sigma": 7}}],
+}
+ROWS["t16"] = {
+    "netlist": "tb_t16.cir", "ctl_netlist": "tb_t16_ctl.cir", "n": 40, "n_ctl": 20, "seed": 4420, "seed_ctl": 4421,
+    "supplies": EDGE_SUPPLIES,
+    "steps": edge_step(".meas tran dly TRIG v(dsa) VAL=0 RISE=1 TARG v(csig) VAL=0 RISE=1", "dly"),
+    "top": [{"name": "t16_dev_from_half_ui_ps", "expr": "(edge.dly-0.5e-9)*1e12", "unit": "ps",
+             "limits": {"min": -30, "max": 30, "target_sigma": 7}}],
 }
 
 

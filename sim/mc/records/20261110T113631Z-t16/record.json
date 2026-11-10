@@ -1,0 +1,62 @@
+{
+  "record": "mc-t16",
+  "utc_stamp": "20261110T113631Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-16",
+  "claim_scope": "CH only (declared channel model spec/channel/channel_rc.cir, CH-3MM-RC nominal); the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here",
+  "bench": "tb_t16.cir: lane A rises at 2 ns, the center-aligned clock pair rises 0.5 UI (500 ps) later; graded quantity = (clock csig=rxc-rxcb crossing minus data crossing) - 0.5 UI",
+  "skew_definition": "signed difference, limits +-bound, target_sigma 7 each side (sim/mc/README.md, Assumptions for ratification); #136 has not answered otherwise",
+  "requests": {
+    "nominal": "request_t16.json",
+    "negative_control": "request_t16_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 40,
+    "seed": 4420,
+    "samples": 1800,
+    "negative_control_seed": 4421,
+    "negative_control_samples": 900
+  },
+  "sample_size": {
+    "required_n": 1318,
+    "verdict": "sufficient",
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "observed_ci_halfwidth": 0.008845613236843186,
+    "basis": "20-draw pilot (900 samples) verdict"
+  },
+  "result": {
+    "status": "fail",
+    "unit": "ps",
+    "mean": 16.603992333333323,
+    "sigma": 6.6070055194832875,
+    "min": 3.9804,
+    "max": 37.068,
+    "tail": "worst draw 37.1 ps against the +30 limit",
+    "empirical_yield": 0.9644444444444444,
+    "empirical_yield_ci": {
+      "low": 0.9548211217370806,
+      "high": 0.9725123482107669
+    },
+    "sigma_to_spec": 2.027546008121745,
+    "sigma_to_spec_ci": {
+      "low": 1.9467793459269824,
+      "high": 2.108312670316508
+    },
+    "target_sigma": 7,
+    "normality": "rejected",
+    "negative_control": "detected"
+  },
+  "note": "T-16 FAILS the 7-sigma gate: pooled over the 45-corner grid mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7; 3.6 % of draws fall outside the limit. Most of the mean is the systematic corner/edge asymmetry, not mismatch. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative; the empirical yield is the tail used. Pooled grid, as for T-10. Recorded, not tuned; the limit and the sigma convention are not relaxed."
+}
