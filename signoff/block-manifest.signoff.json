@@ -980,8 +980,8 @@
         "command": null,
         "kind": "erc",
         "check_status": "not_checked",
-        "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
-        "input_verified": false,
+        "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+        "input_verified": true,
         "exit_status": 0,
         "parts": [
           {
@@ -989,8 +989,8 @@
             "command": null,
             "kind": "erc",
             "check_status": "not_checked",
-            "content_hash": "sha256:2db2a49d264fd079a5ab36c9e3cd1691c1902580fc55eb9e41699cc0db046d09",
-            "input_verified": false,
+            "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+            "input_verified": true,
             "exit_status": 0
           },
           {
