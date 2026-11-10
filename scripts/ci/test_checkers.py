@@ -143,16 +143,23 @@ class CharacterizationReportTests(unittest.TestCase):
              "signoff/attest/item8.json", "signoff/block-manifest.json", "layout/pnr/request.report.json",
              "signoff/attest/item5-digital")
 
+    @classmethod
+    def populate(cls, root):
+        """Copy FILES plus every record the evidence rows cite, so a new record needs no edit here."""
+        rows = json.loads((REPO / "measurements/row-evidence.json").read_text())["rows"]
+        cited = {e["record"] for entries in rows.values() for e in entries}
+        for f in cls.FILES + tuple(sorted(cited - set(cls.FILES))):
+            dst = root / f
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            if (REPO / f).is_dir():
+                shutil.copytree(REPO / f, dst)
+            else:
+                shutil.copy(REPO / f, dst)
+
     def scenario(self, change=None, *args):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
-            for f in self.FILES:
-                dst = root / f
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                if (REPO / f).is_dir():
-                    shutil.copytree(REPO / f, dst)
-                else:
-                    shutil.copy(REPO / f, dst)
+            self.populate(root)
             if change:
                 change(root)
             return run(GEN, "--root", root, *args)
@@ -198,10 +205,7 @@ class CharacterizationReportTests(unittest.TestCase):
     def test_row_without_record_is_listed(self):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
-            for f in self.FILES:
-                dst = root / f
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copytree(REPO / f, dst) if (REPO / f).is_dir() else shutil.copy(REPO / f, dst)
+            self.populate(root)
             run(GEN, "--root", root)
             rows = [l for l in (root / "measurements/characterization-report.md").read_text().splitlines() if l.startswith("| T-")]
             self.assertEqual(len(rows), 30)
