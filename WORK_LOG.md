@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-10
 
+- **PR #153**: feat(sim): record T-15/T-16 RX skew Monte Carlo over the channel
+- **Issue #137** (closed): T1 item 6 (Monte Carlo): RX skew campaigns T-15/T-16 over the channel (klt yield)
 - **PR #150**: feat(sim): channel-eye CH/TC records on the DR-0017 driver, T-09 evidence
 - **PR #149**: sim: dedicated ESD diode fails T-24 by 8.9 fF; record DR-0018
 - **PR #148**: feat: regenerate I/O column layout for DR-0017 driver and ESD sizing
