@@ -349,6 +349,15 @@ are untouched.
   corners; T-01 and T-26 are report-only. The README's earlier expectation that T-09 would
   fail in L2 did not occur in this run.
 
+**T-16 attribution (#161, parent #142):** record `channel-eye/records/20261111T231422Z-t16attr/`
+(simulated; eight local single-corner runs, no batch job; `channel-eye/run_t16attr.sh`). The
+65 ps binding miss above is the pre-#132 driver; on current `main` (record `20261110T082948Z-ch`)
+it is 41.5 ps. At the binding corner the miss is a sum of named terms with zero residual: the TX
+cell's rise/fall delay asymmetry (about -22.5 ps, unchanged by #132), channel/pad loading of the TX
+(-21.5 ps current, -40.6 ps pre-#132) and under 3 ps of channel line and crossing definition.
+The bench measures offset from an unaligned 0.5 UI, which is not the same thing as the spec
+row's skew; neither is changed. See the record's `README.md` for the numbers and the recommendation.
+
 ## dc-static
 
 `sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner

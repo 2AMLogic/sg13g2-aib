@@ -1,0 +1,11 @@
+* tb_t16attr_id.cir -- T-16 attribution (#161): the same four-lane bench with the channel replaced
+* by an ideal connection (a 0 V source: no R, L or C, and no far-end load either). Not a declared
+* channel and never cited for a CH claim; it exists only to separate cell terms from channel terms.
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.subckt link txp rxp gnd
+Vshort txp rxp 0
+.ends link
+.include tb_body.inc
+.include t16attr_probes.inc
