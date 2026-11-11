@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-11
 
+- **PR #162**: sim: attribute T-16 offset to cell asymmetry and TX loading
+- **Issue #161** (closed): Attribute the T-16 systematic offset (65 ps at mos_ss / 1.08 V / 125 C): cell path imbalance, channel, or measurement
 - **PR #158**: ci: hash-pin routed SPEF and DEF and fail on drift
 - **Issue #126** (closed): Stop committing unreferenced routed SPEF and DEF (~47k lines)
 
