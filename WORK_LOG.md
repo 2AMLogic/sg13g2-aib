@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-11
+
+- **PR #158**: ci: hash-pin routed SPEF and DEF and fail on drift
+- **Issue #126** (closed): Stop committing unreferenced routed SPEF and DEF (~47k lines)
+
 ### 2026-11-10
 
 - **PR #155**: docs(sim): align T-16 required N in MC README with recorded 1318
