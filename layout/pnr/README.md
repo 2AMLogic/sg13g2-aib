@@ -12,8 +12,8 @@ this tool's own route DRC), LVS belongs to #40, STA corners to #43.
 | `request.report.json` | the `--format json` report, verbatim |
 | `.klt/place-and-route/aib_datapath.gds` | routed GDS (DEF merged with the stdcell GDS views) |
 | `.klt/place-and-route/aib_datapath.v` | as-built routed gate-level verilog (CTS buffers, antenna repair included) |
-| `.klt/place-and-route/aib_datapath.def` | routed DEF |
-| `.klt/place-and-route/aib_datapath_route.spef`, `.sdf` | extracted parasitics and the SDF written from them |
+| `.klt/place-and-route/aib_datapath.def` | routed DEF; sha256-pinned in `signoff/block-manifest.json` `derived_inputs."pnr.digital"` |
+| `.klt/place-and-route/aib_datapath_route.spef`, `.sdf` | extracted parasitics and the SDF written from them; the SPEF is pinned with the DEF (`derived_inputs."pnr.digital"`), the SDF under `7.digital`. After a P&R re-run, re-cite the pins deliberately; `python3 -I scripts/ci/check_pnr_pins.py` fails on drift |
 | `.klt/place-and-route/pnr_*.tcl` | the generated OpenROAD stage scripts |
 
 The OpenROAD checkpoints (`*.odb`), the 6 MB parasitics deck, per-corner metrics and logs are
