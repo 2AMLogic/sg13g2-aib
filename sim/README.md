@@ -358,6 +358,17 @@ cell's rise/fall delay asymmetry (about -22.5 ps, unchanged by #132), channel/pa
 The bench measures offset from an unaligned 0.5 UI, which is not the same thing as the spec
 row's skew; neither is changed. See the record's `README.md` for the numbers and the recommendation.
 
+**T-16 design fix (#142):** record `channel-eye/records/20261111T235838Z-ch/` (simulated, CH-3MM-RC,
+45 corners, batch backend). The rise/fall asymmetry (term A in the t16attr record) sat in the
+predriver NOR's series PMOS pull-up (`XMnr1p`/`XMnr2p`, 4u/ng=2 -> 8u/ng=4 in `aib_tx_data`): it
+charges the `XMn` gate through two series PMOS, and it was the slow edge. Ideal-connection probe at
+mos_ss/1.08 V/125 C (`run_t16attr.sh` requests, local): data delay rise/fall 144/185 ps -> 145/147
+ps, `t16_df_cf_long` 477.5 -> 499.0 ps; under the channel 458.5 -> 486.0 ps. T-16 passes 360/360
+measurements at 45/45 corners; the binding point is now `mos_ss/mixed/-40C` `t16_dr_cf_long` =
+480.9 ps (10.9 ps inside the 470 ps edge). T-01, T-09, T-15, T-18, T-26 still pass 45/45. The bound,
+the bench and the spec are unchanged. DIN input capacitance of the cell rises (NOR PMOS gate area
+doubled); the upstream driver of DIN is not modelled in this bench.
+
 ## dc-static
 
 `sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner
@@ -366,3 +377,8 @@ row's skew; neither is changed. See the record's `README.md` for the numbers and
 `records/20261108T004350Z/` (batch job `klt-sim-805dd59f1580`, after the #130 sizing study):
 all six rows pass at 45/45. T-24 is an extracted-capacitance estimate; T-25 is not
 evaluated. See `sim/dc-static/README.md` and DR-0017.
+
+Re-check after the #142 predriver change: `dc-static/records/20261112T001207Z/` (batch job
+`klt-sim-f611a9ac49eb`, same `request.json`): 45/45 corners pass, 810/810 measurements pass,
+so T-06/T-08/T-24 (and T-07, T-11, T-28) are unchanged in verdict. Report only, no
+`record.json`.

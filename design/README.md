@@ -61,6 +61,9 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
 - `aib_tx_data`: `XMp` 54u/54 and `XMn` 22u/22 each drive PAD through a series `rppd`
   (`XRsp`, `XRsn`, `w=10u l=0.5u`, about 18 ohm). The MOS Ron alone spreads 2.1-2.4x over
   PVT-FULL, wider than T-08's 2x window, so no width closes it; the poly leg compresses it.
+- `aib_tx_data` (#142): the predriver NOR pull-up `XMnr1p`/`XMnr2p` is 8u/ng=4 (was 4u/ng=2).
+  The fall edge charged the 22u `XMn` gate through two series PMOS and ran about 41 ps slower
+  than the rise; balanced, the data-to-clock offset (T-16) closes at 45/45 corners.
 - `aib_pad_esd`: `XDp1` is 4.5u x 4.5u (was 10u x 10u) because the wider driver and the
   primary diode do not both fit T-24. **T-25 (ESD level) is not evaluated**: no ESD-transient
   simulation exists. DR-0017 states the trade and what would reverse it.
