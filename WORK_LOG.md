@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-12
 
+- **PR #169**: feat(mc): record T-19 capture-window Monte Carlo campaign (passes at 7 sigma)
+- **Issue #138** (closed): T1 item 6 (Monte Carlo): capture-window campaign T-19 (klt yield)
 - **PR #166**: Bump Repo Skills 0.25.10 -> 0.26.1
 - **PR #164**: design: widen TX predriver NOR pull-up to balance rise/fall delay (T-16)
 - **Issue #142** (closed): channel-eye: T-16 data-clock skew fails at 29/45 CH corners (binding mos_ss 1.08 V 125 C)
