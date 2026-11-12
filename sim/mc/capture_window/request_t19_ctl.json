@@ -169,7 +169,7 @@
     "fail_on_diagnostic": [
       "nonconvergence"
     ],
-    "timeout_s": 120,
+    "timeout_s": 60,
     "keep_artifacts": false,
     "osdi_preload": [
       "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",

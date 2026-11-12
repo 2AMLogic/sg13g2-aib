@@ -98,7 +98,7 @@ ROWS["t16"] = {
 ROWS["t19"] = {
     "dir": "capture_window",
     "netlist": "tb_t19.cir", "ctl_netlist": "tb_t19_ctl.cir", "n": 20, "n_ctl": 20, "seed": 4430, "seed_ctl": 4431,
-    "supplies": ("vdd_rx",), "timeout_s": 120,
+    "supplies": ("vdd_rx",), "timeout_s": 60,
     "steps": [{"name": "cw", "analysis": {"kind": "tran", "args": f"5p {gen_t19.ns(gen_t19.T_END_PS)} 0 20p"},
                "alter": {},
                "measurements": [{"name": k, "spice": v, "unit": "s" if k in ("dr", "df") else "V"}
