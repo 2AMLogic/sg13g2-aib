@@ -74,6 +74,13 @@
         "rows": [
           "T-16"
         ]
+      },
+      {
+        "file": "sim/mc/records/20261112T082047Z-t19/yield.json",
+        "content_hash": "sha256:a5bfd3694835f713f5cbda16fc6525a3ab6eb9c5e401568702d22bea905025b0",
+        "rows": [
+          "T-19"
+        ]
       }
     ],
     "6.digital": {
@@ -93,11 +100,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:7c005a2fd30f3ba7197a310ca17320d2c731f2d3b68c23498a21b2dd7c0f4b8f"
+      "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:7c005a2fd30f3ba7197a310ca17320d2c731f2d3b68c23498a21b2dd7c0f4b8f"
+      "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -155,8 +162,7 @@
         "id": "T-16"
       },
       {
-        "id": "T-19",
-        "gap": "no campaign yet; tracked in #138"
+        "id": "T-19"
       }
     ]
   },

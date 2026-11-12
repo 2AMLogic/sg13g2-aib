@@ -648,6 +648,14 @@
           ],
           "status": "unmet",
           "reason": "check_failed"
+        },
+        {
+          "citation": "sim/mc/records/20261112T082047Z-t19/yield.json",
+          "rows": [
+            "T-19"
+          ],
+          "status": "met",
+          "reason": null
         }
       ],
       "detail": {
@@ -670,14 +678,12 @@
           {
             "id": "T-14",
             "gap": "no campaign yet; tracked in #136"
-          },
-          {
-            "id": "T-19",
-            "gap": "no campaign yet; tracked in #138"
           }
         ],
         "unratified_rows": [],
-        "row_sources": {}
+        "row_sources": {
+          "T-19": "asserted"
+        }
       }
     },
     {
@@ -789,7 +795,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:7c005a2fd30f3ba7197a310ca17320d2c731f2d3b68c23498a21b2dd7c0f4b8f",
+        "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d",
         "input_verified": true,
         "exit_status": 0,
         "attestation": {
@@ -813,7 +819,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:7c005a2fd30f3ba7197a310ca17320d2c731f2d3b68c23498a21b2dd7c0f4b8f",
+        "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d",
         "input_verified": true,
         "exit_status": 0,
         "attestation": {
