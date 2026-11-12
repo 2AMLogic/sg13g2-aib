@@ -16,8 +16,8 @@ XMnd1p GP DIN VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
 XMnd2p GP OE VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
 XMnd1n GP DIN NA VSS sg13_lv_nmos w=4u l=0.13u ng=2 m=1
 XMnd2n NA OE VSS VSS sg13_lv_nmos w=4u l=0.13u ng=2 m=1
-XMnr1p NB DIN VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
-XMnr2p GN OEB NB VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMnr1p NB DIN VDDIO VDDIO sg13_lv_pmos w=8u l=0.13u ng=4 m=1
+XMnr2p GN OEB NB VDDIO sg13_lv_pmos w=8u l=0.13u ng=4 m=1
 XMnr1n GN DIN VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
 XMnr2n GN OEB VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
 XMp DP GP VDDIO VDDIO sg13_lv_pmos w=54u l=0.13u ng=54 m=1
