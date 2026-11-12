@@ -12,6 +12,8 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE / "capture_window"))
+import gen_t19  # noqa: E402  (T-19 bench constants and measurement cards)
 LIBM = "libs.tech/ngspice/models/cornerMOSlv.lib"
 RES = {"tt": "res_typ", "ss": "res_wcs", "ff": "res_bcs", "sf": "res_typ", "fs": "res_typ"}
 OSDI = [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{m}.osdi"
@@ -90,6 +92,24 @@ ROWS["t16"] = {
 }
 
 
+# T-19 receiver capture window (#138): swept-offset single transient, see capture_window/gen_t19.py.
+# One-sided aperture limit (a width; the row has no lower bound) with target_sigma 7, the one-sided
+# reading of the 14 sigma peak-to-peak used for the other STAT rows (README, Assumptions).
+ROWS["t19"] = {
+    "dir": "capture_window",
+    "netlist": "tb_t19.cir", "ctl_netlist": "tb_t19_ctl.cir", "n": 20, "n_ctl": 20, "seed": 4430, "seed_ctl": 4431,
+    "supplies": ("vdd_rx",), "timeout_s": 120,
+    "steps": [{"name": "cw", "analysis": {"kind": "tran", "args": f"5p {gen_t19.ns(gen_t19.T_END_PS)} 0 20p"},
+               "alter": {},
+               "measurements": [{"name": k, "spice": v, "unit": "s" if k in ("dr", "df") else "V"}
+                                for k, v in gen_t19.steps().items()]}],
+    "top": [{"name": "t19_aperture_ps", "expr": "(cw.ys-cw.xs)*1000+(cw.df-cw.dr)*1e12", "unit": "ps",
+             "limits": {"max": 150, "target_sigma": 7}},
+            {"name": "t19_setup_ps", "expr": f"-((cw.xs-{gen_t19.DELTA_PS / 2000})*1000+cw.dr*1e12)", "unit": "ps"},
+            {"name": "t19_hold_ps", "expr": f"(cw.ys-{gen_t19.DELTA_PS / 2000})*1000+cw.df*1e12", "unit": "ps"}],
+}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
@@ -97,7 +117,7 @@ def main() -> int:
     bad = 0
     for row in ROWS:
         for ctl in (False, True):
-            p = HERE / f"request_{row}{'_ctl' if ctl else ''}.json"
+            p = HERE / ROWS[row].get("dir", ".") / f"request_{row}{'_ctl' if ctl else ''}.json"
             text = json.dumps(request(row, ctl), indent=2) + "\n"
             if args.check:
                 if not p.exists() or p.read_text() != text:
