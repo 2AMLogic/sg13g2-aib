@@ -62,6 +62,20 @@
         ]
       },
       {
+        "file": "sim/mc/records/20261112T080126Z-t13/yield.json",
+        "content_hash": "sha256:207c703e700b52846413cd8fcc128e4be2afe87e2657af2c031ca44d97f43ded",
+        "rows": [
+          "T-13"
+        ]
+      },
+      {
+        "file": "sim/mc/records/20261112T080126Z-t14/yield.json",
+        "content_hash": "sha256:0cf750046fa33db8a5bbf6852a363d35bf1b94b2079ed01977cc49aa7696ab05",
+        "rows": [
+          "T-14"
+        ]
+      },
+      {
         "file": "sim/mc/records/20261110T113631Z-t15/yield.json",
         "content_hash": "sha256:3fd5be041efc841c14f4a72c8cb64a244615a1f930684a26bfd2f9b53121bba1",
         "rows": [
@@ -93,11 +107,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:7c005a2fd30f3ba7197a310ca17320d2c731f2d3b68c23498a21b2dd7c0f4b8f"
+      "content_hash": "sha256:72cbc8df146f0043388153f5c82c9e19dafe59434edf9653eae43cfdfbd2aae1"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:7c005a2fd30f3ba7197a310ca17320d2c731f2d3b68c23498a21b2dd7c0f4b8f"
+      "content_hash": "sha256:72cbc8df146f0043388153f5c82c9e19dafe59434edf9653eae43cfdfbd2aae1"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -141,12 +155,10 @@
         "id": "T-10"
       },
       {
-        "id": "T-13",
-        "gap": "no campaign yet; tracked in #136"
+        "id": "T-13"
       },
       {
-        "id": "T-14",
-        "gap": "no campaign yet; tracked in #136"
+        "id": "T-14"
       },
       {
         "id": "T-15"

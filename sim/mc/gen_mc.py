@@ -90,6 +90,26 @@ ROWS["t16"] = {
 }
 
 
+# Single-edge TX-output skew benches (#136). Same measurement as T-15/T-16 but at the TX pad node
+# (near-side output: driver + pad ESD, no channel, no receiver). T-13: lane A rises vs complement lane
+# B falls; T-14: data A rises vs the center-aligned clock pair (padc - padcb) rises 500 ps later.
+# Limits are the row's bound (0.04 / 0.02 UI at 1 Gb/s = 40 / 20 ps) with target_sigma 7 each side.
+ROWS["t13"] = {
+    "netlist": "tb_t13.cir", "ctl_netlist": "tb_t13_ctl.cir", "n": 20, "n_ctl": 20, "seed": 4413, "seed_ctl": 4414,
+    "supplies": ("vdd_atx", "vdd_btx"),
+    "steps": edge_step(".meas tran skew TRIG v(dsa) VAL=0 RISE=1 TARG v(dsb) VAL=0 FALL=1", "skew"),
+    "top": [{"name": "t13_skew_ps", "expr": "edge.skew*1e12", "unit": "ps",
+             "limits": {"min": -40, "max": 40, "target_sigma": 7}}],
+}
+ROWS["t14"] = {
+    "netlist": "tb_t14.cir", "ctl_netlist": "tb_t14_ctl.cir", "n": 20, "n_ctl": 20, "seed": 4418, "seed_ctl": 4419,
+    "supplies": ("vdd_atx", "vdd_ctx"),
+    "steps": edge_step(".meas tran dly TRIG v(dsa) VAL=0 RISE=1 TARG v(csig) VAL=0 RISE=1", "dly"),
+    "top": [{"name": "t14_dev_from_half_ui_ps", "expr": "(edge.dly-0.5e-9)*1e12", "unit": "ps",
+             "limits": {"min": -20, "max": 20, "target_sigma": 7}}],
+}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")

@@ -6,13 +6,14 @@ DR-0013). Simulated, pre-layout; post-layout re-runs follow #37.
 | Row | Status | Where |
 |---|---|---|
 | T-10 receiver threshold | **recorded, fails** | `records/20261108T035315Z-t10/` |
-| T-13, T-14 TX skew | not done | #136 |
+| T-13 data-to-data skew (TX output) | **recorded, fails** | `records/20261112T080126Z-t13/` |
+| T-14 data-to-clock skew (TX output) | **recorded, fails** | `records/20261112T080126Z-t14/` |
 | T-15 RX data-to-data skew (CH) | **recorded, fails** | `records/20261110T113631Z-t15/` |
 | T-16 RX data-to-clock skew (CH) | **recorded, fails** | `records/20261110T113631Z-t16/` |
 | T-19 capture window | not done | #138 |
 
-The manifest declares all six under `spec_rows."6.analog"`; the three open rows (T-13, T-14, T-19) are declared
-`gap`s, so item 6 / analog stays `unmet` (reason `check_failed`: T-10, T-15 and T-16 fail their limits).
+The manifest declares all six under `spec_rows."6.analog"`; the one open row (T-19) is a declared
+`gap`, so item 6 / analog stays `unmet` (reason `check_failed`: T-10, T-13, T-14, T-15 and T-16 fail their limits).
 
 ## Method
 
@@ -76,7 +77,26 @@ distributions are skewed and the normality test rejects, so the empirical tail i
 read. `klt yield` pools the 45 corners as for T-10. The limits are not relaxed. These are CH
 results only; the L2 loopback does not observe RX-input skew, so no TC value is recorded here.
 
+## T-13, T-14 (TX-output skew, CH and TC)
+
+Single-edge benches at the TX pad node (near-side output: `aib_tx_data` / `aib_tx_clk` plus `aib_pad_esd`;
+no channel, no receiver). `tb_t13.cir`: lane A rises and complement lane B falls together; skew is B's
+falling minus A's rising mid-rail crossing. `tb_t14.cir`: lane A rises, the center-aligned `aib_tx_clk` pair
+(`padc - padcb`) rises 500 ps later; the graded quantity is data-to-clock delay minus the nominal 0.5 UI.
+Limits +-40 ps / +-20 ps (0.04 / 0.02 UI at 1 Gb/s), `target_sigma` 7, definition ratified in DR-0019.
+45 corners, supplies of each block in lockstep, seeds 4413 / 4418, negative-control seeds 4414 / 4419.
+N: a 20-draw pilot (900 samples) gave a `klt yield` required N of 183 for both rows, so the pilot is the
+recorded run (verdict sufficient). Negative control: an extra 2 pF on one pad (`tb_t13_ctl.cir`,
+`tb_t14_ctl.cir`, not design evidence), 0 of 900 pass, detected. Both ran on the batch fleet
+(`--wait-for-capacity 600`); job ids are in each `record.json`.
+
+**Results: both fail the 7-sigma gate** (no draw is outside the limit; the row fails on the tail). T-13: mean +2.5 ps,
+sigma 6.2 ps, sigma-to-spec 6.08 (lower bound 5.79) against 7, worst draw 18.3 ps. T-14: mean +1.0 ps, sigma 3.3 ps,
+sigma-to-spec 5.75 (lower bound 5.48) against 7, worst 14.4 ps. Distributions are not normal; pooled grid as for T-10.
+The limits are not relaxed. Scope: the CH value is the TX output before the channel; for TC the on-die array skew
+is what the shmoo observes, and this single-lane-pair spread is not that array measurement.
+
 ## Assumptions for ratification (not in the spec)
 
-- The skew and capture rows (open, #136 to #138) read "14 sigma peak-to-peak" as a signed
+- The skew and capture rows (T-13 to T-16 ratified in DR-0019; T-19 open, #138) read "14 sigma peak-to-peak" as a signed
   lane-to-lane difference with limits +-bound and `target_sigma` 7.

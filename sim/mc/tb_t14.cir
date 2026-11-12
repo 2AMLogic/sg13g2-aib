@@ -1,0 +1,23 @@
+* tb_t14.cir -- T-14 data-to-clock skew at the TX output, one data edge and its center-aligned clock edge
+* One edge at 2 ns (normalised 0..1 stimulus scaled by the TX supply, 100 ps ramp as the PRBS bench).
+* Subject: aib_tx_data (data lane) and aib_tx_clk (clock pair), each pad through aib_pad_esd, measured at
+* the pad nodes (near-side output, no channel, no receiver). aib_tx_clk.spice carries its own copy of
+* aib_tx_data, so only it is included. One supply per block, lockstep.
+.include ../../design/aib_tx_clk.spice
+.include ../../design/aib_pad_esd.spice
+Vdd_atx vdd_atx 0 DC 1.2
+Vdd_ctx vdd_ctx 0 DC 1.2
+Vpa pa 0 dc 0 pwl(0 0 2n 0 2.1n 1 6n 1)
+Vpc pc 0 dc 0 pwl(0 0 2.5n 0 2.6n 1 6n 1)
+Vpcb pcb 0 dc 1 pwl(0 1 2.5n 1 2.6n 0 6n 0)
+Bda da 0 V = v(pa)*v(vdd_atx)
+Bdcp dcp 0 V = v(pc)*v(vdd_ctx)
+Bdcn dcn 0 V = v(pcb)*v(vdd_ctx)
+* OE high (driving), weak pull-up gate PUN high (off), pull-down gate PD low (off).
+Xa da vdd_atx vdd_atx 0 txia vdd_atx 0 aib_tx_data
+Xesda pada txia vdd_atx 0 aib_pad_esd
+Xc dcp dcn vdd_ctx vdd_ctx 0 txic txicb vdd_ctx 0 aib_tx_clk
+Xesdc padc txic vdd_ctx 0 aib_pad_esd
+Xesdcb padcb txicb vdd_ctx 0 aib_pad_esd
+Bdsa dsa 0 V = v(pada) - 0.5*v(vdd_atx)
+Bcs csig 0 V = v(padc) - v(padcb)
