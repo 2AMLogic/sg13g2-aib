@@ -20,14 +20,12 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
-- **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
-- **#146**: T-09: re-run the skew/timing row on the DR-0017 driver
 
 ## In Progress
 
@@ -55,8 +53,9 @@ Issues carrying `loom:curated`.
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)*
 - **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)*
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares) *(curated)*
-- **#44**: T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition *(curated)*
 - **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02) *(curated)*
+- **#136**: T1 item 6 (Monte Carlo): TX skew campaigns T-13/T-14 (klt yield) *(curated)*
+- **#138**: T1 item 6 (Monte Carlo): capture-window campaign T-19 (klt yield) *(curated)*
 - **#146**: T-09: re-run the skew/timing row on the DR-0017 driver *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -73,12 +72,12 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
-| Important | 2 |
-| Ready (`loom:issue`) | 2 |
+| Important | 1 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 7 |
+| Curated | 8 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
