@@ -2,6 +2,13 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-12
+
+- **PR #166**: Bump Repo Skills 0.25.10 -> 0.26.1
+- **PR #164**: design: widen TX predriver NOR pull-up to balance rise/fall delay (T-16)
+- **Issue #142** (closed): channel-eye: T-16 data-clock skew fails at 29/45 CH corners (binding mos_ss 1.08 V 125 C)
+- **Issue #44** (closed): T1 item 6 (Monte Carlo): klt yield campaigns for the STAT rows; not-applicable statement for the digital partition
+
 ### 2026-11-11
 
 - **PR #162**: sim: attribute T-16 offset to cell asymmetry and TX loading
