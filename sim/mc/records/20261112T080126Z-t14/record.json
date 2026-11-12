@@ -1,0 +1,74 @@
+{
+  "record": "mc-t14",
+  "utc_stamp": "20261112T080126Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-14",
+  "claim_scope": "BOTH. CH: the near-side output is the same TX cell and pad before the declared channel (spec/channel/channel_rc.cir adds nothing here). TC: spec/test-configuration.md:72 reads the on-die array skew through the shmoo; this record is the single-lane-pair statistical spread of that skew, pre-layout, not the array measurement and not a wire-bond loopback result",
+  "bench": "tb_t14.cir: data lane A (aib_tx_data) rises, the center-aligned aib_tx_clk pair (padc - padcb) rises 500 ps later; the graded quantity is data-to-clock delay at the TX pad nodes minus the nominal 0.5 UI",
+  "skew_definition": "signed difference, limits +-bound, target_sigma 7 each side (DR-0019)",
+  "requests": {
+    "nominal": "request_t14.json",
+    "negative_control": "request_t14_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "batch_job_ids": {
+    "nominal": [
+      "klt-sim-2028f3157792",
+      "klt-sim-8efdea9488b3",
+      "klt-sim-1922be05aa51"
+    ],
+    "negative_control": [
+      "klt-sim-42f15cb6e17f",
+      "klt-sim-502ae3a063e4",
+      "klt-sim-5328f63efd21"
+    ]
+  },
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 20,
+    "seed": 4418,
+    "samples": 900,
+    "negative_control_seed": 4419,
+    "negative_control_samples": 900
+  },
+  "sample_size": {
+    "required_n": 183,
+    "verdict": "sufficient",
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "observed_ci_halfwidth": 0.0020451832587852214,
+    "basis": "20-draw pilot; the pilot run is the recorded run"
+  },
+  "result": {
+    "status": "fail",
+    "unit": "ps",
+    "mean": 1.038364999999999,
+    "sigma": 3.295046239346259,
+    "min": -14.4363,
+    "max": 9.5843,
+    "tail": "worst draw 14.4 ps against the +-20 ps (0.02 UI at 1 Gb/s) limit",
+    "empirical_yield": 1.0,
+    "empirical_yield_ci": {
+      "low": 0.9959096334824296,
+      "high": 1.0
+    },
+    "sigma_to_spec": 5.754588440544013,
+    "sigma_to_spec_ci": {
+      "low": 5.480691221288902,
+      "high": 6.028485659799124
+    },
+    "target_sigma": 7,
+    "normality": "rejected",
+    "negative_control": "detected"
+  },
+  "note": "T-14 FAILS the 7-sigma gate (lower confidence bound 5.48 against 7): pooled over the 45-corner grid mean 1.0 ps, sigma 3.3 ps, sigma-to-spec 5.75 against 7. No draw falls outside the limit (worst 14.4 ps against 20); the row fails on the tail the spec asks for (14 sigma peak-to-peak), not on a sampled violation. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative. Pooled grid, as for T-10. Recorded, not tuned; the limit and the sigma convention are not relaxed. Negative control: an extra 2 pF on the data lane's pad (tb_t14_ctl.cir, not design evidence), detected (0 of 900 pass)."
+}

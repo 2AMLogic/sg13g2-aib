@@ -57,6 +57,30 @@
         "basis": "simulated, failing T-09 measurements, L2 wire-bond loopback (reported separately from CH)",
         "note": "Simulated, not measured. TC result only, not a CH claim. The spec expects TC to possibly fail the CH limit; here it did not."
       }
+    ],
+    "T-13": [
+      {
+        "record": "sim/mc/records/20261112T080126Z-t13/record.json",
+        "field": "result.sigma_to_spec",
+        "op": ">=",
+        "value": 7,
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "BOTH",
+        "basis": "simulated, pre-layout Monte Carlo sigma-to-spec against the 7-sigma-per-side gate, limit +-40 ps (DR-0019)",
+        "note": "Simulated, not measured. Pooled over the 45-corner grid; no draw outside the limit, the gate is the 14 sigma peak-to-peak tail. TC reading is the on-die array skew, not covered by a single-lane-pair bench."
+      }
+    ],
+    "T-14": [
+      {
+        "record": "sim/mc/records/20261112T080126Z-t14/record.json",
+        "field": "result.sigma_to_spec",
+        "op": ">=",
+        "value": 7,
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "BOTH",
+        "basis": "simulated, pre-layout Monte Carlo sigma-to-spec against the 7-sigma-per-side gate, limit +-20 ps (DR-0019)",
+        "note": "Simulated, not measured. Pooled over the 45-corner grid; no draw outside the limit, the gate is the 14 sigma peak-to-peak tail. TC reading is the on-die array skew, not covered by a single-lane-pair bench."
+      }
     ]
   }
 }
