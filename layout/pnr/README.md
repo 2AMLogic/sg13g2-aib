@@ -12,15 +12,15 @@ this tool's own route DRC), LVS belongs to #40, STA corners to #43.
 | `request.report.json` | the `--format json` report, verbatim |
 | `.klt/place-and-route/aib_datapath.gds` | routed GDS (DEF merged with the stdcell GDS views) |
 | `.klt/place-and-route/aib_datapath.v` | as-built routed gate-level verilog (CTS buffers, antenna repair included) |
-| `.klt/place-and-route/aib_datapath.def` | routed DEF |
-| `.klt/place-and-route/aib_datapath_route.spef`, `.sdf` | extracted parasitics and the SDF written from them |
+| `.klt/place-and-route/aib_datapath.def` | routed DEF; sha256-pinned in `signoff/block-manifest.json` `derived_inputs."pnr.digital"` |
+| `.klt/place-and-route/aib_datapath_route.spef`, `.sdf` | extracted parasitics and the SDF written from them; the SPEF is pinned with the DEF (`derived_inputs."pnr.digital"`), the SDF under `7.digital`. After a P&R re-run, re-cite the pins deliberately; `python3 -I scripts/ci/check_pnr_pins.py` fails on drift |
 | `.klt/place-and-route/pnr_*.tcl` | the generated OpenROAD stage scripts |
 
 The OpenROAD checkpoints (`*.odb`), the 6 MB parasitics deck, per-corner metrics and logs are
 not committed. The report still names them; they regenerate. The report's `*_path` fields hold
 the absolute path of the worktree that produced it; the files sit at the repo paths above.
 
-## Measured (report `status: ok`, `stage_reached: route`, `openroad 26Q3-1510-g6cb3f2b704`, klt 0.8.0)
+## Measured (report `status: ok`, `stage_reached: route`, `openroad 26Q3-1510-g6cb3f2b704`, klt 0.9.0)
 
 Request corner `slow_1p08V_125C`, clock `clk` at 2.0 ns (T-01, 500 MHz; `rx_clk` is not
 constrained, `klt place-and-route` takes one clock).
@@ -34,14 +34,15 @@ constrained, `klt place-and-route` takes one clock).
 | worst setup / hold slack over the 6 shipped liberty corners | 0.494 ns / 0.141 ns |
 | `power.pdn` / `power.global_connect` | true / true |
 | `power.tapcell_master` / `endcap_master` | null / null (the library ships neither) |
+| `power.tapless` | true (klt 0.9.0 states it for `sg13g2_stdcell`) |
 
 Slacks are the tool's estimates from global-route parasitics. The post-route SPEF pass
 (`spef_sta`) annotated 241 of 421 design nets (`annotation_complete: false`), so its slack
 (0.509 ns) is a cross-check only, and the SPEF/SDF are not timing signoff.
 
-**Item 11 (digital) will not read `met` from this run**: the grader asks for a named
-`power.tapcell_master` and this library has none. Not weakened locally; the gap is already tracked upstream as
-`2AMLogic/klayout-tools#4199` (item 11 grades a built PDN `no_pdn` on a tapless library).
+**Item 11 (digital)** reads `met` from this run under klt 0.9.0: the library ships no
+tapcell master, and the grader accepts `power.tapless: true` in its place
+(`2AMLogic/klayout-tools#4199`). Under klt 0.8.0 it read `no_pdn`. The request is unchanged.
 
 ## Reproduce and check
 
@@ -51,7 +52,7 @@ K="uvx --from klayout-tools==$(cat signoff/KLT_VERSION)"
 $K klt place-and-route layout/pnr/request.json --pdk ihp-sg13g2 --format json > layout/pnr/request.report.json
 $K klt place-and-route --check layout/pnr/request.report.json layout/pnr/request.json --pdk ihp-sg13g2          # cheap: exit 0
 $K klt place-and-route --check layout/pnr/request.report.json layout/pnr/request.json --pdk ihp-sg13g2 --rerun  # full
-$K python -I layout/attest_item2_digital.py     # rewrites signoff/attest/item2-digital.json
+$K python -I layout/attest_item2.py digital     # rewrites signoff/attest/item2-digital.json
 ```
 
 Recorded results (2026-10-27): the cheap `--check` exits 0 (input and deck hashes match). The

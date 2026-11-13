@@ -1,0 +1,10 @@
+** sch_path: design/aib_pad_esd.sch
+.subckt aib_pad_esd PAD PADI VDDIO VSS
+*.PININFO PAD:B PADI:B VDDIO:B VSS:B
+XDp1 PAD VDDIO dpantenna l=10u w=10u
+XDn1 PAD VSS VSS VSS sg13_lv_nmos w=20u l=0.13u ng=10 m=1
+XMclamp VDDIO VSS VSS VSS sg13_lv_nmos w=40u l=0.35u ng=20 m=1
+XResd PAD PADI VSS rppd w=2u l=2u m=1 b=0
+XDp2 PADI VDDIO dpantenna l=2u w=2u
+XMn2 PADI VSS VSS VSS sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+.ends

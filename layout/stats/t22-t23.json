@@ -41,7 +41,7 @@
     "length_um": 1320.0,
     "slots": 24
   },
-  "klt_version": "0.8.0",
+  "klt_version": "0.9.0",
   "record": "t22-t23-layout-measured",
   "stream": "layout/aib_io_column.gds"
 }

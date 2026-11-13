@@ -4,8 +4,10 @@ v {xschem version=3.4.7 file_version=1.3
 * Gating: GP = NAND(DIN,OE), GN = NOR(DIN,!OE); output stage Mp/Mn.
 * Weak pulls: PUN=0 enables the pull-up (Mpu+Rpu), PD=1 the pull-down
 * (Mpd+Rpd); about 10-20 kohm each (T-28). PUN=1 and PD=0 select none.
-* Output stage sized so Ron lands in 40-80 ohm by hand estimate (T-08);
-* all sizes are first-cut and UNSIMULATED. No row is claimed met here.
+* Output stage: Mp/Mn each in series with a small poly resistor (Rsp/Rsn, about
+* 18 ohm) to PAD. The MOS Ron alone spreads 2.1-2.4x over PVT-FULL, wider than the
+* 2x window of T-08 (40-80 ohm), so no width closes it; the nearly corner-flat poly
+* compresses the spread (issue #130, sim/dc-static/README.md).
 * PAD is the driver output; the pad_esd cell is not instantiated here.
 }
 G {}
@@ -43,12 +45,12 @@ C {lab_pin.sym} 1320 170 0 0 {name=l21 lab=NA}
 C {lab_pin.sym} 1280 200 0 0 {name=l22 lab=OE}
 C {lab_pin.sym} 1320 230 0 0 {name=l23 lab=VSS}
 C {lab_pin.sym} 1320 200 0 0 {name=l24 lab=VSS}
-C {sg13g2_pr/sg13_lv_pmos.sym} 200 400 0 0 {name=Mnr1p model=sg13_lv_pmos w=4u l=0.13u ng=2 m=1}
+C {sg13g2_pr/sg13_lv_pmos.sym} 200 400 0 0 {name=Mnr1p model=sg13_lv_pmos w=8u l=0.13u ng=4 m=1}
 C {lab_pin.sym} 220 430 0 0 {name=l25 lab=NB}
 C {lab_pin.sym} 180 400 0 0 {name=l26 lab=DIN}
 C {lab_pin.sym} 220 370 0 0 {name=l27 lab=VDDIO}
 C {lab_pin.sym} 220 400 0 0 {name=l28 lab=VDDIO}
-C {sg13g2_pr/sg13_lv_pmos.sym} 420 400 0 0 {name=Mnr2p model=sg13_lv_pmos w=4u l=0.13u ng=2 m=1}
+C {sg13g2_pr/sg13_lv_pmos.sym} 420 400 0 0 {name=Mnr2p model=sg13_lv_pmos w=8u l=0.13u ng=4 m=1}
 C {lab_pin.sym} 440 430 0 0 {name=l29 lab=GN}
 C {lab_pin.sym} 400 400 0 0 {name=l30 lab=OEB}
 C {lab_pin.sym} 440 370 0 0 {name=l31 lab=NB}
@@ -63,13 +65,13 @@ C {lab_pin.sym} 880 370 0 0 {name=l37 lab=GN}
 C {lab_pin.sym} 840 400 0 0 {name=l38 lab=OEB}
 C {lab_pin.sym} 880 430 0 0 {name=l39 lab=VSS}
 C {lab_pin.sym} 880 400 0 0 {name=l40 lab=VSS}
-C {sg13g2_pr/sg13_lv_pmos.sym} 1080 400 0 0 {name=Mp model=sg13_lv_pmos w=28u l=0.13u ng=28 m=1}
-C {lab_pin.sym} 1100 430 0 0 {name=l41 lab=PAD}
+C {sg13g2_pr/sg13_lv_pmos.sym} 1080 400 0 0 {name=Mp model=sg13_lv_pmos w=54u l=0.13u ng=54 m=1}
+C {lab_pin.sym} 1100 430 0 0 {name=l41 lab=DP}
 C {lab_pin.sym} 1060 400 0 0 {name=l42 lab=GP}
 C {lab_pin.sym} 1100 370 0 0 {name=l43 lab=VDDIO}
 C {lab_pin.sym} 1100 400 0 0 {name=l44 lab=VDDIO}
-C {sg13g2_pr/sg13_lv_nmos.sym} 1300 400 0 0 {name=Mn model=sg13_lv_nmos w=14u l=0.13u ng=14 m=1}
-C {lab_pin.sym} 1320 370 0 0 {name=l45 lab=PAD}
+C {sg13g2_pr/sg13_lv_nmos.sym} 1300 400 0 0 {name=Mn model=sg13_lv_nmos w=22u l=0.13u ng=22 m=1}
+C {lab_pin.sym} 1320 370 0 0 {name=l45 lab=DN}
 C {lab_pin.sym} 1280 400 0 0 {name=l46 lab=GN}
 C {lab_pin.sym} 1320 430 0 0 {name=l47 lab=VSS}
 C {lab_pin.sym} 1320 400 0 0 {name=l48 lab=VSS}
@@ -89,6 +91,12 @@ C {lab_pin.sym} 660 600 0 0 {name=l58 lab=VSS}
 C {sg13g2_pr/rppd.sym} 860 600 0 0 {name=Rpd model=rppd w=0.5u l=24u b=0 m=1 body=VSS spiceprefix=X}
 C {lab_pin.sym} 860 570 0 0 {name=l59 lab=PAD}
 C {lab_pin.sym} 860 630 0 0 {name=l60 lab=PDX}
+C {sg13g2_pr/rppd.sym} 1500 400 0 0 {name=Rsp model=rppd w=10u l=0.5u b=0 m=1 body=VSS spiceprefix=X}
+C {lab_pin.sym} 1500 370 0 0 {name=l61 lab=DP}
+C {lab_pin.sym} 1500 430 0 0 {name=l62 lab=PAD}
+C {sg13g2_pr/rppd.sym} 1700 400 0 0 {name=Rsn model=rppd w=10u l=0.5u b=0 m=1 body=VSS spiceprefix=X}
+C {lab_pin.sym} 1700 370 0 0 {name=l63 lab=DN}
+C {lab_pin.sym} 1700 430 0 0 {name=l64 lab=PAD}
 C {ipin.sym} -100 100 0 0 {name=p1 lab=DIN}
 C {ipin.sym} -100 160 0 0 {name=p2 lab=OE}
 C {ipin.sym} -100 220 0 0 {name=p3 lab=PUN}

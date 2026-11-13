@@ -8,33 +8,202 @@
   "evidence": {
     "1.digital": {
       "file": "signoff/attest/item1-digital.attest.json",
-      "content_hash": "sha256:2ae7e3dc00a5ec7da26547fdaef3e7d17ed168b3be0b68c5714522b2beaaf095"
+      "content_hash": "sha256:a519cbeabfafcd2f4189ae6f7454276b861fd29dcb2bc02c5225b9ae72be309e"
     },
-    "1.analog": {"file": "signoff/attest/item1-analog.json", "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4"},
-    "2.analog": {"file": "signoff/attest/item2-analog.json", "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"},
+    "1.analog": {
+      "file": "signoff/attest/item1-analog.json",
+      "content_hash": "sha256:fd747b37546c9099f8081e2837588cdabbe8525ab1544b4084b374aa1f2f0258"
+    },
+    "2.analog": {
+      "file": "signoff/attest/item2-analog.json",
+      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e"
+    },
     "2.digital": {
-   "file": "signoff/attest/item2-digital.json",
-   "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
-  },
-    "3.analog": {"file": "layout/records/20261027T063033Z/drc_analog.json", "content_hash": "sha256:fc52db6b9caa2e2da9167a9020df176a215fdd3481104a86d1011e6bc5dd494f"},
-    "3.digital": {"file": "layout/records/20261027T063033Z/drc_digital.json", "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"},
-    "4.digital": {"file": "layout/lvs/digital.report.json"},
+      "file": "signoff/attest/item2-digital.json",
+      "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
+    },
+    "3.analog": {
+      "file": "layout/records/20261110T082915Z/drc_analog.json",
+      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e"
+    },
+    "3.digital": {
+      "file": "layout/records/20261027T063033Z/drc_digital.json",
+      "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
+    },
+    "4.analog": {
+      "file": "layout/lvs/aib_io_column.report.json"
+    },
+    "4.digital": {
+      "file": "layout/lvs/digital.report.json"
+    },
     "5.digital": [
-      {"file": "signoff/attest/item5-digital/fv_shift_redundancy.json"},
-      {"file": "signoff/attest/item5-digital/fv_datapath_n20.json"},
-      {"file": "signoff/attest/item5-digital/fv_datapath_n8.json"},
-      {"file": "signoff/attest/item5-digital/sta_clk.json"},
-      {"file": "signoff/attest/item5-digital/sta_rx_clk.json"}
+      {
+        "file": "signoff/attest/item5-digital/fv_shift_redundancy.json"
+      },
+      {
+        "file": "signoff/attest/item5-digital/fv_datapath_n20.json"
+      },
+      {
+        "file": "signoff/attest/item5-digital/fv_datapath_n8.json"
+      },
+      {
+        "file": "signoff/attest/item5-digital/sta_clk.json"
+      },
+      {
+        "file": "signoff/attest/item5-digital/sta_rx_clk.json"
+      }
     ],
-    "9.analog": {"file": "signoff/attest/item9-analog.json", "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"},
-    "9.digital": {"file": "signoff/attest/item9-digital.json", "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"},
-    "10.analog": {"file": "signoff/attest/item10.json", "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"},
-    "10.digital": {"file": "signoff/attest/item10.json", "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"}
+    "6.analog": [
+      {
+        "file": "sim/mc/records/20261108T035315Z-t10/yield.json",
+        "content_hash": "sha256:2db1f964470a8953ce8784820907d330873f383b14cbd3eee7203e77fe43ecac",
+        "rows": [
+          "T-10"
+        ]
+      },
+      {
+        "file": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "content_hash": "sha256:3fd5be041efc841c14f4a72c8cb64a244615a1f930684a26bfd2f9b53121bba1",
+        "rows": [
+          "T-15"
+        ]
+      },
+      {
+        "file": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "content_hash": "sha256:30279e0d0d716ec384b9e7f4afb03466a8ab797c8df5544695fa654651f4b070",
+        "rows": [
+          "T-16"
+        ]
+      },
+      {
+        "file": "sim/mc/records/20261112T082047Z-t19/yield.json",
+        "content_hash": "sha256:a5bfd3694835f713f5cbda16fc6525a3ab6eb9c5e401568702d22bea905025b0",
+        "rows": [
+          "T-19"
+        ]
+      }
+    ],
+    "6.digital": {
+      "not_applicable": {
+        "spec": {
+          "file": "signoff/item6/digital-spec.json",
+          "content_hash": "sha256:3df286773459580f2544abbe211c384009ab422173a3d9308443c789e07f5a58"
+        },
+        "statement": {
+          "file": "signoff/item6/digital-statement.json",
+          "content_hash": "sha256:61bd5b77ddf08093c8b8481fa7372e02a3ed8d16633e09084f275194213331e2"
+        }
+      }
+    },
+    "7.digital": {
+      "file": "signoff/attest/item7-digital/fv_post_route.json"
+    },
+    "8.analog": {
+      "file": "signoff/attest/item8.json",
+      "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d"
+    },
+    "8.digital": {
+      "file": "signoff/attest/item8.json",
+      "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d"
+    },
+    "9.analog": {
+      "file": "signoff/attest/item9-analog.json",
+      "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"
+    },
+    "9.digital": {
+      "file": "signoff/attest/item9-digital.json",
+      "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"
+    },
+    "10.analog": {
+      "file": "signoff/attest/item10.json",
+      "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"
+    },
+    "10.digital": {
+      "file": "signoff/attest/item10.json",
+      "content_hash": "sha256:47a129fa482f96ca19b11fb545c89428e2b5c2a31faf36a323bc7f8afb748861"
+    },
+    "11.analog": [
+      {
+        "file": "layout/erc/io_cells.erc-report.json"
+      },
+      {
+        "file": "layout/lvs/aib_io_column.report.json"
+      }
+    ],
+    "11.digital": [
+      {
+        "file": "layout/erc/aib_datapath.erc-report.json"
+      },
+      {
+        "file": "layout/lvs/digital.report.json"
+      },
+      {
+        "file": "layout/pnr/request.report.json"
+      }
+    ]
+  },
+  "spec_rows": {
+    "6.analog": [
+      {
+        "id": "T-10"
+      },
+      {
+        "id": "T-13",
+        "gap": "no campaign yet; tracked in #136"
+      },
+      {
+        "id": "T-14",
+        "gap": "no campaign yet; tracked in #136"
+      },
+      {
+        "id": "T-15"
+      },
+      {
+        "id": "T-16"
+      },
+      {
+        "id": "T-19"
+      }
+    ]
+  },
+  "derived_inputs": {
+    "7.digital": {
+      "generator": "verification/klt/run_evidence.py",
+      "source": {
+        "file": "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf",
+        "content_hash": "sha256:3e8edd07efd747d5e6bb6db8b7fb38d13b7dba2607e25617d084ae6b02e24545"
+      },
+      "files": [
+        {
+          "file": "signoff/attest/item7-digital/aib_datapath_route.tb.sdf",
+          "content_hash": "sha256:8f22f9ab3b82859cdf0d63b75ef57e7822207c280da9625e5ba4efc4e7a08232",
+          "cited_by": "signoff/attest/item7-digital/fv_post_route.json"
+        },
+        {
+          "file": "signoff/attest/item7-digital/aib_datapath_route.tb.neg_timing.sdf",
+          "content_hash": "sha256:b400cd47577099f6fb4dcad0cf13c92c6f64e9035b33c947bca983d3e2f3eb2b",
+          "cited_by": "signoff/attest/item7-digital/fv_neg_post_route_timing.json"
+        }
+      ]
+    },
+    "pnr.digital": {
+      "generator": "klt place-and-route (layout/pnr/request.json, seed 1)",
+      "files": [
+        {
+          "file": "layout/pnr/.klt/place-and-route/aib_datapath_route.spef",
+          "content_hash": "sha256:50e24939d074eb03d97949bd8971a4e2321fe4c22185fdc8a800e247b1925813"
+        },
+        {
+          "file": "layout/pnr/.klt/place-and-route/aib_datapath.def",
+          "content_hash": "sha256:05bb5bac32c3e6c77c8bd4cc5cb8d456ea5ef679e7673821a383a413f323487c"
+        }
+      ]
+    }
   },
   "claims": {
     "3": {
       "analog": {
-        "report": "layout/records/20261027T063033Z/drc_analog.json",
+        "report": "layout/records/20261110T082915Z/drc_analog.json",
         "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
         "status": "clean",
         "violation_count": 0,

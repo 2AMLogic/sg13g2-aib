@@ -1,0 +1,152 @@
+{
+  "schema_version": 2,
+  "file": {
+    "path": "layout/aib_io_column.gds",
+    "scope": "repo"
+  },
+  "spec": "layout/erc/io_cells.erc-spec.json",
+  "pdk": null,
+  "findings_only": true,
+  "gate_role": "gate",
+  "gate_count": 148,
+  "antenna_tables_omitted": true,
+  "gates": [],
+  "nets": [
+    {
+      "name": "VDDIO",
+      "matched_islands": 1,
+      "expected_islands": 1,
+      "roles": [],
+      "unlabelled_islands": null,
+      "unlabelled_area_um2": null,
+      "unlabelled_bbox": null,
+      "unlabelled_allowed_islands": null
+    },
+    {
+      "name": "VSS",
+      "matched_islands": 1,
+      "expected_islands": 1,
+      "roles": [],
+      "unlabelled_islands": null,
+      "unlabelled_area_um2": null,
+      "unlabelled_bbox": null,
+      "unlabelled_allowed_islands": null
+    }
+  ],
+  "erc_findings": [],
+  "erc_finding_count": 0,
+  "erc_status": "clean",
+  "status": "not_checked",
+  "coverage": {
+    "scope": "antenna",
+    "schema_version": 1,
+    "known": true,
+    "checked": [],
+    "skipped": [
+      {
+        "id": "antenna:[]",
+        "reason": "findings_only"
+      }
+    ],
+    "inapplicable": [
+      {
+        "id": "antenna:[\"gate_reference_level\"]",
+        "reason": "gate_reference_level"
+      }
+    ],
+    "unknown": [],
+    "nothing_checked": true,
+    "nothing_checked_reasons": [
+      "findings_only",
+      "gate_reference_level"
+    ]
+  },
+  "erc_coverage": {
+    "scope": "connectivity",
+    "schema_version": 1,
+    "known": true,
+    "checked": [
+      "erc.floating_gate:[]",
+      "erc.missing_tie:[\"nwell_vddio\"]",
+      "erc.missing_tie:[\"psub_vss\"]",
+      "erc.net_connectivity:[\"VDDIO\"]",
+      "erc.net_connectivity:[\"VSS\"]"
+    ],
+    "skipped": [],
+    "inapplicable": [
+      {
+        "id": "erc.supply_short",
+        "reason": "substrate_continuity_not_modelled"
+      }
+    ],
+    "unknown": [],
+    "nothing_checked": false,
+    "nothing_checked_reasons": [],
+    "missing_tie_checked": true,
+    "checked_by_assertion": [
+      "erc.missing_tie:[\"nwell_vddio\"]"
+    ],
+    "checked_by_well_assertion": [
+      "erc.missing_tie:[\"psub_vss\"]"
+    ],
+    "layers_in_stream_without_declaration": [
+      "63/0"
+    ],
+    "well_assertion_coverage": []
+  },
+  "ties_disclosure": null,
+  "provenance": {
+    "klt_version": "0.9.0",
+    "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
+    "klt_reinstall_spec": "klayout-tools==0.9.0",
+    "klayout_version": "0.30.13",
+    "pdk": null,
+    "deck": {
+      "name": "sg13g2",
+      "content_hash": "sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
+      "released": true
+    },
+    "input": {
+      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+      "role": "layout"
+    },
+    "spec": {
+      "content_hash": "sha256:5bb240713aca869fd35fa2dca5aca1b70121c874bf53dea6f03374b5376b9a98"
+    },
+    "devices": [
+      {
+        "name": "rppd",
+        "body_layer": "5/0",
+        "on": "gate",
+        "body_area_um2": 1008.0,
+        "source": "deck",
+        "superseded_by": null
+      }
+    ],
+    "net_exclusions": [],
+    "label_layers": [
+      {
+        "name": "metal2",
+        "label_layer": "10/1",
+        "label_text_count": 48
+      },
+      {
+        "name": "metal3",
+        "label_layer": "30/1",
+        "label_text_count": 168
+      },
+      {
+        "name": "topmetal1",
+        "label_layer": "126/1",
+        "label_text_count": 96
+      }
+    ]
+  },
+  "compact": {
+    "gate_count": 148,
+    "antenna_levels_skipped": 1036,
+    "antenna_reference_levels": 148,
+    "floating_gate_checked": 148,
+    "skipped_reason": "findings_only"
+  }
+}

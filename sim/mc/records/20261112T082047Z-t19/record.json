@@ -1,0 +1,162 @@
+{
+  "record": "mc-t19",
+  "utc_stamp": "20261112T082047Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-19",
+  "claim_scope": "BOTH, as a local cell property: the bench drives the input stage from an ideal 100 ps pad edge and the flop from an ideal 100 ps clock edge, so no channel and no bond pad is in the loop. It holds for the modeled die-to-die channel (CH) and for the wire-bond loopback (TC) only to the extent the edge arriving at the RX pad has the declared 100 ps slew; the slew sensitivity is not measured here, and no separate TC number is recorded.",
+  "bench": "tb_t19.cir: aib_rx_data (design/aib_rx_data.spice, as drawn) driving D of sg13g2_dfrbpq_1 (PDK stdcell, vendored verbatim, same cell design/synth maps to). One transient of 102 cycles of 2 ns: a setup sweep (data rising edge at clock + x, x = -400..+100 ps in 10 ps steps) then a hold sweep (data falling edge at clock + y, same grid). Q falls at the first failing setup cycle and rises at the first capturing hold cycle; a staircase source holds x / y so FIND reads the offset. Measured with a linear sweep, not a bisection: a klt netlist body cannot carry a .control loop.",
+  "aperture_definition": "per draw, one posedge flop instance: setup = clock-to-D-crossing time before which D (50 % of the stage output) must have risen, hold = time after the clock edge D must stay, both referred to the D-pin 50 % crossing (pad-to-D delays dr, df measured in the same run); aperture = setup + hold. The negedge flop is the same cell with the clock inverted and was not run as a second measurement (no posedge/negedge difference was estimated; stated as an assumption below).",
+  "resolution": "10 ps sweep step; setup and hold are each quantised to +-5 ps (midpoint estimate, unbiased), adding about 4.1 ps rms to the aperture sigma (reported sigma 12.5 ps; about 11.8 ps with it removed). The sweep window (-400..+100 ps) is wider than every measured edge (setup 34..127 ps, hold -95..-10 ps in D-referred terms), so no nominal draw was clipped.",
+  "requests": {
+    "nominal": "request_t19.json",
+    "negative_control": "request_t19_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "yield_report_negative_control_alone": "yield_ctl_alone.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 20,
+    "seed": 4430,
+    "samples": 900,
+    "negative_control_seed": 4431,
+    "negative_control_samples": 900
+  },
+  "sample_size": {
+    "required_n": 183,
+    "verdict": "sufficient",
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "observed_ci_halfwidth": 0.0020451832587852214,
+    "basis": "verdict of the 20-draw pilot (900 samples), which is the recorded run: 900 >= required_n 183"
+  },
+  "fleet": {
+    "backend": "batch (aws-batch-fleet, spot)",
+    "submit": "klt sim --backend batch --wait-for-capacity 600 --max-units-per-job 58",
+    "klt": "0.9.0",
+    "nominal_job_ids": [
+      "klt-sim-021b493121bb",
+      "klt-sim-05facb8ad64d",
+      "klt-sim-066426fa0967",
+      "klt-sim-1557e4af9c79",
+      "klt-sim-235cb153076d",
+      "klt-sim-43d41f202c6e",
+      "klt-sim-63ae59f406e8",
+      "klt-sim-731ed8757d33",
+      "klt-sim-7fa2f9efa343",
+      "klt-sim-a72948f3598d",
+      "klt-sim-b7530a670d5a",
+      "klt-sim-d96c15905cdf",
+      "klt-sim-dc727dfc44b1",
+      "klt-sim-dd22accc49e1",
+      "klt-sim-ddd14b1f208d",
+      "klt-sim-de1b1d7ec2dc"
+    ],
+    "negative_control_job_ids": [
+      "klt-sim-0744e701659e",
+      "klt-sim-4823e8307813",
+      "klt-sim-4d2741ec18bd",
+      "klt-sim-4db7b50097b7",
+      "klt-sim-5effc983ff66",
+      "klt-sim-7464ec591225",
+      "klt-sim-834c66b3bcc1",
+      "klt-sim-851854e1745b",
+      "klt-sim-88cb4905a536",
+      "klt-sim-89dfdf8344b9",
+      "klt-sim-9db2c424abe9",
+      "klt-sim-9fd14fe9316c",
+      "klt-sim-a21bba6d3ffd",
+      "klt-sim-c2e7b1fca856",
+      "klt-sim-eaffd11ca298",
+      "klt-sim-fe52eb3d45ac"
+    ],
+    "note": "16 shard jobs per request; environment.remote.fleet in each report carries the instance detail"
+  },
+  "limits": {
+    "max": 150,
+    "unit": "ps",
+    "target_sigma": 7,
+    "reading": "one-sided (the aperture is a width; the row has no lower bound), target_sigma 7 = the one-sided reading of the 14 sigma peak-to-peak used for the other STAT rows"
+  },
+  "result": {
+    "status": "pass",
+    "unit": "ps",
+    "mean": 27.559327444444406,
+    "sigma": 12.513337150353529,
+    "min": -3.8376,
+    "max": 68.60055,
+    "tail": "worst draw 68.6 ps (sf, 1.08 V, -40 C) against the 150 ps limit",
+    "empirical_yield": 1.0,
+    "empirical_yield_ci": {
+      "low": 0.9959096334824296,
+      "high": 1.0
+    },
+    "sigma_to_spec": 9.78481368194386,
+    "sigma_to_spec_ci": {
+      "low": 9.327841033309609,
+      "high": 10.24178633057811
+    },
+    "target_sigma": 7,
+    "normality": "rejected",
+    "negative_control": "detected",
+    "setup_ps": {
+      "mean": 68.43,
+      "sigma": 18.84,
+      "min": 33.9,
+      "max": 127.3
+    },
+    "hold_ps": {
+      "mean": -40.87,
+      "sigma": 15.43,
+      "min": -94.9,
+      "max": -10.2
+    },
+    "per_process_corner_aperture_ps": {
+      "tt": {
+        "mean": 25.9,
+        "max": 51.6
+      },
+      "ss": {
+        "mean": 30.4,
+        "max": 59.8
+      },
+      "ff": {
+        "mean": 27.4,
+        "max": 42.9
+      },
+      "sf": {
+        "mean": 40.7,
+        "max": 68.6
+      },
+      "fs": {
+        "mean": 13.5,
+        "max": 28.7
+      }
+    },
+    "pass_fail_per_corner": "all 45 corners pass: 20 of 20 draws measured and under 150 ps in each (900 of 900); no errored or unmeasurable draw",
+    "holds": "T-19 <= 0.15 UI (150 ps) holds in simulation, pre-layout, at 7 sigma (sigma-to-spec 9.8 against 7)"
+  },
+  "negative_control": {
+    "defect": "the flop clock rising edge ramps over 1500 ps instead of 100 ps (tb_t19_ctl.cir; not design evidence)",
+    "samples": 900,
+    "errored": 72,
+    "errored_note": "the sweep window did not contain the edge in 72 draws; counted as failed draws, not dropped",
+    "mean": 95.80637347826091,
+    "sigma": 21.12179398780471,
+    "max": 172.4177,
+    "draws_over_150ps": 12,
+    "sigma_to_spec": 2.5657681612191356,
+    "yield_status_alone": "fail",
+    "verdict": "klt yield on the control alone fails (exit 3, sigma-to-spec 2.57 against 7); yield-samples reports degradation detected against the nominal"
+  },
+  "spot_check": "one local single-unit klt sim (--backend local, tt, 1.2 V, 27 C, mismatch sections, no seed) during bench bring-up gave apertures of 14, 23 and 31 ps across three runs, inside the 11..31 ps the 20 fleet draws of tt/1.200V/27C span",
+  "note": "T-19 PASSES the 7-sigma gate in simulation, pre-layout: pooled over the 45-corner grid mean 27.6 ps, sigma 12.5 ps, worst draw 68.6 ps against 150 ps. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative; the empirical yield (900 of 900, lower 95 % bound 0.996) and the worst draw are the tail used. Pooled grid, as for T-10 and T-16. The aperture here is a cell property from ideal edges; the post-layout PEX re-run (#37) and the edge slew actually presented at the RX pad (T-18, T-16) are not covered."
+}

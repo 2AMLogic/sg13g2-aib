@@ -1,0 +1,89 @@
+{
+  "record": "channel-eye",
+  "utc_stamp": "20261110T082948Z",
+  "kind": "simulated",
+  "family": "ch",
+  "claim_scope": "CH (modeled channel CH-3MM-RC)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 3,
+  "corners": 45,
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-15": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/27C",
+        "measurement": "t15_af_br_short",
+        "value": -5.57588e-11,
+        "why": "smallest margin"
+      }
+    },
+    "T-16": {
+      "verdict": "fail",
+      "pass": 344,
+      "fail": 16,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/125C",
+        "measurement": "t16_df_cf_long",
+        "value": 4.58455e-10,
+        "why": "fail"
+      }
+    },
+    "T-18": {
+      "verdict": "pass",
+      "pass": 1845,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/125C",
+        "measurement": "t18_eye_height_ok_v",
+        "value": 0.3504988,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ff/mixed/125C",
+        "measurement": "t26_energy_per_bit_simulated_j",
+        "value": 5.83902e-13,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "batch_job_id": null,
+  "runner_klt_version": null,
+  "energy_label": "T-26 energy per bit is SIMULATED; no measurement exists"
+}

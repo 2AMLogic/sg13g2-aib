@@ -1,7 +1,7 @@
 # DR-0010: I/O column layout and skew matching (open question 3)
 
 **Status**: accepted as a method; tool gaps are filed when the work reaches them.
-**Rows**: T-13, T-14, T-22, T-23, T-30.
+**Rows**: T-13, T-14, T-22, T-23, T-30. **Amended by**: DR-0016 (see Amendment, 2026-11-01).
 
 ## The question
 
@@ -49,3 +49,17 @@ before: filing them now would describe a gap this repo has not yet hit.
   (README scope); only the column is custom.
 - **No skew verification beyond `SIM-MC` on the schematic.** Layout-induced skew is the
   array's risk (CLAUDE.md); schematic-only evidence would not see it.
+
+## Amendment, 2026-11-01: the matched span is 22 cells
+
+Appended after DR-0016 ratified (PR #32); the decision above is unchanged. DR-0016
+says the spares sit outside the matched span of this clock tree. That holds only with
+no fault. In a repaired configuration a fault at `pos` moves bits `pos..19` up two
+wires, so wires 20 and 21 both carry data (for `pos <= 18`; for `pos = 19` wire 21
+carries bit 19 and wire 20 is the vacated one). The spare cells are then data cells.
+
+The matched span is therefore **22 cells** (20 data + 2 spare), and the clock tree is
+symmetric about the centre of the 22, not of the 20 data cells. T-13 and T-14 are
+required to hold across all 22 cells in a repaired configuration. This is read from the
+DR-0016 text, not simulated. It does not change a T-13/T-14 target or the DR-0007 area;
+if layout shows it needs to, that is a spec change filed as such, not absorbed here.

@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "note": "Maps spec rows (spec/target-spec.md, T-01..T-30) to committed records. A row with no entry reads not-yet-measured. Add an entry when its record lands; never edit a spec target to make a row pass. Fields: record (repo path), field (dotted path; [name=X] picks a list item by its name), op (>= <= ==), value or value_field (sibling field of the same record), corner, scope (CH, TC, BOTH or n/a), basis (what the number is), note.",
+  "rows": {
+    "T-05": [
+      {
+        "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+        "field": "passed_count",
+        "op": "==",
+        "value_field": "test_count",
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, every single-fault position (41 cases)",
+        "note": "RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured."
+      },
+      {
+        "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",
+        "field": "failed_count",
+        "op": "==",
+        "value": 0,
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, failing cases",
+        "note": "Repair claim in CH needs an assembly; the mux function is what this record covers."
+      }
+    ],
+    "T-27": [
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=latency_ddr].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (cycle accounting)",
+        "scope": "BOTH",
+        "basis": "RTL simulation, N = 20, DDR latency testbench",
+        "note": "The record carries the testbench verdict, not the cycle count."
+      }
+    ],
+    "T-09": [
+      {
+        "record": "sim/channel-eye/records/20261110T082948Z-ch/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-09 measurements over 720 corner-measurements (DR-0017 driver, head 282a9d4)",
+        "note": "Simulated, not measured. Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level)."
+      },
+      {
+        "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "TC",
+        "basis": "simulated, failing T-09 measurements, L2 wire-bond loopback (reported separately from CH)",
+        "note": "Simulated, not measured. TC result only, not a CH claim. The spec expects TC to possibly fail the CH limit; here it did not."
+      }
+    ],
+    "T-19": [
+      {
+        "record": "sim/mc/records/20261112T082047Z-t19/record.json",
+        "field": "result.max",
+        "op": "<=",
+        "value": 150,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated pre-layout Monte Carlo, worst draw of 900 (20 per corner, mismatch), aperture = setup + hold at the D-pin 50 % crossing, ps",
+        "note": "Simulated, not measured. A cell property from ideal 100 ps edges; holds for CH and TC only as far as the declared edge slew does (record claim_scope). Pooled grid."
+      },
+      {
+        "record": "sim/mc/records/20261112T082047Z-t19/record.json",
+        "field": "result.sigma_to_spec",
+        "op": ">=",
+        "value": 7,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated pre-layout, klt yield sigma-to-spec (one-sided, target 7 = the 14 sigma peak-to-peak reading)",
+        "note": "Normal-model figure; the distribution is not normal (Anderson-Darling rejected), the empirical yield 900/900 and the worst draw are the tail used."
+      }
+    ]
+  }
+}

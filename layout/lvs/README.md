@@ -7,22 +7,25 @@ gate-level netlist.
 | Partition | Result | Row |
 |---|---|---|
 | Digital (`aib_datapath`) | `status: match`, `power_connectivity.status: match` | `4.digital` reads `met` |
-| Analog (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | **`status: mismatch`** on all four cells | `4.analog` stays `unmet` / `no_evidence` (nothing cited) |
+| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 4224 / 4224 devices, 389 / 389 nets, 101 / 101 pins (DR-0017 stream, #140) | `4.analog` reads `met`, citing `aib_io_column.report.json` |
+| Analog, per cell (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | `status: match` on all four (stream regenerated, issue #70; the earlier stream was `mismatch`) | not cited: item 4 takes one report per partition (2AMLogic/klayout-tools#4354) |
 
-The analog mismatch is reported as one. The layout generator, the item 1 sources and the P&R flow are
-not changed to make LVS pass (issue #40, "Out of Scope").
+Issue #40 recorded the analog result as a mismatch and did not change the generator. Issue #70 fixed the
+generator (below) and re-ran all four compares against the same, unchanged reference netlists; the
+reports here are those re-runs. The item 1 sources, `gen_reference.py` and the P&R flow are unchanged.
 
 ## Files
 
 | File | What |
 |---|---|
-| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice`; `--check` compares to the committed files; `--diagnostic` writes the `*.diag.ref.spice` set |
+| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice`; `--check` compares to the committed files |
 | `<cell>.ref.spice` | reference for `aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`; each header carries the sha256 of every `design/*.spice` it was built from |
 | `<cell>.request.json`, `<cell>.report.json` | the `klt lvs` request and its `--format json` report, verbatim |
-| `<cell>.diag.*` | the same against the diagnostic reference (below). **Not a result reference.** |
+| `aib_io_column.ref.spice`, `aib_io_column.request.json`, `aib_io_column.report.json` | the whole analog stream (all 48 units) against one generated reference; this is the report `4.analog` cites |
+| `<cell>.diag.*` | the same against a diagnostic reference. **Superseded** by the layout fix (below): the generator path that wrote it is removed, the files are kept as recorded results and do not reproduce. **Not a result reference.** |
 | `aib_datapath.gate.spice`, `aib_datapath.extract.report.json` | layout side of the digital compare: `klt extract --abstract-cells 'sg13g2_*' --def-net-names` of the routed GDS |
 | `digital.request.json`, `digital.report.json` | digital request and report, verbatim |
-| `neg/` | negative control: the as-built netlist with one gate input rewired, and the report it produces |
+| `neg/` | negative controls: digital (the as-built netlist with one gate input rewired) and analog column (`aib_io_column.rewired.ref.spice`: one clamp finger gate moved from `VSS` to `VDDIO`), each with its report |
 
 Provenance: the reference netlists are generated, not hand-written; `design/*.spice` is read only, so the
 item 1 hashes are unchanged. Assembly follows `layout/README.md` ("Assembly choice"): the pad is the
@@ -39,7 +42,7 @@ K="uvx --from klayout-tools==$(cat signoff/KLT_VERSION)"
 python3 -I layout/lvs/gen_reference.py --check
 export PDK_ROOT=<path containing ihp-sg13g2>              # digital only
 cd layout/lvs
-$K klt lvs aib_io_tx.request.json --format json > aib_io_tx.report.json      # exit 3: mismatch
+$K klt lvs aib_io_tx.request.json --format json > aib_io_tx.report.json      # exit 0: match
 $K klt lvs digital.request.json --format json > digital.report.json          # exit 0: match
 $K klt lvs --check digital.report.json                                        # exit 0
 $K klt lvs --check aib_io_tx.report.json --rerun                              # exit 0 (the report is reproduced)
@@ -83,15 +86,16 @@ not transistors. Results:
 ## Analog
 
 Device recognition (the question the issue asked first): the `sg13g2` deck extracts every device in the
-drawn cells, including the ESD structure. For `aib_io_tx`: `dantenna` 1, `dpantenna` 2, `rppd` 3, and the
+drawn cells, including the ESD structure. (As first recorded, for `aib_io_tx`: `dantenna` 1;
+since issue #94 the PAD-to-VSS element `Mn1` is a grounded-gate `nfet` and the `dantenna` count is 0.) For `aib_io_tx`: `dantenna` 1, `dpantenna` 2, `rppd` 3, and the
 clamp NMOS fingers among 45 `nfet`. No device is left unrecognised, so no deck gap is filed for the ESD
 devices. The drawn layout does not carry labels on the datatype the deck reads by default (the generator
 writes datatype 1), so the requests pass `layout.label_layers`; with it the pins extract as named
 (TX: `DIN OE PAD PD PUN VDDIO VSS`).
 
-The compare reports `mismatch` on all four cells. Two differences between the drawn layout and the item 1
-schematic explain it; each was isolated by a *diagnostic* reference (`gen_reference.py --diagnostic`)
-that changes only that difference, and with both applied all four cells report `match` (`*.diag.report.json`,
+The compare on the stream drawn for #40 reported `mismatch` on all four cells (that run is in git history, commit `1226ed8`). Two differences between the drawn layout and the item 1
+schematic explain it; each was isolated by a *diagnostic* reference (written by a `--diagnostic` mode of `gen_reference.py`,
+since removed; see commit `1226ed8` for the localisation) that changes only that difference, and with both applied all four cells report `match` (`*.diag.report.json`,
 `device` counts equal on both sides: 89, 33, 178, 66). The diagnostic is a localisation, not a result:
 nothing is claimed against it.
 
@@ -107,16 +111,66 @@ nothing is claimed against it.
    `Mnr2p`, `Mnr1n`, `Mnr2n`) and the four RX devices (`Mi1p`, `Mi1n`, `Mi2p`, `Mi2n`), all `ng = 2`. Those
    are drawn twice as wide as simulated.
 
-Both belong to the layout stream (`layout/gen_io_column.py`) and are filed as a follow-up on this
-repository rather than fixed here.
+Both were fixed in `layout/gen_io_column.py` (issue #70); the reference netlists were not touched:
+
+1. Cause: the clamp's bulk tap and the secondary diode `Dp2` were placed on the same router node, so
+   the tap's `VSS` Metal1 overlapped the `Dp2` plate (`PADI`). `Dp2` and `Mn2` moved right, clear of the
+   tap. `layout/check_io_column.py` now fails on this merge in the old stream (resistor end on a rail,
+   found from the wire connectivity of unlabelled shapes too).
+2. The generator table carries the finger width for every device and the self-check compares
+   `w * ng` with the netlist `w` for all of them (it was three devices).
+
+The `*.diag.*` files are the localisation recorded against the old stream. They are kept as the
+record of that diagnosis and no longer reproduce (`--check` reports drift on the layout hash); they
+are not evidence about the current stream.
+
+Column compare (issue #40, the `4.analog` citation): `aib_io_column.request.json` extracts the top
+cell (the TX column then the RX column; spares and the clk/clkb pair are ordinary units) and compares
+it to a reference of 24 TX and 24 RX units on shared `OE`/`PUN`/`PD`/`VDDIO`/`VSS`, built by the same
+`gen_reference.py` from the same item 1 netlists. Result: `status: match`, devices 3360/3360, nets
+341/341, pins 101/101; warnings `device.geometry_not_compared`, `device.placeholder_value` (the
+`rppd` value is not compared, as in the cell reports) and 45 `topology` entries (listed in the report).
+`--check` exits 0 and `--check --rerun` exits 0. The negative control (`neg/`) reports `mismatch`
+(exit 3, one `device.unmatched`) when one clamp finger gate is moved in the reference.
+
+Limit of the column compare: klt names the repeated pins `DIN`, `DIN$1`, ... and `PAD`, `PAD$1`, ... in
+its own extraction order, not slot order, and which `DIN$i` shares a unit with which `PAD$k` was read
+once from the extracted column netlist and fixed in `gen_reference.py` (`PAD_OF_DIN`, `PAD_OF_DOUT`).
+That is bookkeeping between identical units, not an electrical claim, and it is klt's numbering, not a
+stable contract (`klt extract --help`); if a later `klt` renumbers, the column compare mismatches and
+the table is re-read. Slot position, mirroring and which pad belongs to which wire are not tested by
+this compare, because the units are interchangeable to LVS. The cell-level reports test each unit's wiring.
 
 Not covered, and so not claimed:
 
 - The resistor value and `L`/`W` are not compared: the `rppd` card in a `subckt-call` reference carries
   a placeholder `R`, and a resistor's `L`/`W` are secondary parameters (`device.placeholder_value`,
   `device.geometry_not_compared` warnings in every analog report).
-- The 24-slot column (`aib_io_column_tx`/`_rx`, top `aib_io_column`) was not compared. The cell-level
-  runs do not match, so a column run would only repeat the same two differences.
 - A second engine (`netgen`) was not run.
 - `klt signoff` item 4 accepts one report per partition (2AMLogic/klayout-tools#4354), so the four
-  per-cell reports cannot be cited together. They are not cited, and `4.analog` stays `unmet`.
+  per-cell reports cannot be cited together; the column report is cited instead.
+
+## Issue #94: `Mn1` replaces the `Dn1` diode
+
+`design/aib_pad_esd.spice` now has `XMn1` (grounded-gate `sg13_lv_nmos`, `w=20u l=0.13u ng=10`, drain `PAD`)
+in place of the `dantenna` `XDn1`, because the 141 ns four-lane channel-eye bench aborted on `XDn1`
+(`sim/README.md`, issue #94). `gen_io_column.py` draws it as ten 2 um fingers, the references were
+regenerated (`gen_reference.py`, `--check` clean), and the five compares were re-run with klt 0.8.0:
+column `match` (3360/3360 devices, 341/341 nets, 101/101 pins), the four cells `match`;
+`--check --rerun` exits 0 on all five. The negative control was rebuilt on the new reference (one
+`device.unmatched`, exit 3). The `*.diag.*` files are untouched history and do not reproduce.
+For `aib_io_tx_clk` and `aib_io_rx_clk` the numbering klt gives the repeated `DIN`/`DOUT` labels
+changed with the layout, so which label shares a unit with `PAD` is now set by `CLK_DIN` / `CLK_DOUT`
+in `gen_reference.py` (read by trying both pairings; the wrong one reports `device.unmatched` on
+the receiver output stage and nothing else). Bookkeeping between identical units, not an electrical claim.
+
+## Issue #140: DR-0017 regeneration
+
+`gen_io_column.py` now draws the DR-0017 driver (`Mp` 54 fingers, `Mn` 22, drains on `DP` / `DN`, series
+`rppd` legs `Rsp` / `Rsn`) and the 4.5 um `Dp1`. `gen_reference.py` regenerated all five references
+(`--check` clean). The five compares were re-run with klt 0.9.0: column `match` (4224/4224 devices,
+389/389 nets, 101/101 pins), `aib_io_tx` (134 devices), `aib_io_rx` (42), `aib_io_tx_clk` (268) and
+`aib_io_rx_clk` (84) `match`; `--check --rerun` exits 0 on the column and `aib_io_tx` reports (the other
+three were not re-run). The negative control was rebuilt on the new reference (one clamp finger gate
+`VSS` -> `VDDIO`): `mismatch`, one `device.unmatched`, exit 3. The sums above 3360 / 341 in the Issue #94
+section describe the earlier stream and are history.

@@ -1,0 +1,72 @@
+{
+ "pre132": {
+  "record": "20261108T220323Z-ch",
+  "corners_failing": 29,
+  "max_dev_ps_by_process": {
+   "mos_ff": 33.5,
+   "mos_fs": 45.2,
+   "mos_sf": 45.2,
+   "mos_ss": 65.2,
+   "mos_tt": 44.8
+  },
+  "max_dev_ps_by_vdd": {
+   "1.08": 65.2,
+   "1.2": 48.7,
+   "1.32": 40.0
+  },
+  "max_dev_ps_by_temp": {
+   "-40": 56.7,
+   "125": 65.2,
+   "27": 59.4
+  },
+  "df_cf_long_ss_1p08V_by_temp_ps": {
+   "-40": 443.3,
+   "27": 440.6,
+   "125": 434.8
+  },
+  "df_cf_long_ss_125C_by_vdd_ps": {
+   "1.08": 434.8,
+   "1.2": 451.3,
+   "1.32": 460.0
+  },
+  "pattern_range_ps_ss_1p08_125": [
+   434.8,
+   529.6
+  ]
+ },
+ "cur": {
+  "record": "20261110T082948Z-ch",
+  "corners_failing": 8,
+  "max_dev_ps_by_process": {
+   "mos_ff": 19.9,
+   "mos_fs": 34.9,
+   "mos_sf": 24.0,
+   "mos_ss": 41.5,
+   "mos_tt": 29.6
+  },
+  "max_dev_ps_by_vdd": {
+   "1.08": 41.5,
+   "1.2": 33.4,
+   "1.32": 28.1
+  },
+  "max_dev_ps_by_temp": {
+   "-40": 39.6,
+   "125": 41.5,
+   "27": 41.3
+  },
+  "df_cf_long_ss_1p08V_by_temp_ps": {
+   "-40": 460.4,
+   "27": 458.7,
+   "125": 458.5
+  },
+  "df_cf_long_ss_125C_by_vdd_ps": {
+   "1.08": 458.5,
+   "1.2": 466.6,
+   "1.32": 471.9
+  },
+  "pattern_range_ps_ss_1p08_125": [
+   458.5,
+   528.0
+  ]
+ }
+}

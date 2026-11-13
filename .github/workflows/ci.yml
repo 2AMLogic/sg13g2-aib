@@ -66,10 +66,24 @@ jobs:
       - name: Check the committed netlist is fresh against the RTL and the attestation chain
         run: python3 -I scripts/ci/check_design_sources.py
 
+      - name: Check the item 6 digital not_applicable documents are fresh against the spec and the Monte Carlo requests against the generator
+        run: |
+          python3 -I scripts/ci/gen_item6_digital.py
+          python3 -I sim/mc/gen_mc.py --check
+
+      - name: Check the derived item 7 SDFs are pinned and reproduce from the routed SDF
+        run: python3 -I scripts/ci/check_item7_sdf.py
+
+      - name: Check the committed routed SPEF and DEF match their manifest pins
+        run: python3 -I scripts/ci/check_pnr_pins.py
+
       - name: Check sim/ records are append-only
         env:
           BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: python3 -I scripts/ci/check_sim_append_only.py --base "$BASE"
+
+      - name: Check the item 8 characterization report is fresh and pinned
+        run: python3 -I scripts/ci/gen_characterization_report.py --check
 
       - name: Install pinned grader
         run: pipx install "klayout-tools==$(cat signoff/KLT_VERSION)"

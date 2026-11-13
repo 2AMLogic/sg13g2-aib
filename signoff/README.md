@@ -3,9 +3,10 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.digital`, `5.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 9 attestation" and "Item 10 attestation"); every other row reads
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable` and `6.analog` `unmet` / `check_failed` (see "Item 6");
+every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
 
@@ -26,6 +27,15 @@ manifest relative to the working directory, not the manifest's directory, so
 the manifest's `file` paths are repo-root-relative. Run from anywhere else,
 item 1 grades `unmet` / `unreadable_evidence`. Commit the result. Never
 hand-edit the record.
+
+## Item 6 (Monte Carlo)
+
+`6.digital` is a `not_applicable` outcome: `scripts/ci/gen_item6_digital.py --regenerate`
+derives `item6/digital-spec.json` (a ratified JSON row list for the five deterministic
+digital rows) from `spec/target-spec.md` and writes `item6/digital-statement.json`; the
+manifest binds both by hash. `6.analog` cites the `klt yield` reports under
+`sim/mc/records/` with `rows`, and `spec_rows."6"` declares all six STAT rows; rows
+without a campaign are declared gaps (see `sim/mc/README.md`), so analog stays `unmet`.
 
 ## Item 1 / digital attestation
 
@@ -54,30 +64,30 @@ The manifest cites the envelope under `1.analog` with the inventory file's sha25
 
 ## Item 2 (layout, analog)
 
-klt 0.8.0 has no `--attest 2`, so `layout/attest_item2.py` writes
-`attest/item2-analog.json`: it regenerates `layout/aib_io_column.gds` into a scratch
+`layout/attest_item2.py analog` writes `attest/item2-analog.json` through
+`klt signoff --attest 2`: it first regenerates `layout/aib_io_column.gds` into a scratch
 directory, requires the same geometry digest as the committed stream and a passing
-`layout/check_io_column.py`, and only then writes the envelope (a `provenance.regeneration`
-claim with `hash_kind: geometry`). The manifest cites it under `2.analog` with the
+`layout/check_io_column.py`, and only then passes klt that digest (`--hash-kind geometry`);
+klt builds the envelope. The manifest cites it under `2.analog` with the
 stream's sha256 (`provenance.input.content_hash`). The envelope is not DRC, LVS or
 extraction evidence; see `layout/README.md`. Regenerate after any `layout/` change, then
 re-cite the hash and regenerate the record:
 
 ```bash
-uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py [--check]
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py analog [--check]
 ```
 
 ## Item 2 (layout, digital)
 
-`layout/attest_item2_digital.py` writes `attest/item2-digital.json`, a `generic` envelope
-anchored on the routed GDS `layout/pnr/.klt/place-and-route/aib_datapath.gds` (the P&R report
+`layout/attest_item2.py digital` writes `attest/item2-digital.json` through
+`klt signoff --attest 2`, anchored on the routed GDS `layout/pnr/.klt/place-and-route/aib_datapath.gds` (the P&R report
 itself is item 11 evidence, so item 2 cannot cite it). It refuses to write unless
 `layout/pnr/request.report.json` is `ok`, `stage_reached: route`, `power.pdn: true`. The manifest
 cites it under `2.digital` with the stream's sha256. Regenerate after re-running P&R
 (`layout/pnr/README.md`), then re-cite the hash and regenerate the record:
 
 ```bash
-uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2_digital.py [--check]
+uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py digital [--check]
 ```
 
 ## Item 3 (DRC)
@@ -93,9 +103,13 @@ records stay. Re-check with `klt drc --check <report>`.
 
 `4.digital` cites the `klt lvs` report `layout/lvs/digital.report.json` directly (an `lvs`-kind
 check: `status: match` and `power_connectivity.status` not `mismatch`; here both are `match`).
-`4.analog` cites nothing and reads `unmet` / `no_evidence`: the four per-cell reports are all
-`mismatch`, and item 4 takes one report per partition (2AMLogic/klayout-tools#4354). Details, the
-two layout differences behind the mismatch, and the commands are in
+`4.analog` cites `layout/lvs/aib_io_column.report.json`, one `klt lvs` of the whole analog stream
+(top `aib_io_column`, 48 I/O units, 3360 devices) against a generated reference; it is `status: match`
+and reads `met`. Item 4 takes one report per partition (2AMLogic/klayout-tools#4354), so the four
+per-cell reports (all `match`, issue #70) are not cited; they localise, the column report is the claim.
+`power_connectivity` is `unchecked` there, because the `subckt-call` reference carries its own power pins
+and they take part in the ordinary compare. Details, the
+two layout differences behind the earlier mismatch, and the commands are in
 [`layout/lvs/README.md`](../layout/lvs/README.md). The report's relative paths resolve against the
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
 re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.
@@ -104,13 +118,13 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 
 `attest/item5-digital/` holds the verbatim `klt` envelopes, cited as a list under
 `5.digital` (the grader requires both kinds): three `klt functional-verification` runs
-(`fv_shift_redundancy` 81/81, `fv_datapath_n20` and `fv_datapath_n8` 8/8) and two
+(`fv_shift_redundancy` 41/41, `fv_datapath_n20` and `fv_datapath_n8` 8/8) and two
 `klt sta` runs (`sta_clk`, `sta_rx_clk`), each over `slow_1p08V_125C` and
 `fast_1p32V_m40C` at a 2.0 ns period (T-01, 500 MHz). Requests live in
 `verification/klt/` and `design/synth/aib_datapath.sta_*.json`.
 
 - The two negative controls (`fv_neg_shift_edge`, `fv_neg_extra_stage`) are committed
-  but **not cited**: they must fail (klt exit 3), and do (79/81, 6/8).
+  but **not cited**: they must fail (klt exit 3), and do (39/41, 6/8).
 - STA is `geometry_source: netlist_estimate` (the `klt synthesize` netlist, ideal wires,
   no SPEF). It is not post-route; re-run after #38. The netlist predates the T-05 mux
   decision (#29 / PR #32), so it does not contain the mux; re-synthesize and re-run
@@ -131,6 +145,64 @@ Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate
 ```bash
 PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ```
+
+## Item 7 / digital evidence
+
+`attest/item7-digital/fv_post_route.json` is the existing cocotb suite
+(`verification/test_datapath.py`, unchanged) run through `klt functional-verification` on
+the **post-route** netlist with the routed SDF annotated (8/8). It is cited under `7.digital`.
+Inputs, pinned by sha256 in `run_evidence.py` (the run refuses if either changes):
+`layout/pnr/.klt/place-and-route/aib_datapath.v` `a27bec23…` and `aib_datapath_route.sdf`
+`3e8edd07…`, plus the `sg13g2_stdcell` Verilog models from `PDK_ROOT`. The SDF is one corner,
+`slow_1p08V_125C` (1.08 V, 125 C), the binding corner; klt's `corner: max` selects its
+min:typ:max column. There is no second SDF, so no fast-corner post-route run exists.
+
+- **Negative control** (`fv_neg_post_route_timing`, committed, **not cited**; klt exit 3, 1/8):
+  the same run on a copy of the SDF in which every delay of the mux driving `tx_wire[0]`
+  is 12 ns, longer than the 10 ns test period. It fails for that reason (round trips lose
+  bit-exactness and the TX marker never reaches the wire); only `l1_ignores_rx_wire` still passes.
+- **Derived SDF.** `aib_datapath_route.tb.sdf` is the routed SDF with one mechanical edit:
+  every `(INSTANCE ...)` is prefixed with `dut`, because the bench instantiates the netlist as
+  `dut` and klt annotates at the bench top. `aib_datapath_route.tb.neg_timing.sdf` adds the
+  inflated arc. `run_evidence.py` regenerates both from the committed SDF. Both are kept as
+  committed evidence inputs and pinned by sha256 in the manifest's `derived_inputs."7.digital"`
+  block, with the routed SDF they derive from (a separate key because the grader reads every
+  `evidence` entry as an envelope). `python3 -I scripts/ci/check_item7_sdf.py` (PDK-free, run in CI)
+  fails if the routed SDF is not the pinned one, if regeneration does not reproduce the committed
+  bytes, or if the committed bytes differ from the pins. If a P&R re-run changes the routed SDF,
+  re-cite `PNR_SHA256`, the SDFs and the pins together. The routed SPEF and DEF from the same
+  P&R run (read by no item) are pinned the same way under `derived_inputs."pnr.digital"`;
+  `python3 -I scripts/ci/check_pnr_pins.py` fails if either differs from its pin, so a re-run
+  re-cites those too.
+- **Bench.** `verification/tb_datapath_postroute.v` is `tb_datapath.v` with `N` fixed at 20
+  (klt rejects `request.parameters` together with `options.sdf`, and the routed netlist has no
+  `N`) and no parameter list (klt's SDF wrapper needs a plain `module` declaration). It also holds
+  `tx_d0`/`tx_d1` for 1 ns after the clock edge. The suite moves them on the edge; the routed clock
+  tree delays the edge at the registers, so without the hold the stimulus races it (observed: the
+  latency tests never saw their marker). That is a declared input-hold assumption of the bench,
+  not a result about the netlist, and it is not timed by any STA here.
+- **Dropped by the simulator** (recorded in the envelope's `environment.sdf.dropped`): all 159
+  `TIMINGCHECK` sections (Icarus does not implement them, so setup/hold/recovery/width limits are
+  **not** checked against the SDF; the evidence is delay-annotated function, not timing closure), and
+  41 `INTERCONNECT` entries from bit-selected top-level inputs, all zero-delay. `annotated: true`,
+  `partial: true`.
+- Not shown: skew across a real I/O column, the TX-to-RX channel (zero-delay wire, `rx_clk` a fixed
+  quarter cycle behind `clk`), or any fast-corner behaviour.
+
+Regenerate with the Item 5 command (it now also writes this directory).
+
+## Item 8 (characterization report)
+
+`measurements/characterization-report.md` is generated by
+`scripts/ci/gen_characterization_report.py` from the 30 spec rows, the committed
+records named in `measurements/row-evidence.json`, and the STA / place-and-route
+reports. `attest/item8.json` is a bare `generic` envelope (`t1_item: 8`) whose
+`provenance.input.content_hash` is the report's sha256; the manifest cites the
+same envelope and hash under `8.analog` and `8.digital`. `status: pass` means no
+recorded row fails. Rows without a record read `not-yet-measured` in the report;
+`met` does not say they pass. The script also checks (`--check`, run in CI) that
+the report, envelope and manifest hash agree. Regenerate after any change to a
+cited record or the mapping, then re-cite the hash and regenerate the record.
 
 ## Item 9 attestation
 
@@ -203,6 +275,34 @@ makes the CI `--check` exit 3 (`drifted`).
   covers that locally (`design/README.md`);
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
+
+## Item 11 (power delivery)
+
+`11.analog` cites `layout/erc/io_cells.erc-report.json` plus item 4's analog LVS report and
+reads `met`. `11.digital` cites `layout/erc/aib_datapath.erc-report.json`, the digital LVS report
+and the P&R response (`layout/pnr/request.report.json`), and reads `met` (klt 0.9.0). The
+standard-cell library ships no tapcell or endcap master, so the routed result has `power.pdn: true`,
+`power.tapcell_master: null` and no tapcells; klt 0.9.0 (`2AMLogic/klayout-tools#4199`, fixed by
+klayout-tools PR #4250) grades that as `met` when the P&R response states `power.tapless: true`,
+which `klt place-and-route` 0.9.0 emits for `sg13g2_stdcell`. Under klt 0.8.0 the row read
+`no_pdn`. Getting to `met` took three steps, none of which changes the P&R request or relaxes a
+check: the P&R report was regenerated under 0.9.0 (same request; the routed GDS, DEF and
+netlist reproduce byte-identically), the digital `klt erc` spec's stackup names were changed to
+the PDK's own `Metal1`..`TopMetal2` (0.9.0 matches `power.straps[].layer` against them exactly;
+`layout/erc/gen_specs.py`), and the ERC report was re-run. Evidence and caveats:
+`layout/erc/README.md`.
+
+## Re-pin to klt 0.9.0
+
+The pin went from 0.8.0 to 0.9.0. Besides item 11 (digital), 0.9.0 binds the item 1 analog
+envelope to every file in its input set, and the committed envelope had been generated from an
+older `design/aib_pad_esd.sch` / `.spice`, which 0.8.0 did not detect (`klt signoff --attest 1
+--check` on 0.8.0 already reported drift). `1.analog` therefore read `stale_evidence` until the
+envelope was regenerated and the manifest re-cited with the new input-set digest. The
+`item2-analog` and `item2-digital` envelopes were rewritten for the new `klt_version`, then
+rebuilt with `klt signoff --attest 2` (see issue 120), which populates `klayout_version`. The
+`signoff/attest/` envelopes not named here were not regenerated; they still record the klt that
+produced them.
 
 ## What CI does not check
 

@@ -1,0 +1,28 @@
+{
+  "status": "ratified",
+  "derived_from": "spec/target-spec.md",
+  "derived_from_sha256": "sha256:ab2f9614a3e99c78336f5a97c51e51bfee671e90afdcb64607ba62d1c583ff09",
+  "partition": "digital",
+  "rows": [
+    {
+      "id": "T-02",
+      "parameter": "Data exchange format"
+    },
+    {
+      "id": "T-03",
+      "parameter": "Data wires per direction (N)"
+    },
+    {
+      "id": "T-05",
+      "parameter": "Spare wires and redundancy"
+    },
+    {
+      "id": "T-27",
+      "parameter": "Latency, sequential part (TX input register to RX output register)"
+    },
+    {
+      "id": "T-29",
+      "parameter": "Test and loopback modes"
+    }
+  ]
+}

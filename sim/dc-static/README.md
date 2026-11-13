@@ -6,9 +6,78 @@ x -40/27/125 C (`klt sim --dry-run` reports `unit_count: 45`). Each process corn
 bundle of the matching MOS, poly-resistor and diode sections, because the cells use `rppd`
 and the antenna diodes as well as the thin-oxide MOS devices.
 
-**Status: testbenches and request only. No record exists yet.** The 45-corner batch
-submit failed (see "Batch run" below), so nothing was graded and no `records/<stamp>/`
-was written. A failed submit is not a result.
+**Status: recorded, two records (append-only).**
+
+- `records/20261108T002904Z/` (batch `klt-sim-abe0ec2c5d05`): the first-cut cells. T-07, T-11,
+  T-28 pass; T-06 (1 mA load), T-08, T-24 fail (issue #130). Untouched.
+- `records/20261108T004350Z/` (batch `klt-sim-805dd59f1580`, runner klt 0.9.0): after the
+  #130 sizing study. **All six rows pass at 45/45 corners**, none inconclusive. The spec is
+  not relaxed. T-25 (ESD level) is not evaluated here; see "Joint driver/ESD sizing" and
+  DR-0017.
+
+| Row | First-cut cells (`...002904Z`) | After #130 (`...004350Z`) |
+|---|---|---|
+| T-06 | fail: loaded VOH droop 0.111 V at ss/1.08 V/125 C | pass: max 0.075 V (VOH), 0.073 V (VOL) |
+| T-07 | pass 45/45 | pass 45/45 |
+| T-08 | fail: pull-up 46.6-110.8 ohm, pull-down 40.3-86.1 ohm | pass: pull-up 42.9-75.1 ohm, pull-down 44.4-72.7 ohm |
+| T-11 | pass 45/45 | pass 45/45 |
+| T-24 | fail 45/45: 102.2-126.2 fF | pass: worst 84.2 / 96.4 / 90.3 fF at pad 0 / VDDIO/2 / VDDIO |
+| T-28 | pass 45/45 | pass 45/45 (weak pulls 11.6-15.3 kohm) |
+
+T-24 is an extracted-capacitance estimate (no bond pad, no PEX). The 1 mA load and 1 uA
+thresholds below are Builder-chosen and still need ratification; T-06 loaded and T-08 depend on
+the 1 mA choice. The 1 mA load and 1 uA thresholds were not changed by #130.
+
+## Joint driver/ESD sizing (issue #130)
+
+Local single-corner probes (ss/1.08 V/125 C, the binding corner for Ron and for T-24, and
+ff/1.32 V/-40 C, the minimum-Ron corner), then the 45-corner fleet run above.
+
+**Why width alone cannot close T-08.** The MOS-only Ron spreads 46.6-110.8 ohm (2.38x) for
+pull-up and 40.3-86.1 ohm (2.14x) for pull-down over PVT-FULL, wider than the 2x window of
+40-80 ohm. Scaling the width to bring the maximum under 80 ohm puts the minimum under 40 ohm
+(for example 28u -> 56u gave 52.1 / 23.0 ohm at the two corners). A series `rppd` (about 18 ohm
+at `w=10u l=0.5u`; it barely moves with the `res_wcs`/`res_bcs` corner) in each output leg
+compresses the ratio, at the price of a wider output device (`XMp` 54u, `XMn` 22u).
+
+**T-24 breakdown at the binding corner (ss/1.08 V/125 C, first-cut cells, fF).** Each row is
+the drop in pin capacitance when that one element is removed from the netlist. The sum is
+not the total: removing an element also removes its junction-bias coupling.
+
+| Element removed | pad = 0 | pad = VDDIO/2 | pad = VDDIO |
+|---|---|---|---|
+| (none, total) | 108.9 | 119.3 | 126.2 |
+| `XDp1` primary diode (10u x 10u) | 57.2 | 63.5 | 75.0 |
+| `XMn1` grounded-gate NMOS (20u) | 13.4 | 11.7 | 10.6 |
+| `XMp` driver PMOS (28u) | 12.8 | 14.5 | 17.1 |
+| `XMn` driver NMOS (14u) | 9.4 | 8.2 | 7.4 |
+| `XResd` (removes receiver, `XDp2`, `XMn2`) | 9.0 | 14.1 | 8.7 |
+| `XMclamp` | 0 | 0 | 0 |
+
+The primary diode is 60% of the pin capacitance; widening the driver to fit T-08 adds about
+20 fF, so T-24 only closes by shrinking `XDp1`.
+
+**Probe table (local, single corner each; ss/1.08 V/125 C unless noted; cap at pad
+0 / VDDIO/2 / VDDIO).**
+
+| XMp / XMn (u) | Series R | `XDp1` | up / dn ohm (ss) | up / dn ohm (ff/1.32 V/-40 C) | Cap, ss (fF) |
+|---|---|---|---|---|---|
+| 28 / 14 | none | 10 x 10 | 110.8 / 86.1 | 46.6 / 40.3 | 108.9 / 119.3 / 126.2 |
+| 56 / 28 | none | 10 x 10 | 52.1 / 40.0 | 23.0 / 19.9 | 130.7 / 141.7 / 150.4 |
+| 52 / 24 | w=7u | 10 x 10 | 86.3 / 77.1 | 51.9 / 50.4 | 128.8 / 139.9 / 148.5 |
+| 54 / 22 | w=10u | 6 x 6 | 75.1 / 72.7 | 42.9 / 44.4 | 93.2 / 100.5 / 102.1 |
+| 54 / 22 | w=10u | 5.5 x 5.5 | 75.1 / 72.7 | 42.9 / 44.4 | 89.9 / 96.9 / 97.8 |
+| 54 / 22 | w=10u | 5 x 5 | 75.1 / 72.7 | 42.9 / 44.4 | 86.9 / 93.5 / 93.8 |
+
+The 5 x 5 point passed 45/45 on the fleet but with 0.64 fF of margin at pad = VDDIO/2 (fs/1.32 V/125 C,
+99.36 fF), which is not a margin; the recorded design uses `XDp1` 4.5 x 4.5 (worst 96.4 fF).
+The limiting corner for T-24 differs from the one for Ron, so the probes above do not
+replace the 45-corner run.
+
+**What this costs.** `XDp1` is now 20 um^2, one fifth of the first-cut 100 um^2. It is not the 35 um^2 `diodevdd_2kv`/`diodevss_2kv` pad diode DR-0008 sized: `XDp1` is
+the `dpantenna` antenna-diode model (reverse-direction use, rs about 8.5 kohm at 20 um^2), so a T-25
+transient on it would not be credible. No ESD-transient simulation has been run, so T-25 is neither
+shown nor refuted. See DR-0017.
 
 ## Rows and measurements
 
@@ -64,21 +133,26 @@ klt sim sim/dc-static/request.json --format json --report-out /tmp/dc-static-rep
 The second command goes to the batch fleet. A record is a new `records/<stamp>/` directory
 holding the report; never edit an earlier one.
 
-## Batch run
+## Batch run history
 
-Submit `klt-sim-1f8fa18f7a9f` (2026-10-27) failed on all 45 units: the fleet runner image
-is klt 0.7.0 and rejects the request ("request is missing required field: analysis")
-because it predates `analysis_steps[]`. The client reported
-`runner_request_features.missing: ["analysis_steps"]`. Per the host rule the grid was not
-run locally. Needs a runner image with `analysis_steps` (klayout-tools#3516 and siblings),
-or a rewrite as one request per analysis kind, which departs from the one-request shape
-of #52.
+- `klt-sim-1f8fa18f7a9f` (2026-10-27) failed on all 45 units: the fleet runner image was klt
+  0.7.0 and rejected the request ("request is missing required field: analysis") because it
+  predated `analysis_steps[]` (`runner_request_features.missing: ["analysis_steps"]`). Per the
+  host rule the grid was not run locally. Not a result.
+- `klt-sim-abe0ec2c5d05` (2026-11-08) on runner klt 0.9.0 (compatibility `match`): 45 units
+  ran. The job state is `failed` / exit 3 because rows failed (the verdict exit code), not a
+  runner crash. This is the recorded run.
 
-## Known finding from a single local probe (not a result)
+An earlier local probe (tt, 1.20 V, 27 C) showed a floating pad because `w` of `sg13_lv_*` is
+the total width; fixed by #56/#58 and not repeated here.
 
-One corner (tt, 1.20 V, 27 C) was run locally as a debug probe and is not recorded.
-The driver does not drive: in this PDK the `w` of `sg13_lv_*` is the **total** width and
-`ng` the finger count, so `aib_tx_data` `XMp` (`w=1u ng=28`) and `XMn` (`w=1u ng=14`) are
-36 nm and 71 nm per finger, below the model minimum, and the pad floats at the first
-operating point. The first `op` then fails to converge, which is why
-`fail_on_diagnostic` is set. Cell netlists are out of scope here (#35); filed separately.
+## ESD pad diode against T-24 (DR-0018, issue #147)
+
+`tb_esd_diode.cir` + `request_esd_diode.json` extract pad C (0, VDDIO/2, VDDIO) and forward
+dynamic R of the `sg13g2_esd.lib` pad diodes and the `dpantenna` baseline at 45 corners.
+`design/aib_pad_esd_2kv.spice` swaps `XDp1` for `diodevdd_2kv`; `tb_dc_static_2kv.cir` +
+`request_2kv.json` re-run the dc-static set on it (the committed netlist is unchanged).
+Result: T-24 worst 108.9 fF against 100 fF; T-06/T-07/T-08/T-11/T-28 unchanged. Record
+`records/20261110T084631Z/`; decision `spec/decisions/0018-dedicated-esd-diode-capacitance-vs-t24.md`.
+Run both with `--wait-for-capacity 600`.
+

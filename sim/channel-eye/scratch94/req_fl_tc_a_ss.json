@@ -1,0 +1,248 @@
+{
+ "engine": "ngspice",
+ "models": {
+  "pdk": "ihp-sg13g2",
+  "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+ },
+ "netlist": "tc_esd_a_body_full.cir",
+ "backend": "batch",
+ "corners": {
+  "process": [
+   {
+    "name": "mos_ss",
+    "sections": [
+     "mos_ss",
+     {
+      "lib": "libs.tech/ngspice/models/cornerRES.lib",
+      "section": "res_wcs"
+     },
+     {
+      "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+      "section": "dio_ss"
+     }
+    ]
+   }
+  ],
+  "supply_v": {
+   "vdd_atx": [
+    1.08
+   ],
+   "vdd_arx": [
+    1.08
+   ],
+   "vdd_btx": [
+    1.08
+   ],
+   "vdd_brx": [
+    1.08
+   ],
+   "vdd_ctx": [
+    1.08
+   ],
+   "vdd_crx": [
+    1.08
+   ]
+  },
+  "temperature_c": [
+   -40
+  ]
+ },
+ "analysis": {
+  "kind": "tran",
+  "args": "2p 141n 0 5p"
+ },
+ "measurements": [
+  {
+   "spec_row": "T-01",
+   "unit": "count",
+   "expr": "mean(abs((v(douta)-0.5*v(vdd_arx) gt 0)[1,length(time)-1]-(v(douta)-0.5*v(vdd_arx) gt 0)[0,length(time)-2])*(time[1,length(time)-1] ge 14e-9)*(time[1,length(time)-1] lt 141e-9))*(length(time)-1)",
+   "name": "t01_dout_edges_a"
+  },
+  {
+   "spec_row": "T-01",
+   "unit": "count",
+   "expr": "mean(abs((v(doutb)-0.5*v(vdd_brx) gt 0)[1,length(time)-1]-(v(doutb)-0.5*v(vdd_brx) gt 0)[0,length(time)-2])*(time[1,length(time)-1] ge 14e-9)*(time[1,length(time)-1] lt 141e-9))*(length(time)-1)",
+   "name": "t01_dout_edges_b"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(vecmax(v(rxa))-vecmax(v(vdd_arx)))/vecmax(v(vdd_arx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_over_a"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(0-vecmin(v(rxa)))/vecmax(v(vdd_arx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_under_a"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_over_a INTEG par('u(v(rxa)-1.25*v(vdd_arx))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_over_a"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_under_a INTEG par('u(-0.25*v(vdd_arx)-v(rxa))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_under_a"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(vecmax(v(rxb))-vecmax(v(vdd_brx)))/vecmax(v(vdd_brx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_over_b"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(0-vecmin(v(rxb)))/vecmax(v(vdd_brx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_under_b"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_over_b INTEG par('u(v(rxb)-1.25*v(vdd_brx))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_over_b"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_under_b INTEG par('u(-0.25*v(vdd_brx)-v(rxb))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_under_b"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(vecmax(v(rxc))-vecmax(v(vdd_crx)))/vecmax(v(vdd_crx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_over_c"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(0-vecmin(v(rxc)))/vecmax(v(vdd_crx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_under_c"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_over_c INTEG par('u(v(rxc)-1.25*v(vdd_crx))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_over_c"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_under_c INTEG par('u(-0.25*v(vdd_crx)-v(rxc))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_under_c"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(vecmax(v(rxcb))-vecmax(v(vdd_crx)))/vecmax(v(vdd_crx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_over_cb"
+  },
+  {
+   "unit": "ratio",
+   "spec_row": "T-09",
+   "expr": "(0-vecmin(v(rxcb)))/vecmax(v(vdd_crx))",
+   "limits": {
+    "max": 0.25
+   },
+   "name": "t09_under_cb"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_over_cb INTEG par('u(v(rxcb)-1.25*v(vdd_crx))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_over_cb"
+  },
+  {
+   "unit": "s",
+   "spec_row": "T-09",
+   "spice": ".meas tran t09_dwell_under_cb INTEG par('u(-0.25*v(vdd_crx)-v(rxcb))') FROM=14n TO=141n",
+   "limits": {
+    "max": 4e-10
+   },
+   "name": "t09_dwell_under_cb"
+  },
+  {
+   "unit": "J",
+   "spec_row": "T-26",
+   "spice": ".meas tran t26_energy_per_bit_simulated_j INTEG par('-(v(vdd_atx)*i(vdd_atx)+v(vdd_arx)*i(vdd_arx)+(v(vdd_ctx)*i(vdd_ctx)+v(vdd_crx)*i(vdd_crx))/20)/127') FROM=14n TO=141n",
+   "name": "t26_energy_per_bit_simulated_j"
+  },
+  {
+   "unit": "J",
+   "spec_row": "T-26",
+   "spice": ".meas tran e_lane_a_tx_j INTEG par('-(v(vdd_atx)*i(vdd_atx))') FROM=14n TO=141n",
+   "name": "e_lane_a_tx_j"
+  },
+  {
+   "unit": "J",
+   "spec_row": "T-26",
+   "spice": ".meas tran e_lane_a_rx_j INTEG par('-(v(vdd_arx)*i(vdd_arx))') FROM=14n TO=141n",
+   "name": "e_lane_a_rx_j"
+  },
+  {
+   "unit": "J",
+   "spec_row": "T-26",
+   "spice": ".meas tran e_clock_lane_j INTEG par('-(v(vdd_ctx)*i(vdd_ctx)+v(vdd_crx)*i(vdd_crx))') FROM=14n TO=141n",
+   "name": "e_clock_lane_j"
+  }
+ ],
+ "batch": {
+  "runner_version_check": "warn"
+ },
+ "options": {
+  "osdi_preload": [
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+   "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+  ],
+  "timeout_s": 2400
+ }
+}

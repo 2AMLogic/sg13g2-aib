@@ -1,0 +1,1053 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "tb_datapath_postroute",
+  "testbench": "test_datapath",
+  "status": "pass",
+  "test_count": 8,
+  "passed_count": 8,
+  "failed_count": 0,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "ddr_round_trip",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.368
+    },
+    {
+      "name": "sdr_round_trip",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.113
+    },
+    {
+      "name": "l1_round_trip_ddr",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.142
+    },
+    {
+      "name": "l1_round_trip_sdr",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.111
+    },
+    {
+      "name": "l1_ignores_rx_wire",
+      "status": "passed",
+      "sim_time_ns": 3903.5,
+      "real_time_s": 0.145
+    },
+    {
+      "name": "mode_switch",
+      "status": "passed",
+      "sim_time_ns": 11710.5,
+      "real_time_s": 0.424
+    },
+    {
+      "name": "latency_ddr",
+      "status": "passed",
+      "sim_time_ns": 254.0,
+      "real_time_s": 0.005
+    },
+    {
+      "name": "latency_sdr",
+      "status": "passed",
+      "sim_time_ns": 61.0,
+      "real_time_s": 0.001
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.1.0",
+    "results_xml": "results_icarus.xml",
+    "test_log": "test_icarus.log",
+    "build_log": "build_icarus.log",
+    "random_seed": 1,
+    "source_defines": {},
+    "initial_state": null,
+    "sdf": {
+      "file": "aib_datapath_route.tb.sdf",
+      "corner": "max",
+      "entries": "all",
+      "annotated": true,
+      "partial": true,
+      "dropped": {
+        "timingcheck": {
+          "count": 159,
+          "reason": "Icarus Verilog implements SDF delay annotation (IOPATH/INTERCONNECT) but not SDF TIMINGCHECK -- every TIMINGCHECK section in the SDF is dropped, so $setup/$hold/$width checks run against the cell library's own placeholder timing, not the characterised limits in the SDF"
+        },
+        "zero_delay_bus_port_source_interconnect": {
+          "count": 41,
+          "reason": "Icarus Verilog can fail to insert an intermodpath for an INTERCONNECT entry whose source is a bit-selected top-level input port -- such an entry fails with 'Could not find intermodpath!'. Entries whose every min:typ:max delay value is zero model no delay at any corner, so they are removed before annotation and counted here instead of failing the run -- a non-zero-delay entry on the same source is left in place and still fails loudly"
+        }
+      },
+      "renamed": [
+        {
+          "from": "g_wire[0].u_rx/_1_",
+          "to": "g_wire_0__u_rx__1_"
+        },
+        {
+          "from": "g_wire[0].u_rx/_2_",
+          "to": "g_wire_0__u_rx__2_"
+        },
+        {
+          "from": "g_wire[0].u_rx/_3_",
+          "to": "g_wire_0__u_rx__3_"
+        },
+        {
+          "from": "g_wire[0].u_rx/_4_",
+          "to": "g_wire_0__u_rx__4_"
+        },
+        {
+          "from": "g_wire[0].u_rx/_5_",
+          "to": "g_wire_0__u_rx__5_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_2_",
+          "to": "g_wire_0__u_tx__2_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_3_",
+          "to": "g_wire_0__u_tx__3_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_4_",
+          "to": "g_wire_0__u_tx__4_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_5_",
+          "to": "g_wire_0__u_tx__5_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_6_",
+          "to": "g_wire_0__u_tx__6_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_7_",
+          "to": "g_wire_0__u_tx__7_"
+        },
+        {
+          "from": "g_wire[0].u_tx/_8_",
+          "to": "g_wire_0__u_tx__8_"
+        },
+        {
+          "from": "g_wire[10].u_rx/_1_",
+          "to": "g_wire_10__u_rx__1_"
+        },
+        {
+          "from": "g_wire[10].u_rx/_2_",
+          "to": "g_wire_10__u_rx__2_"
+        },
+        {
+          "from": "g_wire[10].u_rx/_3_",
+          "to": "g_wire_10__u_rx__3_"
+        },
+        {
+          "from": "g_wire[10].u_rx/_4_",
+          "to": "g_wire_10__u_rx__4_"
+        },
+        {
+          "from": "g_wire[10].u_rx/_5_",
+          "to": "g_wire_10__u_rx__5_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_2_",
+          "to": "g_wire_10__u_tx__2_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_3_",
+          "to": "g_wire_10__u_tx__3_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_4_",
+          "to": "g_wire_10__u_tx__4_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_5_",
+          "to": "g_wire_10__u_tx__5_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_6_",
+          "to": "g_wire_10__u_tx__6_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_7_",
+          "to": "g_wire_10__u_tx__7_"
+        },
+        {
+          "from": "g_wire[10].u_tx/_8_",
+          "to": "g_wire_10__u_tx__8_"
+        },
+        {
+          "from": "g_wire[11].u_rx/_1_",
+          "to": "g_wire_11__u_rx__1_"
+        },
+        {
+          "from": "g_wire[11].u_rx/_2_",
+          "to": "g_wire_11__u_rx__2_"
+        },
+        {
+          "from": "g_wire[11].u_rx/_3_",
+          "to": "g_wire_11__u_rx__3_"
+        },
+        {
+          "from": "g_wire[11].u_rx/_4_",
+          "to": "g_wire_11__u_rx__4_"
+        },
+        {
+          "from": "g_wire[11].u_rx/_5_",
+          "to": "g_wire_11__u_rx__5_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_2_",
+          "to": "g_wire_11__u_tx__2_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_3_",
+          "to": "g_wire_11__u_tx__3_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_4_",
+          "to": "g_wire_11__u_tx__4_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_5_",
+          "to": "g_wire_11__u_tx__5_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_6_",
+          "to": "g_wire_11__u_tx__6_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_7_",
+          "to": "g_wire_11__u_tx__7_"
+        },
+        {
+          "from": "g_wire[11].u_tx/_8_",
+          "to": "g_wire_11__u_tx__8_"
+        },
+        {
+          "from": "g_wire[12].u_rx/_1_",
+          "to": "g_wire_12__u_rx__1_"
+        },
+        {
+          "from": "g_wire[12].u_rx/_2_",
+          "to": "g_wire_12__u_rx__2_"
+        },
+        {
+          "from": "g_wire[12].u_rx/_3_",
+          "to": "g_wire_12__u_rx__3_"
+        },
+        {
+          "from": "g_wire[12].u_rx/_4_",
+          "to": "g_wire_12__u_rx__4_"
+        },
+        {
+          "from": "g_wire[12].u_rx/_5_",
+          "to": "g_wire_12__u_rx__5_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_2_",
+          "to": "g_wire_12__u_tx__2_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_3_",
+          "to": "g_wire_12__u_tx__3_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_4_",
+          "to": "g_wire_12__u_tx__4_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_5_",
+          "to": "g_wire_12__u_tx__5_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_6_",
+          "to": "g_wire_12__u_tx__6_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_7_",
+          "to": "g_wire_12__u_tx__7_"
+        },
+        {
+          "from": "g_wire[12].u_tx/_8_",
+          "to": "g_wire_12__u_tx__8_"
+        },
+        {
+          "from": "g_wire[13].u_rx/_1_",
+          "to": "g_wire_13__u_rx__1_"
+        },
+        {
+          "from": "g_wire[13].u_rx/_2_",
+          "to": "g_wire_13__u_rx__2_"
+        },
+        {
+          "from": "g_wire[13].u_rx/_3_",
+          "to": "g_wire_13__u_rx__3_"
+        },
+        {
+          "from": "g_wire[13].u_rx/_4_",
+          "to": "g_wire_13__u_rx__4_"
+        },
+        {
+          "from": "g_wire[13].u_rx/_5_",
+          "to": "g_wire_13__u_rx__5_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_2_",
+          "to": "g_wire_13__u_tx__2_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_3_",
+          "to": "g_wire_13__u_tx__3_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_4_",
+          "to": "g_wire_13__u_tx__4_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_5_",
+          "to": "g_wire_13__u_tx__5_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_6_",
+          "to": "g_wire_13__u_tx__6_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_7_",
+          "to": "g_wire_13__u_tx__7_"
+        },
+        {
+          "from": "g_wire[13].u_tx/_8_",
+          "to": "g_wire_13__u_tx__8_"
+        },
+        {
+          "from": "g_wire[14].u_rx/_1_",
+          "to": "g_wire_14__u_rx__1_"
+        },
+        {
+          "from": "g_wire[14].u_rx/_2_",
+          "to": "g_wire_14__u_rx__2_"
+        },
+        {
+          "from": "g_wire[14].u_rx/_3_",
+          "to": "g_wire_14__u_rx__3_"
+        },
+        {
+          "from": "g_wire[14].u_rx/_4_",
+          "to": "g_wire_14__u_rx__4_"
+        },
+        {
+          "from": "g_wire[14].u_rx/_5_",
+          "to": "g_wire_14__u_rx__5_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_2_",
+          "to": "g_wire_14__u_tx__2_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_3_",
+          "to": "g_wire_14__u_tx__3_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_4_",
+          "to": "g_wire_14__u_tx__4_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_5_",
+          "to": "g_wire_14__u_tx__5_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_6_",
+          "to": "g_wire_14__u_tx__6_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_7_",
+          "to": "g_wire_14__u_tx__7_"
+        },
+        {
+          "from": "g_wire[14].u_tx/_8_",
+          "to": "g_wire_14__u_tx__8_"
+        },
+        {
+          "from": "g_wire[15].u_rx/_1_",
+          "to": "g_wire_15__u_rx__1_"
+        },
+        {
+          "from": "g_wire[15].u_rx/_2_",
+          "to": "g_wire_15__u_rx__2_"
+        },
+        {
+          "from": "g_wire[15].u_rx/_3_",
+          "to": "g_wire_15__u_rx__3_"
+        },
+        {
+          "from": "g_wire[15].u_rx/_4_",
+          "to": "g_wire_15__u_rx__4_"
+        },
+        {
+          "from": "g_wire[15].u_rx/_5_",
+          "to": "g_wire_15__u_rx__5_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_2_",
+          "to": "g_wire_15__u_tx__2_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_3_",
+          "to": "g_wire_15__u_tx__3_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_4_",
+          "to": "g_wire_15__u_tx__4_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_5_",
+          "to": "g_wire_15__u_tx__5_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_6_",
+          "to": "g_wire_15__u_tx__6_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_7_",
+          "to": "g_wire_15__u_tx__7_"
+        },
+        {
+          "from": "g_wire[15].u_tx/_8_",
+          "to": "g_wire_15__u_tx__8_"
+        },
+        {
+          "from": "g_wire[16].u_rx/_1_",
+          "to": "g_wire_16__u_rx__1_"
+        },
+        {
+          "from": "g_wire[16].u_rx/_2_",
+          "to": "g_wire_16__u_rx__2_"
+        },
+        {
+          "from": "g_wire[16].u_rx/_3_",
+          "to": "g_wire_16__u_rx__3_"
+        },
+        {
+          "from": "g_wire[16].u_rx/_4_",
+          "to": "g_wire_16__u_rx__4_"
+        },
+        {
+          "from": "g_wire[16].u_rx/_5_",
+          "to": "g_wire_16__u_rx__5_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_2_",
+          "to": "g_wire_16__u_tx__2_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_3_",
+          "to": "g_wire_16__u_tx__3_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_4_",
+          "to": "g_wire_16__u_tx__4_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_5_",
+          "to": "g_wire_16__u_tx__5_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_6_",
+          "to": "g_wire_16__u_tx__6_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_7_",
+          "to": "g_wire_16__u_tx__7_"
+        },
+        {
+          "from": "g_wire[16].u_tx/_8_",
+          "to": "g_wire_16__u_tx__8_"
+        },
+        {
+          "from": "g_wire[17].u_rx/_1_",
+          "to": "g_wire_17__u_rx__1_"
+        },
+        {
+          "from": "g_wire[17].u_rx/_2_",
+          "to": "g_wire_17__u_rx__2_"
+        },
+        {
+          "from": "g_wire[17].u_rx/_3_",
+          "to": "g_wire_17__u_rx__3_"
+        },
+        {
+          "from": "g_wire[17].u_rx/_4_",
+          "to": "g_wire_17__u_rx__4_"
+        },
+        {
+          "from": "g_wire[17].u_rx/_5_",
+          "to": "g_wire_17__u_rx__5_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_2_",
+          "to": "g_wire_17__u_tx__2_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_3_",
+          "to": "g_wire_17__u_tx__3_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_4_",
+          "to": "g_wire_17__u_tx__4_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_5_",
+          "to": "g_wire_17__u_tx__5_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_6_",
+          "to": "g_wire_17__u_tx__6_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_7_",
+          "to": "g_wire_17__u_tx__7_"
+        },
+        {
+          "from": "g_wire[17].u_tx/_8_",
+          "to": "g_wire_17__u_tx__8_"
+        },
+        {
+          "from": "g_wire[18].u_rx/_1_",
+          "to": "g_wire_18__u_rx__1_"
+        },
+        {
+          "from": "g_wire[18].u_rx/_2_",
+          "to": "g_wire_18__u_rx__2_"
+        },
+        {
+          "from": "g_wire[18].u_rx/_3_",
+          "to": "g_wire_18__u_rx__3_"
+        },
+        {
+          "from": "g_wire[18].u_rx/_4_",
+          "to": "g_wire_18__u_rx__4_"
+        },
+        {
+          "from": "g_wire[18].u_rx/_5_",
+          "to": "g_wire_18__u_rx__5_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_2_",
+          "to": "g_wire_18__u_tx__2_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_3_",
+          "to": "g_wire_18__u_tx__3_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_4_",
+          "to": "g_wire_18__u_tx__4_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_5_",
+          "to": "g_wire_18__u_tx__5_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_6_",
+          "to": "g_wire_18__u_tx__6_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_7_",
+          "to": "g_wire_18__u_tx__7_"
+        },
+        {
+          "from": "g_wire[18].u_tx/_8_",
+          "to": "g_wire_18__u_tx__8_"
+        },
+        {
+          "from": "g_wire[19].u_rx/_1_",
+          "to": "g_wire_19__u_rx__1_"
+        },
+        {
+          "from": "g_wire[19].u_rx/_2_",
+          "to": "g_wire_19__u_rx__2_"
+        },
+        {
+          "from": "g_wire[19].u_rx/_3_",
+          "to": "g_wire_19__u_rx__3_"
+        },
+        {
+          "from": "g_wire[19].u_rx/_4_",
+          "to": "g_wire_19__u_rx__4_"
+        },
+        {
+          "from": "g_wire[19].u_rx/_5_",
+          "to": "g_wire_19__u_rx__5_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_2_",
+          "to": "g_wire_19__u_tx__2_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_3_",
+          "to": "g_wire_19__u_tx__3_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_4_",
+          "to": "g_wire_19__u_tx__4_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_5_",
+          "to": "g_wire_19__u_tx__5_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_6_",
+          "to": "g_wire_19__u_tx__6_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_7_",
+          "to": "g_wire_19__u_tx__7_"
+        },
+        {
+          "from": "g_wire[19].u_tx/_8_",
+          "to": "g_wire_19__u_tx__8_"
+        },
+        {
+          "from": "g_wire[1].u_rx/_1_",
+          "to": "g_wire_1__u_rx__1_"
+        },
+        {
+          "from": "g_wire[1].u_rx/_2_",
+          "to": "g_wire_1__u_rx__2_"
+        },
+        {
+          "from": "g_wire[1].u_rx/_3_",
+          "to": "g_wire_1__u_rx__3_"
+        },
+        {
+          "from": "g_wire[1].u_rx/_4_",
+          "to": "g_wire_1__u_rx__4_"
+        },
+        {
+          "from": "g_wire[1].u_rx/_5_",
+          "to": "g_wire_1__u_rx__5_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_2_",
+          "to": "g_wire_1__u_tx__2_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_3_",
+          "to": "g_wire_1__u_tx__3_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_4_",
+          "to": "g_wire_1__u_tx__4_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_5_",
+          "to": "g_wire_1__u_tx__5_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_6_",
+          "to": "g_wire_1__u_tx__6_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_7_",
+          "to": "g_wire_1__u_tx__7_"
+        },
+        {
+          "from": "g_wire[1].u_tx/_8_",
+          "to": "g_wire_1__u_tx__8_"
+        },
+        {
+          "from": "g_wire[2].u_rx/_1_",
+          "to": "g_wire_2__u_rx__1_"
+        },
+        {
+          "from": "g_wire[2].u_rx/_2_",
+          "to": "g_wire_2__u_rx__2_"
+        },
+        {
+          "from": "g_wire[2].u_rx/_3_",
+          "to": "g_wire_2__u_rx__3_"
+        },
+        {
+          "from": "g_wire[2].u_rx/_4_",
+          "to": "g_wire_2__u_rx__4_"
+        },
+        {
+          "from": "g_wire[2].u_rx/_5_",
+          "to": "g_wire_2__u_rx__5_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_2_",
+          "to": "g_wire_2__u_tx__2_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_3_",
+          "to": "g_wire_2__u_tx__3_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_4_",
+          "to": "g_wire_2__u_tx__4_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_5_",
+          "to": "g_wire_2__u_tx__5_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_6_",
+          "to": "g_wire_2__u_tx__6_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_7_",
+          "to": "g_wire_2__u_tx__7_"
+        },
+        {
+          "from": "g_wire[2].u_tx/_8_",
+          "to": "g_wire_2__u_tx__8_"
+        },
+        {
+          "from": "g_wire[3].u_rx/_1_",
+          "to": "g_wire_3__u_rx__1_"
+        },
+        {
+          "from": "g_wire[3].u_rx/_2_",
+          "to": "g_wire_3__u_rx__2_"
+        },
+        {
+          "from": "g_wire[3].u_rx/_3_",
+          "to": "g_wire_3__u_rx__3_"
+        },
+        {
+          "from": "g_wire[3].u_rx/_4_",
+          "to": "g_wire_3__u_rx__4_"
+        },
+        {
+          "from": "g_wire[3].u_rx/_5_",
+          "to": "g_wire_3__u_rx__5_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_2_",
+          "to": "g_wire_3__u_tx__2_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_3_",
+          "to": "g_wire_3__u_tx__3_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_4_",
+          "to": "g_wire_3__u_tx__4_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_5_",
+          "to": "g_wire_3__u_tx__5_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_6_",
+          "to": "g_wire_3__u_tx__6_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_7_",
+          "to": "g_wire_3__u_tx__7_"
+        },
+        {
+          "from": "g_wire[3].u_tx/_8_",
+          "to": "g_wire_3__u_tx__8_"
+        },
+        {
+          "from": "g_wire[4].u_rx/_1_",
+          "to": "g_wire_4__u_rx__1_"
+        },
+        {
+          "from": "g_wire[4].u_rx/_2_",
+          "to": "g_wire_4__u_rx__2_"
+        },
+        {
+          "from": "g_wire[4].u_rx/_3_",
+          "to": "g_wire_4__u_rx__3_"
+        },
+        {
+          "from": "g_wire[4].u_rx/_4_",
+          "to": "g_wire_4__u_rx__4_"
+        },
+        {
+          "from": "g_wire[4].u_rx/_5_",
+          "to": "g_wire_4__u_rx__5_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_2_",
+          "to": "g_wire_4__u_tx__2_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_3_",
+          "to": "g_wire_4__u_tx__3_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_4_",
+          "to": "g_wire_4__u_tx__4_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_5_",
+          "to": "g_wire_4__u_tx__5_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_6_",
+          "to": "g_wire_4__u_tx__6_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_7_",
+          "to": "g_wire_4__u_tx__7_"
+        },
+        {
+          "from": "g_wire[4].u_tx/_8_",
+          "to": "g_wire_4__u_tx__8_"
+        },
+        {
+          "from": "g_wire[5].u_rx/_1_",
+          "to": "g_wire_5__u_rx__1_"
+        },
+        {
+          "from": "g_wire[5].u_rx/_2_",
+          "to": "g_wire_5__u_rx__2_"
+        },
+        {
+          "from": "g_wire[5].u_rx/_3_",
+          "to": "g_wire_5__u_rx__3_"
+        },
+        {
+          "from": "g_wire[5].u_rx/_4_",
+          "to": "g_wire_5__u_rx__4_"
+        },
+        {
+          "from": "g_wire[5].u_rx/_5_",
+          "to": "g_wire_5__u_rx__5_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_2_",
+          "to": "g_wire_5__u_tx__2_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_3_",
+          "to": "g_wire_5__u_tx__3_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_4_",
+          "to": "g_wire_5__u_tx__4_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_5_",
+          "to": "g_wire_5__u_tx__5_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_6_",
+          "to": "g_wire_5__u_tx__6_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_7_",
+          "to": "g_wire_5__u_tx__7_"
+        },
+        {
+          "from": "g_wire[5].u_tx/_8_",
+          "to": "g_wire_5__u_tx__8_"
+        },
+        {
+          "from": "g_wire[6].u_rx/_1_",
+          "to": "g_wire_6__u_rx__1_"
+        },
+        {
+          "from": "g_wire[6].u_rx/_2_",
+          "to": "g_wire_6__u_rx__2_"
+        },
+        {
+          "from": "g_wire[6].u_rx/_3_",
+          "to": "g_wire_6__u_rx__3_"
+        },
+        {
+          "from": "g_wire[6].u_rx/_4_",
+          "to": "g_wire_6__u_rx__4_"
+        },
+        {
+          "from": "g_wire[6].u_rx/_5_",
+          "to": "g_wire_6__u_rx__5_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_2_",
+          "to": "g_wire_6__u_tx__2_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_3_",
+          "to": "g_wire_6__u_tx__3_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_4_",
+          "to": "g_wire_6__u_tx__4_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_5_",
+          "to": "g_wire_6__u_tx__5_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_6_",
+          "to": "g_wire_6__u_tx__6_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_7_",
+          "to": "g_wire_6__u_tx__7_"
+        },
+        {
+          "from": "g_wire[6].u_tx/_8_",
+          "to": "g_wire_6__u_tx__8_"
+        },
+        {
+          "from": "g_wire[7].u_rx/_1_",
+          "to": "g_wire_7__u_rx__1_"
+        },
+        {
+          "from": "g_wire[7].u_rx/_2_",
+          "to": "g_wire_7__u_rx__2_"
+        },
+        {
+          "from": "g_wire[7].u_rx/_3_",
+          "to": "g_wire_7__u_rx__3_"
+        },
+        {
+          "from": "g_wire[7].u_rx/_4_",
+          "to": "g_wire_7__u_rx__4_"
+        },
+        {
+          "from": "g_wire[7].u_rx/_5_",
+          "to": "g_wire_7__u_rx__5_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_2_",
+          "to": "g_wire_7__u_tx__2_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_3_",
+          "to": "g_wire_7__u_tx__3_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_4_",
+          "to": "g_wire_7__u_tx__4_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_5_",
+          "to": "g_wire_7__u_tx__5_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_6_",
+          "to": "g_wire_7__u_tx__6_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_7_",
+          "to": "g_wire_7__u_tx__7_"
+        },
+        {
+          "from": "g_wire[7].u_tx/_8_",
+          "to": "g_wire_7__u_tx__8_"
+        },
+        {
+          "from": "g_wire[8].u_rx/_1_",
+          "to": "g_wire_8__u_rx__1_"
+        },
+        {
+          "from": "g_wire[8].u_rx/_2_",
+          "to": "g_wire_8__u_rx__2_"
+        },
+        {
+          "from": "g_wire[8].u_rx/_3_",
+          "to": "g_wire_8__u_rx__3_"
+        },
+        {
+          "from": "g_wire[8].u_rx/_4_",
+          "to": "g_wire_8__u_rx__4_"
+        },
+        {
+          "from": "g_wire[8].u_rx/_5_",
+          "to": "g_wire_8__u_rx__5_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_2_",
+          "to": "g_wire_8__u_tx__2_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_3_",
+          "to": "g_wire_8__u_tx__3_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_4_",
+          "to": "g_wire_8__u_tx__4_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_5_",
+          "to": "g_wire_8__u_tx__5_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_6_",
+          "to": "g_wire_8__u_tx__6_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_7_",
+          "to": "g_wire_8__u_tx__7_"
+        },
+        {
+          "from": "g_wire[8].u_tx/_8_",
+          "to": "g_wire_8__u_tx__8_"
+        },
+        {
+          "from": "g_wire[9].u_rx/_1_",
+          "to": "g_wire_9__u_rx__1_"
+        },
+        {
+          "from": "g_wire[9].u_rx/_2_",
+          "to": "g_wire_9__u_rx__2_"
+        },
+        {
+          "from": "g_wire[9].u_rx/_3_",
+          "to": "g_wire_9__u_rx__3_"
+        },
+        {
+          "from": "g_wire[9].u_rx/_4_",
+          "to": "g_wire_9__u_rx__4_"
+        },
+        {
+          "from": "g_wire[9].u_rx/_5_",
+          "to": "g_wire_9__u_rx__5_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_2_",
+          "to": "g_wire_9__u_tx__2_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_3_",
+          "to": "g_wire_9__u_tx__3_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_4_",
+          "to": "g_wire_9__u_tx__4_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_5_",
+          "to": "g_wire_9__u_tx__5_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_6_",
+          "to": "g_wire_9__u_tx__6_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_7_",
+          "to": "g_wire_9__u_tx__7_"
+        },
+        {
+          "from": "g_wire[9].u_tx/_8_",
+          "to": "g_wire_9__u_tx__8_"
+        }
+      ]
+    }
+  }
+}
