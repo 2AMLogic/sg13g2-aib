@@ -414,7 +414,10 @@ envelope was regenerated and the manifest re-cited with the new input-set digest
 `item2-analog` and `item2-digital` envelopes were rewritten for the new `klt_version`, then
 rebuilt with `klt signoff --attest 2` (see issue 120), which populates `klayout_version`. The
 `signoff/attest/` envelopes not named here were not regenerated; they still record the klt that
-produced them.
+produced them — except `item9-digital.json`, which issue #217 regenerated under 0.9.0 when
+`verification/run_tb.py` changed, so it now records `klt_version: 0.9.0`. A `--check` of a
+0.8.0-produced envelope under the 0.9.0 pin passes (`item9-analog.json` still does), so
+`klt_version` is recorded provenance here, not something the re-attest compares.
 
 ## What CI does not check
 
