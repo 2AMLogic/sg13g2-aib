@@ -424,8 +424,20 @@ here needed no `--resume`**: it is a single fresh run, `environment.resume.resum
 all 15 `environment.remote.fleet[]` shards `resumed: false`, and no resume line in its
 `klt.stderr`. An earlier attempt on 2026-11-13 did need one `--resume` for shards refused past
 that window, but the then-buggy unlaunched-jobs guard matched `--resume`'s own per-shard recovery
-line and deleted that record (the second harness fix below); no artefacts of that attempt
-survive, so nothing here rests on it.
+line and deleted that record; `run_clock_path.sh` now matches klt's summary sentence
+(`were submitted but never launched`) only. No artefacts of that attempt survive, so nothing
+here rests on it.
+
+A record file is immutable from its **first push**, not from merge. `ci.yml` runs the
+append-only check on both the `pull_request` and the `push` event, and its base differs:
+`pull_request.base.sha` (the PR base) versus `github.event.before` (the previously pushed head,
+see `signoff/README.md` -> "What CI checks"). So a record directory that is still new relative to
+`main` — and therefore an addition the PR-event run accepts — is nevertheless already frozen for
+the push-event run as soon as it has been pushed once. Review feedback on a record's own
+`README.md` cannot be applied in place afterwards: the edit surfaces as `M` against the pre-push
+head and fails, and so does reverting it on the next push. Get a record directory's prose right
+in the commit that first pushes it; a correction found later belongs in this file, which is not
+under a `records/` directory and may change.
 
 ## dc-static
 
