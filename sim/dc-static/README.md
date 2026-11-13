@@ -4,7 +4,9 @@ DC static characteristics of the I/O cell, PVT-FULL (T1 item 5, analog; family o
 One `klt sim` request, `request.json`, 45 corners: 5 MOS corners x VDDIO 1.08/1.20/1.32 V
 x -40/27/125 C (`klt sim --dry-run` reports `unit_count: 45`). Each process corner is a
 bundle of the matching MOS, poly-resistor and diode sections, because the cells use `rppd`
-and the antenna diodes as well as the thin-oxide MOS devices.
+and the antenna diodes as well as the thin-oxide MOS devices. The requests in this directory
+are hand-written rather than generated, so CI checks their `corners` blocks against the one
+PVT-FULL table (`sim/pvt_full.py`, `scripts/ci/check_corner_bundles.py`).
 
 **Status: recorded, two records (append-only).**
 

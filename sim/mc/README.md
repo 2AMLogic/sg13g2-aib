@@ -17,11 +17,11 @@ The manifest declares all six under `spec_rows."6.analog"`; the two open rows (T
 ## Method
 
 `gen_mc.py` writes one nominal and one negative-control `klt sim` request per row
-(`--check` for staleness; CI runs it). Each request is the 45-corner PVT-FULL grid with
-`mos_<corner>_mismatch` process sections (the PDK's per-instance mismatch sections),
-`monte_carlo.vary: mismatch`, a recorded seed, and goes to the batch fleet; the
-negative control is a bench copy of the cell with a seeded degradation. The two reports
-are joined by `klt yield-samples` and graded by `klt yield`:
+(`--check` for staleness; CI runs it). Each request is the 45-corner PVT-FULL grid of
+`sim/pvt_full.py` with `mos_<corner>_mismatch` process sections (the PDK's per-instance
+mismatch sections), `monte_carlo.vary: mismatch`, a recorded seed, and goes to the batch
+fleet; the negative control is a bench copy of the cell with a seeded degradation. The two
+reports are joined by `klt yield-samples` and graded by `klt yield`:
 
 ```bash
 python3 -I sim/mc/gen_mc.py --check

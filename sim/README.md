@@ -9,6 +9,27 @@ and the OSDI toolchain (OpenVAF-Reloaded `v24.0.1mob`). Every record under
 `sim/` traces to it. Records are append-only: a new run is a new directory,
 and an earlier record is never edited.
 
+## PVT-FULL corner bundle
+
+`sim/pvt_full.py` is the repo's one encoding of the PVT-FULL grid that
+`spec/target-spec.md` defines: the MOS corner -> (poly-resistor section, diode
+section) table, the VDDIO and temperature lists, the four OSDI models, and the
+`corners` object every request generator builds from them. The resistor and
+diode sections follow the MOS corner (tt/sf/fs: `res_typ`/`dio_tt`, ss:
+`res_wcs`/`dio_ss`, ff: `res_bcs`/`dio_ff`); `mos_sf` and `mos_fs` are mixed MOS
+corners with no matching resistor or diode section, so they take the typical
+ones. Stdlib only; no PDK is needed to import it.
+
+`gen_channel_eye.py`, `gen_clock_path.py` and `gen_mc.py` all import it rather
+than restating the table, and `scripts/ci/check_corner_bundles.py` (CI) checks
+every committed request under `sim/` against it, so the copies cannot drift
+apart again. The three families write two request shapes -- a bare MOS section
+name for the transient benches, an explicit `{lib, section}` pair (plus
+`_mismatch`) for Monte Carlo -- and both come out of the one table.
+
+Records under `sim/*/records/` are **not** checked and are never rewritten to
+match: they are append-only evidence and keep the request they were run with.
+
 ## OSDI device models
 
 The PDK ships the PSP103 and `r3_cmc` Verilog-A sources, not `.osdi` binaries.
@@ -80,10 +101,10 @@ sim/channel-eye/run_channel_eye.sh ch                 # batch fleet; writes reco
 sim/channel-eye/run_channel_eye.sh tc
 ```
 
-Corners: `mos_{tt,ss,ff,sf,fs}` x VDDIO 1.08/1.20/1.32 V x -40/27/125 C; the resistor and
-diode sections follow the MOS corner (tt/sf/fs: `res_typ`/`dio_tt`, ss: `res_wcs`/`dio_ss`,
-ff: `res_bcs`/`dio_ff`). Six supply sources (A/B/clock, TX/RX) sweep together so the energy
-of each block is separable.
+Corners: the 45-unit PVT-FULL grid of `sim/pvt_full.py` (`mos_{tt,ss,ff,sf,fs}` x VDDIO
+1.08/1.20/1.32 V x -40/27/125 C, resistor and diode sections following the MOS corner), built
+from that one table rather than restated here. Six supply sources (A/B/clock, TX/RX) sweep
+together so the energy of each block is separable.
 
 **Status: no 45-corner record exists yet, and no row is claimed.** Findings from bringing
 the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
