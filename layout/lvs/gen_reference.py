@@ -8,6 +8,11 @@ them and writes `klt lvs` plain-element SPICE, one file per layout cell. Nothing
 hand and design/*.spice is read only; each output carries the sha256 of every source it was
 built from, and --check fails if the committed files differ from a fresh build.
 
+The negative controls in neg/ are written here too (see `neg`): each is a copy of a source with
+exactly one seeded defect, so it must differ from that source in that line and nothing else.
+They were hand-copied and rebuilt by hand on every regeneration until #202; deriving them keeps
+them in step with a source that moves.
+
 Assembly (mirrors layout/README.md "Assembly choice"): the bond pad is the PAD of aib_pad_esd.
 TX: driver output on PAD, PADI left on the secondary diodes and Mn2 only. RX: receiver input
 on PADI, behind the series resistor.
@@ -27,6 +32,7 @@ import sys
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 DESIGN = os.path.join(ROOT, "design")
 OUT = os.path.join(ROOT, "layout", "lvs")
+PNR_V = os.path.join(ROOT, "layout", "pnr", ".klt", "place-and-route", "aib_datapath.v")
 SOURCES = ["aib_pad_esd", "aib_tx_data", "aib_rx_data", "aib_tx_clk", "aib_rx_clk"]
 CLK_DIN = ("DIN$1", "DIN")      # the DIN label that shares a unit with PAD, PAD$1 in the drawn tx pair
 CLK_DOUT = ("DOUT$1", "DOUT")    # same for the rx pair
@@ -129,7 +135,49 @@ def cell(subs, name, pins, parts):
     return "\n".join(lines) + "\n"
 
 
+def seed(text, old, new, what):
+    """`text` with `old` replaced by `new`, which must match exactly once: a seeded defect.
+
+    The anchor spans the line it changes (or the part of it the defect is in), so a source edit
+    that moves it fails loudly here instead of silently producing a control with no defect, two
+    defects, or a defect in the wrong place."""
+    n = text.count(old)
+    if n != 1:
+        raise SystemExit(f"{what}: anchor {old!r} matched {n} times in its source, expected 1")
+    return text.replace(old, new)
+
+
+def neg(column):
+    """The neg/ negative controls: one copy per seeded defect, byte-identical to the hand-made
+    files whose sha256 the committed neg/*.report.json carry.
+
+    A control shows that the compare catches its one defect. If the source moves and the copy
+    does not, the copy differs in more than the defect and the mismatch no longer isolates
+    anything, so each is derived from its current source here.
+
+    The analog column is taken from the reference just built (not from the committed file), so a
+    stale aib_io_column.ref.spice cannot leak into its control. The digital one copies the routed
+    netlist, which is the layout side's own as-built reference.
+    """
+    return {
+        # analog column: the gate of one clamp finger moves from VSS to VDDIO. The anchor stops
+        # at the device class, because the defect is the gate net and nothing else: a clamp
+        # resize is meant to flow straight through into the control, while a rewiring of its
+        # other terminals is not, and fails here.
+        "neg/aib_io_column.rewired.ref.spice": seed(
+            column,
+            "Mt0esd_Mclamp_f0 VDDIO VSS VSS VSS nfet ",
+            "Mt0esd_Mclamp_f0 VDDIO VDDIO VSS VSS nfet ",
+            "neg/aib_io_column.rewired.ref.spice"),
+        # digital data path: one mux input is rewired from the TX wire to the RX wire
+        "neg/aib_datapath.rewired.v": seed(
+            open(PNR_V).read(), "    .A1(tx_wire[0]),\n", "    .A1(rx_wire[0]),\n",
+            "neg/aib_datapath.rewired.v"),
+    }
+
+
 def build():
+    """-> {path relative to layout/lvs/: text}."""
     subs = load()
     esd = lambda k, pad, padi: (k + "esd", "aib_pad_esd", dict(PAD=pad, PADI=padi, VDDIO="VDDIO", VSS="VSS"))
     tx = lambda k, din, pad: (k + "tx", "aib_tx_data", dict(DIN=din, OE="OE", PUN="PUN", PD="PD", PAD=pad,
@@ -169,22 +217,25 @@ def build():
     cpins = ([sfx("DIN", i) for i in range(24)] + [sfx("DOUT", i) for i in range(24)] + ["OE"] +
              [sfx("PAD", i) for i in range(48)] + ["PD", "PUN", "VDDIO", "VSS"])
     files["aib_io_column"] = cell(subs, "aib_io_column", cpins, parts)
-    return files
+    out = {name + ".ref.spice": text for name, text in files.items()}
+    out.update(neg(files["aib_io_column"]))
+    return out
 
 
 def main():
     files = build()
     bad = False
-    for name, text in files.items():
-        path = os.path.join(OUT, name + ".ref.spice")
+    for rel, text in files.items():
+        path = os.path.join(OUT, *rel.split("/"))
         if "--check" in sys.argv:
             if not os.path.exists(path) or open(path).read() != text:
                 print("DIFFERS", path)
                 bad = True
         else:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
             open(path, "w").write(text)
     if "--check" in sys.argv:
-        print("FAIL" if bad else "ok: committed reference netlists match a fresh build")
+        print("FAIL" if bad else "ok: committed reference netlists and neg/ controls match a fresh build")
         sys.exit(1 if bad else 0)
 
 
