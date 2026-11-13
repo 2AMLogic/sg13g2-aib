@@ -422,6 +422,16 @@ class CornerBundleTests(unittest.TestCase):
                 {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
             self.assertEqual(run(CORNERS, "--root", root).returncode, 0)
 
+    def test_unparseable_json_is_reported_not_skipped(self):
+        # a malformed request must not pass the check unexamined
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "sim/fam").mkdir(parents=True)
+            (root / "sim/fam/request.json").write_text("{not json")
+            r = run(CORNERS, "--root", root)
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("not readable as JSON", r.stdout + r.stderr)
+
 
 class PvtFullTableTests(unittest.TestCase):
     """The shared table emits both request shapes the benches use."""
@@ -457,7 +467,7 @@ class PvtFullTableTests(unittest.TestCase):
 
     def test_every_generator_is_fresh_against_the_table(self):
         for gen in ("sim/channel-eye/gen_channel_eye.py", "sim/clock-path/gen_clock_path.py",
-                    "sim/mc/gen_mc.py"):
+                    "sim/mc/gen_mc.py", "sim/dc-static/gen_dc_static.py"):
             r = run(REPO / gen, "--check")
             self.assertEqual(r.returncode, 0, f"{gen} --check: {r.stdout}{r.stderr}")
 

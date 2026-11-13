@@ -12,7 +12,9 @@ single-corner probe, a bench control) passes; a wrong pairing does not. That is
 the invariant three hand-kept copies had already broken (#184).
 
 Records under `sim/*/records/` are skipped: they are append-only evidence and
-keep the request they were run with, whatever the table says today.
+keep the request they were run with, whatever the table says today. A file that
+is not readable as JSON is reported, not skipped -- a malformed request must not
+pass unexamined.
 
 Exit 0 if every request conforms, 1 otherwise (each problem on its own line).
 """
@@ -29,16 +31,22 @@ import pvt_full  # noqa: E402  (the one PVT-FULL definition)
 
 
 def requests(sim_root: Path):
-    """Committed JSON files under sim/ that carry a `corners` block, records aside."""
+    """Committed JSON under sim/ (records aside), as (path, obj, problem) triples.
+
+    A file that cannot be read or parsed is reported rather than skipped: a
+    malformed request would otherwise pass this check unexamined, which is the
+    one way a wrong corner bundle could still reach a run.
+    """
     for path in sorted(sim_root.rglob("*.json")):
         if "records" in path.relative_to(sim_root).parts[:-1]:
             continue
         try:
             obj = json.loads(path.read_text())
-        except (OSError, ValueError):
+        except (OSError, ValueError) as e:
+            yield path, None, f"{path}: not readable as JSON ({e})"
             continue
         if isinstance(obj, dict) and isinstance(obj.get("corners"), dict):
-            yield path, obj
+            yield path, obj, None
 
 
 def main(argv=None):
@@ -50,7 +58,10 @@ def main(argv=None):
         print(f"no sim/ directory under {args.root}", file=sys.stderr)
         return 1
     bad, n = [], 0
-    for path, obj in requests(sim_root):
+    for path, obj, problem in requests(sim_root):
+        if problem is not None:
+            bad.append(problem)
+            continue
         n += 1
         bad += pvt_full.check_corners(obj["corners"], where=str(path.relative_to(args.root)))
     for line in bad:
