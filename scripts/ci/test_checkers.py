@@ -26,8 +26,8 @@ REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
 
-# The six generators that share the one write-or-check helper (#227), each with one of its
-# committed outputs, used to assert that a refused run writes nothing.
+# The seven generators that share the one write-or-check helper (#227, #239), each with one
+# of its committed outputs, used to assert that a refused run writes nothing.
 GENERATORS = {
     "sim/channel-eye/gen_channel_eye.py": "sim/channel-eye/prbs7_stim.inc",
     "sim/clock-path/gen_clock_path.py": "sim/clock-path/clock_stim.inc",
@@ -35,6 +35,7 @@ GENERATORS = {
     "sim/mc/gen_mc.py": "sim/mc/tb_t10_ctl.cir",
     "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
     "layout/lvs/gen_reference.py": "layout/lvs/aib_io_tx.ref.spice",
+    "layout/pex/gen_pex_benches.py": "layout/pex/benches/extraction.json",
 }
 
 
