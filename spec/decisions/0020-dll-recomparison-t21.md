@@ -124,9 +124,11 @@ append-only on `main`.
 
 Substituting the sibling's fallback-column numbers into the T-20 allocation
 (`target-spec.md` § Timing budget): the 0.0625 UI placement line becomes ≥ 0.35 UI,
-and the DLL's share of the 0.050 UI clock-path jitter line becomes 0.07 UI on its
-own. About **0.31 UI comes out of a 0.1075 UI margin**, leaving roughly
-**−0.20 UI**.
+costing ≥ 0.2875 UI; and the DLL's share of the 0.050 UI clock-path jitter line
+goes from 0.03 UI to 0.07 UI, costing a further 0.04 UI. The DLL holds 0.03 of
+that 0.050 line (`target-spec.md` § Timing budget), so the forwarded clock's own
+0.02 UI share is left in place rather than absorbed. About **0.33 UI comes out of
+a 0.1075 UI margin**, leaving roughly **−0.22 UI** (linear sum).
 
 So: **the sibling's fallback column, as specified at `381d989`, does not close
 T-20 at this repo's target.** This is hand arithmetic from two tables, in the same

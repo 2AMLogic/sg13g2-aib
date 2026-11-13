@@ -127,8 +127,12 @@ period T = 2000 ps. "Sibling" = the **fallback** column of `spec/target-spec.md`
 
 - **rms versus peak-to-peak.** The sibling's row 6 limit is an **rms** figure; T-21
   and the timing budget are **peak-to-peak**. The 14 σ Gaussian conversion used
-  above is this repo's (`spec/README.md`, DR-0019) and is the one the sibling's
-  0002 proposed sharing. It is an assumption about the distribution, not an
+  above is this repo's (`target-spec.md` § Timing budget, which states the jitter
+  allocation is peak-to-peak at 14 σ; DR-0013 for the statistical rows that use the
+  same tail) and is the one the sibling's 0002 proposed sharing. DR-0019 would
+  ratify that definition for the T-13/T-14 skew rows, but it is **not on `main`** —
+  it is in open PR #168 — so it is named here as a pending claim, not cited as
+  evidence. It is an assumption about the distribution, not an
   identity: a jitter distribution with a non-Gaussian tail breaks it in the
   unsafe direction. The sibling's own jitter method section says the figure is
   "simulated added jitter, thermal-noise class", underestimates 1/f, and does not
@@ -158,9 +162,10 @@ period T = 2000 ps. "Sibling" = the **fallback** column of `spec/target-spec.md`
   `"dut": "standin"` for every row, and no `results/` or `records/` directory
   exists under `sim/phase`, `sim/lock-time`, `sim/false-lock`, `sim/jitter` or
   `sim/power`. The sibling's recorded results at this pin (`cp-currents`,
-  `delay-sanity`, `delay-sizing`, `pfd-fit`, `lock-detector-smoke`,
-  `supervisor-smoke`, `pdk-smoke`) are device- and block-level probes, not graded
-  spec rows. **Every row above is therefore "specified only", at no corners.**
+  `delay-sanity`, `delay-sizing`, `harness-example`, `pfd-fit`,
+  `lock-detector-smoke`, `supervisor-smoke`, `pdk-smoke`) are device- and
+  block-level probes or harness examples, not graded spec rows. **Every row
+  above is therefore "specified only", at no corners.**
 
 ### This repo's other two rate points
 
@@ -188,11 +193,14 @@ Listed so they are not mistaken for fits:
 ### Consequence for the budget (arithmetic, not a change)
 
 Substituting the fallback-column numbers into the T-20 timing-budget allocation
-(`target-spec.md` § Timing budget) replaces the 0.0625 UI placement line with
-≥ 0.35 UI and pushes the DLL's share of the 0.050 UI clock-path jitter line to
-0.07 UI on its own: about **0.31 UI removed from a 0.1075 UI margin**, i.e. a
-negative margin of roughly −0.20 UI. **The sibling's fallback column, as specified
-at `381d989`, does not close T-20 at this repo's target.** That is hand arithmetic
+(`target-spec.md` § Timing budget) does two things. The 0.0625 UI placement line
+becomes ≥ 0.35 UI, costing ≥ 0.2875 UI. The DLL's share of the 0.050 UI clock-path
+jitter line goes from 0.03 UI to 0.07 UI — `target-spec.md` § Timing budget gives
+the DLL 0.03 of that 0.050, so the forwarded clock's own 0.02 UI share stays and is
+**not** absorbed — costing a further 0.04 UI. Together that is about **0.33 UI
+removed from a 0.1075 UI margin**, i.e. a negative margin of roughly −0.22 UI
+(linear sum). **The sibling's fallback column, as specified at `381d989`, does
+not close T-20 at this repo's target.** That is hand arithmetic
 from two tables, in the same spirit as DR-0014 — not a simulation, not a
 feasibility claim, and **not a change to any T-row or D-row value**. The
 shortfalls it names are recorded in
