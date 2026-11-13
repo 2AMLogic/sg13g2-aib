@@ -1,6 +1,7 @@
 # DR-0022: the T-02 and T-04 `SIM` legs — a pointer and a report-only leg
 
-**Status**: accepted. **Rows**: T-02, T-04.
+**Status**: accepted. **Rows**: T-02, T-04. **Amended by**: this record's own
+Amendment, 2026-11-13 (where a wrongly cited T-02 lands; the Decision is unchanged).
 
 ## Context
 
@@ -88,8 +89,13 @@ What the grader does with a declared row, measured by the probes above:
 | how the row is declared in `spec_rows` | where it lands |
 |---|---|
 | declared, no citation, no `gap` key | `uncovered_rows` |
-| declared, cited to the report-only clock-path record | `failed_citations` + `failed_rows` |
+| declared, cited to the report-only clock-path record | `failed_citations` + `failed_rows` — **superseded, see the Amendment, 2026-11-13**: this holds for a citation to a *non-envelope* file in that record directory, not to its `klt sim` envelope `report.json`, which gives `uncovered_rows` |
 | declared with a `gap` string | `declared_gaps`; out of both lists above |
+
+> **Withdrawn — see the Amendment, 2026-11-13.** The paragraph below is kept as
+> filed, and its bucket is wrong: cited to the record's `klt sim` envelope
+> `report.json`, T-02 lands in `uncovered_rows`, so #191's and PR #199's wording is
+> correct. The conclusion it draws is unaffected.
 
 **Correction to #191 as filed.** The issue reports that citing T-02 under the clock-path
 envelope "returns `uncovered_rows: ["T-02"]`". It does not: the citation is accepted into
@@ -139,3 +145,69 @@ bound. Only the bucket it fails into was misnamed. The same wording appears in P
   crossing requirement, T-04 gets a bound by a new decision record naming it (DR-0001),
   and the 225 measurements already recorded can be graded against it without re-running
   the grid.
+
+## Amendment, 2026-11-13: where a wrongly cited T-02 lands, per citation shape
+
+Appended after #212 reported that the middle row of the "where it lands" table above,
+and the "Correction to #191 as filed" paragraph that rests on it, do not reproduce on
+the pinned grader. The Decision, Evidence, Alternatives rejected and Consequences
+sections are unchanged and no decision is revisited here; what changes is one stated
+grader fact.
+
+**What the row above got wrong.** The probes behind it cited `record.json`, `rows.json`,
+`report.json.gz` and `request.json` — none of which is a `klt sim` envelope. At
+`d88b89b`, the commit this record names, the decompressed envelope
+`sim/clock-path/records/20261113T095936Z/report.json` was not in the tree at all; it
+arrives with #42 (PR #199). So the row states what the grader does with a citation to a
+**non-envelope file** as though it were what the grader does with a citation to the
+**record**. Its mechanism is wrong with it: the citation is not "accepted into the
+grading set and then fails" — the file is rejected as evidence, before any row is
+graded, and the row's report-only status plays no part in that rejection.
+
+**Re-measured 2026-11-13** against the pinned grader (`signoff/KLT_VERSION` = 0.9.0, run
+as `uvx --from "klayout-tools==0.9.0" klt signoff --manifest <scratch> --format json`
+from the repo root) on throwaway copies of `signoff/block-manifest.json` kept outside the
+tree. Every scratch manifest declares `spec_rows."5.analog"` containing `{"id": "T-02"}`
+with no `gap` key, and — except for the last row below — cites the file under test in
+`evidence."5.analog"` as `{"file": <f>, "rows": ["T-02"]}`. All runs exit 3 and grade
+item 5 / analog `unmet`.
+
+| citation shape | commit probed | item `reason` | where T-02 lands |
+|---|---|---|---|
+| cited to the `klt sim` envelope `report.json` | `0f3bf92` (PR #199 head) | `partial_coverage` | `uncovered_rows: ["T-02"]`, `failed_rows: []`, **no `failed_citations` key**; that citation itself grades `met`; T-02 absent from `row_sources` |
+| cited to `record.json`, `rows.json` or `request.json` | `615c357` (`main`) | `unrecognized_envelope` | `failed_rows: ["T-02"]`, `failed_citations: [<the cited file>]`, `uncovered_rows: []` |
+| cited to `report.json.gz` | `615c357` (`main`) | `unreadable_evidence` | `failed_rows: ["T-02"]`, `failed_citations: [".../report.json.gz"]`, `uncovered_rows: []` |
+| declared, no citation | `615c357` and `0f3bf92` | `partial_coverage` | `uncovered_rows: ["T-02"]`, `failed_rows: []`, no `failed_citations` key |
+| declared with a `gap` string | — | — | `declared_gaps`; out of both lists (unchanged from the table above) |
+
+The envelope row can only be probed where `report.json` exists, which today is PR #199's
+head; the non-envelope rows ran on `main` at `615c357`, whose record directory holds the
+same file set as `d88b89b` (no `report.json`). One trap worth recording: citing the path
+`.../report.json` on `main`, where that file does not exist, also returns
+`unreadable_evidence` — the same `reason` as a cited `.gz`, so the `reason` string alone
+does not tell a missing file from an unreadable one.
+
+**Why `uncovered_rows` is the bucket, and why that agrees with the Decision above.** The
+clock-path envelope does tag four measurements — `t02_cf_dr`, `t02_cr_df`, `t02_df_cf`,
+`t02_dr_cr` — with `spec_row: "T-02"`, and every one carries `limits: null`. With no
+limit there is no verdict to derive, so the grader writes no `row_sources` entry for
+T-02 and leaves the row uncovered. T-17's `t17_dcd_c` / `t17_dcd_cb` in the same envelope
+do carry limits, and give `row_sources."T-17": "derived"`. A report-only row cited under
+its own envelope therefore reads exactly as a row with no citation at all, which is this
+record's point: the measurements are present, and they are not a grade.
+
+**"Correction to #191 as filed": withdrawn.** #191's `uncovered_rows: ["T-02"]` is
+correct for the citation shape that matters — the record's `klt sim` envelope — and PR
+#199's `signoff/README.md` wording is correct for the same reason and needs no change on
+this record's account. Nothing in either conclusion moves: a report-only row still cannot
+be cited into coverage, and a declared gap is still its only honest disposition until the
+row has a bound.
+
+**One caution the original table did not state.** "Citing T-02 or T-04 under the passing
+T-17 clock-path envelope to make them read covered — the grader rejects it" (Alternatives
+rejected) holds for *that* envelope, as re-measured above. It does not generalise: T-02
+appended to the dc-static citation's `rows` at `0f3bf92` returns `uncovered_rows: []` and
+`row_sources."T-02": "asserted"`, because that envelope carries no `spec_row` tag the
+grader could check the claim against. Citing a row under an envelope that does not
+measure it is laundering the tool does not catch. The Alternatives bullet's objection
+stands on its own terms — it is honesty, not an enforcement the grader supplies.
