@@ -115,6 +115,42 @@ class AppendOnlyTests(unittest.TestCase):
             (r / self.REC).rename(dst / "record.json")
         self.assertNotEqual(self.scenario(mv), 0)
 
+    PEX_REC = "layout/pex/records/20260101T000000Z/record.json"
+
+    def test_pex_record_add_passes(self):
+        def add(r):
+            p = r / "layout/pex/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "record.json").write_text(json.dumps(GOOD))
+        self.assertEqual(self.scenario(add), 0)
+
+    def test_pex_record_edit_fails(self):
+        def edit(r):
+            p = r / self.PEX_REC
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("{}")
+        # The base tree has no pex record, so seed one, then edit it.
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD)
+            (root / self.PEX_REC).parent.mkdir(parents=True)
+            (root / self.PEX_REC).write_text(json.dumps(GOOD))
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            base = git(root, "rev-parse", "HEAD")
+            edit(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "change")
+            self.assertNotEqual(run(APP, "--base", base, cwd=root).returncode, 0)
+
+    def test_pex_generator_edit_passes(self):
+        def edit(r):
+            p = r / "layout/pex/gen_pex_benches.py"
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("# changed\n")
+        self.assertEqual(self.scenario(edit), 0)
+
     def test_zero_base_skips(self):
         self.assertEqual(run(APP, "--base", "0" * 40).returncode, 0)
 

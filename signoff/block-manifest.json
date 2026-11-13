@@ -125,6 +125,20 @@
         }
       }
     },
+    "7.analog": [
+      {
+        "file": "layout/pex/records/20261113T130842Z/aib_io_tx.extract.report.json"
+      },
+      {
+        "file": "layout/pex/records/20261113T130842Z/aib_io_rx.extract.report.json"
+      },
+      {
+        "file": "layout/pex/records/20261113T130842Z/aib_io_tx_clk.extract.report.json"
+      },
+      {
+        "file": "layout/pex/records/20261113T130842Z/aib_io_rx_clk.extract.report.json"
+      }
+    ],
     "7.digital": {
       "file": "signoff/attest/item7-digital/fv_post_route.json"
     },
@@ -266,6 +280,92 @@
       },
       {
         "id": "T-19"
+      }
+    ],
+    "7.analog": [
+      {
+        "id": "T-01",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-02",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
+      },
+      {
+        "id": "T-04",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
+      },
+      {
+        "id": "T-05",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: no testbench measures the redundancy mux's added load/delay; the RTL leg is covered, the SIM leg is not. Tracked in #192"
+      },
+      {
+        "id": "T-06",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above"
+      },
+      {
+        "id": "T-07",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above"
+      },
+      {
+        "id": "T-08",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above"
+      },
+      {
+        "id": "T-09",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-11",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above"
+      },
+      {
+        "id": "T-12",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: channel-model definition, not a block measurable, so not cited as covered; the +/-20 % channel R/C sensitivity its grid column asks for was never run (every record is nominal kr = kc = 1). Tracked in #193"
+      },
+      {
+        "id": "T-15",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-16",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-17",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-18",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-20",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: no end-to-end SIM confirmation and no ANALYSIS roll-up; fed by T-19 and T-21, both open. Tracked in #194"
+      },
+      {
+        "id": "T-21",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM half of the dll-interface contract; this repo does not design a DLL (CLAUDE.md, DR-0020). #175 delivered the sibling comparison only. Tracked in #195"
+      },
+      {
+        "id": "T-24",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above"
+      },
+      {
+        "id": "T-25",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: 0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
+      },
+      {
+        "id": "T-26",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'"
+      },
+      {
+        "id": "T-28",
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above"
+      },
+      {
+        "id": "T-29",
+        "gap": "carried forward from 5.analog, not re-measured post-layout: no loopback mux exists in design/, so L1/L2 cannot be exercised; also a TC row. Tracked in #176"
       }
     ]
   },
