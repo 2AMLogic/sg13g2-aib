@@ -24,6 +24,12 @@ from it; there is no second copy of any of them here.
 A post-route request (`options.sdf`, or an unresolved `@PDK_ROOT@`-style
 placeholder) needs the PDK and the pinned klt: it is refused here with exit 2
 and stays with verification/klt/run_evidence.py.
+
+Every other way a request can fail to load exits 2 as well -- a missing file,
+malformed JSON, and a request that parses but is the wrong shape (a missing or
+wrong-typed field). Exit 1 is reserved for a suite that ran and failed, which is
+what a negative control requires, so a wrong-shaped neg_*.json must never reach
+it.
 """
 
 from __future__ import annotations
@@ -45,10 +51,31 @@ class Unsupported(Exception):
     """The request is well-formed but not something this runner can run."""
 
 
+def _describe(value) -> str:
+    """Name a JSON value's type the way the request file spells it."""
+    for kind, name in ((bool, "a boolean"), (str, "a string"), (dict, "an object"),
+                       (list, "an array"), (int, "a number"), (float, "a number")):
+        if isinstance(value, kind):
+            return name
+    return "null" if value is None else repr(value)
+
+
+def _require(ok: bool, path: Path, message: str) -> None:
+    """Raise Unsupported unless `ok`, so the caller exits 2 rather than 1."""
+    if not ok:
+        raise Unsupported(f"{path}: {message}")
+
+
 def load_request(path: Path) -> dict:
     """Read a klt functional-verification request into the arguments cocotb needs.
 
     Paths resolve against the request file's own directory, as klt resolves them.
+
+    Every shape error raises Unsupported, so a request that is valid JSON but
+    wrong-shaped exits 2 (the suite did not run) and never 1. That matters most
+    for the negative controls: exit 1 is what `run_neg` requires, so a shape
+    mistake in neg_shift_edge.json or neg_extra_stage.json must not be able to
+    satisfy the control with the bench never built.
     """
     raw = path.read_text()
     if PLACEHOLDER.search(raw):
@@ -56,7 +83,12 @@ def load_request(path: Path) -> dict:
                           f"({PLACEHOLDER.search(raw).group(0)}); it needs the PDK and the "
                           "pinned klt — run verification/klt/run_evidence.py")
     req = json.loads(raw)
+    _require(isinstance(req, dict), path,
+             f"the request is {_describe(req)}, expected an object")
+
     options = req.get("options", {})
+    _require(isinstance(options, dict), path,
+             f"options is {_describe(options)}, expected an object")
     if "sdf" in options:
         raise Unsupported(f"{path} annotates an SDF; the post-route run needs the PDK and the "
                           "pinned klt — run verification/klt/run_evidence.py")
@@ -64,18 +96,56 @@ def load_request(path: Path) -> dict:
     if engine != "icarus":
         raise Unsupported(f"{path} asks for engine {engine!r}; this runner only drives icarus")
 
+    sources = req.get("sources")
+    _require(isinstance(sources, list) and bool(sources), path,
+             f"sources is {_describe(sources)}, expected a non-empty array")
+    _require(all(isinstance(s, str) for s in sources), path,
+             "every entry in sources must be a string")
+
+    toplevel = req.get("hdl_toplevel")
+    _require(isinstance(toplevel, str), path,
+             f"hdl_toplevel is {_describe(toplevel)}, expected a string")
+
+    testbench = req.get("testbench")
+    _require(isinstance(testbench, dict), path,
+             f"testbench is {_describe(testbench)}, expected an object")
+    test_module = testbench.get("module")
+    _require(isinstance(test_module, str), path,
+             f"testbench.module is {_describe(test_module)}, expected a string")
+    search_path = testbench.get("search_path", ".")
+    _require(isinstance(search_path, str), path,
+             f"testbench.search_path is {_describe(search_path)}, expected a string")
+
+    parameters = req.get("parameters", {})
+    _require(isinstance(parameters, dict), path,
+             f"parameters is {_describe(parameters)}, expected an object")
+    defines = options.get("defines", {})
+    _require(isinstance(defines, dict), path,
+             f"options.defines is {_describe(defines)}, expected an object")
+
+    # Required, not defaulted. A fallback literal here would be a second copy of
+    # a value the request file is supposed to be the only home for, and nothing
+    # checks it against what klt assumes when the key is absent. All seven
+    # committed requests set both.
+    timescale = options.get("timescale")
+    _require(isinstance(timescale, list) and len(timescale) == 2
+             and all(isinstance(t, str) for t in timescale), path,
+             f"options.timescale is {_describe(timescale)}, expected a two-string array "
+             'such as ["1ns", "1ps"]')
+    seed = options.get("random_seed")
+    _require(isinstance(seed, int) and not isinstance(seed, bool), path,
+             f"options.random_seed is {_describe(seed)}, expected an integer")
+
     here = path.parent
-    testbench = req["testbench"]
-    timescale = options.get("timescale", ["1ns", "1ps"])
     return dict(
-        sources=[(here / s).resolve() for s in req["sources"]],
-        toplevel=req["hdl_toplevel"],
-        test_module=testbench["module"],
-        test_dir=(here / testbench.get("search_path", ".")).resolve(),
-        parameters=req.get("parameters", {}),
-        defines=options.get("defines", {}),
+        sources=[(here / s).resolve() for s in sources],
+        toplevel=toplevel,
+        test_module=test_module,
+        test_dir=(here / search_path).resolve(),
+        parameters=parameters,
+        defines=defines,
         timescale=(timescale[0], timescale[1]),
-        seed=options.get("random_seed", 1),
+        seed=seed,
     )
 
 
@@ -96,7 +166,11 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         bench = load_request(args.request)
-    except (OSError, json.JSONDecodeError, KeyError, Unsupported) as exc:
+    # json.JSONDecodeError is a ValueError. The types beyond Unsupported are a
+    # backstop: load_request validates the shape itself, and anything it still
+    # lets through must exit 2 (did not run), never 1 (a test failed).
+    except (OSError, ValueError, TypeError, AttributeError, IndexError, KeyError,
+            Unsupported) as exc:
         print(f"the request did not load: {exc}", file=sys.stderr)
         return EXIT_DID_NOT_RUN
 

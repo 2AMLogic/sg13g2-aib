@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/run_tb.py",
         "passed": true,
-        "content_hash": "sha256:994b3dc96eb2b711e4d20ad5c7b493e32667bc3ee32d19cb19d3db5d197df622"
+        "content_hash": "sha256:2487f183b69bae1e7d47ff97b2d44f40f754841c64afa706030ccd155cbbca26"
       },
       {
         "check": "present",

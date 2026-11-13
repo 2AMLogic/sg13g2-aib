@@ -125,6 +125,12 @@ if [ "$want_rtl" = 1 ]; then
   # the same bench definition as the committed evidence.
   #
   # Plain python3, not -I: -I hides a user-site cocotb.
+  #
+  # The loader first: it is what keeps the two negative controls below honest.
+  # A request that does not load must exit 2, never the 1 a control requires.
+  run "Self-test the request loader's exit-2 contract" \
+    python3 verification/test_run_tb.py
+
   run "Run the shift-redundancy bench (expect 41/41)" \
     python3 verification/run_tb.py verification/klt/shift_redundancy.json
   run_neg "Negative control must exit exactly 1" \
@@ -144,4 +150,12 @@ if [ "$want_rtl" = 1 ]; then
     run_rc "Refuse the post-route request $req.json" 2 \
       python3 verification/run_tb.py "verification/klt/$req.json"
   done
+
+  # A request that is valid JSON but the wrong shape must also exit 2. The
+  # fixture is a mis-authored neg_shift_edge.json -- `testbench` as a string
+  # rather than an object. Were that to exit 1, run_neg above would pass with
+  # the bench never built, which is the one thing a negative control must not
+  # do. verification/test_run_tb.py covers the rest of the class.
+  run_rc "Refuse a wrong-shaped request" 2 \
+    python3 verification/run_tb.py verification/testdata/wrong_shape_request.json
 fi

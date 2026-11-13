@@ -50,3 +50,15 @@ definition per run, the file the evidence cites. A request the runner cannot
 honour PDK-free (`options.sdf`, or an unresolved `@PDK_ROOT@`-style placeholder)
 is refused with exit 2 — the suite did not run — and stays with
 `verification/klt/run_evidence.py`.
+
+Moving the bench definition into a file moves a class of mistake with it, so the
+exit-1-exactly Consequence above now binds the loader too: a request that does
+not load exits 2, including one that is valid JSON but the wrong shape. A
+wrong-shaped `neg_*.json` that exited 1 would satisfy its negative control
+without the bench ever building — the "exits non-zero while proving nothing"
+case this record exists to rule out. `verification/run_tb.py` therefore
+validates every field it reads instead of indexing into the request, and
+requires `options.timescale` and `options.random_seed` rather than defaulting
+them, so no value has a second home in the runner.
+`verification/test_run_tb.py` asserts the class and
+`scripts/ci/check_local.sh` asserts the exit code end to end.

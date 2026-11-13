@@ -25,6 +25,22 @@ annotate an SDF and name `@PDK_ROOT@`, so they need the PDK and the pinned klt.
 `run_tb.py` refuses them with exit 2 (the suite did not run) rather than running
 a half-configured bench; use `klt/run_evidence.py` for those.
 
+Every other way a request can fail to load exits 2 as well: a missing file,
+malformed JSON, and a request that parses but is the wrong shape (a missing or
+wrong-typed field). That last one is why the loader validates rather than
+indexing: a shape mistake in `neg_shift_edge.json` or `neg_extra_stage.json`
+that exited 1 would satisfy the negative control with the bench never built.
+`timescale` and `random_seed` are required for the same reason the flags are
+gone -- a fallback literal in the runner would be a second copy of a value the
+request is meant to be the only home for.
+
+`test_run_tb.py` is the self-test for that contract (the whole wrong-shape
+class; no cocotb needed for the loader cases), and
+`testdata/wrong_shape_request.json` is the mis-authored negative control
+`scripts/ci/check_local.sh` asserts exit 2 on end to end.
+
+    python3 -I verification/test_run_tb.py
+
 - `test_shift_redundancy.py`: T-05 `RTL` row, all 40 single-fault cases (20 positions x 2 channel directions) plus no-fault, with a TX bit-to-wire bijection check per position.
 - `tb_top.v`: bench top with fault injection (X, stuck-0, stuck-1) on the wires.
 - `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and L1
