@@ -21,34 +21,13 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/venv"
           "$RUNNER_TEMP/venv/bin/pip" install "cocotb>=2.0,<3"
 
-      - name: Run the shift-redundancy bench (expect 81/81)
+      # One list, in scripts/ci/check_local.sh, so the local run cannot drift
+      # from this one: the benches, both exit-1 negative controls and the
+      # expected pass counts all live there.
+      - name: Run the RTL benches and their negative controls
         run: |
           . "$RUNNER_TEMP/venv/bin/activate"
-          python3 verification/run_tb.py
-
-      - name: Negative control must exit exactly 1
-        run: |
-          . "$RUNNER_TEMP/venv/bin/activate"
-          rc=0
-          python3 verification/run_tb.py --define INJECT_BUG_SHIFT_EDGE=1 || rc=$?
-          if [ "$rc" != 1 ]; then
-            echo "::error::negative control exited $rc, expected exactly 1"; exit 1
-          fi
-
-      - name: Run the datapath bench at N = 20 and N = 8 (expect 8/8 each)
-        run: |
-          . "$RUNNER_TEMP/venv/bin/activate"
-          python3 verification/run_tb.py --bench datapath --param N=20
-          python3 verification/run_tb.py --bench datapath --param N=8
-
-      - name: Latency negative control must exit exactly 1
-        run: |
-          . "$RUNNER_TEMP/venv/bin/activate"
-          rc=0
-          python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1 || rc=$?
-          if [ "$rc" != 1 ]; then
-            echo "::error::latency negative control exited $rc, expected exactly 1"; exit 1
-          fi
+          scripts/ci/check_local.sh rtl
 
   evidence:
     runs-on: ubuntu-latest
@@ -57,38 +36,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Self-test the checkers
-        run: python3 -I scripts/ci/test_checkers.py
-
-      - name: Self-test the shared sim record harness (stubbed klt sim; no PDK, no fleet)
-        run: |
-          python3 -I sim/harness/test_write_record.py
-          sim/harness/test_batch_record.sh
-
-      - name: Check evidence structure and sim/ record format
-        run: python3 -I scripts/ci/check_evidence_format.py
-
-      - name: Check the committed netlist is fresh against the RTL and the attestation chain
-        run: python3 -I scripts/ci/check_design_sources.py
-
-      - name: Check the item 6 digital not_applicable documents are fresh against the spec and the Monte Carlo requests against the generator
-        run: |
-          python3 -I scripts/ci/gen_item6_digital.py
-          python3 -I sim/mc/gen_mc.py --check
-
-      - name: Check the derived item 7 SDFs are pinned and reproduce from the routed SDF
-        run: python3 -I scripts/ci/check_item7_sdf.py
-
-      - name: Check the committed routed SPEF and DEF match their manifest pins
-        run: python3 -I scripts/ci/check_pnr_pins.py
-
-      - name: Check sim/ records are append-only
+      # Same single list as the local run (scripts/ci/check_local.sh); the
+      # script prints a ::group:: per checker, so the log stays navigable.
+      - name: Run the PDK-free evidence checkers
         env:
           BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
-        run: python3 -I scripts/ci/check_sim_append_only.py --base "$BASE"
-
-      - name: Check the item 8 characterization report is fresh and pinned
-        run: python3 -I scripts/ci/gen_characterization_report.py --check
+        run: scripts/ci/check_local.sh evidence
 
       - name: Install pinned grader
         run: pipx install "klayout-tools==$(cat signoff/KLT_VERSION)"

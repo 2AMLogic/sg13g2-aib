@@ -16,6 +16,10 @@ sim/build/
 sim/.work/
 # machine-local PDK override (sim/harness/pdk.py); never committed
 sim/pdk.local.json
+# sim/channel-eye: run_t16attr.sh regenerates the four T-16 attribution requests
+# with gen_t16attr.py before every run, so the bench-directory copies are
+# disposable output. The run's own copies stay tracked under records/.
+/sim/channel-eye/request_t16attr_*.json
 # synthesis / P&R scratch
 flow/build/
 # cocotb/Icarus build + result artifacts (verification/)
