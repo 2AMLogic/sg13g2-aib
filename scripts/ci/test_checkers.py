@@ -3,6 +3,8 @@
 
 Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
+import contextlib
+import io
 import json
 import posixpath
 import shutil
@@ -23,6 +25,17 @@ CORNERS = HERE / "check_corner_bundles.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
+
+# The six generators that share the one write-or-check helper (#227), each with one of its
+# committed outputs, used to assert that a refused run writes nothing.
+GENERATORS = {
+    "sim/channel-eye/gen_channel_eye.py": "sim/channel-eye/prbs7_stim.inc",
+    "sim/clock-path/gen_clock_path.py": "sim/clock-path/clock_stim.inc",
+    "sim/mc/capture_window/gen_t19.py": "sim/mc/capture_window/tb_t19.cir",
+    "sim/mc/gen_mc.py": "sim/mc/tb_t10_ctl.cir",
+    "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
+    "layout/lvs/gen_reference.py": "layout/lvs/aib_io_tx.ref.spice",
+}
 
 
 def run(*cmd, cwd=None):
@@ -576,6 +589,109 @@ class PvtFullTableTests(unittest.TestCase):
     def test_unknown_style_is_refused(self):
         with self.assertRaises(ValueError):
             self.pvt.process(style="sections")
+
+class WriteOrCheckHelperTests(unittest.TestCase):
+    """sim/gen_common.py is the one write-or-check implementation the generators share (#227)."""
+
+    def setUp(self):
+        sys.path.insert(0, str(REPO / "sim"))
+        import gen_common
+        self.gc = gen_common
+
+    def test_write_creates_parent_directories(self):
+        with tempfile.TemporaryDirectory() as t:
+            base = Path(t)
+            rc = self.gc.write_or_check({"neg/a.txt": "x\n", "b.txt": "y\n"}, [], base=base)
+            self.assertEqual(rc, 0)
+            self.assertEqual((base / "neg/a.txt").read_text(), "x\n")
+            self.assertEqual((base / "b.txt").read_text(), "y\n")
+
+    def test_an_absolute_output_path_needs_no_base(self):
+        with tempfile.TemporaryDirectory() as t:
+            p = Path(t) / "sub" / "a.txt"
+            self.assertEqual(self.gc.write_or_check({p: "x\n"}, []), 0)
+            self.assertEqual(p.read_text(), "x\n")
+
+    def test_check_is_quiet_and_zero_when_every_file_is_fresh(self):
+        with tempfile.TemporaryDirectory() as t:
+            base = Path(t)
+            self.gc.write_or_check({"a.txt": "x\n"}, [], base=base)
+            err, out = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+                rc = self.gc.write_or_check({"a.txt": "x\n"}, ["--check"], base=base)
+            self.assertEqual(rc, 0)
+            self.assertEqual(err.getvalue() + out.getvalue(), "")
+
+    def test_check_names_each_stale_file_on_stderr_and_returns_1(self):
+        with tempfile.TemporaryDirectory() as t:
+            base = Path(t)
+            self.gc.write_or_check({"a.txt": "x\n", "b.txt": "y\n"}, [], base=base)
+            (base / "a.txt").write_text("edited\n")          # content drift
+            (base / "b.txt").unlink()                        # missing entirely
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                rc = self.gc.write_or_check({"a.txt": "x\n", "b.txt": "y\n"}, ["--check"], base=base)
+            self.assertEqual(rc, 1)
+            self.assertEqual(err.getvalue().count("STALE:"), 2)
+            self.assertIn("a.txt", err.getvalue())
+            self.assertIn("b.txt", err.getvalue())
+
+    def test_check_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as t:
+            base = Path(t)
+            with contextlib.redirect_stderr(io.StringIO()):
+                rc = self.gc.write_or_check({"a.txt": "x\n"}, ["--check"], base=base)
+            self.assertEqual(rc, 1)
+            self.assertFalse((base / "a.txt").exists())
+
+    def test_a_stale_file_under_the_repo_is_named_relative_to_it(self):
+        # --check writes nothing, so naming a path that does not exist is safe here.
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            rc = self.gc.write_or_check({"no_such_generated_file": "x"}, ["--check"], base=REPO / "sim")
+        self.assertEqual(rc, 1)
+        self.assertIn("STALE: sim/no_such_generated_file", err.getvalue())
+
+    def test_an_unknown_flag_exits_2_and_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as t:
+            base = Path(t)
+            with contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as cm:
+                    self.gc.write_or_check({"a.txt": "x\n"}, ["--chek"], base=base)
+            self.assertEqual(cm.exception.code, 2)
+            self.assertFalse((base / "a.txt").exists())
+
+    def test_a_relative_output_without_a_base_is_refused(self):
+        with self.assertRaises(ValueError):
+            self.gc.write_or_check({"a.txt": "x\n"}, [])
+
+    def test_seed_substitutes_an_anchor_that_matches_exactly_once(self):
+        self.assertEqual(self.gc.seed("a b c", "b", "B", "what"), "a B c")
+
+    def test_seed_refuses_an_anchor_that_does_not_match_once(self):
+        for text, anchor, n in (("a b c", "zz", 0), ("a b b", "b", 2)):
+            with self.assertRaises(SystemExit) as cm:
+                self.gc.seed(text, anchor, "X", "what")
+            self.assertIn(f"matched {n} times", str(cm.exception))
+            self.assertIn("what", str(cm.exception))
+
+
+class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
+    """A mistyped --check must report, never silently regenerate (#227).
+
+    Three of the six used to test `"--check" in argv`, so any other argument meant "write":
+    `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
+    """
+
+    def test_an_unknown_flag_exits_2_and_writes_nothing(self):
+        for gen, generated in GENERATORS.items():
+            with self.subTest(gen=gen):
+                before = (REPO / generated).stat().st_mtime_ns
+                r = run(REPO / gen, "--chek")
+                self.assertEqual(r.returncode, 2, f"{gen} --chek: {r.stdout}{r.stderr}")
+                self.assertEqual((REPO / generated).stat().st_mtime_ns, before,
+                                 f"{gen} --chek rewrote {generated}")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

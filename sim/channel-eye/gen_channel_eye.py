@@ -20,6 +20,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
+import gen_common  # noqa: E402  (the one write-or-check implementation)
 UI_PS = 1000
 TR_PS = 100
 WARM = 14                 # warm-up bits (cyclic prefix), excluded from every window
@@ -227,18 +228,8 @@ def outputs():
 
 
 def main(argv):
-    stale = []
-    for name, text in outputs().items():
-        path = HERE / name
-        if "--check" in argv:
-            if not path.exists() or path.read_text() != text:
-                stale.append(name)
-        else:
-            path.write_text(text)
-    if stale:
-        print("stale generated files: " + ", ".join(stale), file=sys.stderr)
-        return 1
-    return 0
+    return gen_common.write_or_check(outputs(), argv, base=HERE,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":
