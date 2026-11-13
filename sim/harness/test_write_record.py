@@ -88,6 +88,28 @@ class ReplayTests(unittest.TestCase):
                                    head, tail, with_ranges=True)
         self.assertEqual(json.dumps(built, indent=2) + "\n", (rec / "record.json").read_text())
 
+    def test_a_decompressed_report_copy_matches_its_gz(self):
+        """`report.json` is excluded from the bench-file set, so check it is what it claims.
+
+        sim/README.md section "The decompressed `report.json` copies": each copy is a
+        `gzip -dc` of the committed `.gz` beside it, written because the pinned grader
+        (0.9.0) cannot read a `.json.gz` citation (2AMLogic/klayout-tools#5452) - no re-run,
+        byte-identical. The exclusion above would otherwise let an unrelated `report.json`
+        land in a record unseen.
+
+        No minimum count is asserted: the copies go away when that grader bug is fixed, and a
+        record with no `report.json` excludes nothing, so there is nothing to check there.
+        """
+        for rec in committed_records():
+            copy = rec / "report.json"
+            if not copy.is_file():
+                continue
+            with self.subTest(record=str(rec.relative_to(SIM))):
+                self.assertEqual(gzip.open(rec / "report.json.gz", "rb").read(),
+                                 copy.read_bytes(),
+                                 f"{rec.name}: report.json is not the decompressed "
+                                 f"report.json.gz beside it")
+
     def test_a_sharded_channel_eye_run_now_records_its_job_ids(self):
         """The fix: every committed channel-eye record has null ids; the replay recovers them."""
         checked = 0
@@ -166,7 +188,8 @@ class EntryPointTests(unittest.TestCase):
         bench = set(cfg["copy"]) | {request["netlist"]}
         committed_bench = {p.name for p in rec.iterdir()
                            if p.name not in ("record.json", "rows.json", "request.json",
-                                             "report.json.gz", "klt.stderr", "README.md")}
+                                             "report.json.gz", "report.json", "klt.stderr",
+                                             "README.md")}
         self.assertEqual(bench, committed_bench,
                          f"{rec.name}: the copied bench files drifted from the record")
 
