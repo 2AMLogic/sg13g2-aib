@@ -3,8 +3,9 @@
 
 Stdlib only. `python3 -I sim/mc/gen_mc.py [--check]` writes (or checks) one
 `request_<row>.json` and `request_<row>_ctl.json` per campaign in sim/mc/, plus the
-T-10 control bench `tb_t10_ctl.cir` (see `tb_t10_ctl`). The 45-corner PVT-FULL grid
-(spec/target-spec.md) is built from the PDK's `mos_<corner>_mismatch` sections so
+T-10 control bench `tb_t10_ctl.cir` (see `tb_t10_ctl`). The 45-corner PVT-FULL grid comes
+from `sim/pvt_full.py` (the repo's one encoding of spec/target-spec.md), on the PDK's
+`mos_<corner>_mismatch` sections so
 per-instance mismatch is live.
 """
 import argparse
@@ -15,22 +16,15 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE / "capture_window"))
+sys.path.insert(0, str(HERE.parent))
 import gen_t19  # noqa: E402  (T-19 bench constants and measurement cards)
-LIBM = "libs.tech/ngspice/models/cornerMOSlv.lib"
-RES = {"tt": "res_typ", "ss": "res_wcs", "ff": "res_bcs", "sf": "res_typ", "fs": "res_typ"}
-OSDI = [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{m}.osdi"
-        for m in ("psp103", "psp103_nqs", "r3_cmc", "mosvar")]
+import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
+LIBM = pvt_full.LIB_MOS
 
 
 def corners(supplies=("vddio",)) -> dict:
-    proc = []
-    for c in ("tt", "ss", "ff", "sf", "fs"):
-        proc.append({"name": c, "sections": [
-            {"lib": LIBM, "section": f"mos_{c}_mismatch"},
-            {"lib": "libs.tech/ngspice/models/cornerRES.lib", "section": RES[c]},
-            {"lib": "libs.tech/ngspice/models/cornerDIO.lib", "section": "dio_tt"}]})
-    return {"process": proc, "supply_v": {k: [1.08, 1.2, 1.32] for k in supplies},
-            "temperature_c": [-40, 27, 125]}
+    """The PVT-FULL grid on the PDK's `mos_*_mismatch` sections (per-instance mismatch live)."""
+    return pvt_full.corners(supplies, style="explicit", mismatch=True)
 
 
 # row id -> (netlist, control netlist, analysis step list, MC n, seed)
@@ -49,7 +43,7 @@ def request(row: str, ctl: bool) -> dict:
         "measurements": spec["top"],
         "options": {"stage_model_inputs": True, "fail_on_diagnostic": ["nonconvergence"],
                     "timeout_s": spec.get("timeout_s", 10), "keep_artifacts": False,
-                    "osdi_preload": OSDI},
+                    "osdi_preload": pvt_full.osdi_preload()},
         "backend": "batch",
         "batch": {"runner_version_check": "warn", "capacity_wait_s": 1800},
     }

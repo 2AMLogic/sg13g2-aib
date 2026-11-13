@@ -18,6 +18,7 @@ SRC = HERE / "check_design_sources.py"
 GEN = HERE / "gen_characterization_report.py"
 SDF7 = HERE / "check_item7_sdf.py"
 PNR_PINS = HERE / "check_pnr_pins.py"
+CORNERS = HERE / "check_corner_bundles.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -360,6 +361,122 @@ class PnrPinTests(unittest.TestCase):
             del d["pnr.digital"]["files"][1]
         self.assertNotEqual(self.check(self.edit_manifest(drop)), 0)
 
+
+
+class CornerBundleTests(unittest.TestCase):
+    """Every committed request under sim/ must agree with the one PVT-FULL table."""
+
+    def bundle(self, corner, res, dio):
+        return {"name": corner, "sections": [
+            {"lib": "libs.tech/ngspice/models/cornerMOSlv.lib", "section": "mos_" + corner},
+            {"lib": "libs.tech/ngspice/models/cornerRES.lib", "section": res},
+            {"lib": "libs.tech/ngspice/models/cornerDIO.lib", "section": dio}]}
+
+    def check(self, corners):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "sim/fam").mkdir(parents=True)
+            (root / "sim/fam/request.json").write_text(json.dumps({"corners": corners}))
+            return run(CORNERS, "--root", root).returncode
+
+    def grid(self, *bundles, supply=None, temps=None):
+        return {"process": list(bundles),
+                "supply_v": {"vddio": supply or [1.08, 1.2, 1.32]},
+                "temperature_c": temps or [-40, 27, 125]}
+
+    def test_the_repo_conforms(self):
+        self.assertEqual(run(CORNERS, "--root", REPO).returncode, 0)
+
+    def test_matching_bundle_passes(self):
+        self.assertEqual(self.check(self.grid(self.bundle("ss", "res_wcs", "dio_ss"))), 0)
+
+    def test_reduced_grid_passes(self):
+        self.assertEqual(self.check(self.grid(self.bundle("tt", "res_typ", "dio_tt"),
+                                              supply=[1.2], temps=[27])), 0)
+
+    def test_held_diode_section_fails(self):
+        # the drift of #184: dio_tt kept at a slow/fast MOS corner
+        self.assertNotEqual(self.check(self.grid(self.bundle("ss", "res_wcs", "dio_tt"))), 0)
+        self.assertNotEqual(self.check(self.grid(self.bundle("ff", "res_bcs", "dio_tt"))), 0)
+
+    def test_wrong_resistor_section_fails(self):
+        self.assertNotEqual(self.check(self.grid(self.bundle("ss", "res_typ", "dio_ss"))), 0)
+
+    def test_missing_diode_section_fails(self):
+        b = self.bundle("ss", "res_wcs", "dio_ss")
+        del b["sections"][2]
+        self.assertNotEqual(self.check(self.grid(b)), 0)
+
+    def test_off_grid_supply_or_temperature_fails(self):
+        good = self.bundle("tt", "res_typ", "dio_tt")
+        self.assertNotEqual(self.check(self.grid(good, supply=[1.0, 1.2, 1.32])), 0)
+        self.assertNotEqual(self.check(self.grid(good, temps=[-40, 25, 125])), 0)
+
+    def test_records_are_not_checked(self):
+        # append-only evidence keeps the request it ran with
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            d = root / "sim/fam/records/20260101T000000Z"
+            d.mkdir(parents=True)
+            (d / "request.json").write_text(json.dumps(
+                {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
+            self.assertEqual(run(CORNERS, "--root", root).returncode, 0)
+
+    def test_unparseable_json_is_reported_not_skipped(self):
+        # a malformed request must not pass the check unexamined
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "sim/fam").mkdir(parents=True)
+            (root / "sim/fam/request.json").write_text("{not json")
+            r = run(CORNERS, "--root", root)
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("not readable as JSON", r.stdout + r.stderr)
+
+
+class PvtFullTableTests(unittest.TestCase):
+    """The shared table emits both request shapes the benches use."""
+
+    def setUp(self):
+        sys.path.insert(0, str(REPO / "sim"))
+        import pvt_full
+        self.pvt = pvt_full
+
+    def test_45_unit_grid(self):
+        c = self.pvt.corners(["vddio"])
+        units = len(c["process"]) * len(c["supply_v"]["vddio"]) * len(c["temperature_c"])
+        self.assertEqual(units, self.pvt.N_UNITS)
+        self.assertEqual(units, 45)
+
+    def test_inline_shape_is_the_transient_bench_shape(self):
+        e = self.pvt.process()[1]
+        self.assertEqual(e["name"], "mos_ss")
+        self.assertEqual(e["sections"][0], "mos_ss")
+        self.assertEqual([s["section"] for s in e["sections"][1:]], ["res_wcs", "dio_ss"])
+
+    def test_explicit_mismatch_shape_is_the_monte_carlo_shape(self):
+        e = self.pvt.process(style="explicit", mismatch=True)[1]
+        self.assertEqual(e["name"], "ss")
+        self.assertEqual(e["sections"][0], {"lib": self.pvt.LIB_MOS, "section": "mos_ss_mismatch"})
+        self.assertEqual([s["section"] for s in e["sections"][1:]], ["res_wcs", "dio_ss"])
+
+    def test_diode_follows_the_mos_corner(self):
+        # sim/README.md: the resistor and diode sections follow the MOS corner
+        self.assertEqual({c: d for c, (_, d) in self.pvt.PROCESS.items()},
+                         {"tt": "dio_tt", "ss": "dio_ss", "ff": "dio_ff",
+                          "sf": "dio_tt", "fs": "dio_tt"})
+
+    def test_every_generator_is_fresh_against_the_table(self):
+        for gen in ("sim/channel-eye/gen_channel_eye.py", "sim/clock-path/gen_clock_path.py",
+                    "sim/mc/gen_mc.py", "sim/dc-static/gen_dc_static.py"):
+            r = run(REPO / gen, "--check")
+            self.assertEqual(r.returncode, 0, f"{gen} --check: {r.stdout}{r.stderr}")
+
+    def test_only_shape_restricts_the_grid(self):
+        self.assertEqual([e["name"] for e in self.pvt.process(only=("tt",))], ["mos_tt"])
+
+    def test_unknown_style_is_refused(self):
+        with self.assertRaises(ValueError):
+            self.pvt.process(style="sections")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
