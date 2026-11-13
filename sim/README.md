@@ -399,6 +399,76 @@ and `tb_l1.cir` keeps the model's `cfar = 0.1 pF` far-end term on top of the rea
 pin capacitance, exactly as `tb_ch.cir` does. The RTL input named `l1` is the digital
 select, not this configuration (#181).
 
+## clock-path
+
+`sim/clock-path/` is the PVT-FULL clock-path family of the T1 item 5 (analog) campaign
+(#42, #54): `aib_tx_clk` -> `aib_pad_esd` -> CH-3MM-RC -> `aib_pad_esd` -> `aib_rx_clk`, plus
+one `aib_tx_data` lane for the data-to-clock timing. Rows: T-17 (forwarded-clock duty-cycle
+distortion at the TX output, |DCD| <= 3 %, ideal 50 % input so only the TX clock path
+contributes), T-04 (clk/clkb crossing at the RX pins and outputs; report-only, since
+`spec/target-spec.md` gives no numeric crossing bound) and T-02 (SIM half: data edge versus
+both clock edges at the RX; report-only, T-19/T-20 are not graded here). All rows are CH claims.
+T-21 and T-29 are declared gaps (no DLL-side model, no loopback mux in `design/`).
+
+```bash
+python3 -I sim/clock-path/gen_clock_path.py --check   # generated files fresh?
+cd sim/clock-path && klt sim request.json --dry-run   # 45 corners
+sim/clock-path/run_clock_path.sh                      # batch fleet; writes records/<UTC>/
+```
+
+**Status (2026-11-13): the 45-corner record exists.** Record `clock-path/records/20261113T095936Z/`
+(simulated, CH-3MM-RC, 45 corners, batch backend, 15 jobs of 3 corners; job ids in the record's
+`batch_job_ids`). `klt sim` exited 0 with 45/45 corners carrying a status. No local grid was run,
+and `design/` and `spec/` are untouched.
+
+- **T-17 passes at 45/45 corners** (90/90 graded measurements against the +/-3 % bound: `t17_dcd_c`
+  and `t17_dcd_cb` at 45 corners each; the row's other 180 high-time/period measurements carry no
+  limits and are reported, not graded). Worst case
+  **-1.036 %** at `mos_sf`, 1.08 V, -40 C — one of the two corners the spec row calls out — so
+  1.964 % of margin remains. `clk` and `clkb` distort identically. No duty-cycle corrector is
+  needed at 1 Gb/s and none is designed here; dll-interface Gap G3 (D-9) is not triggered.
+- **T-04 is reported, not graded**: `spec/target-spec.md` T-04 states no numeric crossing bound,
+  so none was invented. The pair crosses within 20 mV of VDDIO/2 at the RX **pins** at every
+  corner (-19.2 mV .. +9.1 mV); at the RX **outputs** the crossing is up to -646 mV off mid-rail,
+  which is the `aib_rx_data` receiver's rise/fall asymmetry, not a channel effect. TX-to-RX
+  latency 338.4-629.1 ps.
+- **T-02 (SIM half) is reported**: same-direction data/clock edges track to under 0.01 ps, but the
+  **alternate DDR half-period at the RX output is off-centre by up to 0.103 UI** (397.4 ps instead
+  of 500 ps at `mos_sf`, 1.08 V, -40 C). Only -20.7 ps of that is at the TX pad (T-17); the rest is
+  added after the pad, dominantly by the receiver. This does **not** contradict T-16, which
+  channel-eye grades at the RX *pins* (before the receiver) and which passes 45/45 on current
+  `main` — the two measure different nodes. Whether the T-20 margin still closes is a T-19/T-20
+  budget question, filed as #177; this record relaxes no bound.
+- **T-21 and T-29 are declared gaps**, not claimed: T-21 needs a DLL-side model this repo does not
+  build (scope discipline), and no loopback mux exists in the five `design/` cells for T-29 (which
+  is a TC row besides). Follow-ups: #175 (T-21), #176 (T-29).
+
+See the record's `README.md` for the per-corner numbers and the decomposition.
+
+The 2026-10-27 attempt of this same request produced no record: the submit succeeded (15 jobs of 3
+units) but the fleet left every job `pending` and never launched it. That run did not pass
+`--wait-for-capacity`; the fleet is vCPU-budgeted and refuses a burst with `batch_no_capacity`.
+`run_clock_path.sh` now passes `--wait-for-capacity 600` (and `request.json` sets
+`batch.capacity_wait_s`), which is what let this run through a busy fleet. **The record committed
+here needed no `--resume`**: it is a single fresh run, `environment.resume.resumed_corners` = 0,
+all 15 `environment.remote.fleet[]` shards `resumed: false`, and no resume line in its
+`klt.stderr`. An earlier attempt on 2026-11-13 did need one `--resume` for shards refused past
+that window, but the then-buggy unlaunched-jobs guard matched `--resume`'s own per-shard recovery
+line and deleted that record; `run_clock_path.sh` now matches klt's summary sentence
+(`were submitted but never launched`) only. No artefacts of that attempt survive, so nothing
+here rests on it.
+
+A record file is immutable from its **first push**, not from merge. `ci.yml` runs the
+append-only check on both the `pull_request` and the `push` event, and its base differs:
+`pull_request.base.sha` (the PR base) versus `github.event.before` (the previously pushed head,
+see `signoff/README.md` -> "What CI checks"). So a record directory that is still new relative to
+`main` — and therefore an addition the PR-event run accepts — is nevertheless already frozen for
+the push-event run as soon as it has been pushed once. Review feedback on a record's own
+`README.md` cannot be applied in place afterwards: the edit surfaces as `M` against the pre-push
+head and fails, and so does reverting it on the next push. Get a record directory's prose right
+in the commit that first pushes it; a correction found later belongs in this file, which is not
+under a `records/` directory and may change.
+
 ## dc-static
 
 `sim/dc-static/` holds the T-06/T-07/T-08/T-11/T-24/T-28 testbenches and the one 45-corner
