@@ -18,14 +18,38 @@ reports here are those re-runs. The item 1 sources, `gen_reference.py` and the P
 
 | File | What |
 |---|---|
-| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice`; `--check` compares to the committed files |
+| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice` and the `neg/` negative controls (one anchored substitution each); `--check` compares to the committed files |
 | `<cell>.ref.spice` | reference for `aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`; each header carries the sha256 of every `design/*.spice` it was built from |
 | `<cell>.request.json`, `<cell>.report.json` | the `klt lvs` request and its `--format json` report, verbatim |
 | `aib_io_column.ref.spice`, `aib_io_column.request.json`, `aib_io_column.report.json` | the whole analog stream (all 48 units) against one generated reference; this is the report `4.analog` cites |
 | `<cell>.diag.*` | the same against a diagnostic reference. **Superseded** by the layout fix (below): the generator path that wrote it is removed, the files are kept as recorded results and do not reproduce. **Not a result reference.** |
 | `aib_datapath.gate.spice`, `aib_datapath.extract.report.json` | layout side of the digital compare: `klt extract --abstract-cells 'sg13g2_*' --def-net-names` of the routed GDS |
 | `digital.request.json`, `digital.report.json` | digital request and report, verbatim |
-| `neg/` | negative controls: digital (the as-built netlist with one gate input rewired) and analog column (`aib_io_column.rewired.ref.spice`: one clamp finger gate moved from `VSS` to `VDDIO`), each with its report |
+| `neg/` | negative controls: digital (the as-built netlist with one gate input rewired) and analog column (`aib_io_column.rewired.ref.spice`: one clamp finger gate moved from `VSS` to `VDDIO`), each with its report. Written by `gen_reference.py`, not by hand (below) |
+
+### Negative controls are generated too (#202)
+
+Each `neg/` file is a copy of a source with exactly one seeded defect, and it only isolates that defect
+while it differs from its source in that line and nothing else. Both were hand-copied until #202, and
+the column one was rebuilt by hand on every regeneration of its source (#94, #140, #187), so a source
+that moved left the copy behind. `gen_reference.py` now derives them, each by one substitution whose
+anchor must match its source exactly once:
+
+| Output | Source | Seeded change | A source edit that moves the anchor |
+|---|---|---|---|
+| `neg/aib_io_column.rewired.ref.spice` | the `aib_io_column` reference as just built, not the committed file | gate of `Mt0esd_Mclamp_f0`: `VSS` -> `VDDIO` | the generator exits non-zero naming the anchor |
+| `neg/aib_datapath.rewired.v` | `../pnr/.klt/place-and-route/aib_datapath.v` | `.A1(tx_wire[0])` -> `.A1(rx_wire[0])` | same |
+
+The anchors are scoped to the defect: the column one stops at the device class, so a clamp *resize*
+flows through into the control untouched, while a *rewiring* of the clamp's other terminals halts the
+generator — at that point the control has to be restated, not silently rebuilt. Both outputs are
+byte-identical to the hand-made copies they replace, so the `reference_sha256` the committed
+`neg/*.report.json` carry is unchanged and `klt lvs --check` still exits 0 on both (run from `neg/`:
+`--check` resolves a report's relative paths against the current directory).
+
+Limitation: `gen_reference.py --check` is still not run by `.github/workflows/ci.yml`, so this check
+only bites when someone runs it. Wiring it into CI is #173. The T-10 control bench is the covered case
+— `sim/mc/gen_mc.py` writes it and CI already runs `gen_mc.py --check` (`sim/mc/README.md`).
 
 Provenance: the reference netlists are generated, not hand-written; `design/*.spice` is read only, so the
 item 1 hashes are unchanged. Assembly follows `layout/README.md` ("Assembly choice"): the pad is the
@@ -153,8 +177,9 @@ for a change that only adds fingers in parallel.
 The negative control was rebuilt by hand on the new column reference with the same single change
 (`Mt0esd_Mclamp_f0` gate `VSS` -> `VDDIO`; `neg/aib_io_column.rewired.ref.spice` differs from
 `aib_io_column.ref.spice` on that one line and no other): `status: mismatch`, one
-`device.unmatched`, klt exit 3, 4319 / 4320 devices and 387 / 389 nets matched. `gen_reference.py`
-still does not write or check that file.
+`device.unmatched`, klt exit 3, 4319 / 4320 devices and 387 / 389 nets matched. That hand rebuild was
+the last one: #202 made `gen_reference.py` write and check the file (above), reproducing this same
+copy byte for byte, so the report quoted here is unchanged.
 
 The `*.diag.*` files are untouched history and do not reproduce. The sums in the Issue #140 and
 Issue #94 sections above describe earlier streams and are history.
