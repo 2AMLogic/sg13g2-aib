@@ -2,6 +2,8 @@
 # run_channel_eye.sh -- PVT-FULL channel-eye family (T-01 / T-09 / T-15 / T-16 / T-18 / T-26).
 #
 #   sim/channel-eye/run_channel_eye.sh ch      # CH-3MM-RC, 45 corners (claims about the modeled channel)
+#   sim/channel-eye/run_channel_eye.sh ch-spread  # CH-3MM-RC at the declared +-20 % channel R/C
+#                                             # spread, 45 corners x 4 (kr, kc) pairs = 180 units (T-12)
 #   sim/channel-eye/run_channel_eye.sh tc      # L2 wire-bond loopback, 45 corners (test configuration; never a CH claim)
 #   sim/channel-eye/run_channel_eye.sh control  # bench positive control, one corner, fixed-PMOS TX copy (not design evidence)
 #
@@ -18,10 +20,16 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-kind="${1:?usage: run_channel_eye.sh ch|tc|control}"
+kind="${1:?usage: run_channel_eye.sh ch|ch-spread|tc|control}"
 shift
+units=1   # one unit per job: with timeout_s 2400 the fleet rejects more (sim/README.md)
 case "${kind}" in
   ch) req=request_ch_1g.json ; claim="CH (modeled channel CH-3MM-RC)" ;;
+  ch-spread) req=request_ch_spread_1g.json
+    claim="CH (modeled channel CH-3MM-RC) at the declared +-20 % R/C spread, kr/kc in {0.8, 1.2}"
+    # 4x the units of a nominal run, so they are packed: the spread request lowers timeout_s
+    # to keep units x timeout_s under the fleet's per-job ceiling (gen_channel_eye.py).
+    units="$(python3 -I -c 'import sys; sys.path.insert(0, sys.argv[1]); import gen_channel_eye as g; print(g.SPREAD_UNITS_PER_JOB)' "${HERE}")" ;;
   tc) req=request_tc_1g.json ; claim="TC (L2 wire-bond loopback, declared values)" ;;
   control) req=request_ctl_ch_tt.json ; claim="none: bench positive control with a modified TX copy" ;;
   *) echo "run_channel_eye.sh: unknown kind '${kind}'" >&2; exit 2 ;;
@@ -39,7 +47,7 @@ exec "${HERE}/../harness/batch_record.sh" \
   --generator gen_channel_eye.py \
   --post-label "${kind}" \
   --record-suffix "-${kind}" \
-  --max-units-per-job 1 \
+  --max-units-per-job "${units}" \
   --env-prefix CHANNEL_EYE \
   --copy tb_body.inc \
   --copy prbs7_stim.inc \

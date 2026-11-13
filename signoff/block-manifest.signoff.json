@@ -565,7 +565,7 @@
           },
           {
             "id": "T-12",
-            "gap": "channel-model definition, not a block measurable, so not cited as covered; the +/-20 % channel R/C sensitivity its grid column asks for was never run (every record is nominal kr = kc = 1). Tracked in #193"
+            "gap": "channel-model definition, not a block measurable, so not cited as covered: the declared model is the input to T-01/T-09/T-15/T-16/T-18/T-26, and citing an input definition as evidence of itself would be circular. The +/-20 % channel R/C sensitivity its grid column asks for HAS now been run -- sim/channel-eye/records/20261113T223804Z-ch-spread/ is PVT-FULL at each of the four (kr, kc) pairs in {0.8, 1.2}, 180/180 corners, and all six dependent rows pass at all four spread corners (T-16's margin narrows to 1.3 ps against its 470 ps edge, from 10.9 ps nominal; reported, not relaxed, and tracked in #251). That record is referenced here rather than cited as an envelope because coverage is derived from the spec_row tags a report carries and no measurement carries T-12: probed with the pinned klt 0.9.0, citing it with rows [T-12] grades item 5 invalid_evidence while T-12 is a declared gap, and partial_coverage with uncovered_rows [T-12] once it is not. The six dependent rows keep their nominal citation. Tracked in #193"
           },
           {
             "id": "T-20",

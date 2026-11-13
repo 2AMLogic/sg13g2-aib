@@ -182,7 +182,7 @@ standing gap does not close through verification work. Whether item 5 / analog c
 | T-02 | `SIM` leg is a **pointer**, not a bound of its own (DR-0022): format by `RTL`, timing graded at T-16/T-19/T-20; the 45-corner clock-path `t02_*` measurements are reported inputs to those rows. **Standing gap** | #216 |
 | T-04 | `SIM` leg is **report-only by design** (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements are reported evidence, not a graded claim; the arrangement is verified by `RTL`. **Standing gap** | #216 |
 | T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #216 |
-| T-12 | channel-model *definition*, not a block measurable — see below | #193 |
+| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for now exists) — see below | #193 |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
 | T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
@@ -190,14 +190,30 @@ standing gap does not close through verification work. Whether item 5 / analog c
 
 `SIM-MC` rows (T-10, T-13, T-14, T-19) belong to item 6, not here.
 
-### T-12 is an input definition, and separately a missing sensitivity run
+### T-12 is an input definition; its ±20 % sensitivity run now exists
 
 `spec/channel/channel_rc.cir` opens "A declared model, not a measured one." The CH-3MM-RC
 parameter set is the **input** to T-01/T-09/T-15/T-16/T-18/T-26, so citing it as a covered row
-would be circular, and it is not cited. It is still declared a gap, for a different reason: its
-grid column asks for "PVT-FULL, plus channel R/C ±20 %" and **no record varies `kr`/`kc`** —
-every channel record is nominal `kr = kc = 1`. So every CH claim here holds at the nominal
-channel and says nothing about the declared ±20 % spread (#193).
+would be circular, and it is not cited. T-12 therefore stays a declared gap.
+
+What its grid column also asked for — "PVT-FULL, plus channel R/C ±20 % (DR-0005)" — **has
+now been run** (#193): `channel-eye/records/20261113T223804Z-ch-spread/` is PVT-FULL at each
+of the four (kr, kc) pairs in {0.8, 1.2}, 180/180 corners with a status, and **all six
+dependent rows pass at all four spread corners**. See that record's `README.md` for the
+per-row, per-spread-corner table; the headline is that the spread is a shunt-**C** effect
+(`kr` moves T-18 by at most 2.8 mV, `kc` by 83.6 mV), that T-15, T-18 and T-26 each bind at
+an **off-diagonal** corner (`kr` 0.8 / `kc` 1.2), and that **T-16's margin narrows to 1.3 ps**
+against its 470 ps edge, from 10.9 ps at the nominal channel. T-16 still passes; no bound was
+relaxed, and whether a 1.3 ps worst-case margin is acceptable is a `spec/` question tracked in
+#251.
+
+The spread record is **referenced from T-12's gap text, not cited as an envelope**. Probed
+with the pinned grader (klt 0.9.0, a scratch copy of the manifest, nothing committed): citing
+it with `rows: ["T-12"]` grades item 5 `unmet` / `invalid_evidence` ("a member names a row
+that is undeclared or a declared gap") while T-12 is a declared gap, and `unmet` /
+`partial_coverage` with `uncovered_rows: ["T-12"]` once it is not — because coverage is
+derived from the `spec_row` tags the report carries, and no measurement carries T-12. So the
+six dependent rows keep their nominal citation (`20261111T235838Z-ch`), unchanged.
 
 ### The decompressed `report.json` copies
 
@@ -234,10 +250,27 @@ T-26 are report-only, and T-15/T-16/T-18 are not observable in L2 and are not re
 `gen_channel_eye.py` writes `prbs7_stim.inc` and the requests (`--check` for staleness);
 the 75 CH measurements are generated, not hand-written.
 
+A third request, `request_ch_spread_1g.json`, is the **same CH claim at the declared
++-20 % channel R/C spread** that T-12's grid column asks for (#193): PVT-FULL once at each
+of the four (kr, kc) pairs in {0.8, 1.2}, so 45 x 4 = 180 units. It comes out of the same
+`request("ch")` builder with only the netlist and an added `corners.params` axis changed,
+so its measurements and limits cannot drift from the nominal request. Two mechanics are
+worth knowing: `corners.params` can target a **top-level** `.param` only, which is why
+`tb_ch_spread.cir` exists (it is `tb_ch.cir` with `kr`/`kc` lifted to `.param ch_kr`/
+`ch_kc`, leaving the nominal bench the records cite untouched); and the axis is **zipped
+by index, not crossed**, so the four pairs are spelled out as
+`ch_kr: [0.8, 0.8, 1.2, 1.2]`, `ch_kc: [0.8, 1.2, 0.8, 1.2]`. All four are run because R
+and C spread independently and which combination binds differs by row -- the two diagonal
+corners alone cannot bound a row whose worst case is off-diagonal. The corner ids gain a
+trailing `params:` segment, which `channel_eye_post.py` splits off to group one row
+summary per spread corner into the record's `param_groups` (and so that the segment is not
+mistaken for the temperature).
+
 ```bash
 python3 -I sim/channel-eye/test_channel_eye.py        # generator + post-processor self-tests
 cd sim/channel-eye && klt sim request_ch_1g.json --dry-run   # 45 corners
 sim/channel-eye/run_channel_eye.sh ch                 # batch fleet; writes records/<UTC>-ch/
+sim/channel-eye/run_channel_eye.sh ch-spread          # the +-20 % R/C spread, 180 units (T-12)
 sim/channel-eye/run_channel_eye.sh tc                 # procedure: "Record harness" above
 ```
 
@@ -529,6 +562,32 @@ measurements at 45/45 corners; the binding point is now `mos_ss/mixed/-40C` `t16
 480.9 ps (10.9 ps inside the 470 ps edge). T-01, T-09, T-15, T-18, T-26 still pass 45/45. The bound,
 the bench and the spec are unchanged. DIN input capacitance of the cell rises (NOR PMOS gate area
 doubled); the upstream driver of DIN is not modelled in this bench.
+
+**±20 % channel R/C spread (#193):** record `channel-eye/records/20261113T223804Z-ch-spread/`
+(simulated, CH-3MM-RC at `kr`/`kc` in {0.8, 1.2}, 180 corners = PVT-FULL × 4 spread corners,
+batch backend, 23 jobs, `klt` exit 0). This is T-12's missing sensitivity run, not a new
+measurement: same measurements, limits and stimulus as `request_ch_1g.json`, from the same
+generator builder. **All six rows pass at all four spread corners** (per-row counts per
+corner in `record.json` → `param_groups`). The spread is a shunt-capacitance effect: T-18 eye
+height 426.8 mV at `kc` 0.8 → 343.2 mV at `kc` 1.2 (against a 90 mV floor), while `kr` moves
+it by at most 2.8 mV; T-26 0.578 → 0.692 pJ simulated (1 pJ ceiling). T-15, T-18 and T-26
+each bind **off-diagonal**, at `kr` 0.8 / `kc` 1.2, so the two diagonal corners alone would
+have mis-stated their worst case — which is why all four were run. **T-16 is the one tight
+row**: `t16_dr_cf_long` is 471.3 ps against the 470 ps lower edge, a 1.3 ps margin where the
+nominal channel leaves 10.9 ps, so the +20 % C corner consumes 9.5 ps of it. It passes; no
+bound, spec row or model value was changed, and the acceptability of a 1.3 ps margin is a
+`spec/` question tracked in #251. The nominal record is untouched.
+
+Two mechanics of this run are worth carrying forward. The request lowers `options.timeout_s`
+to 400 s (the nominal request keeps 2400 s, which its records were run with) **so the fleet
+will pack a job**: the fleet's per-job rule, quoted from its own refusal, is
+`max_units_per_job = floor((max_job_seconds - 120) / options.timeout_s)`, so 2400 s forces one
+unit per job — 180 separate capacity grants, which on a busy fleet launched 4 of 180 in 17
+minutes (ETA 9 h). At 400 s a job carries 8 units, the same 180 units become 23 jobs, and the
+launch rate measured 3.1/min instead of 0.3/min. Neither constant is queryable from the
+client, so both are pinned in `gen_channel_eye.py` (ceiling undocumented:
+`2AMLogic/klayout-tools#4675`; the ceiling treats a job's units as serial although the runner
+runs them concurrently: `#5544`).
 
 ## clock-path
 
