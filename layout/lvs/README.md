@@ -151,6 +151,40 @@ The `*.diag.*` files are the localisation recorded against the old stream. They 
 record of that diagnosis and no longer reproduce (`--check` reports drift on the layout hash); they
 are not evidence about the current stream.
 
+## Issue #248: DR-0016 spare placement (2026-11-13)
+
+`gen_io_column.py` now labels the column slots `D0..D10, CLK, CLKB, D11..D19, SP0, SP1` instead of
+`SP0, D0..D9, CLK, CLKB, D10..D19, SP1`, so both spares sit at one end as DR-0016 decides (see
+`layout/README.md`, "Spare placement"). Nothing in `design/`, the references or this directory's
+generator changed: the edit renames 24 `TM1lbl` texts per column cell and moves no shape, and the
+non-text geometry of the regenerated stream is bit-identical to the pre-fix one. The five compares
+were re-run only because the stream's content hash changed, which `klt lvs --check` reports as
+`DRIFTED environment.layout_sha256` (exit 3) on every report that binds it:
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4320 / 4320 | 389 / 389 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | 138 / 138 | 17 / 17 | 7 / 7 |
+| `aib_io_rx.report.json` | `match` | 42 / 42 | 6 / 6 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | 276 / 276 | 29 / 29 | 9 / 9 |
+| `aib_io_rx_clk.report.json` | `match` | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Each re-run report is **byte-identical to the one it replaces apart from
+`environment.layout_sha256` and `provenance.input.content_hash`** — same verdict, same counts, same
+warning categories (including the column's 45 `topology` entries and its 47 reported net-name
+mismatches). The negative control re-runs to `status: mismatch`, one `device.unmatched`, klt exit 3,
+4319 / 4320 devices and 387 / 389 nets, also byte-identical apart from those two hashes. `--check`
+exits 0 on all five result reports and on the negative control again.
+
+That the slot labels cannot reach LVS is also structural, not just empirical: the requests read
+label purposes `[126, 1]` for `metal5`/`metal6`, but a slot label is drawn at the cell centre
+(y = 50 um) while the only TopMetal1 in a unit cell is the pad stack (y = 54 .. 98 um), so a slot
+label probes no conductor and names no net. The column's repeated pins stay klt's own `DIN`,
+`DIN$1`, ... numbering ("Limit of the column compare", below), which was never slot order.
+
+The `*.diag.*` files are untouched history and do not reproduce; they bind a stream older than
+either of the two here.
+
 ## Issue #187: predriver pull-up regeneration (2026-11-13)
 
 PR #164 widened the TX predriver NOR pull-ups (`Mnr1p`, `Mnr2p`) to `w=8u ng=4` in the item 1

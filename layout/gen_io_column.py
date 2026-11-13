@@ -752,12 +752,21 @@ def build_pair(layout, name, unit):
 
 
 def build_column(layout, name, unit, pair, role):
-    """24 slots: spare, 10 data, clk/clkb pair, 10 data, spare. Slot k is mirrored when k is odd,
-    so the column is mirror-symmetric about its centre (slot k <-> slot 23-k)."""
+    """24 slots: 11 data, clk/clkb pair, 9 data, 2 spare (DR-0016). Slot k is mirrored when k is
+    odd, so the column is mirror-symmetric about its centre (slot k <-> slot 23-k).
+
+    Wires 0..21 run monotonically along the column -- data bits 0..19 on wires 0..19 and the two
+    spares as wires 20, 21 -- with both spares adjacent at the high-slot end (DR-0016: the shift
+    always runs toward the spares, so repairing a fault at bit `pos` must be a two-cell move of
+    bits `pos..19`, which only a monotonic run of wires gives). The clk/clkb pair sits at the
+    centre of the 22 I/O cells, which is the matched span of the clock tree (DR-0010 Amendment,
+    2026-11-01). Only the slot assignment is asymmetric: every non-clock slot holds the same unit
+    cell at the same parity, so the drawn geometry is mirror-symmetric either way."""
     cell = layout.create_cell(name)
-    n_slots = 2 + 10 + 2 + 10
+    n_slots = 11 + 2 + 9 + 2
     d = Draw(layout, cell)
-    names = ["SP0"] + [f"D{i}" for i in range(10)] + ["CLK", "CLKB"] + [f"D{i}" for i in range(10, 20)] + ["SP1"]
+    names = ([f"D{i}" for i in range(11)] + ["CLK", "CLKB"]
+             + [f"D{i}" for i in range(11, 20)] + ["SP0", "SP1"])
     k = 0
     while k < n_slots:
         if k == 11:

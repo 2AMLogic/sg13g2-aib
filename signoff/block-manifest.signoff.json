@@ -244,7 +244,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -253,7 +253,7 @@
             "path": "layout/aib_io_column.gds",
             "scope": "repo"
           },
-          "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+          "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
           "input_verified": true,
           "summary": "T1 item 2 (Layout): 3/3 attestation checks passed (klt signoff --attest)",
           "source": "layout/aib_io_column.gds",
@@ -265,7 +265,7 @@
           },
           "regeneration": {
             "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-            "regenerated_hash": "sha256:5899535fad000a21062318752e3e9fff2d85eb7274589028c5ad2d6a37e936de",
+            "regenerated_hash": "sha256:af6051bb1f17d390d9eef8bcccff1b974e0c1eb6ceec5fd199707c02ac85cd6b",
             "executed_by_klt": false,
             "hash_kind": "geometry"
           }
@@ -328,11 +328,11 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "layout/records/20261113T112710Z/drc_analog.json",
+        "file": "layout/records/20261113T231304Z/drc_analog.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
-        "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
         "input_verified": true,
         "exit_status": 0,
         "coverage": {
@@ -471,7 +471,7 @@
         "command": null,
         "kind": "lvs",
         "check_status": "match",
-        "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
         "input_verified": true,
         "exit_status": 0
       }
@@ -1096,7 +1096,7 @@
         "command": null,
         "kind": "erc",
         "check_status": "not_checked",
-        "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
         "input_verified": true,
         "exit_status": 0,
         "parts": [
@@ -1105,7 +1105,7 @@
             "command": null,
             "kind": "erc",
             "check_status": "not_checked",
-            "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+            "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
             "input_verified": true,
             "exit_status": 0
           },
@@ -1114,7 +1114,7 @@
             "command": null,
             "kind": "lvs",
             "check_status": "match",
-            "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+            "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
             "input_verified": true,
             "exit_status": 0
           }
