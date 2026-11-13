@@ -58,26 +58,30 @@ install behind. `build-osdi.sh` likewise refuses an unverified compiler.
 
 ## Record harness
 
-`sim/channel-eye/run_channel_eye.sh` and `sim/clock-path/run_clock_path.sh` are thin entry
-points over one shared procedure, `sim/harness/batch_record.sh`: resolve the PDK, check the
+`sim/channel-eye/run_channel_eye.sh`, `sim/clock-path/run_clock_path.sh` and
+`sim/redundancy-mux/run_redundancy_mux.sh` are thin entry points over one shared procedure,
+`sim/harness/batch_record.sh`: resolve the PDK, check the
 generated files are fresh, refuse an existing record directory, submit **one** `klt sim
 --backend batch` request with `--wait-for-capacity 600`, scrub the fleet bucket name out of
 the captured stderr, classify the exit code, copy the request and bench into the record,
 post-process the report and write `record.json` (`sim/harness/write_record.py`). The entry
-points pass only what differs between the two families: the request, the record suffix,
+points pass only what differs between the families: the request, the record suffix,
 `--max-units-per-job`, the bench files to copy, the generator to `--check`, and the family's
-own `record.json` fields. Neither submits anything itself, so a fleet-handling fix lands once
+own `record.json` fields. None submits anything itself, so a fleet-handling fix lands once
 (#189; the two copies had drifted apart on four fleet behaviours).
 
 A tool or fleet error writes **no** record (exit 6) and prints the
 `CHANNEL_EYE_WORK=<dir> CHANNEL_EYE_RESUME=1` line that retries the same batch jobs
-(`CLOCK_PATH_*` for the clock-path runner); there is no local fallback. Only klt's summary
-sentence `were submitted but never launched` discards a record — a successful `--resume`
-prints the same words per shard it recovers, and that record is kept.
+(`CLOCK_PATH_*` and `REDUNDANCY_MUX_*` for the other two runners); there is no local
+fallback. Only klt's summary sentence `were submitted but never launched` discards a
+record — a successful `--resume` prints the same words per shard it recovers, and that
+record is kept. The redundancy-mux record of 2026-11-13 is exactly that case: the first
+submit left one of 15 shards unlaunched and wrote nothing, and the retry launched it and
+kept the record.
 
 ```bash
 sim/harness/test_batch_record.sh            # the procedure, against a stubbed klt sim
-python3 -I sim/harness/test_write_record.py  # replays every committed record of both families
+python3 -I sim/harness/test_write_record.py  # replays every committed record of every family
 sim/channel-eye/run_channel_eye.sh ch --dry-run   # what an entry point passes; submits nothing
 ```
 
@@ -142,17 +146,19 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Six of the eight are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-02 and T-04 are standing gaps**: DR-0022 decided their `SIM` legs have no
-gradable bound by design, so they do not close through verification work, and #191 (which
-asked for that decision) is closed as completed. Whether item 5 / analog can ever read `met`
-with two standing gaps declared is **not settled here** — it is tracked in #216.
+Five of the eight are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-02, T-04 and T-05 are standing gaps**: DR-0022 decided the `SIM` legs of the
+first two have no gradable bound by design (#191, closed as completed), and DR-0023 decides
+the same for T-05 — its added load and delay are *measured*, over the full grid, and reported
+into the rows that carry the numbers rather than graded against a bound of their own. A
+standing gap does not close through verification work. Whether item 5 / analog can ever read
+`met` with three standing gaps declared is **not settled here** — it is tracked in #216.
 
 | row | why no envelope covers it | issue |
 |---|---|---|
 | T-02 | `SIM` leg is a **pointer**, not a bound of its own (DR-0022): format by `RTL`, timing graded at T-16/T-19/T-20; the 45-corner clock-path `t02_*` measurements are reported inputs to those rows. **Standing gap** | #216 |
 | T-04 | `SIM` leg is **report-only by design** (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements are reported evidence, not a graded claim; the arrangement is verified by `RTL`. **Standing gap** | #216 |
-| T-05 | no testbench measures the redundancy mux's added load/delay (the `RTL` leg is covered) | #192 |
+| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #216 |
 | T-12 | channel-model *definition*, not a block measurable — see below | #193 |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
@@ -571,6 +577,95 @@ the push-event run as soon as it has been pushed once. Review feedback on a reco
 head and fails, and so does reverting it on the next push. Get a record directory's prose right
 in the commit that first pushes it; a correction found later belongs in this file, which is not
 under a `records/` directory and may change.
+
+## redundancy-mux
+
+`sim/redundancy-mux/` is the PVT-FULL redundancy-mux family of the T1 item 5 (analog)
+campaign (#42, #192): what the T-05 shift-redundancy remap adds to one TX lane in load and
+delay. Row: T-05 (`SIM` leg). **Nothing here is graded** — `spec/target-spec.md` T-05 states
+no bound for this leg and DR-0023 invents none, so no measurement carries `limits` and T-05
+stays a declared gap whose string names this record (the form DR-0022 established for T-02
+and T-04). The two delay terms are reported *into* the rows that carry numbers: the common
+term into T-20, the select-dependent term into T-13.
+
+**There is no transistor-level remap in this repo** — `tx_remap` / `rx_remap` are RTL only
+and the committed netlist predates them — so DR-0023 declares the arrangement that is
+measured: the remap on the serialized wire between the serializer mux and `aib_tx_data`'s
+`DIN`, with `sg13g2_mux2_1` (the cell synthesis already maps the serializer mux to; 22
+instances in the committed netlist, vendored unmodified as `sg13g2_mux2_1.inc`) standing in
+for both stages, on the same swept VDDIO as the TX cell. `tb_redundancy_mux.cir` carries four
+lanes on one stimulus and one corner — baseline, a **control** that is the baseline built a
+second time, and two with-mux lanes selected to `A0` and to `A1` — so every reported number
+is a difference measured inside one simulation, and the control measures what is left of the
+bench's own noise. `design/` and `rtl/` are untouched; nothing is instantiated or
+re-synthesized.
+
+```bash
+python3 -I sim/redundancy-mux/gen_redundancy_mux.py --check   # generated files fresh?
+cd sim/redundancy-mux && klt sim request.json --dry-run       # 45 corners
+cd sim/redundancy-mux && klt sim request_tt.json --backend local \
+    --report-out /tmp/rm_tt.json --format json                # one corner, ~15 s, no fleet
+sim/redundancy-mux/run_redundancy_mux.sh                      # batch fleet; writes records/<UTC>/
+                                                              # procedure: "Record harness" above
+```
+
+**Status (2026-11-13): the 45-corner record exists.** Record
+`redundancy-mux/records/20261113T160050Z/` (simulated, 45 corners, batch backend, 15 jobs of
+3 corners; job ids in the record's `batch_job_ids`). `klt sim` exited 0 with 45/45 corners
+carrying a status and all 2205 measurements reported. No local grid was run.
+
+- **The negative control is clean.** Lane `c` is lane `b` built a second time — the remap
+  stage shorted out — and reproduces it to 2.4e-10 ps at worst over the grid, about twelve
+  orders of magnitude below the added delay. A non-zero baseline-to-with-mux delta is the
+  remap and nothing else.
+- **The select-dependent term (T-13) is negligible**: worst **0.289 ps = 0.00029 UI**
+  (`mos_ss`, 1.08 V, −40 °C), which is 0.7 % of T-13's 0.04 UI bound. Whether a repaired
+  wire takes the mux's `A0` or `A1` input is not a meaningful skew contributor.
+- **The common term (T-20) does not fit.** One remap stage adds **53.8 .. 128.2 ps** to a
+  rising edge and **71.1 .. 183.9 ps** to a falling one at the TX pad, worst case
+  **0.184 UI** at `mos_ss`, 1.08 V, −40 °C. T-20 asks for ≥ 0.10 UI of margin remaining, and
+  #177 allocates 0.1075 UI to static off-centring of which the clock path already consumes
+  0.103 UI (#54). The remap as measured exceeds the whole 0.10 UI target on its own at
+  **30 of the 45 corners** (both edges above 0.10 UI at 13 of them); the remaining 15 — the
+  1.32 V corners of `mos_ff`, `mos_sf`, `mos_tt` and `mos_fs`, plus `mos_ff` at 1.20 V — read
+  **0.071 .. 0.099 UI**. At every corner it is far larger than the ~0.0045 UI the allocation
+  leaves after the clock path, so there is no corner at which it fits. It also adds up to
+  56.8 ps of pulse-width distortion to the data lane, which the
+  forwarded clock does not see. No bound is relaxed here; the consequence is filed as #232.
+- **The added load is negative**: the serializer drives two mux inputs (4.5–5.3 fF) instead
+  of one `DIN` (29.6–33.6 fF), so it is **24.9–28.7 fF lighter** and 39–88 ps faster. The
+  whole cost is the remap stage inheriting that ~30 fF load and driving it with the same
+  minimum-strength cell (`sg13g2_mux2_2` and `sg13g2_buf_*` exist and are not measured here).
+
+See the record's `README.md` for the per-corner decomposition and for what the record does
+not settle.
+
+**Correction (2026-11-13, PR #233) to `records/20261113T160050Z/README.md` lines 84-85.**
+That record's README says the remap "exceeds the entire T-20 target on its own, at every
+corner of the grid", and its own parenthesis contradicts it (0.054 UI is below 0.10 UI).
+The record file is immutable from its first push, so the correction lives here. Recomputed
+from the record's committed `report.json.gz` — per corner, the worst of `t05_add_r_s`,
+`t05_add_f_s`, `t05_add1_r_s`, `t05_add1_f_s`:
+
+- above 0.10 UI (100 ps at 1 Gb/s) at **30 of 45** corners, both edges above at 13;
+- the other 15 read **71.2 .. 99.4 ps** (0.071 .. 0.099 UI): the twelve 1.32 V corners of
+  `mos_ff`, `mos_sf`, `mos_tt` and `mos_fs`, plus the three `mos_ff` corners at 1.20 V;
+- worst case **0.184 UI** (`mos_ss`, 1.08 V, −40 °C) and best **0.071 UI** (`mos_ff`,
+  1.32 V, −40 °C) — the 53.8 ps / 0.054 UI in the record's parenthesis is the best *rise*
+  edge, not the per-corner worst.
+
+The record's conclusion is unchanged: at every corner the added delay is far larger than
+the ~0.0045 UI left of #177's 0.1075 UI allocation after the clock path's 0.103 UI (#54),
+so it does not fit anywhere on the grid, and #232 stands as filed. Only the "exceeds the
+whole target at every corner" phrasing is withdrawn. The record's other "every corner"
+statements were re-checked against the same report and hold (fall is the slower edge at
+all 45; `t05_load_*` negative at all 45; the control reproduces the baseline at all 45).
+
+**Also not named in that record's prose**: the report carries one solver diagnostic,
+`singular_matrix` at `mos_sf` / 1.32 V / 125 °C (node `n.xtx_c.xmnd1n.nsg13_lv_nmos#GP`,
+the control lane). The corner is `pass`, its control delta is 2.8e-23 s and its added-delay
+values are in family (69.6 ps rise, 89.5 ps fall), so it looks benign — but the record
+calls the run "clean" without naming it, and this is the one warning in the grid.
 
 ## dc-static
 

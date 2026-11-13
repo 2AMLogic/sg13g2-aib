@@ -1,0 +1,20 @@
+klt sim: notice: splitting 45 units into 15 batch jobs of at most 3 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt sim: batch job klt-sim-020cc006ae0d: done
+klt sim: batch job klt-sim-b56d84a3c61a: done
+klt sim: batch job klt-sim-5339be05eb62: done
+klt sim: batch job klt-sim-82d6afa4a787: done
+klt sim: batch job klt-sim-a94a2f2808c6: done
+klt sim: batch job klt-sim-581a99fff713: done
+klt sim: batch job klt-sim-cd116930d196: done
+klt sim: batch job klt-sim-e65d3d8031d5: done
+klt sim: batch job klt-sim-eb6b8b2a3cde: done
+klt sim: batch job klt-sim-c038b717c0dc: done
+klt sim: batch job klt-sim-4e4b8c61c650: done
+klt sim: batch job klt-sim-4e3e3761c440: done
+klt sim: batch job klt-sim-ca390c2b89c5: done
+klt sim: batch job klt-sim-c07dfb59dd3c: done
+klt sim: shards 14/15 launched, 1 launching, 0 pending, 14 collected; launch rate unknown, ETA unknown
+klt sim: shards 15/15 launched, 0 launching, 0 pending, 14 collected; launch rate unknown, ETA 0m
+klt sim: batch job klt-sim-05baa586e5ea had been submitted but never launched; launched it
+klt sim: batch job klt-sim-05baa586e5ea state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-05baa586e5ea: done
