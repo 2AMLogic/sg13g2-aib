@@ -107,11 +107,11 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
       "role": "layout"
     },
     "spec": {
-      "content_hash": "sha256:5bb240713aca869fd35fa2dca5aca1b70121c874bf53dea6f03374b5376b9a98"
+      "content_hash": "sha256:36121e01956b3151bb1952b4ccc3b08b36f7cc3087e7fc4d367efce5321e5ecf"
     },
     "devices": [
       {

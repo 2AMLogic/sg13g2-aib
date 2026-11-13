@@ -4,6 +4,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-13
 
+- **Issue #146** (closed): T-09: re-run the skew/timing row on the DR-0017 driver
 - **Issue #165** (closed): Generate LVS negative-control netlists instead of committing 290 KB near-copies
 
 ### 2026-11-12
