@@ -16,8 +16,11 @@ A negative control must require exactly 1.
 
 - `test_shift_redundancy.py`: T-05 `RTL` row, all 40 single-fault cases (20 positions x 2 channel directions) plus no-fault, with a TX bit-to-wire bijection check per position.
 - `tb_top.v`: bench top with fault injection (X, stuck-0, stuck-1) on the wires.
-- `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and L1
-  (L1 with a decoy on `rx_wire`), mode switch, and the TX/RX cycle-accounting tests.
+- `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and with
+  the datapath's `l1` loopback select on (with a decoy on `rx_wire`), mode switch, and the
+  TX/RX cycle-accounting tests. The `l1` path is the **digital** select only and is not the
+  L1 electrical path of `spec/test-configuration.md` (DR-0019); T-29's `SIM` leg is in
+  `sim/channel-eye/` (`tb_l1.cir` for L1, `tb_tc.cir` for L2).
 - `tb_datapath.v`: bench top; zero-delay wire, `rx_clk` = `clk` delayed a quarter cycle.
 
 ## `klt functional-verification` requests (`klt/`)

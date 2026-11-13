@@ -1,0 +1,66 @@
+{
+  "label": "l1",
+  "corners": 135,
+  "kind": "simulated",
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "measurements": [
+        "t01_dout_edges_a",
+        "t01_dout_edges_b"
+      ],
+      "pass": 270,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/params:kc_l1=0.8,kr_l1=0.8",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "measurements": [
+        "t09_dwell_over_a",
+        "t09_dwell_over_b",
+        "t09_dwell_over_c",
+        "t09_dwell_over_cb",
+        "t09_dwell_under_a",
+        "t09_dwell_under_b",
+        "t09_dwell_under_c",
+        "t09_dwell_under_cb",
+        "t09_over_a",
+        "t09_over_b",
+        "t09_over_c",
+        "t09_over_cb",
+        "t09_under_a",
+        "t09_under_b",
+        "t09_under_c",
+        "t09_under_cb"
+      ],
+      "pass": 2160,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/params:kc_l1=0.8,kr_l1=0.8",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "reported",
+      "measurements": [
+        "e_clock_lane_j",
+        "e_lane_a_rx_j",
+        "e_lane_a_tx_j",
+        "t26_energy_per_bit_simulated_j"
+      ],
+      "pass": 540,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  }
+}

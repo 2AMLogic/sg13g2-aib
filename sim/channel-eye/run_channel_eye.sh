@@ -3,6 +3,7 @@
 #
 #   sim/channel-eye/run_channel_eye.sh ch      # CH-3MM-RC, 45 corners (claims about the modeled channel)
 #   sim/channel-eye/run_channel_eye.sh tc      # L2 wire-bond loopback, 45 corners (test configuration; never a CH claim)
+#   sim/channel-eye/run_channel_eye.sh l1      # L1 on-die loopback, 135 corners (PVT-FULL x the route's -20/nom/+20 % R/C; TC, never a CH claim)
 #   sim/channel-eye/run_channel_eye.sh control  # bench positive control, one corner, fixed-PMOS TX copy (not design evidence)
 #
 # Every run is a `klt sim` request on the batch fleet; there is no local loop and no
@@ -17,10 +18,15 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SIM_DIR="$(cd "${HERE}/.." && pwd)"
 REPO="$(cd "${SIM_DIR}/.." && pwd)"
-kind="${1:?usage: run_channel_eye.sh ch|tc|control}"
+kind="${1:?usage: run_channel_eye.sh ch|tc|l1|control}"
+# units per job: the fleet allows floor((3600 - 120) / options.timeout_s). ch/tc/control
+# declare timeout_s 2400, so 1; l1 declares 480, so 7 -- which is what keeps its 135-corner
+# grid to 20 submits instead of 135 (one submit costs about 45 s).
+units=1
 case "${kind}" in
   ch) req=request_ch_1g.json ;;
   tc) req=request_tc_1g.json ;;
+  l1) req=request_l1_1g.json; units=7 ;;
   control) req=request_ctl_ch_tt.json ;;
   *) echo "run_channel_eye.sh: unknown kind '${kind}'" >&2; exit 2 ;;
 esac
@@ -41,7 +47,7 @@ trap '[[ -n "${KEEP_WORK:-}" ]] || rm -rf "${WORK}"' EXIT
 
 cd "${HERE}"
 rc=0
-"${KLT[@]}" sim "${req}" --backend batch --max-units-per-job 1 --wait-for-capacity 600 -o "${WORK}/out" \
+"${KLT[@]}" sim "${req}" --backend batch --max-units-per-job "${units}" --wait-for-capacity 600 -o "${WORK}/out" \
   --report-out "${REC}/report.json.gz" --format json > "${WORK}/stdout" 2> "${WORK}/stderr" || rc=$?
 # progress lines name the fleet bucket (an account id): keep them out of the record
 grep -q 'never launched' "${WORK}/stderr" && { KEEP_WORK=1; echo "run_channel_eye.sh: PARTIAL: fleet left jobs unlaunched; resume dir ${WORK}/out" >&2; }
@@ -67,6 +73,8 @@ rep = json.load(gzip.open(f"{rec}/report.json.gz", "rt"))
 rows = json.load(open(f"{rec}/rows.json"))["rows"]
 remote = rep.get("environment", {}).get("remote", {})
 claim = {"ch": "CH (modeled channel CH-3MM-RC)", "tc": "TC (L2 wire-bond loopback, declared values)",
+         "l1": "TC (L1 on-die loopback: declared RC route emulating CH-3MM-RC R and C "
+               "within +-20 %, no route inductance per DR-0009; not extracted from layout)",
          "control": "none: bench positive control with a modified TX copy"}[kind]
 out = {
     "record": "channel-eye", "utc_stamp": stamp, "kind": "simulated", "family": kind, "claim_scope": claim,

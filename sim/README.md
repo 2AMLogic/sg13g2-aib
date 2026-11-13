@@ -65,11 +65,18 @@ wires; **simulated**, the record says so), and the single-instance halves of T-1
 (opposite-polarity edges on A/B) and T-16 (data edge to center-aligned clock edge, nominal
 0.5 UI). The array and Monte Carlo halves of T-14/T-15/T-16 are #44's.
 
-Two separate requests keep the claims apart: `request_ch_1g.json` is **CH-3MM-RC**
+Three separate requests keep the claims apart: `request_ch_1g.json` is **CH-3MM-RC**
 (`spec/channel/channel_rc.cir`, nominal kr = kc = 1); `request_tc_1g.json` is the **L2
 wire-bond loopback** of `spec/test-configuration.md` (2 nH per wire, 0.5 pF per pin,
-declared). TC grades only T-09 (expected to fail there; recorded, not relaxed); its T-01 and
-T-26 are report-only, and T-15/T-16/T-18 are not observable in L2 and are not requested.
+declared); `request_l1_1g.json` is the **L1 on-die loopback** (DR-0019), an RC route
+emulating the model's R and C with its inductance removed per DR-0009 "Limits"
+(`tb_l1.cir`: `chan_rlc` at `l_mm = 0`). L2 grades only T-09 (expected to fail there;
+recorded, not relaxed); its T-01 and T-26 are report-only. L1 grades T-01 and T-09 — the
+rows `test-configuration.md` marks `yes` for it — and reports T-26. T-15/T-16/T-18 are not
+observable in either loopback and are not requested. L1 adds a third corner axis
+(`corners.params`): the route's −20 %, nominal and +20 % R and C points, zipped so R and C
+move together, so its grid is 135 corners against the other two requests' 45. Both
+loopbacks are **TC** and neither is ever cited for a CH row.
 `gen_channel_eye.py` writes `prbs7_stim.inc` and the requests (`--check` for staleness);
 the 75 CH measurements are generated, not hand-written.
 
@@ -78,6 +85,7 @@ python3 -I sim/channel-eye/test_channel_eye.py        # generator + post-process
 cd sim/channel-eye && klt sim request_ch_1g.json --dry-run   # 45 corners
 sim/channel-eye/run_channel_eye.sh ch                 # batch fleet; writes records/<UTC>-ch/
 sim/channel-eye/run_channel_eye.sh tc
+sim/channel-eye/run_channel_eye.sh l1                 # 135 corners (PVT-FULL x 3 R/C points)
 ```
 
 Corners: `mos_{tt,ss,ff,sf,fs}` x VDDIO 1.08/1.20/1.32 V x -40/27/125 C; the resistor and
@@ -368,6 +376,28 @@ measurements at 45/45 corners; the binding point is now `mos_ss/mixed/-40C` `t16
 480.9 ps (10.9 ps inside the 470 ps edge). T-01, T-09, T-15, T-18, T-26 still pass 45/45. The bound,
 the bench and the spec are unchanged. DIN input capacitance of the cell rises (NOR PMOS gate area
 doubled); the upstream driver of DIN is not modelled in this bench.
+
+**L1 record (#176, DR-0019): `channel-eye/records/20261113T105218Z-l1/`** — the first
+record of the **L1 on-die loopback**, and T-29's `SIM` leg for L1 (the L2 leg is the
+existing `20261110T083756Z-tc` record). Simulated, TC scope, **never a CH claim**. 135
+corners = PVT-FULL x the route's −20 %, nominal and +20 % R and C points (`corners.params`
+zips `kr_l1`/`kc_l1`, so R and C move together), 20 batch jobs of 7 units, `klt sim` exit 0,
+135/135 corners `pass`. T-01 passes 270/270 (`dout` edge count 64.0 on both data lanes at
+every corner) and T-09 passes 2160/2160 (worst over/undershoot 0.0053 x VOS against the
+0.25 bound, zero dwell above the level — L1 loads the pin far less than L2's bond wire
+does). T-26 is **report-only** in L1 per `spec/test-configuration.md` and is
+**simulated**: 0.308 pJ/bit (`mos_ss`/−40 C/0.8) to 0.691 pJ/bit (`mos_ff`/125 C/1.2),
+rising monotonically with the route's C, which cross-checks that the R/C axis took effect.
+T-15/T-16/T-18 are not observable in L1 and are not requested. No bound was changed and
+nothing under `design/` or `spec/` was edited to produce it.
+
+*Declared gaps* (also in the record's `README.md`): the TopMetal2 route is **not in
+`layout/`**, so the ±20 % band is the declared emulation tolerance of
+`test-configuration.md`, not an extracted R/C — the `klt extract` / `klt pex` check is owed
+and filed as #182; the route's inductance is not reproduced (`l_mm = 0`, DR-0009 "Limits");
+and `tb_l1.cir` keeps the model's `cfar = 0.1 pF` far-end term on top of the real cells'
+pin capacitance, exactly as `tb_ch.cir` does. The RTL input named `l1` is the digital
+select, not this configuration (#181).
 
 ## clock-path
 
