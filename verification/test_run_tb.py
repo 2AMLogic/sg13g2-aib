@@ -8,6 +8,10 @@ requires of a negative control, so if a wrong-shaped neg_*.json could produce
 it, the control would pass with the bench never built -- the "exits non-zero
 while proving nothing" case DR-0015 exists to rule out.
 
+It also covers the unknown-key refusal (issue #231): a request key the runner
+does not read exits 2 rather than being ignored, so the bench the item 5 digital
+envelopes cite cannot drift from the bench a green `rtl` job runs.
+
 No PDK, no klt, and no cocotb needed for the loader cases.
 
     python3 -I verification/test_run_tb.py
@@ -86,6 +90,51 @@ MUTATIONS = [
      lambda r: r["options"].__setitem__("random_seed", 1.5)),
 ]
 
+# (label, mutation, name) -- each adds a key load_request does not read, and
+# `name` is the path-qualified key the refusal must name. The first three are the
+# ones reported on issue #231. `testbench.testcase`, `options.includes`,
+# `options.coverage`, `options.trace`, `options.build_args` and
+# `options.initial_state` are keys the pinned klt itself honours, which is what
+# makes an ignored key drift rather than a harmless typo; `simulator`, `module`
+# and `testbench.toplevel_lang` stand for the misplaced/misspelled class.
+UNKNOWN_KEYS = [
+    ("testbench.testcase",
+     lambda r: r["testbench"].__setitem__("testcase", "no_such_test"),
+     "testbench.testcase"),
+    ("options.includes",
+     lambda r: r["options"].__setitem__("includes", ["/nonexistent"]),
+     "options.includes"),
+    ("options.plusargs",
+     lambda r: r["options"].__setitem__("plusargs", ["+x"]), "options.plusargs"),
+    ("top-level unknown key",
+     lambda r: r.__setitem__("simulator", "icarus"), "simulator"),
+    ("top-level key spelled like a nested one",
+     lambda r: r.__setitem__("module", "test_shift_redundancy"), "module"),
+    ("testbench unknown key",
+     lambda r: r["testbench"].__setitem__("toplevel_lang", "verilog"),
+     "testbench.toplevel_lang"),
+    ("options.coverage",
+     lambda r: r["options"].__setitem__("coverage", True), "options.coverage"),
+    ("options.trace", lambda r: r["options"].__setitem__("trace", True), "options.trace"),
+    ("options.build_args",
+     lambda r: r["options"].__setitem__("build_args", ["-g2012"]), "options.build_args"),
+    ("options.initial_state",
+     lambda r: r["options"].__setitem__("initial_state", "x"), "options.initial_state"),
+]
+
+# Every key the three allow-lists permit, all at once: the allow-lists must not
+# be narrower than what load_request reads, or a committed request would be
+# refused for a key the runner honours.
+EVERY_ALLOWED_KEY = {
+    "schema": "klt.functional_verification.request/1",
+    "engine": "icarus",
+    "sources": ["../../rtl/shift_redundancy.v", "../tb_top.v"],
+    "hdl_toplevel": "tb_top",
+    "testbench": {"module": "test_shift_redundancy", "search_path": ".."},
+    "parameters": {"N": 8},
+    "options": {"timescale": ["1ns", "1ps"], "random_seed": 1, "defines": {"FOO": 1}},
+}
+
 
 def load_obj(obj, directory: Path):
     """Write `obj` as a request in `directory` and load it."""
@@ -125,6 +174,69 @@ class LoaderRejectsWrongShapes(unittest.TestCase):
         json.loads(fixture.read_text())  # valid JSON, so exit 2 is about the shape
         with self.assertRaises(run_tb.Unsupported):
             run_tb.load_request(fixture)
+
+
+class LoaderRejectsUnknownKeys(unittest.TestCase):
+    """A key klt honours and this runner ignores must not load (issue #231).
+
+    #217 made the request file the only bench definition so a green `rtl` job
+    runs what the item 5 digital envelopes cite. A key the runner silently
+    ignores reintroduces exactly that drift, so it exits 2 rather than warning.
+    """
+
+    def test_unknown_keys_are_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            for label, mutate, _name in UNKNOWN_KEYS:
+                req = copy.deepcopy(VALID)
+                mutate(req)
+                with self.subTest(label), self.assertRaises(run_tb.Unsupported):
+                    load_obj(req, Path(d))
+
+    def test_the_refusal_names_the_key_with_its_path(self):
+        """`options.includes`, not `includes`: the message says where to look."""
+        with tempfile.TemporaryDirectory() as d:
+            for label, mutate, name in UNKNOWN_KEYS:
+                req = copy.deepcopy(VALID)
+                mutate(req)
+                with self.subTest(label):
+                    with self.assertRaises(run_tb.Unsupported) as caught:
+                        load_obj(req, Path(d))
+                    self.assertIn(name, str(caught.exception))
+
+    def test_every_allowed_key_still_loads(self):
+        """Guards the allow-lists against being narrower than what is read."""
+        with tempfile.TemporaryDirectory() as d:
+            bench = load_obj(copy.deepcopy(EVERY_ALLOWED_KEY), Path(d))
+        self.assertEqual(bench["parameters"], {"N": 8})
+        self.assertEqual(bench["defines"], {"FOO": 1})
+
+    def test_the_allow_lists_are_what_load_request_reads(self):
+        """A key added to an allow-list without being read would reopen the gap."""
+        self.assertEqual(run_tb.ALLOWED_TOP, frozenset(EVERY_ALLOWED_KEY))
+        self.assertEqual(run_tb.ALLOWED_TESTBENCH,
+                         frozenset(EVERY_ALLOWED_KEY["testbench"]))
+        self.assertEqual(run_tb.ALLOWED_OPTIONS,
+                         frozenset(EVERY_ALLOWED_KEY["options"]))
+
+    def test_the_sdf_refusal_still_wins(self):
+        """options.sdf is itself an unknown key; its own message is the useful one."""
+        for label, mutate, _name in UNKNOWN_KEYS:
+            req = copy.deepcopy(VALID)
+            mutate(req)
+            req["options"]["sdf"] = "../../pnr/out/routed.sdf"
+            with tempfile.TemporaryDirectory() as d, self.subTest(label):
+                with self.assertRaises(run_tb.Unsupported) as caught:
+                    load_obj(req, Path(d))
+                self.assertIn("annotates an SDF", str(caught.exception))
+
+    def test_the_placeholder_refusal_still_wins(self):
+        req = copy.deepcopy(VALID)
+        req["testbench"]["testcase"] = "no_such_test"
+        req["sources"] = ["@PDK_ROOT@/tb_top.v"]
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(run_tb.Unsupported) as caught:
+                load_obj(req, Path(d))
+        self.assertIn("unresolved placeholder", str(caught.exception))
 
 
 class LoaderAcceptsTheCommittedRequests(unittest.TestCase):
@@ -178,6 +290,16 @@ class MainReturnsTwo(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "request.json"
             for label, mutate in MUTATIONS:
+                req = copy.deepcopy(VALID)
+                mutate(req)
+                path.write_text(json.dumps(req))
+                with self.subTest(label):
+                    self.assertEqual(run_tb.main([str(path)]), 2)
+
+    def test_every_unknown_key(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "request.json"
+            for label, mutate, _name in UNKNOWN_KEYS:
                 req = copy.deepcopy(VALID)
                 mutate(req)
                 path.write_text(json.dumps(req))
