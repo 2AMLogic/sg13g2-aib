@@ -10,7 +10,9 @@ table (`sim/pvt_full.py`) rather than restating it; CI checks both that the comm
 requests reproduce (`gen_dc_static.py --check`) and that every committed `sim/` request
 agrees with the table (`scripts/ci/check_corner_bundles.py`).
 
-**Status: recorded, two records (append-only).**
+**Status: recorded, four records (append-only).** The two below are the item 5 pair; see
+"ESD pad diode against T-24" for `20261110T084631Z` and "Batch run history" for the #142
+re-check `20261112T001207Z`, which is the record the manifest cites.
 
 - `records/20261108T002904Z/` (batch `klt-sim-abe0ec2c5d05`): the first-cut cells. T-07, T-11,
   T-28 pass; T-06 (1 mA load), T-08, T-24 fail (issue #130). Untouched.
@@ -140,16 +142,46 @@ Scope: every row here is `BOTH` (channel and test configuration); no channel mod
 
 ## Reproduce
 
+`run_dc_static.sh` is a thin entry point over the shared batch run-and-record procedure,
+`sim/harness/batch_record.sh` — the same one `sim/channel-eye/` and `sim/clock-path/` use
+(`sim/README.md`, "Record harness"). It resolves the PDK, runs `gen_dc_static.py --check`
+before submitting anything, submits **one** `klt sim --backend batch` request with
+`--wait-for-capacity 600`, scrubs the fleet bucket name out of the captured stderr, and
+writes a complete `records/<stamp>[-<kind>]/`: `request.json`, the bench files, `klt.stderr`,
+`rows.json`, `report.json.gz` and a `record.json` carrying `klt_exit_code`.
+
 ```bash
 sim/harness/common/fetch-pdk.sh && source sim/harness/env.sh
 SG13G2_TOOLS_CACHE=$PWD/sim/build/cache sim/harness/common/build-osdi.sh
-python3 -I sim/dc-static/gen_dc_static.py --check       # requests fresh against the generator
-klt sim sim/dc-static/request.json --dry-run            # 45 units, backend batch
-klt sim sim/dc-static/request.json --format json --report-out /tmp/dc-static-report.json
+sim/dc-static/run_dc_static.sh nominal --dry-run   # resolved configuration, touches nothing
+sim/dc-static/run_dc_static.sh nominal             # request.json -> records/<stamp>/
+sim/dc-static/run_dc_static.sh 2kv                 # request_2kv.json -> records/<stamp>-2kv/
+sim/dc-static/run_dc_static.sh esd-diode           # request_esd_diode.json -> records/<stamp>-esd-diode/
 ```
 
-The second command goes to the batch fleet. A record is a new `records/<stamp>/` directory
-holding the report; never edit an earlier one.
+Each kind is its own record: the shared procedure submits one request per record, so the
+DR-0018 pair that `records/20261110T084631Z/` holds in one directory would now be two.
+A fleet error writes **no** record (exit 6) and prints the
+`DC_STATIC_WORK=<dir> DC_STATIC_RESUME=1` line that retries the same batch jobs; there is no
+local fallback. Records are append-only — never edit an earlier one.
+
+**Until #228 this procedure was the recipe above, followed by hand**, and the four committed
+records have four different shapes: none holds the request or the bench it was run from, none
+records `klt_exit_code`, and `records/20261112T001207Z/` — the one
+`signoff/block-manifest.json` cites — has no `record.json` at all, so
+`scripts/ci/check_evidence_format.py` does not look at it. Those four are evidence and are
+left exactly as they are; the entry point is for the next run. No `record.json` was
+back-filled.
+
+**Spec rows come from a prefix map, not from the request.** `rows` is grouped by spec row,
+and the committed requests declare no `spec_row`: every graded measurement is step-level, so
+the report names it `<step>.tNN_*` while a request would declare it `tNN_*`. `run_dc_static.sh`
+therefore hands the harness a `--row-map` of name prefixes (`t06_` → T-06, `t07_t28_` → both
+T-07 and T-28, and so on), which resolves the six rows without changing the committed request
+bytes the cited record was run from. Adding `spec_row` tags to the requests would change those
+bytes and is a separate, deliberate re-run. `sim/harness/test_batch_record.sh` case 8 drives
+the whole procedure over `records/20261112T001207Z/report.json` and checks the map reproduces
+the six rows, their 45-corner counts and T-24's binding corner.
 
 ## Batch run history
 

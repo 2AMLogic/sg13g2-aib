@@ -2,9 +2,9 @@
 # batch_record.sh -- submit ONE `klt sim` request to the batch fleet and write ONE
 # append-only record under <family dir>/records/.
 #
-# This is the shared procedure behind sim/channel-eye/run_channel_eye.sh and
-# sim/clock-path/run_clock_path.sh; those stay the entry points and pass only what
-# really differs between the two families. It is never called directly by an operator.
+# This is the shared procedure behind the sim/<family>/run_<family>.sh entry points
+# (channel-eye, clock-path, dc-static); those stay the entry points and pass only what
+# really differs between the families. It is never called directly by an operator.
 #
 # There is no local loop and no fallback: a failed submit is reported and the script
 # exits non-zero. `--wait-for-capacity 600` is mandatory on this fleet (it is
@@ -17,9 +17,10 @@
 #   batch_record.sh --dir DIR --record NAME --request FILE --generator FILE
 #                   --post-label LABEL --max-units-per-job N --env-prefix PREFIX
 #                   [--self NAME] [--record-suffix SUFFIX] [--copy FILE]...
-#                   [--fields-head JSON] [--fields-tail JSON] [--report-only-ranges]
+#                   [--fields-head JSON] [--fields-tail JSON] [--row-map JSON]
+#                   [--report-only-ranges]
 #
-#   --dir                family directory (sim/channel-eye, sim/clock-path)
+#   --dir                family directory (sim/channel-eye, sim/clock-path, sim/dc-static)
 #   --record             the record.json "record" field
 #   --request            the klt sim request, copied into the record as request.json
 #   --generator          python generator run with --check before anything is submitted
@@ -32,6 +33,14 @@
 #                        request's own "netlist" is always copied
 #   --fields-head        JSON object of family record.json fields, placed after "kind"
 #   --fields-tail        JSON object of family record.json fields, placed after "rows"
+#   --row-map            JSON object of measurement-name PREFIX -> spec row (or [rows]),
+#                        for a family whose graded measurements carry no `spec_row` and
+#                        so cannot be grouped from the request (dc-static: a report names
+#                        a step measurement `<step>.<name>`, the request declares it
+#                        `<name>`, and the committed request declares no row). It only
+#                        reaches `rows`; `--report-only-ranges` still takes its `spec_row`
+#                        from the request, which is correct as long as a prefix map names
+#                        only graded measurements
 #   --report-only-ranges record the min/max over the grid of every ungraded measurement
 #   --dry-run            print the resolved configuration as JSON and exit, touching nothing
 #                        (needs no PDK and no fleet; this is what the self-tests check the
@@ -45,7 +54,7 @@ set -euo pipefail
 
 SELF="$(basename "${0}")"
 DIR="" ; RECORD="" ; REQUEST="" ; GENERATOR="" ; POST_LABEL="" ; MAX_UNITS="" ; ENV_PREFIX=""
-SUFFIX="" ; FIELDS_HEAD="{}" ; FIELDS_TAIL="{}" ; RANGES=0 ; DRY=0
+SUFFIX="" ; FIELDS_HEAD="{}" ; FIELDS_TAIL="{}" ; ROW_MAP="{}" ; RANGES=0 ; DRY=0
 COPY=()
 while [[ $# -gt 0 ]]; do
   case "${1}" in
@@ -61,9 +70,10 @@ while [[ $# -gt 0 ]]; do
     --copy) COPY+=("${2}"); shift 2 ;;
     --fields-head) FIELDS_HEAD="${2}"; shift 2 ;;
     --fields-tail) FIELDS_TAIL="${2}"; shift 2 ;;
+    --row-map) ROW_MAP="${2}"; shift 2 ;;
     --report-only-ranges) RANGES=1; shift ;;
     --dry-run) DRY=1; shift ;;
-    -h|--help) sed -n '2,43p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help) sed -n '2,52p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "${SELF}: unknown argument '${1}'" >&2; exit 2 ;;
   esac
 done
@@ -74,7 +84,8 @@ for need in "DIR:--dir" "RECORD:--record" "REQUEST:--request" "GENERATOR:--gener
 done
 
 if [[ ${DRY} -eq 1 ]]; then
-  # also the only validation of --fields-head / --fields-tail: json.loads rejects a typo.
+  # also the only validation of --fields-head / --fields-tail / --row-map: json.loads
+  # rejects a typo.
   python3 -I -c 'import json,sys
 k = ("self", "dir", "record", "request", "generator", "post_label", "record_suffix",
      "max_units_per_job", "env_prefix")
@@ -82,10 +93,11 @@ cfg = dict(zip(k, sys.argv[1:1 + len(k)]))
 cfg["report_only_ranges"] = sys.argv[1 + len(k)] == "1"
 cfg["fields_head"] = json.loads(sys.argv[2 + len(k)])
 cfg["fields_tail"] = json.loads(sys.argv[3 + len(k)])
-cfg["copy"] = sys.argv[4 + len(k):]
+cfg["row_map"] = json.loads(sys.argv[4 + len(k)])
+cfg["copy"] = sys.argv[5 + len(k):]
 print(json.dumps(cfg, indent=2))' \
     "${SELF}" "${DIR}" "${RECORD}" "${REQUEST}" "${GENERATOR}" "${POST_LABEL}" "${SUFFIX}" \
-    "${MAX_UNITS}" "${ENV_PREFIX}" "${RANGES}" "${FIELDS_HEAD}" "${FIELDS_TAIL}" \
+    "${MAX_UNITS}" "${ENV_PREFIX}" "${RANGES}" "${FIELDS_HEAD}" "${FIELDS_TAIL}" "${ROW_MAP}" \
     ${COPY[@]+"${COPY[@]}"}
   exit 0
 fi
@@ -142,8 +154,10 @@ rm -rf "${WORK}"
 cp "${DIR}/${REQUEST}" "${REC}/request.json"
 for f in ${COPY[@]+"${COPY[@]}"}; do cp "${DIR}/${f}" "${REC}/"; done
 cp "${DIR}/$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["netlist"])' "${DIR}/${REQUEST}")" "${REC}/"
-python3 -I "${SIM_DIR}/channel-eye/channel_eye_post.py" "${REC}/report.json.gz" \
-  --request "${REQUEST}" --label "${POST_LABEL}" > "${REC}/rows.json"
+POST=(python3 -I "${SIM_DIR}/channel-eye/channel_eye_post.py" "${REC}/report.json.gz"
+      --request "${REQUEST}" --label "${POST_LABEL}")
+[[ "${ROW_MAP}" == "{}" ]] || POST+=(--row-map "${ROW_MAP}")
+"${POST[@]}" > "${REC}/rows.json"
 
 PDKTAG="$(grep -o '"release_tag": *"[^"]*"' "${SIM_DIR}/pdk.json" | head -1 | cut -d'"' -f4)"
 WRITE=(python3 -I "${HARNESS}/write_record.py" "${REC}" --record "${RECORD}" --stamp "${STAMP}"
