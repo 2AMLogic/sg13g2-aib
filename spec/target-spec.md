@@ -58,7 +58,7 @@ are reported as mean, sigma and the tail used, not as a single corner value.
 | T-16 | Data-to-clock skew, RX input | ≤ 0.03 UI (30 ps at 1 Gb/s) | ≤ 0.06 UI | ≤ 0.03 UI | `SIM` over the channel model; `SIM-MC` | PVT-FULL | §2.1.3.3 Table 7 (tDCS 0.03 UI) | CH. **STAT** |
 | T-17 | Forwarded-clock duty-cycle distortion at TX output | ±3 % (DDR) | ±5 % | ±3 % | `SIM` | PVT-FULL incl. `mos_sf`, `mos_fs` | §2.1.6.5 Table 8 (tFDCD: DDR ±3 %, SDR ±10 %) | BOTH |
 | T-18 | Eye at the far-end RX input (width) | ≥ 0.40 UI valid window, ≥ ±90 mV eye height around VDDIO/2 | ≥ 0.30 UI | ≥ 0.40 UI | `SIM` (eye over PRBS-7 at the rate, channel model) | PVT-FULL | §4.1 Table 17 (tEW far end 0.40 UI; VEH ±90 mV). The AIB 1.2 near-end width (0.56 UI) and trace consumption (0.1 UI) are reported alongside | CH |
-| T-19 | Receiver capture window (setup + hold aperture), including mismatch | ≤ 0.15 UI (150 ps at 1 Gb/s) | ≤ 0.25 UI | ≤ 0.15 UI (75 ps at 2 Gb/s) | `SIM-MC` of the RX capture flop/latch plus input stage | PVT-FULL | not defined by AIB 1.2 (it defines the eye at the pin, not the capture aperture). Allocation in §Timing budget below; DR-0006 | BOTH. **STAT** |
+| T-19 | Receiver capture window (setup + hold aperture) **referred to the RX pin**, including mismatch | ≤ 0.15 UI (150 ps at 1 Gb/s) | ≤ 0.25 UI | ≤ 0.15 UI (75 ps at 2 Gb/s) | `SIM-MC` of the RX capture flop/latch plus the input stage, **driven from the pin and reported referred to it** — a flop-referred aperture does not answer this row (DR-0021) | PVT-FULL | not defined by AIB 1.2 (it defines the eye at the pin, not the capture aperture). Allocation in §Timing budget below; DR-0006. **Reference node**: the RX pin (`rxa`, `rxc`/`rxcb`), the node T-16 and T-18 are graded at, so the input stage is inside the aperture and no node between the last pin-referred row and the capture flop is uncharged — DR-0021 | BOTH. **STAT** |
 | T-20 | Sampling-margin budget (the DDR capture window left after all uncertainty) | ≥ 0.10 UI (100 ps at 1 Gb/s) at every PVT-FULL corner | ≥ 0.05 UI | ≥ 0.10 UI | `ANALYSIS` fed by T-16, T-19, T-21, and the DLL interface (dll-interface.md); `SIM` end-to-end confirms | PVT-FULL | not defined by AIB 1.2 (derived; §Timing budget) | CH for the claim; TC value reported separately |
 | T-21 | Forwarded-clock alignment (RX sampling-clock placement) | step ≤ 1/8 UI (125 ps at 1 Gb/s, i.e. 16 steps per clock period); worst-case placement error (half a step plus phase-spacing error) ≤ 0.0625 UI; range ≥ one forwarded-clock period (2 ns at 1 Gb/s); lock ≤ 10 µs; DLL-added jitter ≤ 0.03 UI peak-to-peak | step ≤ 1/4 UI (8 steps per period); placement error ≤ 0.125 UI; jitter ≤ 0.05 UI p-p | step ≤ 1/16 UI | `SIM` of the interface contract (dll-interface.md); compared against the sibling | PVT-FULL | §2.1.6.7 (optional DLL phase selection), §3.2.3 (calibration, which an absent DLL shall still perform as if present); step, range, lock and jitter values are *not defined by AIB 1.2* (DR-0011) | BOTH |
 | T-22 | I/O cell pitch | 55 µm | 80 µm | 40 µm | `LAYOUT` (`klt` bounding box of the unit cell and its abutment) | n/a (geometric) | §1.3.4.1 Table 4 and §4.1 note: ≤ 55 µm bump pitch is the low-density class AIB 1.2 sizes its timing against. Floor from PDK-lay Pad.aR + Pad.bR = 38.4 µm; the PDK's own I/O cells are 80 µm wide (PDK-io LEF) | BOTH (the same cell is in both) |
@@ -81,7 +81,7 @@ is a verified row, and the sum is what T-20 checks, not an independent claim.
 | Contribution | UI | ps at 1 Gb/s | Row |
 |---|---|---|---|
 | Far-end valid eye | 0.400 | 400 | T-18 (AIB 1.2) |
-| − receiver capture aperture | 0.150 | 150 | T-19 |
+| − receiver capture aperture, referred to the RX pin | 0.150 | 150 | T-19 (node: DR-0021) |
 | − data-to-clock skew at RX input | 0.030 | 30 | T-16 (AIB 1.2) |
 | − alignment placement error (half a step of 1/8 UI plus phase-spacing error, worst case) | 0.0625 | 62.5 | T-21 |
 | − forwarded-clock + DLL jitter, peak-to-peak (all contributors in the block's clock path) | 0.050 | 50 | T-21 |
@@ -95,6 +95,36 @@ the stretch must not drive the architecture (CLAUDE.md, DR-0002).
 
 The jitter allocation is peak-to-peak at 14 σ (≈ 1e-12 tail); 0.03 UI of it is
 the DLL's (dll-interface.md), i.e. about 2.1 ps rms at 1 Gb/s.
+
+**Every line above is referred to the RX pin.** T-18's eye and T-16's skew are
+graded there, and T-19's aperture is *defined* there
+([DR-0021](decisions/0021-t19-reference-node.md)), so the RX input stage falls
+inside T-19 rather than between two rows. Two consequences, neither of which
+changes a line above:
+
+- The input stage's rise/fall delay asymmetry `Δ_rx` is charged to T-19, and **no
+  sampling-clock placement can absorb it**: over a DDR stream the same asymmetry
+  falls on the setup side for one data/clock-edge pairing and on the hold side
+  for another, so re-centring trades one for the other. Because T-21 sets a
+  single sampling phase for both clock edges, the two worst sides add and the
+  pin-referred aperture is **`t_su + t_h + 2·|Δ_rx|`** (DR-0021 § decision 2).
+  None of it is chargeable to T-21.
+- **T-19 still passes pin-referred.** `sim/mc/records/20261112T082047Z-t19/`
+  (**simulated**, pre-layout, 900 mismatch draws over the 45-corner grid) records
+  an aperture of 68.60 ps worst draw against the 150 ps limit *referred to the
+  flop's D pin*, plus the pad-to-D delays per draw; re-referring it to the pin
+  gives a worst draw of **99.5 ps of 150 ps**, 0 of 900 draws over the limit
+  (DR-0021 § decision 3). T-19's worst corner is a skew corner (`mos_sf`), not
+  the classic slow/fast pair.
+
+**The open item is the edge slew at the RX pad, not the budget.**
+`sim/clock-path/records/20261113T095936Z/` measures the alternate DDR
+half-periods at the RX *outputs* as 397.4 and 602.6 ps against a nominal 500 ps
+at `mos_sf`/1.08 V/−40 °C — 0.103 UI of static off-centring end-to-end — of which
+T-17 accounts for 20.7 ps and the per-stage receiver measurement above for at
+most 19.1 ps. The remaining 63–71 ps is attributed by no measurement on `main`,
+and the T-19 figure holds only at that bench's ideal 100 ps pad ramp. Filed as
+**#198**. T-20's allocation and verdict are unaffected.
 
 ## What this spec does not cover
 
