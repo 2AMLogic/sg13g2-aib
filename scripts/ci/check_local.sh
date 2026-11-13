@@ -96,6 +96,19 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I sim/mc/gen_mc.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
+
+  # The two sim bench self-tests. Each covers its post-processor -- the code
+  # that turns a recorded report into a pass/fail -- and asserts its generated
+  # files are fresh against the generator, so neither needs its own
+  # `gen_*.py --check` line: test_channel_eye.py compares all four
+  # channel-eye outputs and test_t19.py both T-19 netlists, the same
+  # comparison those --check modes make. The one sim generator not reached
+  # that way, sim/clock-path/gen_clock_path.py --check, runs inside
+  # test_checkers.py above (with gen_channel_eye, gen_mc and gen_dc_static).
+  run "Self-test the channel-eye bench and its pass/fail post-processor" \
+    python3 -I sim/channel-eye/test_channel_eye.py
+  run "Self-test the T-19 capture-window bench and its aperture post-processor" \
+    python3 -I sim/mc/capture_window/test_t19.py
   run "Check every committed sim/ and layout/ request against the one PVT-FULL corner table" \
     python3 -I scripts/ci/check_corner_bundles.py
   run "Check the item 7 pex benches against the generator" \
