@@ -127,9 +127,9 @@
       "matched": 29
     },
     "devices": {
-      "layout": 268,
-      "reference": 268,
-      "matched": 268
+      "layout": 276,
+      "reference": 276,
+      "matched": 276
     },
     "pins": {
       "layout": 9,
@@ -152,8 +152,8 @@
     "engine": "klayout",
     "engine_version": "0.30.13",
     "netgen_binary": null,
-    "layout_sha256": "cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
-    "reference_sha256": "b5e32c2a584f58c3918b8acd1295369ace7471b9e1ce97c510ab8d31674394ed",
+    "layout_sha256": "fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+    "reference_sha256": "f7645b79a4e3769c0b6a915728443db4b00a8e48861f73aa5c3d2e2a368ac10c",
     "extracted_netlist": null
   },
   "provenance": {
@@ -168,7 +168,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
       "role": "layout"
     },
     "klayout_version_mismatch": true
@@ -262,7 +262,7 @@
       "pin": false
     },
     {
-      "layout": "\\$17",
+      "layout": "\\$13",
       "reference": "ATX/OEB",
       "pin": false
     },
@@ -277,7 +277,7 @@
       "pin": false
     },
     {
-      "layout": "\\$15",
+      "layout": "\\$17",
       "reference": "BTX/DN",
       "pin": false
     },
@@ -287,12 +287,12 @@
       "pin": false
     },
     {
-      "layout": "\\$20",
+      "layout": "\\$18",
       "reference": "BTX/GN",
       "pin": false
     },
     {
-      "layout": "\\$13",
+      "layout": "\\$14",
       "reference": "BTX/GP",
       "pin": false
     },
@@ -302,12 +302,12 @@
       "pin": false
     },
     {
-      "layout": "\\$14",
+      "layout": "\\$15",
       "reference": "BTX/NB",
       "pin": false
     },
     {
-      "layout": "\\$19",
+      "layout": "\\$20",
       "reference": "BTX/OEB",
       "pin": false
     },

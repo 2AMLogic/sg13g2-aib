@@ -16,15 +16,15 @@
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
-      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e"
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e"
     },
     "2.digital": {
       "file": "signoff/attest/item2-digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
     "3.analog": {
-      "file": "layout/records/20261110T082915Z/drc_analog.json",
-      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e"
+      "file": "layout/records/20261113T112710Z/drc_analog.json",
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e"
     },
     "3.digital": {
       "file": "layout/records/20261027T063033Z/drc_digital.json",
@@ -203,7 +203,7 @@
   "claims": {
     "3": {
       "analog": {
-        "report": "layout/records/20261110T082915Z/drc_analog.json",
+        "report": "layout/records/20261113T112710Z/drc_analog.json",
         "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
         "status": "clean",
         "violation_count": 0,

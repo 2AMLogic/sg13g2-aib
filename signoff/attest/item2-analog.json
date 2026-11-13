@@ -15,7 +15,7 @@
         "check": "stream_readable",
         "role": "layout",
         "passed": true,
-        "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e"
+        "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e"
       },
       {
         "check": "top_cell_non_empty",
@@ -43,11 +43,11 @@
         "path": "layout/aib_io_column.gds",
         "scope": "repo"
       },
-      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e"
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e"
     },
     "regeneration": {
       "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-      "regenerated_hash": "sha256:6a2461185cab186b2fb5567ef77a57e4967c630dbdd365bba353a94cd316b321",
+      "regenerated_hash": "sha256:5899535fad000a21062318752e3e9fff2d85eb7274589028c5ad2d6a37e936de",
       "hash_kind": "geometry"
     }
   }

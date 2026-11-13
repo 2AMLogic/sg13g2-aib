@@ -127,9 +127,9 @@
       "matched": 17
     },
     "devices": {
-      "layout": 134,
-      "reference": 134,
-      "matched": 134
+      "layout": 138,
+      "reference": 138,
+      "matched": 138
     },
     "pins": {
       "layout": 7,
@@ -152,8 +152,8 @@
     "engine": "klayout",
     "engine_version": "0.30.13",
     "netgen_binary": null,
-    "layout_sha256": "cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
-    "reference_sha256": "d9ae144e5614062179df1735208e09202ec7d8a776818a5f86b7f8caaf9e7f4b",
+    "layout_sha256": "fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+    "reference_sha256": "236f94023a45b74a8bea45f10bed340078204c2767b7bdb35208a5015fc7e815",
     "extracted_netlist": null
   },
   "provenance": {
@@ -168,7 +168,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:cea4e63c2d253eca9eef7828789bb0d08c3af562281276fd6d5f4983c4d48b2e",
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
       "role": "layout"
     },
     "klayout_version_mismatch": true
@@ -272,7 +272,7 @@
       "pin": false
     },
     {
-      "layout": "\\$11",
+      "layout": "\\$10",
       "reference": "TX/GN",
       "pin": false
     },
@@ -292,7 +292,7 @@
       "pin": false
     },
     {
-      "layout": "\\$10",
+      "layout": "\\$11",
       "reference": "TX/OEB",
       "pin": false
     },

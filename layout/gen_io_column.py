@@ -98,8 +98,8 @@ TX_DEVICES = [
     ("Mnd2p", "pmos", 2.0, 0.13, 2, dict(D="GP", G="OE", S="VDDIO")),
     ("Mnd1n", "nmos", 2.0, 0.13, 2, dict(D="GP", G="DIN", S="NA")),
     ("Mnd2n", "nmos", 2.0, 0.13, 2, dict(D="NA", G="OE", S="VSS")),
-    ("Mnr1p", "pmos", 2.0, 0.13, 2, dict(D="NB", G="DIN", S="VDDIO")),
-    ("Mnr2p", "pmos", 2.0, 0.13, 2, dict(D="GN", G="OEB", S="NB")),
+    ("Mnr1p", "pmos", 2.0, 0.13, 4, dict(D="NB", G="DIN", S="VDDIO")),
+    ("Mnr2p", "pmos", 2.0, 0.13, 4, dict(D="GN", G="OEB", S="NB")),
     ("Mnr1n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="DIN", S="VSS")),
     ("Mnr2n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="OEB", S="VSS")),
     ("Mp", "pmos", 1.0, 0.13, 54, dict(D="DP", G="GP", S="VDDIO")),
@@ -673,9 +673,14 @@ def build_tx(ctx, router):
 
     put("Mp", 5.0, 25, 27)
     put("Mn", 28.0, 33)
-    x = 3.5
+    # Row 33 holds the four predriver pmos, then Mn at x = 28.0. The ng = 4
+    # pull-ups Mnr1p / Mnr2p (#164) are 1.14 um wider each, so with the 2.0 um
+    # device gap this row used, Mnr2p's nwell bulk tap landed on Mn and shorted
+    # DN to VDDIO through a 0.01 um metal1 overlap (#187). Mnd1p keeps its x and
+    # the three gaps behind it close to 1.2 um, leaving the chain clear of Mn.
+    x = 4.3
     for nm in ("Mnd1p", "Mnd2p", "Mnr1p", "Mnr2p"):
-        x = put(nm, x + 2.0, 33)
+        x = put(nm, x + 1.2, 33)
     x = 3.5
     for nm in ("Mnd1n", "Mnd2n", "Mnr1n", "Mnr2n"):
         x = put(nm, x + 2.0, 44)
