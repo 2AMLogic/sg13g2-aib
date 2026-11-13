@@ -87,7 +87,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:3df286773459580f2544abbe211c384009ab422173a3d9308443c789e07f5a58"
+          "content_hash": "sha256:7021a5eaf31d330f585886d86d40002267631cab9113a7d4f06cd4b2c1ea6494"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
@@ -100,11 +100,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d"
+      "content_hash": "sha256:2ffcc5e25e46021e3561214fc4afdb9d3e93dded358f0adb5b86dcea77e2bf55"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d"
+      "content_hash": "sha256:2ffcc5e25e46021e3561214fc4afdb9d3e93dded358f0adb5b86dcea77e2bf55"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
