@@ -120,12 +120,26 @@ Scope: every row here is `BOTH` (channel and test configuration); no channel mod
 - `tb_drive.cir` (T-06/T-08), `tb_pin.cir` (T-07/T-24/T-28), `tb_rx_hyst.cir` (T-11).
 - `request.json` the one request. `options.fail_on_diagnostic: ["nonconvergence"]` grades
   a corner whose operating point did not converge as `inconclusive`, never pass/fail.
+- `gen_dc_static.py` **generates all three requests** here (`request.json`,
+  `request_2kv.json`, `request_esd_diode.json`) from one description; the generated JSON
+  stays committed, as in the other `sim/` families. `request_2kv.json` was a hand copy of
+  `request.json` with nothing checking that the 12 steps stayed equal (#203), so an item-5
+  edit could leave the DR-0018 re-run measuring the old set; both now share one `DC_STEPS`
+  list. Edit the generator, never the JSON:
+
+  ```bash
+  python3 -I sim/dc-static/gen_dc_static.py            # rewrite the three requests
+  python3 -I sim/dc-static/gen_dc_static.py --check    # exit 1 if a committed one is stale
+  ```
+
+  CI runs `--check` (`scripts/ci/check_local.sh`), so a hand-edited request fails the build.
 
 ## Reproduce
 
 ```bash
 sim/harness/common/fetch-pdk.sh && source sim/harness/env.sh
 SG13G2_TOOLS_CACHE=$PWD/sim/build/cache sim/harness/common/build-osdi.sh
+python3 -I sim/dc-static/gen_dc_static.py --check       # requests fresh against the generator
 klt sim sim/dc-static/request.json --dry-run            # 45 units, backend batch
 klt sim sim/dc-static/request.json --format json --report-out /tmp/dc-static-report.json
 ```
@@ -154,5 +168,6 @@ dynamic R of the `sg13g2_esd.lib` pad diodes and the `dpantenna` baseline at 45 
 `request_2kv.json` re-run the dc-static set on it (the committed netlist is unchanged).
 Result: T-24 worst 108.9 fF against 100 fF; T-06/T-07/T-08/T-11/T-28 unchanged. Record
 `records/20261110T084631Z/`; decision `spec/decisions/0018-dedicated-esd-diode-capacitance-vs-t24.md`.
-Run both with `--wait-for-capacity 600`.
+Run both with `--wait-for-capacity 600`; `batch.capacity_wait_s` in all three generated
+requests is 600 to match (`request.json` carried a stale 1800 until #203).
 
