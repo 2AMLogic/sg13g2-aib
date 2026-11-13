@@ -117,7 +117,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:39a4dbfad7e8dad1daddfbfa9b7df9d421ee56b663b1dbeeb4f075592941db82"
+          "content_hash": "sha256:98c43fe746701fb91de922263295f4676bcbeaff1aebcf005fb8d504f43f1c22"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
@@ -201,7 +201,7 @@
       },
       {
         "id": "T-05",
-        "gap": "no testbench measures the redundancy mux's added load/delay; the RTL leg is covered, the SIM leg is not. Tracked in #192"
+        "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #216"
       },
       {
         "id": "T-06"
@@ -297,7 +297,7 @@
       },
       {
         "id": "T-05",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: no testbench measures the redundancy mux's added load/delay; the RTL leg is covered, the SIM leg is not. Tracked in #192"
+        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #216"
       },
       {
         "id": "T-06",
