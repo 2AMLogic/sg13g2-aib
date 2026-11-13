@@ -104,5 +104,9 @@ is #216's question, not this record's.
   follow-up is filed. No bound is relaxed on this record's account. **This happened**: the
   first record under this decision (`sim/redundancy-mux/records/20261113T160050Z/`) measures
   a common added delay of up to 0.184 UI, which exceeds T-20's whole 0.10 UI target on its
-  own at every corner. That is filed as #232 — which also owns the two ways out this record
+  own at 30 of the 45 corners; at the other 15 (the 1.32 V corners of `mos_ff`, `mos_sf`,
+  `mos_tt` and `mos_fs`, plus `mos_ff` at 1.20 V) it reads 0.071 .. 0.099 UI. At **every**
+  corner it is far larger than the ~0.0045 UI left of #177's 0.1075 UI static-off-centring
+  allocation after the clock path's 0.103 UI (#54), so it does not fit anywhere on the grid.
+  That is filed as #232 — which also owns the two ways out this record
   rejected assuming, a sized remap stage and the alternative placement — and no bound moved.

@@ -625,8 +625,12 @@ carrying a status and all 2205 measurements reported. No local grid was run.
   rising edge and **71.1 .. 183.9 ps** to a falling one at the TX pad, worst case
   **0.184 UI** at `mos_ss`, 1.08 V, −40 °C. T-20 asks for ≥ 0.10 UI of margin remaining, and
   #177 allocates 0.1075 UI to static off-centring of which the clock path already consumes
-  0.103 UI (#54). The remap as measured exceeds the whole T-20 target on its own at **every**
-  corner. It also adds up to 56.8 ps of pulse-width distortion to the data lane, which the
+  0.103 UI (#54). The remap as measured exceeds the whole 0.10 UI target on its own at
+  **30 of the 45 corners** (both edges above 0.10 UI at 13 of them); the remaining 15 — the
+  1.32 V corners of `mos_ff`, `mos_sf`, `mos_tt` and `mos_fs`, plus `mos_ff` at 1.20 V — read
+  **0.071 .. 0.099 UI**. At every corner it is far larger than the ~0.0045 UI the allocation
+  leaves after the clock path, so there is no corner at which it fits. It also adds up to
+  56.8 ps of pulse-width distortion to the data lane, which the
   forwarded clock does not see. No bound is relaxed here; the consequence is filed as #232.
 - **The added load is negative**: the serializer drives two mux inputs (4.5–5.3 fF) instead
   of one `DIN` (29.6–33.6 fF), so it is **24.9–28.7 fF lighter** and 39–88 ps faster. The
@@ -635,6 +639,33 @@ carrying a status and all 2205 measurements reported. No local grid was run.
 
 See the record's `README.md` for the per-corner decomposition and for what the record does
 not settle.
+
+**Correction (2026-11-13, PR #233) to `records/20261113T160050Z/README.md` lines 84-85.**
+That record's README says the remap "exceeds the entire T-20 target on its own, at every
+corner of the grid", and its own parenthesis contradicts it (0.054 UI is below 0.10 UI).
+The record file is immutable from its first push, so the correction lives here. Recomputed
+from the record's committed `report.json.gz` — per corner, the worst of `t05_add_r_s`,
+`t05_add_f_s`, `t05_add1_r_s`, `t05_add1_f_s`:
+
+- above 0.10 UI (100 ps at 1 Gb/s) at **30 of 45** corners, both edges above at 13;
+- the other 15 read **71.2 .. 99.4 ps** (0.071 .. 0.099 UI): the twelve 1.32 V corners of
+  `mos_ff`, `mos_sf`, `mos_tt` and `mos_fs`, plus the three `mos_ff` corners at 1.20 V;
+- worst case **0.184 UI** (`mos_ss`, 1.08 V, −40 °C) and best **0.071 UI** (`mos_ff`,
+  1.32 V, −40 °C) — the 53.8 ps / 0.054 UI in the record's parenthesis is the best *rise*
+  edge, not the per-corner worst.
+
+The record's conclusion is unchanged: at every corner the added delay is far larger than
+the ~0.0045 UI left of #177's 0.1075 UI allocation after the clock path's 0.103 UI (#54),
+so it does not fit anywhere on the grid, and #232 stands as filed. Only the "exceeds the
+whole target at every corner" phrasing is withdrawn. The record's other "every corner"
+statements were re-checked against the same report and hold (fall is the slower edge at
+all 45; `t05_load_*` negative at all 45; the control reproduces the baseline at all 45).
+
+**Also not named in that record's prose**: the report carries one solver diagnostic,
+`singular_matrix` at `mos_sf` / 1.32 V / 125 °C (node `n.xtx_c.xmnd1n.nsg13_lv_nmos#GP`,
+the control lane). The corner is `pass`, its control delta is 2.8e-23 s and its added-delay
+values are in family (69.6 ps rise, 89.5 ps fall), so it looks benign — but the record
+calls the run "clean" without naming it, and this is the one warning in the grid.
 
 ## dc-static
 
