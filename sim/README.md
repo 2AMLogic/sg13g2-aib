@@ -386,9 +386,39 @@ cd sim/clock-path && klt sim request.json --dry-run   # 45 corners
 sim/clock-path/run_clock_path.sh                      # batch fleet; writes records/<UTC>/
 ```
 
-**Status: no 45-corner record exists yet, and no row is claimed.** On 2026-10-27 the batch
-submit succeeded (15 jobs of 3 units) but the fleet left every job `pending` and never launched
-it, across a `--resume` and a wait of several minutes; no local fallback was run.
+**Status (2026-11-13): the 45-corner record exists.** Record `clock-path/records/20261113T095936Z/`
+(simulated, CH-3MM-RC, 45 corners, batch backend, 15 jobs of 3 corners; job ids in the record's
+`batch_job_ids`). `klt sim` exited 0 with 45/45 corners carrying a status. No local grid was run,
+and `design/` and `spec/` are untouched.
+
+- **T-17 passes at 45/45 corners** (270/270 measurements against the +/-3 % bound). Worst case
+  **-1.036 %** at `mos_sf`, 1.08 V, -40 C — one of the two corners the spec row calls out — so
+  1.964 % of margin remains. `clk` and `clkb` distort identically. No duty-cycle corrector is
+  needed at 1 Gb/s and none is designed here; dll-interface Gap G3 (D-9) is not triggered.
+- **T-04 is reported, not graded**: `spec/target-spec.md` T-04 states no numeric crossing bound,
+  so none was invented. The pair crosses within 20 mV of VDDIO/2 at the RX **pins** at every
+  corner (-19.2 mV .. +9.1 mV); at the RX **outputs** the crossing is up to -646 mV off mid-rail,
+  which is the `aib_rx_data` receiver's rise/fall asymmetry, not a channel effect. TX-to-RX
+  latency 338.4-629.1 ps.
+- **T-02 (SIM half) is reported**: same-direction data/clock edges track to under 0.01 ps, but the
+  **alternate DDR half-period at the RX output is off-centre by up to 0.103 UI** (397.4 ps instead
+  of 500 ps at `mos_sf`, 1.08 V, -40 C). Only -20.7 ps of that is at the TX pad (T-17); the rest is
+  added after the pad, dominantly by the receiver. This does **not** contradict T-16, which
+  channel-eye grades at the RX *pins* (before the receiver) and which passes 45/45 on current
+  `main` — the two measure different nodes. Whether the T-20 margin still closes is a T-19/T-20
+  budget question, filed as #177; this record relaxes no bound.
+- **T-21 and T-29 are declared gaps**, not claimed: T-21 needs a DLL-side model this repo does not
+  build (scope discipline), and no loopback mux exists in the five `design/` cells for T-29 (which
+  is a TC row besides). Follow-ups: #175 (T-21), #176 (T-29).
+
+See the record's `README.md` for the per-corner numbers and the decomposition.
+
+The 2026-10-27 attempt of this same request produced no record: the submit succeeded (15 jobs of 3
+units) but the fleet left every job `pending` and never launched it. That run did not pass
+`--wait-for-capacity`; the fleet is vCPU-budgeted and refuses a burst with `batch_no_capacity`.
+`run_clock_path.sh` now passes `--wait-for-capacity 600` (and `request.json` sets
+`batch.capacity_wait_s`), which is what let this run through a busy fleet; one `--resume` was still
+needed for the shards that were refused past that window.
 
 ## dc-static
 

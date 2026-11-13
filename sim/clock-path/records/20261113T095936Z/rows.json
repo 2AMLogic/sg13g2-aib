@@ -1,0 +1,54 @@
+{
+  "label": "clock-path",
+  "corners": 45,
+  "kind": "simulated",
+  "rows": {
+    "T-02": {
+      "verdict": "reported",
+      "measurements": [
+        "t02_cf_dr",
+        "t02_cr_df",
+        "t02_df_cf",
+        "t02_dr_cr"
+      ],
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    },
+    "T-04": {
+      "verdict": "reported",
+      "measurements": [
+        "t04_latency_s",
+        "t04_xlevel_out_f_v",
+        "t04_xlevel_out_r_v",
+        "t04_xlevel_pin_f_v",
+        "t04_xlevel_pin_r_v"
+      ],
+      "pass": 225,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    },
+    "T-17": {
+      "verdict": "pass",
+      "measurements": [
+        "t17_dcd_c",
+        "t17_dcd_cb",
+        "t17_hi_c",
+        "t17_hi_cb",
+        "t17_per_c",
+        "t17_per_cb"
+      ],
+      "pass": 270,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t17_dcd_c",
+        "value": -0.0103576,
+        "why": "smallest margin"
+      }
+    }
+  }
+}

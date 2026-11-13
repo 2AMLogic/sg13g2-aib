@@ -103,8 +103,9 @@ def request():
                     "temperature_c": [-40, 27, 125]},
         "analysis": {"kind": "tran", "args": f"2p {NUI}n 0 5p"},
         "measurements": measurements(),
-        "batch": {"runner_version_check": "warn"},
-        # ~4 s of ngspice per corner alone, but ~160 s per unit in a 3-unit fleet job (measured); 3 units x 1100 s fits the 3600 s job ceiling
+        "batch": {"runner_version_check": "warn", "capacity_wait_s": 600},
+        # ~6 s of ngspice per corner locally (measured, mos_tt/1.20 V/27 C); the per-unit cost in a
+        # fleet job is much higher, so the budget is generous. 3 units x 1100 s fits the 3600 s job ceiling.
         "options": {"osdi_preload": [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{o}.osdi" for o in OSDI],
                     "timeout_s": 1100},
     }

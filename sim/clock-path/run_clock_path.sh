@@ -4,8 +4,11 @@
 #   sim/clock-path/run_clock_path.sh
 #
 # One `klt sim` request over the 45-corner grid on the batch fleet; there is no local loop and no
-# fallback: a failed submit is reported and the script exits non-zero. Writes a new, never-overwritten
-# record under sim/clock-path/records/<UTC>/. Needs PDK_ROOT (see sim/README.md) and uvx.
+# fallback: a failed submit is reported and the script exits non-zero. `--wait-for-capacity 600` is
+# mandatory on this fleet (it is vCPU-budgeted): without it a burst is refused for capacity and the
+# jobs are left `pending`, which is what stalled the 2026-10-27 run of this request. Writes a new,
+# never-overwritten record under sim/clock-path/records/<UTC>/. Needs PDK_ROOT (see sim/README.md)
+# and uvx.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,7 +29,8 @@ WORK="${CLOCK_PATH_WORK:-$(mktemp -d)}"   # kept on a batch error so `klt sim --
 
 cd "${HERE}"
 rc=0
-"${KLT[@]}" sim request.json --backend batch --max-units-per-job 3 -o "${WORK}/out" ${CLOCK_PATH_RESUME:+--resume} \
+"${KLT[@]}" sim request.json --backend batch --max-units-per-job 3 --wait-for-capacity 600 \
+  -o "${WORK}/out" ${CLOCK_PATH_RESUME:+--resume} \
   --report-out "${REC}/report.json.gz" --format json > "${WORK}/stdout" 2> "${WORK}/stderr" || rc=$?
 # progress lines name the fleet bucket (an account id): keep them out of the record
 sed -E 's#s3://[^ /]+#s3://<bucket>#g' "${WORK}/stderr" > "${REC}/klt.stderr"
@@ -39,8 +43,11 @@ if [[ "${rc}" -ne 0 && "${rc}" -ne 3 && "${rc}" -ne 4 ]] || [[ ! -s "${REC}/repo
   rm -rf "${REC}"
   exit 6
 fi
-# a request whose jobs were submitted but never launched reports every corner as an error: not a result
-if grep -q 'never launched' "${REC}/klt.stderr"; then
+# a request whose jobs were submitted but never launched reports every corner as an error: not a result.
+# Match klt's summary sentence only ("N of M batch job(s) were submitted but never launched"): a
+# --resume prints "had been submitted but never launched; launched it" per shard it RECOVERS, and a
+# bare 'never launched' grep throws away the record of a successful resume.
+if grep -q 'were submitted but never launched' "${REC}/klt.stderr"; then
   echo "run_clock_path.sh: batch jobs were submitted but never launched; no record written." >&2
   echo "run_clock_path.sh: retry with CLOCK_PATH_WORK=${WORK} CLOCK_PATH_RESUME=1" >&2
   rm -rf "${REC}"
@@ -67,7 +74,12 @@ for c in rep["corners"]:
             r = ranges.setdefault(m["name"], {"spec_row": row_of.get(m["name"]), "min": (v, c["corner_id"]), "max": (v, c["corner_id"])})
             r["min"] = min(r["min"], (v, c["corner_id"]))
             r["max"] = max(r["max"], (v, c["corner_id"]))
-remote = rep.get("environment", {}).get("remote", {})
+# a single batch job reports environment.remote.job_id; a sharded one reports environment.remote.fleet[]
+remote = rep.get("environment", {}).get("remote") or {}
+shards = remote.get("fleet") or []
+job_ids = [j for j in ([remote.get("job_id")] + [s.get("job_id") for s in shards]) if j]
+runner_vs = sorted({v for v in ([remote.get("runner_klt_version")] +
+                                [s.get("runner_klt_version") for s in shards]) if v})
 out = {
     "record": "clock-path", "utc_stamp": stamp, "kind": "simulated",
     "claim_scope": "CH (modeled channel CH-3MM-RC, nominal); stimulus is an ideal 50 % complementary 500 MHz clock",
@@ -77,7 +89,7 @@ out = {
     "report_only_ranges": {n: {"spec_row": r["spec_row"], "min": list(r["min"]), "max": list(r["max"])} for n, r in sorted(ranges.items())},
     "t04_bound": "none: spec/target-spec.md T-04 states no numeric crossing bound; crossing level and latency are reported",
     "t02_bound": "none: SIM half reports data-to-clock edge times; the capture aperture (T-19) and margin (T-20) are not graded here",
-    "batch_job_id": remote.get("job_id"), "runner_klt_version": remote.get("runner_klt_version"),
+    "batch_job_ids": job_ids, "runner_klt_version": runner_vs,
 }
 json.dump(out, open(f"{rec}/record.json", "w"), indent=2)
 open(f"{rec}/record.json", "a").write("\n")

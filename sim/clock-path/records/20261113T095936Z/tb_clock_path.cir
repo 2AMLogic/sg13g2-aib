@@ -1,0 +1,56 @@
+* tb_clock_path.cir -- CH-3MM-RC clock path: aib_tx_clk -> pad ESD -> declared channel -> pad ESD -> aib_rx_clk,
+* plus one data lane (aib_tx_data -> ... -> aib_rx_data) for the DDR timing of T-02 (SIM half).
+* Rows: T-17 (DCD at the TX output), T-04 (clk/clkb crossing at the RX), T-02 (data edge vs both clock edges).
+* Claim scope: CH (declared die-to-die channel, nominal kr = kc = 1). No TC (wire-bond) rows here.
+*
+* Stimulus (clock_stim.inc): ideal complementary 50 % forwarded clock at 500 MHz (1 Gb/s DDR), so the
+* measured DCD is what the TX clock path adds; data toggles every UI, clock edges center aligned.
+* vdd_tx and vdd_rx are swept together by klt. design/aib_{tx,rx}_clk.spice embed aib_tx_data and
+* aib_rx_data, so the data cells are not included separately.
+.include ../../spec/channel/channel_rc.cir
+.include ../../design/aib_tx_clk.spice
+.include ../../design/aib_rx_clk.spice
+.include ../../design/aib_pad_esd.spice
+.subckt link txp rxp gnd
+Xch txp rxp gnd chan_rlc len_mm=3
+.ends link
+.include clock_stim.inc
+
+Vdd_tx vdd_tx 0 DC 1.2
+Vdd_rx vdd_rx 0 DC 1.2
+
+* ideal full-rail drivers scaled by the TX supply; OE and PUN high (driving, weak pull-up off), PD low
+Bckp ckp 0 V = v(pc)*v(vdd_tx)
+Bckn ckn 0 V = (1-v(pc))*v(vdd_tx)
+Bdd  dd_ 0 V = v(pd_)*v(vdd_tx)
+Boe  oe  0 V = v(vdd_tx)
+
+* clock lanes: cell pad nodes txc/txcb (TX output), channel-side txp*, RX pins rxc/rxcb, RX outputs cko/ckbo
+Xtxc  ckp ckn oe oe 0 txc txcb vdd_tx 0 aib_tx_clk
+Xetc  txpc  txc  vdd_tx 0 aib_pad_esd
+Xetcb txpcb txcb vdd_tx 0 aib_pad_esd
+Xlc   txpc  rxpc  0 link
+Xlcb  txpcb rxpcb 0 link
+Xerc  rxpc  rxc  vdd_rx 0 aib_pad_esd
+Xercb rxpcb rxcb vdd_rx 0 aib_pad_esd
+Xrxc  rxc rxcb cko ckbo vdd_rx 0 aib_rx_clk
+* data lane, same cells and channel
+Xtxd  dd_ oe oe 0 txdc vdd_tx 0 aib_tx_data
+Xetd  txpd txdc vdd_tx 0 aib_pad_esd
+Xld   txpd rxpd 0 link
+Xerd  rxpd rxd vdd_rx 0 aib_pad_esd
+Xrxd  rxd ddo vdd_rx 0 aib_rx_data
+* declared 5 fF on each RX output (an RTL flop input; no PDK or layout value behind it)
+Ccko  cko  0 5f
+Cckbo ckbo 0 5f
+Cddo  ddo  0 5f
+
+* zero-crossing probes
+Bdtc  dtc  0 V = v(txc)  - 0.5*v(vdd_tx)
+Bdtcb dtcb 0 V = v(txcb) - 0.5*v(vdd_tx)
+Bcsp  csp  0 V = v(rxc) - v(rxcb)
+Bdxp  dxp  0 V = v(rxc) - 0.5*v(vdd_rx)
+Bcso  cso  0 V = v(cko) - v(ckbo)
+Bdxo  dxo  0 V = v(cko) - 0.5*v(vdd_rx)
+Bcsd  csd  0 V = v(ckp) - v(ckn)
+Bdd0  ddo0 0 V = v(ddo) - 0.5*v(vdd_rx)
