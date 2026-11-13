@@ -112,6 +112,19 @@ read only `environment.remote.job_id`, which a sharded run never sets. Those rec
 append-only evidence and were not edited: their job ids are in each record's `klt.stderr`
 and in the 45 `fleet` entries of its `report.json.gz`.
 
+**A record's `README.md` is narrative, not a measured datum.** Every data file in a record
+directory is frozen once committed, but a record README's *prose* may be corrected against
+the record's own data — and has been: `3cceaea` corrected the T-17 graded count in
+`clock-path/records/20261113T095936Z/README.md` after PR #178's review, and the
+20261113T174852Z README was corrected the same way in PR #249. `check_sim_append_only.py`
+permits this against a pull request's base, where a record added by that pull request reads
+as an addition. On a `push` event CI compares against the **previous push on the branch**
+instead, so correcting a newly-added record's README inside its own pull request makes that
+one push's `evidence` job fail even though the pull-request job passes; the next push that
+leaves record files alone clears it. The checker's docstring already says READMEs "may
+change", which its `is_record()` does not implement for a README nested in a record
+directory. Correct the prose, never a datum, and only before the record merges.
+
 ## pdk-smoke
 
 `sim/pdk-smoke/` runs one corner (`mos_tt`, 27 C) with a single local
@@ -173,7 +186,10 @@ Five of the eight are *pending* — a measurement that has not been made yet, an
 when it is. **T-02, T-04 and T-05 are standing gaps**: DR-0022 decided the `SIM` legs of the
 first two have no gradable bound by design (#191, closed as completed), and DR-0023 decides
 the same for T-05 — its added load and delay are *measured*, over the full grid, and reported
-into the rows that carry the numbers rather than graded against a bound of their own. A
+rather than graded against a bound of their own. DR-0024 then decided **where the remap
+lives** on that evidence (ahead of the TX input register, #232), which removes T-05's terms
+from T-20 and T-13 by construction; the leg stays a standing gap either way, because having
+no bound is what makes it one. A
 standing gap does not close through verification work. Whether item 5 / analog can ever read
 `met` with three standing gaps declared is **not settled here** — it is tracked in #216.
 
@@ -181,7 +197,7 @@ standing gap does not close through verification work. Whether item 5 / analog c
 |---|---|---|
 | T-02 | `SIM` leg is a **pointer**, not a bound of its own (DR-0022): format by `RTL`, timing graded at T-16/T-19/T-20; the 45-corner clock-path `t02_*` measurements are reported inputs to those rows. **Standing gap** | #216 |
 | T-04 | `SIM` leg is **report-only by design** (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements are reported evidence, not a graded claim; the arrangement is verified by `RTL`. **Standing gap** | #216 |
-| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #216 |
+| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/`. Since DR-0024 put the remap **ahead of the TX input register**, those measurements are the evidence for a *rejected* in-lane placement and report into no row: the register re-times the remap, so T-05's common term in T-20 and select-dependent term in T-13 are both zero by construction. **Standing gap** | #216 |
 | T-12 | channel-model *definition*, not a block measurable — see below | #193 |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
@@ -604,38 +620,47 @@ under a `records/` directory and may change.
 ## redundancy-mux
 
 `sim/redundancy-mux/` is the PVT-FULL redundancy-mux family of the T1 item 5 (analog)
-campaign (#42, #192): what the T-05 shift-redundancy remap adds to one TX lane in load and
-delay. Row: T-05 (`SIM` leg). **Nothing here is graded** — `spec/target-spec.md` T-05 states
-no bound for this leg and DR-0023 invents none, so no measurement carries `limits` and T-05
-stays a declared gap whose string names this record (the form DR-0022 established for T-02
-and T-04). The two delay terms are reported *into* the rows that carry numbers: the common
-term into T-20, the select-dependent term into T-13.
+campaign (#42, #192, #232): what the T-05 shift-redundancy remap adds to one TX lane in load
+and delay. Row: T-05 (`SIM` leg). **Nothing here is graded** — `spec/target-spec.md` T-05
+states no bound for this leg and DR-0023 invents none, so no measurement carries `limits` and
+T-05 stays a declared gap whose string names these records (the form DR-0022 established for
+T-02 and T-04).
+
+**These two records are now the evidence for a rejected placement, and that is their job.**
+DR-0024 read them and put the remap **ahead of the TX input register** (#232), where the
+input register re-times it: the in-lane added delay at the TX output is zero by construction,
+so T-05 reports no common term into T-20 and no select-dependent term into T-13 any more.
+Both records measure the remap *on the serialized wire* — DR-0023's declared placement, the
+one DR-0024 rejects — because that is the arrangement whose cost had to be known before the
+placement could be chosen. No further in-lane campaign is planned.
 
 **There is no transistor-level remap in this repo** — `tx_remap` / `rx_remap` are RTL only
 and the committed netlist predates them — so DR-0023 declares the arrangement that is
 measured: the remap on the serialized wire between the serializer mux and `aib_tx_data`'s
 `DIN`, with `sg13g2_mux2_1` (the cell synthesis already maps the serializer mux to; 22
 instances in the committed netlist, vendored unmodified as `sg13g2_mux2_1.inc`) standing in
-for both stages, on the same swept VDDIO as the TX cell. `tb_redundancy_mux.cir` carries four
+for both stages, on the same swept VDDIO as the TX cell. `tb_redundancy_mux.cir` carries six
 lanes on one stimulus and one corner — baseline, a **control** that is the baseline built a
-second time, and two with-mux lanes selected to `A0` and to `A1` — so every reported number
-is a difference measured inside one simulation, and the control measures what is left of the
-bench's own noise. `design/` and `rtl/` are untouched; nothing is instantiated or
-re-synthesized.
+second time, two with-mux lanes selected to `A0` and to `A1`, and two **sized** remap stages
+(`sg13g2_mux2_2`, and `sg13g2_mux2_1` followed by `sg13g2_buf_4`; vendored the same way) — so
+every reported number is a difference measured inside one simulation, and the control
+measures what is left of the bench's own noise. `design/` and `rtl/` are untouched; nothing
+is instantiated or re-synthesized.
 
 ```bash
 python3 -I sim/redundancy-mux/gen_redundancy_mux.py --check   # generated files fresh?
 cd sim/redundancy-mux && klt sim request.json --dry-run       # 45 corners
 cd sim/redundancy-mux && klt sim request_tt.json --backend local \
-    --report-out /tmp/rm_tt.json --format json                # one corner, ~15 s, no fleet
+    --report-out /tmp/rm_tt.json --format json                # one corner, ~25 s, no fleet
 sim/redundancy-mux/run_redundancy_mux.sh                      # batch fleet; writes records/<UTC>/
                                                               # procedure: "Record harness" above
 ```
 
-**Status (2026-11-13): the 45-corner record exists.** Record
-`redundancy-mux/records/20261113T160050Z/` (simulated, 45 corners, batch backend, 15 jobs of
-3 corners; job ids in the record's `batch_job_ids`). `klt sim` exited 0 with 45/45 corners
-carrying a status and all 2205 measurements reported. No local grid was run.
+### First record (2026-11-13): the drive-1 stand-in
+
+Record `redundancy-mux/records/20261113T160050Z/` (simulated, 45 corners, batch backend, 15
+jobs of 3 corners; job ids in the record's `batch_job_ids`). `klt sim` exited 0 with 45/45
+corners carrying a status and all 2205 measurements reported. No local grid was run.
 
 - **The negative control is clean.** Lane `c` is lane `b` built a second time — the remap
   stage shorted out — and reproduces it to 2.4e-10 ps at worst over the grid, about twelve
@@ -654,11 +679,13 @@ carrying a status and all 2205 measurements reported. No local grid was run.
   **0.071 .. 0.099 UI**. At every corner it is far larger than the ~0.0045 UI the allocation
   leaves after the clock path, so there is no corner at which it fits. It also adds up to
   56.8 ps of pulse-width distortion to the data lane, which the
-  forwarded clock does not see. No bound is relaxed here; the consequence is filed as #232.
+  forwarded clock does not see. No bound was relaxed; the consequence was filed as #232 and
+  decided by DR-0024 — not by shrinking this term but by moving the stage out of the lane.
 - **The added load is negative**: the serializer drives two mux inputs (4.5–5.3 fF) instead
   of one `DIN` (29.6–33.6 fF), so it is **24.9–28.7 fF lighter** and 39–88 ps faster. The
   whole cost is the remap stage inheriting that ~30 fF load and driving it with the same
-  minimum-strength cell (`sg13g2_mux2_2` and `sg13g2_buf_*` exist and are not measured here).
+  minimum-strength cell (`sg13g2_mux2_2` and `sg13g2_buf_*` exist and are not measured in
+  *this* record; the second record below measures two of them).
 
 See the record's `README.md` for the per-corner decomposition and for what the record does
 not settle.
@@ -688,7 +715,52 @@ all 45; `t05_load_*` negative at all 45; the control reproduces the baseline at 
 `singular_matrix` at `mos_sf` / 1.32 V / 125 °C (node `n.xtx_c.xmnd1n.nsg13_lv_nmos#GP`,
 the control lane). The corner is `pass`, its control delta is 2.8e-23 s and its added-delay
 values are in family (69.6 ps rise, 89.5 ps fall), so it looks benign — but the record
-calls the run "clean" without naming it, and this is the one warning in the grid.
+calls the run "clean" without naming it, and this is the one warning in the grid. The
+second record's grid carries **no** diagnostic on any corner.
+
+### Second record (2026-11-13): the two sized stages
+
+Record `redundancy-mux/records/20261113T174852Z/` (simulated, 45 corners, batch backend, 15
+jobs of 3 corners). `klt sim` exited 0 with 45/45 corners carrying a status, 0 failed, 0
+errored, all 3870 measurements reported and no corner carrying a diagnostic. Same bench, same
+stimulus, same placement, two more lanes: `sg13g2_mux2_2` (drive 2) and `sg13g2_mux2_1`
+followed by `sg13g2_buf_4`, both selected to `A0`. This is the re-measurement #232 asked for,
+and the evidence DR-0024 rejects a sized in-lane stage on.
+
+- **The six-lane deck reproduces the four-lane one.** The re-measured drive-1 lanes read
+  `t05_add_r_s` **53.786 .. 128.150 ps** and `t05_add_f_s` **71.134 .. 183.889 ps** against
+  the first record's identical ranges — six significant figures, and 0.2 fs at the nominal
+  corner — and `t05_stage_r_s` matches to the same precision. So the sizing comparison is a
+  difference inside one simulation, not between two records.
+- **No in-lane stage fits, sized or not.** Per-corner worst common added delay, against the
+  **7.5 ps** the timing-budget margin line has spare and T-20's whole 0.10 UI = 100 ps target:
+
+  | remap stage | rise | fall | per-corner worst | over 100 ps | over 7.5 ps |
+  |---|---|---|---|---|---|
+  | `sg13g2_mux2_1`, drive 1 | 53.8 .. 128.2 ps | 71.1 .. 183.9 ps | 71.2 .. 184.2 ps | 30 / 45 | **45 / 45** |
+  | `sg13g2_mux2_2`, drive 2 | 21.9 .. 56.0 ps | 52.9 .. 153.9 ps | 52.9 .. 153.9 ps | 14 / 45 | **45 / 45** |
+  | `sg13g2_mux2_1` + `buf_4` | 46.1 .. 113.9 ps | 63.0 .. 181.2 ps | 63.0 .. 181.2 ps | 25 / 45 | **45 / 45** |
+
+  The best corner of the better sized option is **52.9 ps, 7.1 times** the 7.5 ps spare.
+  Sizing buys 26 % of that per-corner worst at the best corner and 16 % at the worst, and
+  cuts the stage term itself 32 % at its rise minimum and 12 % at its fall maximum; the
+  buffered stage buys 11 % and 1.6 % of the per-corner worst (8.2 % and 1.2 % of the stage
+  term), and on the falling edge it is *worse* than the drive-1 cell at the five `mos_fs`
+  corners below 1.32 V.
+- **Sizing makes the pulse-width distortion worse**: `t05_pwd*_s` reads 15.2 .. 56.8 ps for
+  drive 1, **24.8 .. 101.7 ps** for drive 2 and 0.5 .. 78.8 ps for the buffered stage.
+  Doubling the output drive helps the rising edge about twice as much as the falling
+  one (per-corner rise-gain / fall-gain ratio 1.18 .. 3.75, median 1.93), so the asymmetry
+  the forwarded clock does not see nearly doubles.
+- **The load term is unchanged by sizing**, as expected: `sg13g2_mux2_2`'s `A0`/`A1` devices
+  are the same size as `sg13g2_mux2_1`'s, so all three lanes load the serializer identically
+  (`t05_dcl*_f` −28.8 .. −24.9 fF) and sizing acts only on the stage term.
+
+See the record's `README.md` for the per-corner tables, the buffer choice and what the
+record does not settle. **Neither record measures the placement DR-0024 chose** — ahead of
+the input register there is no in-lane term to measure, which is the point; the moved cost
+is datapath setup time, graded by synthesis and P&R (item 7 / digital), and DR-0024's
+follow-ups own it.
 
 ## dc-static
 

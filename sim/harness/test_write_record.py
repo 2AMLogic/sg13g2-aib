@@ -173,13 +173,27 @@ class EntryPointTests(unittest.TestCase):
         return json.loads(out)
 
     def committed(self, in_dir, **match):
+        """The NEWEST committed record of a family that matches, not the oldest.
+
+        Record directories are UTC stamps and committed_records() yields them in sorted
+        order, so the last match is the most recent run of that family. The entry point
+        under test describes the bench **as it is now**, and assert_matches_committed
+        compares its --copy list with the record's bench files: pinning that comparison to
+        the first record ever written would fail the moment a family gains a bench file
+        (adding sg13g2_mux2_2.inc and sg13g2_buf_4.inc to redundancy-mux did exactly that,
+        #232). Records are append-only evidence, so the fix is to compare against the run
+        the entry point would reproduce today -- never to edit an older record into line.
+        """
+        newest = None
         for rec in committed_records():
             if rec.parent.parent.name != in_dir:
                 continue
             data = json.loads((rec / "record.json").read_text())
             if all(data.get(k) == v for k, v in match.items()):
-                return rec, data
-        self.fail(f"no committed {in_dir} record matching {match}")
+                newest = (rec, data)       # sorted order: keep overwriting, end with the newest
+        if newest is None:
+            self.fail(f"no committed {in_dir} record matching {match}")
+        return newest
 
     def assert_matches_committed(self, cfg, rec, data):
         """The entry point's family fields and copy list must reproduce a committed record."""
@@ -233,6 +247,22 @@ class EntryPointTests(unittest.TestCase):
         # T-05's SIM leg has no bound of its own (DR-0023); the record must say so itself.
         self.assertTrue(cfg["fields_tail"]["t05_bound"].startswith("none:"))
         self.assert_matches_committed(cfg, *self.committed("redundancy-mux"))
+
+    def test_committed_selects_the_newest_record_not_the_first(self):
+        """The bench comparison tracks the newest run of a family, not the first (#232).
+
+        With two or more committed records of a family this is what keeps
+        assert_matches_committed honest: an entry point that gains a --copy is compared
+        with the record that run produced, and the earlier records stay untouched.
+        """
+        for family in FAMILIES:
+            stamps = sorted(r.name for r in committed_records()
+                            if r.parent.parent.name == family)
+            if len(stamps) < 2:
+                continue
+            with self.subTest(family=family):
+                rec, _ = self.committed(family)
+                self.assertEqual(rec.name, stamps[-1])
 
     def test_an_unknown_kind_is_refused(self):
         r = subprocess.run([str(SIM / "channel-eye/run_channel_eye.sh"), "nope", "--dry-run"],

@@ -1,0 +1,630 @@
+{
+  "engine": "ngspice",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "netlist": "tb_redundancy_mux.cir",
+  "backend": "batch",
+  "corners": {
+    "process": [
+      {
+        "name": "mos_tt",
+        "sections": [
+          "mos_tt",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "mos_ss",
+        "sections": [
+          "mos_ss",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ss"
+          }
+        ]
+      },
+      {
+        "name": "mos_ff",
+        "sections": [
+          "mos_ff",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_bcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ff"
+          }
+        ]
+      },
+      {
+        "name": "mos_sf",
+        "sections": [
+          "mos_sf",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "mos_fs",
+        "sections": [
+          "mos_fs",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vdd_tx": [
+        1.08,
+        1.2,
+        1.32
+      ]
+    },
+    "temperature_c": [
+      -40,
+      27,
+      125
+    ]
+  },
+  "analysis": {
+    "kind": "tran",
+    "args": "2p 24n 0 5p"
+  },
+  "measurements": [
+    {
+      "name": "t05_vdd_v",
+      "unit": "V",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_vdd_v FIND v(vdd_tx) AT=5.5e-10"
+    },
+    {
+      "name": "t05_b_dpr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_dpr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hb) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_b_dpf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_dpf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hb) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_b_dsr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_dsr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hbs) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_b_dsf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_dsf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hbs) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_b_tr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_tr_s TRIG v(bs10) VAL=0 RISE=6 TARG v(bs90) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_b_tf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_tf_s TRIG v(bs90) VAL=0 FALL=6 TARG v(bs10) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_b_q_c",
+      "unit": "C",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_q_c INTEG v(qb) FROM=1.005e-08 TO=1.205e-08"
+    },
+    {
+      "name": "t05_b_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_b_cl_f param='t05_b_q_c/(2*t05_vdd_v)'"
+    },
+    {
+      "name": "t05_c_dpr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_dpr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hc) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_c_dpf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_dpf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hc) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_c_dsr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_dsr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hcs) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_c_dsf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_dsf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hcs) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_c_tr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_tr_s TRIG v(cs10) VAL=0 RISE=6 TARG v(cs90) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_c_tf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_tf_s TRIG v(cs90) VAL=0 FALL=6 TARG v(cs10) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_c_q_c",
+      "unit": "C",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_q_c INTEG v(qc) FROM=1.005e-08 TO=1.205e-08"
+    },
+    {
+      "name": "t05_c_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_c_cl_f param='t05_c_q_c/(2*t05_vdd_v)'"
+    },
+    {
+      "name": "t05_m0_dpr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_dpr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm0) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m0_dpf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_dpf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm0) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m0_dsr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_dsr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm0s) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m0_dsf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_dsf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm0s) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m0_tr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_tr_s TRIG v(m0s10) VAL=0 RISE=6 TARG v(m0s90) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m0_tf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_tf_s TRIG v(m0s90) VAL=0 FALL=6 TARG v(m0s10) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m0_q_c",
+      "unit": "C",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_q_c INTEG v(qm0) FROM=1.005e-08 TO=1.205e-08"
+    },
+    {
+      "name": "t05_m0_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m0_cl_f param='t05_m0_q_c/(2*t05_vdd_v)'"
+    },
+    {
+      "name": "t05_m1_dpr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_dpr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm1) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m1_dpf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_dpf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm1) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m1_dsr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_dsr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm1s) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m1_dsf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_dsf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm1s) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m1_tr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_tr_s TRIG v(m1s10) VAL=0 RISE=6 TARG v(m1s90) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m1_tf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_tf_s TRIG v(m1s90) VAL=0 FALL=6 TARG v(m1s10) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m1_q_c",
+      "unit": "C",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_q_c INTEG v(qm1) FROM=1.005e-08 TO=1.205e-08"
+    },
+    {
+      "name": "t05_m1_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m1_cl_f param='t05_m1_q_c/(2*t05_vdd_v)'"
+    },
+    {
+      "name": "t05_m2_dpr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_dpr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm2) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m2_dpf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_dpf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm2) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m2_dsr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_dsr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm2s) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m2_dsf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_dsf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm2s) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m2_tr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_tr_s TRIG v(m2s10) VAL=0 RISE=6 TARG v(m2s90) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m2_tf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_tf_s TRIG v(m2s90) VAL=0 FALL=6 TARG v(m2s10) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m2_q_c",
+      "unit": "C",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_q_c INTEG v(qm2) FROM=1.005e-08 TO=1.205e-08"
+    },
+    {
+      "name": "t05_m2_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m2_cl_f param='t05_m2_q_c/(2*t05_vdd_v)'"
+    },
+    {
+      "name": "t05_m3_dpr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_dpr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm3) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m3_dpf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_dpf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm3) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m3_dsr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_dsr_s TRIG v(hclk) VAL=0 FALL=6 TARG v(hm3s) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m3_dsf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_dsf_s TRIG v(hclk) VAL=0 RISE=6 TARG v(hm3s) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m3_tr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_tr_s TRIG v(m3s10) VAL=0 RISE=6 TARG v(m3s90) VAL=0 RISE=6"
+    },
+    {
+      "name": "t05_m3_tf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_tf_s TRIG v(m3s90) VAL=0 FALL=6 TARG v(m3s10) VAL=0 FALL=6"
+    },
+    {
+      "name": "t05_m3_q_c",
+      "unit": "C",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_q_c INTEG v(qm3) FROM=1.005e-08 TO=1.205e-08"
+    },
+    {
+      "name": "t05_m3_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_m3_cl_f param='t05_m3_q_c/(2*t05_vdd_v)'"
+    },
+    {
+      "name": "t05_add_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add_r_s param='t05_m0_dpr_s-t05_b_dpr_s'"
+    },
+    {
+      "name": "t05_add_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add_f_s param='t05_m0_dpf_s-t05_b_dpf_s'"
+    },
+    {
+      "name": "t05_pwd_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_pwd_s param='t05_add_f_s-t05_add_r_s'"
+    },
+    {
+      "name": "t05_add2_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add2_r_s param='t05_m2_dpr_s-t05_b_dpr_s'"
+    },
+    {
+      "name": "t05_add2_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add2_f_s param='t05_m2_dpf_s-t05_b_dpf_s'"
+    },
+    {
+      "name": "t05_pwd2_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_pwd2_s param='t05_add2_f_s-t05_add2_r_s'"
+    },
+    {
+      "name": "t05_add3_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add3_r_s param='t05_m3_dpr_s-t05_b_dpr_s'"
+    },
+    {
+      "name": "t05_add3_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add3_f_s param='t05_m3_dpf_s-t05_b_dpf_s'"
+    },
+    {
+      "name": "t05_pwd3_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_pwd3_s param='t05_add3_f_s-t05_add3_r_s'"
+    },
+    {
+      "name": "t05_add1_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add1_r_s param='t05_m1_dpr_s-t05_b_dpr_s'"
+    },
+    {
+      "name": "t05_add1_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_add1_f_s param='t05_m1_dpf_s-t05_b_dpf_s'"
+    },
+    {
+      "name": "t05_sel_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_sel_r_s param='t05_m1_dpr_s-t05_m0_dpr_s'"
+    },
+    {
+      "name": "t05_sel_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_sel_f_s param='t05_m1_dpf_s-t05_m0_dpf_s'"
+    },
+    {
+      "name": "t05_load_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_load_r_s param='t05_m0_dsr_s-t05_b_dsr_s'"
+    },
+    {
+      "name": "t05_load_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_load_f_s param='t05_m0_dsf_s-t05_b_dsf_s'"
+    },
+    {
+      "name": "t05_stage_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_stage_r_s param='t05_add_r_s-t05_load_r_s'"
+    },
+    {
+      "name": "t05_stage_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_stage_f_s param='t05_add_f_s-t05_load_f_s'"
+    },
+    {
+      "name": "t05_dtr_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dtr_s param='t05_m0_tr_s-t05_b_tr_s'"
+    },
+    {
+      "name": "t05_dtf_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dtf_s param='t05_m0_tf_s-t05_b_tf_s'"
+    },
+    {
+      "name": "t05_dcl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dcl_f param='t05_m0_cl_f-t05_b_cl_f'"
+    },
+    {
+      "name": "t05_load2_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_load2_r_s param='t05_m2_dsr_s-t05_b_dsr_s'"
+    },
+    {
+      "name": "t05_load2_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_load2_f_s param='t05_m2_dsf_s-t05_b_dsf_s'"
+    },
+    {
+      "name": "t05_stage2_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_stage2_r_s param='t05_add2_r_s-t05_load2_r_s'"
+    },
+    {
+      "name": "t05_stage2_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_stage2_f_s param='t05_add2_f_s-t05_load2_f_s'"
+    },
+    {
+      "name": "t05_dtr2_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dtr2_s param='t05_m2_tr_s-t05_b_tr_s'"
+    },
+    {
+      "name": "t05_dtf2_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dtf2_s param='t05_m2_tf_s-t05_b_tf_s'"
+    },
+    {
+      "name": "t05_dcl2_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dcl2_f param='t05_m2_cl_f-t05_b_cl_f'"
+    },
+    {
+      "name": "t05_load3_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_load3_r_s param='t05_m3_dsr_s-t05_b_dsr_s'"
+    },
+    {
+      "name": "t05_load3_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_load3_f_s param='t05_m3_dsf_s-t05_b_dsf_s'"
+    },
+    {
+      "name": "t05_stage3_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_stage3_r_s param='t05_add3_r_s-t05_load3_r_s'"
+    },
+    {
+      "name": "t05_stage3_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_stage3_f_s param='t05_add3_f_s-t05_load3_f_s'"
+    },
+    {
+      "name": "t05_dtr3_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dtr3_s param='t05_m3_tr_s-t05_b_tr_s'"
+    },
+    {
+      "name": "t05_dtf3_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dtf3_s param='t05_m3_tf_s-t05_b_tf_s'"
+    },
+    {
+      "name": "t05_dcl3_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_dcl3_f param='t05_m3_cl_f-t05_b_cl_f'"
+    },
+    {
+      "name": "t05_ctl_r_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_ctl_r_s param='t05_c_dpr_s-t05_b_dpr_s'"
+    },
+    {
+      "name": "t05_ctl_f_s",
+      "unit": "s",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_ctl_f_s param='t05_c_dpf_s-t05_b_dpf_s'"
+    },
+    {
+      "name": "t05_ctl_cl_f",
+      "unit": "F",
+      "spec_row": "T-05",
+      "spice": ".meas tran t05_ctl_cl_f param='t05_c_cl_f-t05_b_cl_f'"
+    }
+  ],
+  "batch": {
+    "runner_version_check": "warn",
+    "capacity_wait_s": 600
+  },
+  "options": {
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ],
+    "timeout_s": 1100
+  }
+}

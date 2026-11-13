@@ -561,7 +561,7 @@
           },
           {
             "id": "T-05",
-            "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #216"
+            "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ (the drive-1 stand-in) and sim/redundancy-mux/records/20261113T174852Z/ (two sized stages). DR-0024 read those records and placed the remap ahead of the TX input register, where the register re-times it: the in-lane added delay at the TX output is zero by construction, so this row now reports no common added delay into T-20 and no select-dependent delay into T-13. The two records measure the in-lane placement DR-0024 rejects and are its evidence; nothing in them is graded and no bound changes. A standing gap, not pending work. Tracked in #216"
           },
           {
             "id": "T-12",
@@ -794,7 +794,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:98c43fe746701fb91de922263295f4676bcbeaff1aebcf005fb8d504f43f1c22",
+          "content_hash": "sha256:73569b31ae8e2c6f714684e9a0db28e88d04df99bff1df3a85926aa58bb651c9",
           "status": "ratified",
           "row_count": 5
         },
