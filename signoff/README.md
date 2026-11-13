@@ -3,12 +3,15 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog`, `11.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable`, `6.analog` `unmet` / `check_failed` (see "Item 6")
 and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
 `7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
 runs extracted the cells and graded nothing, which is not the same as a spec row failing);
+`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — three recorded rows
+fail, so the aggregate's envelope is `status: fail`; that is the report following the records,
+not a spec target being missed by the report);
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
@@ -315,6 +318,24 @@ recorded row fails. Rows without a record read `not-yet-measured` in the report;
 `met` does not say they pass. The script also checks (`--check`, run in CI) that
 the report, envelope and manifest hash agree. Regenerate after any change to a
 cited record or the mapping, then re-cite the hash and regenerate the record.
+
+The generator also refuses to run — writing and under `--check` — when this
+manifest cites per-row evidence the map does not grade. Every `(file, row)` pair
+under `evidence."5.analog"` and `evidence."6.analog"` must have an entry in
+`row-evidence.json` citing a file in that same record directory (a `rows.json` or
+`yield.json` digest beside a `klt sim` envelope counts). So the manifest is the
+single list of which rows have a record and the map only says how each is graded;
+a record cited for signoff can no longer be missing from the aggregate, which is
+how 13 rows — three of them recorded failures — read `not-yet-measured` here
+while already being cited for item 5 and item 6 (issue #230). The map may still
+carry extra entries the manifest does not cite; the check is one-directional.
+
+**Item 8 currently reads `unmet` / `check_failed`, and that is the honest state.**
+T-10, T-15 and T-16 each have a committed `klt yield` record whose verdict is
+`fail`, so the envelope is `status: fail` and the aggregate says so. No spec
+target, limit or comparator was changed, and no record under `sim/*/records/` was
+touched, to produce it. The `met` reading it replaced was an artefact of those
+records never being read.
 
 ## Item 9 attestation
 
