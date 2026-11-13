@@ -3,7 +3,7 @@
 # append-only record under <family dir>/records/.
 #
 # This is the shared procedure behind the sim/<family>/run_<family>.sh entry points
-# (channel-eye, clock-path, dc-static); those stay the entry points and pass only what
+# (channel-eye, clock-path, dc-static, redundancy-mux); those stay the entry points and pass only what
 # really differs between the families. It is never called directly by an operator.
 #
 # There is no local loop and no fallback: a failed submit is reported and the script
@@ -20,7 +20,7 @@
 #                   [--fields-head JSON] [--fields-tail JSON] [--row-map JSON]
 #                   [--report-only-ranges]
 #
-#   --dir                family directory (sim/channel-eye, sim/clock-path, sim/dc-static)
+#   --dir                family directory (sim/channel-eye, sim/clock-path, sim/dc-static, ...)
 #   --record             the record.json "record" field
 #   --request            the klt sim request, copied into the record as request.json
 #   --generator          python generator run with --check before anything is submitted
