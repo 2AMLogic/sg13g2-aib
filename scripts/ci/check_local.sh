@@ -83,6 +83,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/gen_item6_digital.py
   run "Check the Monte Carlo requests against the generator" \
     python3 -I sim/mc/gen_mc.py --check
+  run "Check the dc-static requests against the generator" \
+    python3 -I sim/dc-static/gen_dc_static.py --check
   run "Check the derived item 7 SDFs are pinned and reproduce from the routed SDF" \
     python3 -I scripts/ci/check_item7_sdf.py
   run "Check the committed routed SPEF and DEF match their manifest pins" \
