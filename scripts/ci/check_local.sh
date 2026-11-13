@@ -85,6 +85,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I sim/mc/gen_mc.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
+  run "Check every committed sim/ request against the one PVT-FULL corner table" \
+    python3 -I scripts/ci/check_corner_bundles.py
   run "Check the item 7 pex benches against the generator" \
     python3 -I layout/pex/gen_pex_benches.py --check
   run "Self-test the item 7 pex benches (pin lists, one .include, row split)" \
