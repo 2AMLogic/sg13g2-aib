@@ -82,11 +82,16 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
+Six of the eight are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-02 and T-04 are standing gaps**: DR-0022 decided their `SIM` legs have no
+gradable bound by design, so they do not close through verification work, and #191 (which
+asked for that decision) is closed as completed. Whether item 5 / analog can ever read `met`
+with two standing gaps declared is **not settled here** — it is tracked in #216.
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-02 | measured at 45 corners (clock-path) but report-only — the spec gives no numeric bound | #191 |
-| T-04 | measured at 45 corners (clock-path) but report-only — no numeric crossing bound | #191 |
+| T-02 | `SIM` leg is a **pointer**, not a bound of its own (DR-0022): format by `RTL`, timing graded at T-16/T-19/T-20; the 45-corner clock-path `t02_*` measurements are reported inputs to those rows. **Standing gap** | #216 |
+| T-04 | `SIM` leg is **report-only by design** (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements are reported evidence, not a graded claim; the arrangement is verified by `RTL`. **Standing gap** | #216 |
 | T-05 | no testbench measures the redundancy mux's added load/delay (the `RTL` leg is covered) | #192 |
 | T-12 | channel-model *definition*, not a block measurable — see below | #193 |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |

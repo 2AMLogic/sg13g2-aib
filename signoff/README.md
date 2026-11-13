@@ -121,8 +121,17 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 `spec_rows."5.analog"` declares the **full** analog `SIM` row set — 21 rows, 13 covered and
 8 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
 `uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
-but declared gaps remain. It reads `met` only when the gap issues close; that is tracked in #3,
-not here.
+but declared gaps remain.
+
+Six of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. **T-02 and T-04 are standing gaps**:
+DR-0022 decided that T-02's `SIM` leg is a pointer to where the timing is graded (T-16, T-19,
+T-20) and that T-04's is report-only by design, because the specification states no clk/clkb
+crossing requirement. Neither closes through verification work — only a future revision of the
+specification, or a consumer stating a requirement, would give T-04 a bound (DR-0022,
+"Consequences"). So **closing the pending gap issues does not by itself make this item read
+`met`**, and whether it can while two standing gaps are declared is an open accounting
+question, tracked in #216. Do not settle it by deleting a row from the declared set.
 
 | envelope | rows | result |
 |---|---|---|

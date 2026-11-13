@@ -553,11 +553,11 @@
         "declared_gaps": [
           {
             "id": "T-02",
-            "gap": "SIM leg measured at 45 corners in sim/clock-path/records/20261113T095936Z/ but report-only: spec/target-spec.md states no numeric bound. Tracked in #191"
+            "gap": "SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
           },
           {
             "id": "T-04",
-            "gap": "SIM leg measured at 45 corners in sim/clock-path/records/20261113T095936Z/ but report-only: spec/target-spec.md states no numeric crossing bound. Tracked in #191"
+            "gap": "SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
           },
           {
             "id": "T-05",
