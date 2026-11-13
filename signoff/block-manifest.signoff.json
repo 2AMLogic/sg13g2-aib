@@ -710,7 +710,7 @@
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
-          "content_hash": "sha256:61bd5b77ddf08093c8b8481fa7372e02a3ed8d16633e09084f275194213331e2",
+          "content_hash": "sha256:7dd6372488862f8aedd667e003cd598e12a78595d473a61478dbde6779b5efbd",
           "rows": [
             {
               "id": "T-02",
@@ -735,7 +735,7 @@
             {
               "id": "T-29",
               "class": "mode-function",
-              "reason": "Loopback modes L1 and L2 are selected by control inputs of the RTL; each mode is a fixed routing of enumerated signals, simulated per mode, with no variation dependence."
+              "reason": "The digital half of the row is the datapath's loopback select: the one control input `l1` of rtl/aib_datapath.v, enumerated in both states and simulated per state. It is a fixed routing of enumerated signals, with no variation dependence. The RTL has no L2 control input, and `l1` is the digital select only, not the L1 electrical path: which loopback a wire group offers is set by its on-die route and its bonding, not by an RTL state, and the analog half of each loopback is separate SIM evidence outside this partition (DR-0019)."
             }
           ]
         }
@@ -795,7 +795,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d",
+        "content_hash": "sha256:2a6eee02a614d3aeef8a4bf6386bd653c5330a32378f7be82dafee3354c010f6",
         "input_verified": true,
         "exit_status": 0,
         "attestation": {
@@ -819,7 +819,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d",
+        "content_hash": "sha256:2a6eee02a614d3aeef8a4bf6386bd653c5330a32378f7be82dafee3354c010f6",
         "input_verified": true,
         "exit_status": 0,
         "attestation": {

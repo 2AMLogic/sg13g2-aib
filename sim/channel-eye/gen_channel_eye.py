@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Generate the channel-eye stimulus include and the two `klt sim` requests.
+"""Generate the channel-eye stimulus include and the `klt sim` requests.
 
 Stdlib only. Usage (from anywhere):
   python3 -I sim/channel-eye/gen_channel_eye.py          # write the generated files
   python3 -I sim/channel-eye/gen_channel_eye.py --check  # exit 1 if they are stale
 
-Generated: prbs7_stim.inc, request_ch_1g.json, request_tc_1g.json, request_ctl_ch_tt.json.
+Generated: prbs7_stim.inc, request_ch_1g.json, request_tc_1g.json, request_l1_1g.json,
+request_ctl_ch_tt.json.
 
 Timing: UI 1000 ps (1 Gb/s DDR, 500 MHz forwarded clock). The stimulus is the cyclic
 PRBS-7 sequence (x^7 + x^6 + 1) with the last WARM bits prepended, so the waveform is
@@ -37,6 +38,22 @@ PROCESS = {"mos_tt": ("res_typ", "dio_tt"), "mos_ss": ("res_wcs", "dio_ss"),
            "mos_ff": ("res_bcs", "dio_ff"), "mos_sf": ("res_typ", "dio_tt"),
            "mos_fs": ("res_typ", "dio_tt")}
 MODELS = "libs.tech/ngspice/models/"
+# L1's on-die route emulates CH-3MM-RC's R and C to within +-20 % (test-configuration.md,
+# "L1"); kr_l1 / kc_l1 sweep that emulation band as a third corner axis. This is the
+# route's build tolerance, not the channel-model process spread of DR-0005.
+L1_RC = [0.8, 1.0, 1.2]
+# Which spec rows each request GRADES (emits `limits` for). CH grades every row it
+# measures. A loopback request grades only what spec/test-configuration.md marks `yes`
+# for that loopback among the rows this bench measures:
+#   L2 (tc) -> T-09 only (the matrix reports T-01 there: "report (loaded channel)");
+#   L1      -> T-01 ("yes: error-free at the rate") and T-09 ("yes").
+# T-26 is report-only in both loopbacks (the matrix says "not measured" for each), and
+# T-15 / T-16 / T-18 are not observable in either and are not emitted at all.
+GRADED = {
+    "ch": {"T-01", "T-09", "T-15", "T-16", "T-18", "T-26"},
+    "tc": {"T-09"},
+    "l1": {"T-01", "T-09"},
+}
 
 
 def prbs7():
@@ -140,8 +157,9 @@ def meas(name, **kw):
 
 def measurements(kind):
     ch = kind == "ch"
+    graded = GRADED[kind]
     m = []
-    lim = lambda **k: {"limits": k} if ch else {}
+    lim = lambda row, **k: {"limits": k} if row in graded else {}
     pr = prbs7()
     n_edges = sum(1 for i in range(PERIOD) if pr[i] != pr[i - 1])  # cyclic transitions per period
     for lane, rx in (("a", "vdd_arx"), ("b", "vdd_brx")):
@@ -150,7 +168,7 @@ def measurements(kind):
         gate = f"(time[1,{n}-1] ge {T0_NS}e-9)*(time[1,{n}-1] lt {T1_NS}e-9)"
         m.append(meas(f"t01_dout_edges_{lane}", spec_row="T-01", unit="count",
                       expr=f"mean(abs({x}[1,{n}-1]-{x}[0,{n}-2])*{gate})*({n}-1)",
-                      **lim(min=n_edges - 0.5, max=n_edges + 0.5)))
+                      **lim("T-01", min=n_edges - 0.5, max=n_edges + 0.5)))
     if ch:  # T-18 is CH only (test-configuration.md: L2 and L1 cannot observe an eye)
         wins = list(range(0, UI_PS, EYE_STEP_PS))
         for k, s in enumerate(wins):
@@ -169,18 +187,18 @@ def measurements(kind):
         rx = RX[lane]
         top, vd = f"vecmax(v({pin}))", f"vecmax(v({rx}))"
         m.append(meas(f"t09_over_{lane}", unit="ratio", spec_row="T-09", expr=f"({top}-{vd})/{vd}",
-                      **({"limits": {"max": 0.25}})))
+                      **lim("T-09", max=0.25)))
         m.append(meas(f"t09_under_{lane}", unit="ratio", spec_row="T-09", expr=f"(0-vecmin(v({pin})))/{vd}",
-                      **({"limits": {"max": 0.25}})))
+                      **lim("T-09", max=0.25)))
         for tag, sign in (("over", f"v({pin})-1.25*v({rx})"), ("under", f"-0.25*v({rx})-v({pin})")):
             m.append(meas(f"t09_dwell_{tag}_{lane}", unit="s", spec_row="T-09",
                           spice=f".meas tran t09_dwell_{tag}_{lane} INTEG par('u({sign})') FROM={T0_NS}n TO={T1_NS}n",
-                          limits={"max": 0.4e-9}))
+                          **lim("T-09", max=0.4e-9)))
     p = lambda a: f"v({a})*i({a})"
     e = (f"-({p('vdd_atx')}+{p('vdd_arx')}+({p('vdd_ctx')}+{p('vdd_crx')})/{N_WIRES})/{PERIOD}")
     m.append(meas("t26_energy_per_bit_simulated_j", unit="J", spec_row="T-26",
                   spice=f".meas tran t26_energy_per_bit_simulated_j INTEG par('{e}') FROM={T0_NS}n TO={T1_NS}n",
-                  **lim(max=1e-12)))
+                  **lim("T-26", max=1e-12)))
     for nm, srcs in (("e_lane_a_tx_j", ["vdd_atx"]), ("e_lane_a_rx_j", ["vdd_arx"]),
                      ("e_clock_lane_j", ["vdd_ctx", "vdd_crx"])):
         pw = "+".join(p(s) for s in srcs)
@@ -189,32 +207,46 @@ def measurements(kind):
     if ch:  # T-15 / T-16: single-instance half only; the array and Monte Carlo half is #44
         t15, t16 = skew_pairs()
         for nm, card in t15:
-            m.append(meas(nm, unit="s", spec_row="T-15", spice=card, limits={"min": -0.06e-9, "max": 0.06e-9}))
+            m.append(meas(nm, unit="s", spec_row="T-15", spice=card, **lim("T-15", min=-0.06e-9, max=0.06e-9)))
         for nm, card in t16:
             m.append(meas(nm, unit="s", spec_row="T-16", spice=card,
-                          limits={"min": 0.5e-9 - 0.03e-9, "max": 0.5e-9 + 0.03e-9}))
+                          **lim("T-16", min=0.5e-9 - 0.03e-9, max=0.5e-9 + 0.03e-9)))
     return m
 
 
+def corners(kind):
+    """The PVT-FULL grid, plus L1's zipped +-20 % R/C axis (3 points, so 135 corners)."""
+    c = {"process": [{"name": c, "sections": [c, {"lib": MODELS + "cornerRES.lib", "section": r},
+                                              {"lib": MODELS + "cornerDIO.lib", "section": d}]}
+                     for c, (r, d) in PROCESS.items()],
+         "supply_v": {s: [1.08, 1.2, 1.32] for s in SUPPLIES},
+         "temperature_c": [-40, 27, 125]}
+    if kind == "l1":
+        # zipped by index: R and C move together, so the -20 %, nominal and +20 % points
+        # of the route are three corners each, never folded into nominal.
+        c["params"] = {"kr_l1": list(L1_RC), "kc_l1": list(L1_RC)}
+    return c
+
+
 def request(kind):
-    sections = [{"name": c, "sections": [c, {"lib": MODELS + "cornerRES.lib", "section": r},
-                                         {"lib": MODELS + "cornerDIO.lib", "section": d}]}
-                for c, (r, d) in PROCESS.items()]
     return {
         "engine": "ngspice",
         "models": {"pdk": "ihp-sg13g2", "lib": MODELS + "cornerMOSlv.lib"},
         "netlist": f"tb_{kind}.cir",
         "backend": "batch",
-        "corners": {"process": sections,
-                    "supply_v": {s: [1.08, 1.2, 1.32] for s in SUPPLIES},
-                    "temperature_c": [-40, 27, 125]},
+        "corners": corners(kind),
         "analysis": {"kind": "tran", "args": f"2p {T1_NS}n 0 5p"},
         "measurements": measurements(kind),
         # fleet runner is klt 0.7.0 and rejects the 0.8.0 pinned client without this (see README)
         "batch": {"runner_version_check": "warn"},
         # measured ~8 s of ngspice per ns of stimulus at mos_tt/1.2 V/27 C: ~1100 s per corner
+        # (superseded: about 22-30 s per full 141 ns corner since the #142 driver; sim/README.md).
+        # ch/tc keep 2400 s, the value their committed records were produced with. L1 declares
+        # 480 s -- still 16x the measured cost -- because the fleet's units-per-job ceiling is
+        # floor((3600 - 120) / timeout_s): at 2400 s that is 1, which would make L1's 135-corner
+        # grid 135 one-unit jobs, and submitting one job takes about 45 s. At 480 s it is 7.
         "options": {"osdi_preload": [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{o}.osdi" for o in OSDI],
-                    "timeout_s": 2400},
+                    "timeout_s": 480 if kind == "l1" else 2400},
     }
 
 
@@ -229,7 +261,7 @@ def control_request():
 
 def outputs():
     o = {"prbs7_stim.inc": stim_include()}
-    for k in ("ch", "tc"):
+    for k in ("ch", "tc", "l1"):
         o[f"request_{k}_1g.json"] = json.dumps(request(k), indent=2) + "\n"
     o["request_ctl_ch_tt.json"] = json.dumps(control_request(), indent=2) + "\n"
     return o

@@ -35,7 +35,7 @@ added load and delay of the mux (no SIM leg). The synthesized netlist under
 `INJECT_BUG_SHIFT_EDGE` (negative control): TX skips the shift at
 position 19 (bit 19 stays on the faulty wire).
 
-## aib_datapath.v: T-02 DDR/SDR serializer, deserializer, T-29 L1 select, T-27 latency
+## aib_datapath.v: T-02 DDR/SDR serializer, deserializer, T-29 loopback select, T-27 latency
 
 `aib_datapath #(N)` instantiates N `aib_tx_slice` + `aib_rx_slice` pairs, one per
 wire (N = 20 default, 8 fallback, T-03). The design follows AIB 1.2 sections
@@ -49,10 +49,25 @@ and are not in this module.
 | `rx_clk` | RX forwarded clock, already centred in the data eye (the DLL's job; the bench uses `clk` delayed a quarter cycle) |
 | `rst_n` | asynchronous active-low reset of every register |
 | `sdr` | 0 = DDR, 1 = SDR test mode (TX side): `tx_d0` is held for the whole cycle and `tx_d1` is ignored |
-| `l1` | 1 = L1 on-die loopback: each RX slice samples its own `tx_wire` instead of `rx_wire` (`spec/test-configuration.md`, "L1"). The digital select only; the TopMetal2 route is layout work |
+| `l1` | 1 = **digital** loopback: each RX slice samples its own `tx_wire` instead of `rx_wire`. The select function only — this path contains no I/O cell, pad or route, so it is **not** the L1 electrical path of `spec/test-configuration.md` (DR-0019); the port name predates that record |
 | `tx_d0`, `tx_d1` | the two bits per wire per cycle; `d0` goes out first |
 | `tx_wire`, `rx_wire` | the N wires out and in |
 | `rx_q0`, `rx_q1` | the received word, `q0` the first bit; in SDR `q1` repeats `q0` and carries no data |
+
+**Scope of the T-29 evidence (DR-0019).** This module carries the **`RTL` leg** of T-29
+and nothing more: `l1` is the digital select, enumerated in both states by
+`verification/test_datapath.py` (`l1_round_trip_ddr`, `l1_round_trip_sdr`,
+`l1_ignores_rx_wire`). Three things follow, and the first two are easy to get wrong:
+
+- **`l1 = 1` is not the spec's L1.** The spec's L1 is a TopMetal2 route between two real
+  I/O cells (`spec/test-configuration.md`, DR-0009); exercising it needs `l1 = 0`, so that
+  the RX slices sample `rx_wire`, the real RX cell's output. The `SIM` leg of L1 is
+  `sim/channel-eye/tb_l1.cir`, and of L2 the existing `tb_tc.cir` record.
+- **There is no L2 control input, and none is owed.** Which loopback a wire group offers
+  is set by its on-die route and its bonding, not by an RTL state (DR-0019).
+- **Selection granularity is the wire group.** `sdr` and `l1` are one per
+  `aib_datapath` instance, and one instance is one direction's N wires sharing a
+  forwarded clock (T-03) — which is the granularity T-29's "per wire group" asks for.
 
 ### Cycle accounting (T-27)
 

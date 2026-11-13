@@ -48,9 +48,13 @@ DIGITAL = {
              "RX output register, 1.5 cycles each way); analog delays are excluded by the "
              "row itself."),
     "T-29": ("mode-function",
-             "Loopback modes L1 and L2 are selected by control inputs of the RTL; each mode "
-             "is a fixed routing of enumerated signals, simulated per mode, with no variation "
-             "dependence."),
+             "The digital half of the row is the datapath's loopback select: the one control "
+             "input `l1` of rtl/aib_datapath.v, enumerated in both states and simulated per "
+             "state. It is a fixed routing of enumerated signals, with no variation "
+             "dependence. The RTL has no L2 control input, and `l1` is the digital select "
+             "only, not the L1 electrical path: which loopback a wire group offers is set by "
+             "its on-die route and its bonding, not by an RTL state, and the analog half of "
+             "each loopback is separate SIM evidence outside this partition (DR-0019)."),
 }
 
 

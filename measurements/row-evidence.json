@@ -79,6 +79,58 @@
         "basis": "simulated pre-layout, klt yield sigma-to-spec (one-sided, target 7 = the 14 sigma peak-to-peak reading)",
         "note": "Normal-model figure; the distribution is not normal (Anderson-Darling rejected), the empirical yield 900/900 and the worst draw are the tail used."
       }
+    ],
+    "T-29": [
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=l1_round_trip_ddr].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, N = 20: PRBS-7 round trip with the datapath's loopback select on",
+        "note": "RTL leg, loopback select function only. This is the digital `l1` path of rtl/aib_datapath.v: it contains no I/O cell, pad or route, so it is NOT the L1 electrical path of test-configuration.md (DR-0019). Port naming filed as #181."
+      },
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=l1_ignores_rx_wire].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, N = 20: a decoy on rx_wire corrupts the round trip with the select off and not with it on",
+        "note": "RTL leg. Shows the select is real rather than vacuous; still the digital path only (DR-0019)."
+      },
+      {
+        "record": "sim/channel-eye/records/20261113T105218Z-l1/rows.json",
+        "field": "rows.T-01.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL x the route's -20/nominal/+20 % R/C, 135 corners",
+        "scope": "TC",
+        "basis": "simulated, failing T-01 measurements over 270 corner-measurements, L1 on-die loopback through the real cells",
+        "note": "Simulated, not measured. SIM leg of L1: bit transfer through the L1 electrical configuration (dout edge count 64.0 at every corner). TC only, never a CH claim. Declared gap: the L1 TopMetal2 route is not in layout/, so the +-20 % R/C band is the declared emulation tolerance of test-configuration.md, not an extracted R/C (owed, #182). The route's inductance is not reproduced (l_mm = 0, DR-0009 Limits)."
+      },
+      {
+        "record": "sim/channel-eye/records/20261113T105218Z-l1/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL x the route's -20/nominal/+20 % R/C, 135 corners",
+        "scope": "TC",
+        "basis": "simulated, failing T-09 measurements over 2160 corner-measurements, L1 on-die loopback",
+        "note": "Simulated, not measured. SIM leg of L1: worst over/undershoot 0.0053 x VOS against the 0.25 bound, zero dwell above the level. T-26 is report-only in L1 (test-configuration.md) and is not cited. Same declared gaps as this record's T-01 entry above; the record's README.md lists them."
+      },
+      {
+        "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "TC",
+        "basis": "simulated, failing T-09 measurements, L2 wire-bond loopback through the real cells",
+        "note": "Simulated, not measured. SIM leg of L2: the existing tb_tc.cir record, now cited for T-29 as well as T-09. Declared gap: the 2 nH/wire and 0.5 pF/pin package values are assumptions until the shuttle packaging is known (test-configuration.md). TC only."
+      }
     ]
   }
 }

@@ -23,11 +23,20 @@ def load(path):
 
 
 def short_corner(cid):
-    """mos_tt/vdd_...=1.200_...V/27C -> mos_tt/1.20V/27C (all supplies swing together)."""
+    """mos_tt/vdd_...=1.200_...V/27C -> mos_tt/1.20V/27C (all supplies swing together).
+
+    A corner_id can carry further axis segments after the temperature -- `params:...`
+    for the L1 route's R/C sweep (tb_l1.cir), and klt also emits `options:...` and
+    `mcN`. Those are kept, and the temperature is never dropped to make room for
+    them: taking the last segment alone silently renamed an L1 binding corner
+    `mos_tt/mixed/params:kc_l1=0.8,kr_l1=0.8`, with no temperature in it at all.
+    """
     parts = cid.split("/")
-    volts = sorted({p.split("=")[1] for p in parts[1].split("_") if "=" in p}) if len(parts) > 2 else []
+    if len(parts) <= 2:
+        return cid
+    volts = sorted({p.split("=")[1] for p in parts[1].split("_") if "=" in p})
     v = volts[0] if len(volts) == 1 else "mixed"
-    return f"{parts[0]}/{v}/{parts[-1]}" if len(parts) > 2 else cid
+    return "/".join([parts[0], v, *parts[2:]])
 
 
 def summarise(report, row_of=None):

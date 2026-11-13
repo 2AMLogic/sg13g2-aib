@@ -1,0 +1,23 @@
+* tb_l1.cir -- TC, L1 on-die loopback (spec/test-configuration.md), four lanes (tb_body.inc).
+* A TX pin drives an RX pin of the same die through an on-die TopMetal2 route sized to
+* emulate CH-3MM-RC: R and C within +-20 % of the model (test-configuration.md, "L1").
+* The route is the model's RC ladder with its inductance removed -- DR-0009 "Limits" says
+* L1 reproduces the model's R and C by extraction check and does NOT reproduce its
+* inductance, so l_mm = 0 here and the model's 0.5 nH/mm is not carried as if it were.
+* kr_l1 / kc_l1 are the +-20 % emulation band of the route, swept as a corner axis by
+* request_l1_1g.json (corners.params). They are the route's own build tolerance, not the
+* channel-model process spread of DR-0005.
+* cfar keeps the model's default 0.1 pF far-end term, exactly as tb_ch.cir does, so the
+* two benches load the receiver side the same way; the real cells add their own pin
+* capacitance on top in both.
+* This is NOT the channel: no claim made from this netlist is a CH claim. L1 is the test
+* configuration, and the on-die route does not exist in layout/ yet (see the record README).
+.include ../../spec/channel/channel_rc.cir
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.param kr_l1=1 kc_l1=1
+.subckt link txp rxp gnd
+Xrt txp rxp gnd chan_rlc len_mm=3 l_mm=0 kr=kr_l1 kc=kc_l1
+.ends link
+.include tb_body.inc
