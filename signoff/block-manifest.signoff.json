@@ -915,7 +915,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d",
+        "content_hash": "sha256:0685d96daba86ba62387e12c5e31b5d2e658517b4415fa4e6d1da99096c261e1",
         "input_verified": true,
         "exit_status": 0,
         "attestation": {
@@ -939,7 +939,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:6c5876fc375d53bc2233fe5da7ed397acabf0f92510d54154bc5a5511fc4768d",
+        "content_hash": "sha256:0685d96daba86ba62387e12c5e31b5d2e658517b4415fa4e6d1da99096c261e1",
         "input_verified": true,
         "exit_status": 0,
         "attestation": {
