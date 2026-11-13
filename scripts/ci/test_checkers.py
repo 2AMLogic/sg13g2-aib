@@ -116,6 +116,42 @@ class AppendOnlyTests(unittest.TestCase):
             (r / self.REC).rename(dst / "record.json")
         self.assertNotEqual(self.scenario(mv), 0)
 
+    PEX_REC = "layout/pex/records/20260101T000000Z/record.json"
+
+    def test_pex_record_add_passes(self):
+        def add(r):
+            p = r / "layout/pex/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "record.json").write_text(json.dumps(GOOD))
+        self.assertEqual(self.scenario(add), 0)
+
+    def test_pex_record_edit_fails(self):
+        def edit(r):
+            p = r / self.PEX_REC
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("{}")
+        # The base tree has no pex record, so seed one, then edit it.
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD)
+            (root / self.PEX_REC).parent.mkdir(parents=True)
+            (root / self.PEX_REC).write_text(json.dumps(GOOD))
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            base = git(root, "rev-parse", "HEAD")
+            edit(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "change")
+            self.assertNotEqual(run(APP, "--base", base, cwd=root).returncode, 0)
+
+    def test_pex_generator_edit_passes(self):
+        def edit(r):
+            p = r / "layout/pex/gen_pex_benches.py"
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("# changed\n")
+        self.assertEqual(self.scenario(edit), 0)
+
     def test_zero_base_skips(self):
         self.assertEqual(run(APP, "--base", "0" * 40).returncode, 0)
 
@@ -364,7 +400,7 @@ class PnrPinTests(unittest.TestCase):
 
 
 class CornerBundleTests(unittest.TestCase):
-    """Every committed request under sim/ must agree with the one PVT-FULL table."""
+    """Every committed request under sim/ or layout/ agrees with the PVT-FULL table."""
 
     def bundle(self, corner, res, dio):
         return {"name": corner, "sections": [
@@ -421,6 +457,32 @@ class CornerBundleTests(unittest.TestCase):
             (d / "request.json").write_text(json.dumps(
                 {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
             self.assertEqual(run(CORNERS, "--root", root).returncode, 0)
+
+    def test_layout_requests_are_checked(self):
+        # #81: the item 7 pex benches carry the same corner object as item 5's,
+        # so a held dio_tt there is the same #184 defect in a second tree.
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "layout/pex/benches").mkdir(parents=True)
+            (root / "layout/pex/benches/request_dc_static_top.json").write_text(json.dumps(
+                {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
+            r = run(CORNERS, "--root", root)
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("dio_tt", r.stdout + r.stderr)
+
+    def test_layout_records_are_not_checked(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            d = root / "layout/pex/records/20260101T000000Z"
+            d.mkdir(parents=True)
+            (d / "request_dc_static_top.json").write_text(json.dumps(
+                {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
+            self.assertEqual(run(CORNERS, "--root", root).returncode, 0)
+
+    def test_no_request_tree_at_all_is_an_error(self):
+        # a root with neither sim/ nor layout/ is a mis-invocation, not a pass
+        with tempfile.TemporaryDirectory() as t:
+            self.assertNotEqual(run(CORNERS, "--root", Path(t)).returncode, 0)
 
     def test_unparseable_json_is_reported_not_skipped(self):
         # a malformed request must not pass the check unexamined

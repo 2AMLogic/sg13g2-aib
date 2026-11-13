@@ -23,13 +23,16 @@ ones. Stdlib only; no PDK is needed to import it.
 `gen_channel_eye.py`, `gen_clock_path.py`, `gen_mc.py` and `gen_dc_static.py`
 all import it rather than restating the table, and
 `scripts/ci/check_corner_bundles.py` (CI) checks every committed request under
-`sim/` against it, so the copies cannot drift apart again. The four families
+`sim/` and `layout/` against it, so the copies cannot drift apart again (the
+item 7 pex benches under `layout/pex/benches/` re-run the item 5 corner grid, so
+they carry the same corner object). The four families
 write two request shapes -- a bare MOS section name for the transient benches,
 an explicit `{lib, section}` pair (plus `_mismatch` for Monte Carlo, plain
 `mos_<corner>` for dc-static) -- and both come out of the one table.
 
-Records under `sim/*/records/` are **not** checked and are never rewritten to
-match: they are append-only evidence and keep the request they were run with.
+Records under `*/records/` (in either tree) are **not** checked and are never
+rewritten to match: they are append-only evidence and keep the request they were
+run with.
 
 ## OSDI device models
 

@@ -1,0 +1,77 @@
+{
+  "record": "pex",
+  "mode": "probe",
+  "item": "7.analog",
+  "klt_version": "0.9.0",
+  "layout_sha256": "fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+  "generated_by": "layout/pex/run_pex.sh",
+  "reports": [
+    "aib_io_rx.envbackend.pex.report.json",
+    "aib_io_rx.named.pex.report.json",
+    "aib_io_tx.envbackend.pex.report.json",
+    "aib_io_tx.named.pex.report.json"
+  ],
+  "request_modifications": {
+    "_comment": "What run_pex.sh changed in the committed benches/request_dc_static_<top>.json before each run. Each request as it ran is pinned by request_<tag>.json.sha256.",
+    "named": {
+      "corners": "narrowed to the single corner tt/1.200V/27C",
+      "backend": "local",
+      "options.keep_artifacts": true
+    },
+    "envbackend": {
+      "corners": "narrowed to the single corner tt/1.200V/27C",
+      "backend": "field deleted, so it resolves from $KLT_SIM_BACKEND (defect 1 reproduction)",
+      "options.keep_artifacts": true
+    }
+  },
+  "summary": {
+    "aib_io_rx.envbackend.pex.report.json": {
+      "status": "error",
+      "device_count": 42,
+      "net_count": 6,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 10,
+      "delta_errors": 10,
+      "delta_error_sides": [
+        "schematic:ngspice_fatal"
+      ]
+    },
+    "aib_io_rx.named.pex.report.json": {
+      "status": "error",
+      "device_count": 42,
+      "net_count": 6,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 10,
+      "delta_errors": 10,
+      "delta_error_sides": [
+        "extracted:ngspice_fatal"
+      ]
+    },
+    "aib_io_tx.envbackend.pex.report.json": {
+      "status": "error",
+      "device_count": 138,
+      "net_count": 17,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 14,
+      "delta_errors": 14,
+      "delta_error_sides": [
+        "schematic:ngspice_fatal"
+      ]
+    },
+    "aib_io_tx.named.pex.report.json": {
+      "status": "error",
+      "device_count": 138,
+      "net_count": 17,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 14,
+      "delta_errors": 14,
+      "delta_error_sides": [
+        "extracted:ngspice_fatal"
+      ]
+    }
+  }
+}
