@@ -31,6 +31,41 @@ sim/pdk-smoke/run_smoke.sh                       # writes sim/pdk-smoke/records/
 A tarball checksum mismatch aborts `fetch-pdk.sh` (exit 4) and leaves no
 install behind. `build-osdi.sh` likewise refuses an unverified compiler.
 
+## Record harness
+
+`sim/channel-eye/run_channel_eye.sh` and `sim/clock-path/run_clock_path.sh` are thin entry
+points over one shared procedure, `sim/harness/batch_record.sh`: resolve the PDK, check the
+generated files are fresh, refuse an existing record directory, submit **one** `klt sim
+--backend batch` request with `--wait-for-capacity 600`, scrub the fleet bucket name out of
+the captured stderr, classify the exit code, copy the request and bench into the record,
+post-process the report and write `record.json` (`sim/harness/write_record.py`). The entry
+points pass only what differs between the two families: the request, the record suffix,
+`--max-units-per-job`, the bench files to copy, the generator to `--check`, and the family's
+own `record.json` fields. Neither submits anything itself, so a fleet-handling fix lands once
+(#189; the two copies had drifted apart on four fleet behaviours).
+
+A tool or fleet error writes **no** record (exit 6) and prints the
+`CHANNEL_EYE_WORK=<dir> CHANNEL_EYE_RESUME=1` line that retries the same batch jobs
+(`CLOCK_PATH_*` for the clock-path runner); there is no local fallback. Only klt's summary
+sentence `were submitted but never launched` discards a record — a successful `--resume`
+prints the same words per shard it recovers, and that record is kept.
+
+```bash
+sim/harness/test_batch_record.sh            # the procedure, against a stubbed klt sim
+python3 -I sim/harness/test_write_record.py  # replays every committed record of both families
+sim/channel-eye/run_channel_eye.sh ch --dry-run   # what an entry point passes; submits nothing
+```
+
+Both self-tests are PDK-free, fleet-free and offline, and neither writes under `records/`.
+`write_record.py` collects job ids from `environment.remote.job_id` **and**
+`environment.remote.fleet[]`, so a sharded run (what `--max-units-per-job 1` always produces)
+records them. Records written from 2026-11-13 carry a `batch_job_ids` list and a
+`runner_klt_version` list; the five channel-eye records committed before that keep
+`"batch_job_id": null` and `"runner_klt_version": null`, because the runner that wrote them
+read only `environment.remote.job_id`, which a sharded run never sets. Those records are
+append-only evidence and were not edited: their job ids are in each record's `klt.stderr`
+and in the 45 `fleet` entries of its `report.json.gz`.
+
 ## pdk-smoke
 
 `sim/pdk-smoke/` runs one corner (`mos_tt`, 27 C) with a single local
@@ -149,7 +184,7 @@ the 75 CH measurements are generated, not hand-written.
 python3 -I sim/channel-eye/test_channel_eye.py        # generator + post-processor self-tests
 cd sim/channel-eye && klt sim request_ch_1g.json --dry-run   # 45 corners
 sim/channel-eye/run_channel_eye.sh ch                 # batch fleet; writes records/<UTC>-ch/
-sim/channel-eye/run_channel_eye.sh tc
+sim/channel-eye/run_channel_eye.sh tc                 # procedure: "Record harness" above
 ```
 
 Corners: `mos_{tt,ss,ff,sf,fs}` x VDDIO 1.08/1.20/1.32 V x -40/27/125 C; the resistor and
@@ -456,6 +491,7 @@ T-21 and T-29 are declared gaps (no DLL-side model, no loopback mux in `design/`
 python3 -I sim/clock-path/gen_clock_path.py --check   # generated files fresh?
 cd sim/clock-path && klt sim request.json --dry-run   # 45 corners
 sim/clock-path/run_clock_path.sh                      # batch fleet; writes records/<UTC>/
+                                                      # procedure: "Record harness" above
 ```
 
 **Status (2026-11-13): the 45-corner record exists.** Record `clock-path/records/20261113T095936Z/`

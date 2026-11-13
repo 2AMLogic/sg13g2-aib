@@ -68,6 +68,13 @@ run_neg() {
 if [ "$want_evidence" = 1 ]; then
   run "Self-test the checkers" \
     python3 -I scripts/ci/test_checkers.py
+
+  # The shared sim record harness, against a stubbed `klt sim`: no PDK and no
+  # batch fleet, so it belongs in the PDK-free list like every checker above.
+  run "Self-test the shared sim record harness (stubbed klt sim)" \
+    python3 -I sim/harness/test_write_record.py
+  run "Self-test the shared batch record harness (stubbed klt sim)" \
+    sim/harness/test_batch_record.sh
   run "Check evidence structure and sim/ record format" \
     python3 -I scripts/ci/check_evidence_format.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
