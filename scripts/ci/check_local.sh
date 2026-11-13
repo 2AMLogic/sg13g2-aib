@@ -65,6 +65,17 @@ run_neg() {
   [ "$rc" = 1 ] || fail "$label exited $rc, expected exactly 1"
 }
 
+# run_rc <label> <want> <argv...> — must exit exactly <want>. For a refusal
+# path, where the point of the check is the specific code and not just failure.
+run_rc() {
+  label="$1"; want="$2"; shift 2
+  group_begin "$label"
+  rc=0
+  "$@" || rc=$?
+  group_end
+  [ "$rc" = "$want" ] || fail "$label exited $rc, expected exactly $want"
+}
+
 if [ "$want_evidence" = 1 ]; then
   run "Self-test the checkers" \
     python3 -I scripts/ci/test_checkers.py
@@ -96,16 +107,28 @@ if [ "$want_evidence" = 1 ]; then
 fi
 
 if [ "$want_rtl" = 1 ]; then
+  # Each bench is defined once, by the klt functional-verification request the
+  # item 5 digital envelopes cite; run_tb.py reads it. So a green rtl job runs
+  # the same bench definition as the committed evidence.
+  #
   # Plain python3, not -I: -I hides a user-site cocotb.
   run "Run the shift-redundancy bench (expect 41/41)" \
-    python3 verification/run_tb.py
+    python3 verification/run_tb.py verification/klt/shift_redundancy.json
   run_neg "Negative control must exit exactly 1" \
-    python3 verification/run_tb.py --define INJECT_BUG_SHIFT_EDGE=1
+    python3 verification/run_tb.py verification/klt/neg_shift_edge.json
 
-  for n in 20 8; do
-    run "Run the datapath bench at N = $n (expect 8/8)" \
-      python3 verification/run_tb.py --bench datapath --param "N=$n"
+  for req in datapath_n20 datapath_n8; do
+    run "Run the datapath bench from $req.json (expect 8/8)" \
+      python3 verification/run_tb.py "verification/klt/$req.json"
   done
   run_neg "Latency negative control must exit exactly 1" \
-    python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1
+    python3 verification/run_tb.py verification/klt/neg_extra_stage.json
+
+  # The two post-route requests need the PDK and the pinned klt, so this runner
+  # must refuse them (exit 2 = did not run) rather than run a half-configured
+  # bench. They are the only requests under verification/klt/ it cannot run.
+  for req in post_route neg_post_route_timing; do
+    run_rc "Refuse the post-route request $req.json" 2 \
+      python3 verification/run_tb.py "verification/klt/$req.json"
+  done
 fi

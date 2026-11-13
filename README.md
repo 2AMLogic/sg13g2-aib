@@ -90,10 +90,11 @@ CI (`.github/workflows/ci.yml`) runs the PDK-free ones; the rest need the PDK,
 ngspice or Yosys and run on a worker.
 
 ```bash
-# RTL: cocotb + Icarus (pip install "cocotb>=2.0,<3"; iverilog on PATH)
+# RTL: cocotb + Icarus (pip install "cocotb>=2.0,<3"; iverilog on PATH).
+# The bench is defined once, by the klt request the item 5 evidence cites.
 python3 verification/run_tb.py                                   # shift redundancy, 41/41
-python3 verification/run_tb.py --bench datapath --param N=20     # 8/8
-python3 verification/run_tb.py --bench datapath --param N=8      # 8/8
+python3 verification/run_tb.py verification/klt/datapath_n20.json  # 8/8
+python3 verification/run_tb.py verification/klt/datapath_n8.json   # 8/8
 
 # Evidence format and harness self-tests (no tools needed)
 python3 -I scripts/ci/test_checkers.py

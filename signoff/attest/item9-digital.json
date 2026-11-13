@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/run_tb.py",
         "passed": true,
-        "content_hash": "sha256:3516f910be0ce60cdad78308daa9255f460774154268d8d19b00f218191f02e4"
+        "content_hash": "sha256:994b3dc96eb2b711e4d20ad5c7b493e32667bc3ee32d19cb19d3db5d197df622"
       },
       {
         "check": "present",
@@ -89,7 +89,7 @@
     ]
   },
   "provenance": {
-    "klt_version": "0.8.0",
+    "klt_version": "0.9.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,

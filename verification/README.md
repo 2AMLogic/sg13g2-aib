@@ -2,8 +2,14 @@
 
 cocotb + Icarus benches. Needs `iverilog` and `cocotb` (2.x); no PDK, no klt.
 
-    python3 verification/run_tb.py                                  # expect exit 0, 41/41
-    python3 verification/run_tb.py --define INJECT_BUG_SHIFT_EDGE=1 # expect exit 1
+Each bench is defined **once**, by its `klt functional-verification` request under
+`klt/` — the same file the item 5 digital envelopes cite. `run_tb.py` takes one
+request path and reads the sources, top, test module, parameters, defines,
+timescale and seed from it, so there is no second copy to drift. With no
+argument it runs `klt/shift_redundancy.json`.
+
+    python3 verification/run_tb.py                                       # expect exit 0, 41/41
+    python3 verification/run_tb.py verification/klt/neg_shift_edge.json  # expect exit 1
 
 Run it with plain `python3`, not `-I` (isolated mode hides a user-site cocotb).
 
@@ -11,8 +17,13 @@ Exit codes (same contract as the gf180-polysynth runner, DR-0015):
 0 all passed, 1 the suite ran and a test failed, 2 the suite did not run.
 A negative control must require exactly 1.
 
-    python3 verification/run_tb.py --bench datapath --param N=20    # also N=8; expect exit 0, 8/8
-    python3 verification/run_tb.py --bench datapath --define INJECT_EXTRA_STAGE=1   # expect exit 1
+    python3 verification/run_tb.py verification/klt/datapath_n20.json     # also _n8; expect exit 0, 8/8
+    python3 verification/run_tb.py verification/klt/neg_extra_stage.json  # expect exit 1
+
+`post_route.json` and `neg_post_route_timing.json` are the exception: they
+annotate an SDF and name `@PDK_ROOT@`, so they need the PDK and the pinned klt.
+`run_tb.py` refuses them with exit 2 (the suite did not run) rather than running
+a half-configured bench; use `klt/run_evidence.py` for those.
 
 - `test_shift_redundancy.py`: T-05 `RTL` row, all 40 single-fault cases (20 positions x 2 channel directions) plus no-fault, with a TX bit-to-wire bijection check per position.
 - `tb_top.v`: bench top with fault injection (X, stuck-0, stuck-1) on the wires.
@@ -27,5 +38,6 @@ The same benches through the pinned `klt` (T1 item 5, digital): `shift_redundanc
 and the negative controls `neg_shift_edge.json` and `neg_extra_stage.json`, which must
 exit 3. `klt/run_evidence.py` runs all of them plus the STA and writes the envelopes
 to `signoff/attest/item5-digital/` (see `signoff/README.md`). The klt verdict comes
-from `results.xml`; `run_tb.py` stays the quick local runner. Running klt directly
+from `results.xml`; `run_tb.py` stays the quick local runner over the same request
+files, and the CI `rtl` job runs all five through it. Running klt directly
 needs the extra: `uvx --from "klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION)" klt functional-verification verification/klt/<name>.json -o <dir>`.
