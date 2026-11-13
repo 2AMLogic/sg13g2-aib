@@ -5,7 +5,8 @@ evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
 rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable` and `6.analog` `unmet` / `check_failed` (see "Item 6");
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable`, `6.analog` `unmet` / `check_failed` (see "Item 6")
+and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
@@ -113,6 +114,89 @@ two layout differences behind the earlier mismatch, and the commands are in
 [`layout/lvs/README.md`](../layout/lvs/README.md). The report's relative paths resolve against the
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
 re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.
+
+## Item 5 / analog evidence
+
+`5.analog` cites three `klt sim` reports as a list, each naming the `rows` it covers, and
+`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 21 rows, 13 covered and
+8 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
+`uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
+but declared gaps remain.
+
+Six of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. **T-02 and T-04 are standing gaps**:
+DR-0022 decided that T-02's `SIM` leg is a pointer to where the timing is graded (T-16, T-19,
+T-20) and that T-04's is report-only by design, because the specification states no clk/clkb
+crossing requirement. Neither closes through verification work — only a future revision of the
+specification, or a consumer stating a requirement, would give T-04 a bound (DR-0022,
+"Consequences"). So **closing the pending gap issues does not by itself make this item read
+`met`**, and whether it can while two standing gaps are declared is an open accounting
+question, tracked in #216. Do not settle it by deleting a row from the declared set.
+
+| envelope | rows | result |
+|---|---|---|
+| `sim/dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass |
+| `sim/channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated) |
+| `sim/clock-path/records/20261113T095936Z/report.json` | T-17 | 45/45 corners pass (CH) |
+
+The declared row set is every row in `spec/target-spec.md` whose verification column has a
+plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,
+T-14, T-19). **Re-derive it from the spec table** when a row changes — see `sim/README.md`
+("Item 5 / analog: the declared row set") for the 8 gaps and their issues.
+
+### Two citation rules this item depends on
+
+Both were verified on 2026-11-13 against the pinned grader (0.9.0) with scratch copies of the
+manifest; nothing in the checkout was written.
+
+- **Only the CH channel-eye record is cited, not the TC one.** `sim/channel-eye/records/20261110T083756Z-tc/`
+  carries the same row ids from the test configuration (bond-pad loaded loopback). Citing both
+  would mix a modeled-die-to-die-channel claim with a test-configuration one under one item.
+  `spec/test-configuration.md` keeps the two apart, so item 5 carries the CH claim only. This is
+  a reading of that document, not a grader rule.
+- **A `.json.gz` citation grades `unmet` / `unreadable_evidence`.** The channel-eye and
+  clock-path records hold `report.json.gz`; a decompressed `report.json` was added beside each
+  (byte-identical content, no re-run — the `.gz` is untouched, so the `sim/` append-only check
+  passes) and that is what is cited. Filed upstream as `2AMLogic/klayout-tools#5452`. If a later
+  pin fixes it, the citations can move back to the `.gz` and the copies be dropped.
+
+### The declared row set is load-bearing, not decorative
+
+The grader does **not** infer the row set. Verified against 0.9.0:
+
+- Omitting a gap entry — or omitting `spec_rows."5.analog"` entirely — makes item 5 / analog
+  read **`met`** on the 13 covered rows, with the 8 real gaps silently absent and
+  `uncovered_rows` empty. Nothing flags the omission. This is why the full set is committed
+  and must be re-derived from the spec table rather than edited by hand.
+- The `rows` list on a citation is checked **only where the envelope's measurements carry
+  `spec_row` tags** — not on every envelope. The channel-eye and clock-path reports are tagged
+  (`T-01, T-09, T-15, T-16, T-18, T-26` and `T-02, T-04, T-17`), and under them a wrong `rows`
+  entry is caught: listing a report-only row (T-02, whose measurements carry `limits: null`)
+  under the passing clock-path envelope returns `uncovered_rows: ["T-02"]`, not coverage, and
+  so does claiming a row that envelope has no measurements for (probed with T-05). **The
+  dc-static report's measurements carry no `spec_row` field, and under it the grader accepts
+  whatever `rows` says**: the same two probes moved to the dc-static citation both return
+  `uncovered_rows: []` with `row_sources` `asserted`. So a row can be listed under an untagged
+  envelope that does not measure it and nothing fails.
+- `detail.row_sources` is what tells the two apart: `derived` where the grader matched the row
+  against the envelope's own measurement names, `asserted` where it did not. **An `asserted`
+  entry means "the grader did not check this row — verify it by hand", not "checked and
+  covered".** Under `5.analog` the six `asserted` rows are exactly the dc-static ones, and they
+  are covered on this manifest's word rather than the grader's check. Each was read against
+  `sim/dc-static/records/20261112T001207Z/report.json` by hand; all have bounded, passing
+  measurements over the envelope's 45/45 corners:
+
+  | row | measurements | bound |
+  | --- | --- | --- |
+  | T-06 | `drv_{nl,ld}.t06_vol_v`, `drv_{nl,ld}.t06_voh_droop_v` | `max` 0.1 V |
+  | T-07 | `lk_{0,5,10}.t07_t28_ipin_a` | `max` 1 uA |
+  | T-08 | `drv_ld.t08_rout_{up,dn}_ohm` | 40-80 ohm |
+  | T-11 | `t11_hyst_mv` | `max` 60 mV |
+  | T-24 | `cap_{0,5,10}.t24_cpin_ff` | `max` 100 fF |
+  | T-28 | `pu_on.t28_rpu_ohm`, `pd_on.t28_rpd_ohm`, `lk_*.t07_t28_ipin_a` | 10-20 kohm |
+
+  Re-check this table by hand whenever a dc-static row's `rows` entry changes: the grader will
+  not do it. The gap is filed upstream as `2AMLogic/klayout-tools#5462`.
 
 ## Item 5 / digital evidence
 

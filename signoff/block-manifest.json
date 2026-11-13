@@ -36,6 +36,36 @@
     "4.digital": {
       "file": "layout/lvs/digital.report.json"
     },
+    "5.analog": [
+      {
+        "file": "sim/dc-static/records/20261112T001207Z/report.json",
+        "rows": [
+          "T-06",
+          "T-07",
+          "T-08",
+          "T-11",
+          "T-24",
+          "T-28"
+        ]
+      },
+      {
+        "file": "sim/channel-eye/records/20261111T235838Z-ch/report.json",
+        "rows": [
+          "T-01",
+          "T-09",
+          "T-15",
+          "T-16",
+          "T-18",
+          "T-26"
+        ]
+      },
+      {
+        "file": "sim/clock-path/records/20261113T095936Z/report.json",
+        "rows": [
+          "T-17"
+        ]
+      }
+    ],
     "5.digital": [
       {
         "file": "signoff/attest/item5-digital/fv_shift_redundancy.json"
@@ -143,6 +173,79 @@
     ]
   },
   "spec_rows": {
+    "5.analog": [
+      {
+        "id": "T-01"
+      },
+      {
+        "id": "T-02",
+        "gap": "SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
+      },
+      {
+        "id": "T-04",
+        "gap": "SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
+      },
+      {
+        "id": "T-05",
+        "gap": "no testbench measures the redundancy mux's added load/delay; the RTL leg is covered, the SIM leg is not. Tracked in #192"
+      },
+      {
+        "id": "T-06"
+      },
+      {
+        "id": "T-07"
+      },
+      {
+        "id": "T-08"
+      },
+      {
+        "id": "T-09"
+      },
+      {
+        "id": "T-11"
+      },
+      {
+        "id": "T-12",
+        "gap": "channel-model definition, not a block measurable, so not cited as covered; the +/-20 % channel R/C sensitivity its grid column asks for was never run (every record is nominal kr = kc = 1). Tracked in #193"
+      },
+      {
+        "id": "T-15"
+      },
+      {
+        "id": "T-16"
+      },
+      {
+        "id": "T-17"
+      },
+      {
+        "id": "T-18"
+      },
+      {
+        "id": "T-20",
+        "gap": "no end-to-end SIM confirmation and no ANALYSIS roll-up; fed by T-19 and T-21, both open. Tracked in #194"
+      },
+      {
+        "id": "T-21",
+        "gap": "SIM half of the dll-interface contract; this repo does not design a DLL (CLAUDE.md, DR-0020). #175 delivered the sibling comparison only. Tracked in #195"
+      },
+      {
+        "id": "T-24"
+      },
+      {
+        "id": "T-25",
+        "gap": "0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
+      },
+      {
+        "id": "T-26"
+      },
+      {
+        "id": "T-28"
+      },
+      {
+        "id": "T-29",
+        "gap": "no loopback mux exists in design/, so L1/L2 cannot be exercised; also a TC row. Tracked in #176"
+      }
+    ],
     "6.analog": [
       {
         "id": "T-10"
