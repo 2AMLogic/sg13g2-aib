@@ -18,7 +18,10 @@ contributes none.
 
 ## T-17 — forwarded-clock duty-cycle distortion at the TX output: PASS at 45/45
 
-270/270 graded measurements pass the +/-3 % bound of `spec/target-spec.md` T-17.
+90/90 graded measurements pass the +/-3 % bound of `spec/target-spec.md` T-17: `t17_dcd_c` and
+`t17_dcd_cb` at 45 corners each, the only two of the row's six measurements that carry limits
+(`coverage.measurements_with_limits` = 2). The other 180 T-17 measurements (`t17_hi_*`,
+`t17_per_*`, high time and period) have `limits: null` and are reported, never graded.
 
 | | value | corner |
 |---|---|---|
@@ -26,7 +29,8 @@ contributes none.
 | next | -0.739 % | `mos_sf`, 1.08 V, 27 C |
 | high time / period at the binding corner | 979.3 ps / 2000.0 ps | |
 
-`clk` and `clkb` distort identically (`t17_dcd_c` == `t17_dcd_cb` to six digits) — the two
+`clk` and `clkb` distort identically (`t17_dcd_c` vs `t17_dcd_cb` differ by at most 1.19e-6 over
+the grid — about six decimal places, five significant digits) — the two
 halves of `aib_tx_clk` are the same `aib_tx_data` cell driven by complementary inputs. The
 binding corner is one of the two the spec row calls out explicitly (`mos_sf`/`mos_fs` at
 -40 C). **No duty-cycle corrector is needed for T-17 at 1 Gb/s**, and none is designed here

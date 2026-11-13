@@ -391,7 +391,9 @@ sim/clock-path/run_clock_path.sh                      # batch fleet; writes reco
 `batch_job_ids`). `klt sim` exited 0 with 45/45 corners carrying a status. No local grid was run,
 and `design/` and `spec/` are untouched.
 
-- **T-17 passes at 45/45 corners** (270/270 measurements against the +/-3 % bound). Worst case
+- **T-17 passes at 45/45 corners** (90/90 graded measurements against the +/-3 % bound: `t17_dcd_c`
+  and `t17_dcd_cb` at 45 corners each; the row's other 180 high-time/period measurements carry no
+  limits and are reported, not graded). Worst case
   **-1.036 %** at `mos_sf`, 1.08 V, -40 C — one of the two corners the spec row calls out — so
   1.964 % of margin remains. `clk` and `clkb` distort identically. No duty-cycle corrector is
   needed at 1 Gb/s and none is designed here; dll-interface Gap G3 (D-9) is not triggered.
@@ -417,8 +419,13 @@ The 2026-10-27 attempt of this same request produced no record: the submit succe
 units) but the fleet left every job `pending` and never launched it. That run did not pass
 `--wait-for-capacity`; the fleet is vCPU-budgeted and refuses a burst with `batch_no_capacity`.
 `run_clock_path.sh` now passes `--wait-for-capacity 600` (and `request.json` sets
-`batch.capacity_wait_s`), which is what let this run through a busy fleet; one `--resume` was still
-needed for the shards that were refused past that window.
+`batch.capacity_wait_s`), which is what let this run through a busy fleet. **The record committed
+here needed no `--resume`**: it is a single fresh run, `environment.resume.resumed_corners` = 0,
+all 15 `environment.remote.fleet[]` shards `resumed: false`, and no resume line in its
+`klt.stderr`. An earlier attempt on 2026-11-13 did need one `--resume` for shards refused past
+that window, but the then-buggy unlaunched-jobs guard matched `--resume`'s own per-shard recovery
+line and deleted that record (the second harness fix below); no artefacts of that attempt
+survive, so nothing here rests on it.
 
 ## dc-static
 
