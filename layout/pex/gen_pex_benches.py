@@ -46,7 +46,6 @@ one `layout/pex/run_pex.sh` away once the tool is fixed.
 From the repo root:
     python3 -I layout/pex/gen_pex_benches.py [--check]
 """
-import argparse
 import hashlib
 import json
 import sys
@@ -59,6 +58,7 @@ BENCHES = HERE / "benches"
 
 sys.path.insert(0, str(ROOT / "sim"))
 sys.path.insert(0, str(ROOT / "sim" / "dc-static"))
+import gen_common  # noqa: E402  (the one write-or-check implementation)
 import gen_dc_static as dc  # noqa: E402  (path set above; stdlib-only module)
 import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
 
@@ -401,24 +401,8 @@ def files() -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true",
-                    help="exit 1 if a committed file is stale, writing nothing")
-    args = ap.parse_args()
-    bad = 0
-    for rel, text in files().items():
-        p = HERE / rel
-        if args.check:
-            if not p.exists() or p.read_text() != text:
-                print(f"STALE: layout/pex/{rel} "
-                      f"(run python3 -I layout/pex/{Path(__file__).name})", file=sys.stderr)
-                bad = 1
-        else:
-            p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(text)
-    if args.check and not bad:
-        print("ok: committed pex benches, DUTs and requests match a fresh build")
-    return bad
+    return gen_common.write_or_check(files(), base=HERE,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":
