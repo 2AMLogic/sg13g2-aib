@@ -156,7 +156,7 @@ class EntryPointTests(unittest.TestCase):
             data = json.loads((rec / "record.json").read_text())
             if all(data.get(k) == v for k, v in match.items()):
                 return rec, data
-        self.fail(f"no committed {family} record matching {match}")
+        self.fail(f"no committed {in_dir} record matching {match}")
 
     def assert_matches_committed(self, cfg, rec, data):
         """The entry point's family fields and copy list must reproduce a committed record."""
