@@ -4,6 +4,16 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-13
 
+- **Issue #219** (closed): Run the committed sim self-tests in CI: 18 tests and two generator --check modes are in no check list
+- **PR #235**: ci: run the channel-eye and T-19 bench self-tests in the PDK-free list
+- **Issue #228** (closed): Record dc-static runs through the shared batch harness: it is the one item 5 family still recorded by hand, and its four records have four shapes
+- **PR #242**: feat(sim): record dc-static runs through the shared batch harness
+- **Issue #227** (closed): Share one write-or---check helper across the six generators: the loop is copied six times with three behaviours
+- **PR #238**: refactor: share one write-or-check helper across the six generators
+- **Issue #230** (closed): Item 8 report grades from a hand-kept row map that omits 13 rows the manifest already cites, three of them recorded failures: check the map against the manifest
+- **PR #240**: fix(item8): grade every row the manifest cites, flipping item 8 to fail
+- **Issue #192** (closed): T-05 SIM leg: no testbench measures the redundancy mux's added load and delay
+- **PR #233**: feat(sim,spec): measure the T-05 redundancy mux's added load and delay over PVT-FULL
 - **Issue #217** (closed): Define each cocotb bench once: run_tb.py and the klt functional-verification requests hold two copies
 - **PR #222**: refactor(verification): define each cocotb bench once, in its klt request
 - **Issue #218** (closed): T-22/T-23: layout/stats/t22-t23.json says met but nothing reads it, and the item 8 report says not-yet-measured - wire it in or stop grading there
