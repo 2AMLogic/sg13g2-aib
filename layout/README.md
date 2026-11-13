@@ -88,7 +88,9 @@ wire 5500 um2 (55 x 100 um bounding box, pad included). T-22 and T-23 sit exactl
 their limits; they are met, with no margin, and the 80 um fallback is not invoked. The
 bounding box of a cell that is defined to be 55 x 100 um (the `prBoundary`) says the
 cell was drawn to that box; the contents are what must fit, and they do (every drawn
-shape is inside it).
+shape is inside it). The verdict of record for both rows is the item 8 aggregate
+(`measurements/characterization-report.md`), which cites this record through
+`measurements/row-evidence.json`; the numbers here are its input, not a second grading.
 
 ### DR-0017 regeneration (#140)
 
