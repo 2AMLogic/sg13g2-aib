@@ -6,7 +6,10 @@ matching).
 
 **Status of this stream: it exists, regenerates, and passes structural checks. It is not
 extraction evidence, and its LVS against the item 1 netlists is `match` for the digital partition and for the four analog cells**
-([`lvs/`](lvs/README.md), #40, #70). DRC is recorded in [`records/`](#drc-records); extraction is a separate issue (#42).
+([`lvs/`](lvs/README.md), #40, #70). DRC is recorded in [`records/`](#drc-records); parasitic
+extraction of the four drawn I/O cells is in [`pex/`](pex/README.md) (T1 item 7, analog), where
+the extraction itself is clean but the extracted netlist cannot be simulated on this PDK, so
+`7.analog` stays `unmet`.
 
 The digital partition's routed stream (`klt place-and-route` of the synthesized data path) is
 in [`pnr/`](pnr/README.md).

@@ -1,0 +1,22 @@
+* T-07 / T-24 on the tristated RX pad and T-11 receiver hysteresis, on one
+* `aib_io_rx` instance per sub-bench. The drawn RX cell contains the pad/ESD
+* structure and takes its input on PADI, behind the ESD series resistor, so the
+* pad node here is the bond pad -- sim/dc-static/tb_rx_hyst.cir drove the
+* receiver input directly, with no ESD in front of it.
+Vddio vddio 0 dc 1.2
+.include "aib_io_rx.dut.spice"
+
+* -- tristated pin: the pad is forced through the zero-volt series source Vacp,
+* whose current is the pin current and which carries the AC stimulus.
+Vpf pf 0 dc 0
+Bpin pb 0 V=v(pf)*v(vddio)
+Vacp pad_p pb dc 0 ac 0
+Xrx_p dout_p pad_p vddio 0 aib_io_rx
+
+* -- hysteresis: the pad is swept as a fraction of VDDIO, up and then down;
+* dnorm is the receiver output normalised to VDDIO so the 50 % crossing is a
+* literal level in every supply corner.
+Vfr fr 0 dc 0
+Bpin_r pad_r 0 V=v(fr)*v(vddio)
+Xrx_r dout_r pad_r vddio 0 aib_io_rx
+Bdn dnorm 0 V=v(dout_r)/v(vddio)

@@ -1,0 +1,1469 @@
+{
+  "schema_version": 2,
+  "status": "error",
+  "layout": {
+    "path": "layout/aib_io_column.gds",
+    "scope": "repo"
+  },
+  "netlist": {
+    "path": null,
+    "scope": "external"
+  },
+  "reference_netlist": {
+    "path": null,
+    "scope": "external"
+  },
+  "reference_netlist_sha256": "sha256:9a55370e6707906ada634d6715028dd15b9ba14810f329470bc793b3969bdb33",
+  "extraction": {
+    "deck": "sg13g2",
+    "device_count": 138,
+    "net_count": 17,
+    "netlist_sha256": "b86ffe1df0439abe75025f7b2f8d782a9f7fb04d1a76cda52aa67573e482ee2f",
+    "model": {
+      "capacitance": "net-to-ground for every net's own (non-coupled) area/perimeter, plus net-to-net for the vertical-overlap coupling `coupling` describes below -- a coupled net pair gets a direct capacitor between their two hub nodes, not just capacitors to the deck's ground/substrate net",
+      "coupling": "vertical overlap (crossover) unconditionally -- where one net's conductor on an adjacent metal level sits directly over another *distinct* net's conductor, that overlap area is charged between the two nets instead of to ground (issue #760) -- plus lateral (same-layer, sidewall) coupling, but only for a net pair naming one of the caller's declared `--critical-net` nets (issue #976): facing-edge length within that layer's own minimum-spacing lookback is charged between the two nets, *additively* (not deducted from either net's substrate fringe term, unlike the vertical case -- a known simplification). Any same-layer pair with neither side named `--critical-net`, and fringe shielding in general, are still not modelled",
+      "resistance": "single lumped series resistance per net, distributed as a star across that net's device terminals (issue #592) -- not a per-segment, distributed RC ladder, *unless* `--distributed-rc` names this net via `--critical-net` (issue #977, Epic #709 Phase 2b): then the net's terminals are ordered along their approximate physical spread and its total R/C is broken into a chain of per-segment resistors (segment length proportional to inter-terminal distance) with a ground capacitor at each terminal node (proportional to its adjacent segment length/2), instead of one star hub -- still an approximation (terminal position is a device-placement proxy, not true per-segment routing geometry), but a strictly finer-grained one than the single-hub star",
+      "frequency": "quasi-static -- one frequency-independent R and C per net; no skin effect, no distributed transmission-line behavior"
+    },
+    "critical_nets": [],
+    "distributed_rc": false,
+    "mom_rlc_override": null,
+    "label_layers": {
+      "metal0": [
+        8,
+        1
+      ],
+      "metal1": [
+        10,
+        1
+      ],
+      "metal2": [
+        30,
+        1
+      ],
+      "metal5": [
+        126,
+        1
+      ],
+      "metal6": [
+        126,
+        1
+      ]
+    },
+    "device_models": null,
+    "rename_declared_pins": true,
+    "tie_declared_pins": true,
+    "pdk": {
+      "variant": "ihp-sg13g2",
+      "root": {
+        "path": null,
+        "scope": "external"
+      },
+      "version": "fetched:0.3.0"
+    },
+    "parasitic_integrity": {
+      "short_threshold_ohm": 1.0,
+      "cap_tolerance": {
+        "absolute_ff": 1e-06,
+        "relative": 1e-09
+      },
+      "max_detail_items": 20,
+      "nets_checked": 17,
+      "nets_with_findings": 0,
+      "open_nets": 0,
+      "island_components": 0,
+      "orphan_nodes": 0,
+      "suspicious_resistors": 0,
+      "short_candidates": 0,
+      "capacitance_mismatches": 0,
+      "nets": [
+        {
+          "net": "\\$10",
+          "net_id": 10,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 2.686141,
+              "computed_ff": 2.686141,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$11",
+          "net_id": 11,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 3.655541,
+              "computed_ff": 3.655541,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$12",
+          "net_id": 12,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 1.47121,
+              "computed_ff": 1.47121,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$13",
+          "net_id": 13,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 2.724405,
+              "computed_ff": 2.724405,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$14",
+          "net_id": 14,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 1.464278,
+              "computed_ff": 1.464278,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$3",
+          "net_id": 3,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 3.392335,
+              "computed_ff": 3.392335,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$6",
+          "net_id": 6,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 10.175306,
+              "computed_ff": 10.175306,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$7",
+          "net_id": 7,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 3.313825,
+              "computed_ff": 3.313825,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$8",
+          "net_id": 8,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 2.227942,
+              "computed_ff": 2.227942,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "\\$9",
+          "net_id": 9,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 5.073224,
+              "computed_ff": 5.073224,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "DIN",
+          "net_id": 1,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 5.136448,
+              "computed_ff": 5.136448,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "OE",
+          "net_id": 15,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 6.107497,
+              "computed_ff": 6.107497,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "PAD",
+          "net_id": 5,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 98.444322,
+              "computed_ff": 98.444322,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "PD",
+          "net_id": 17,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 4.169453,
+              "computed_ff": 4.169453,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "PUN",
+          "net_id": 16,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 4.051566,
+              "computed_ff": 4.051566,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "VDDIO",
+          "net_id": 4,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 30.246759,
+              "computed_ff": 30.246759,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        },
+        {
+          "net": "VSS",
+          "net_id": 19,
+          "rc_model": "lumped",
+          "integrity": {
+            "open": {
+              "status": "not_applicable",
+              "reason": "lumped model: terminal legs attach to the hub by construction; no distributed segments to check connectivity over",
+              "disconnected_count": 0,
+              "disconnected_terminals": [],
+              "details_truncated": false
+            },
+            "islands": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "orphan_nodes": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "suspicious_resistors": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "short_candidates": {
+              "count": 0,
+              "details": [],
+              "details_truncated": false,
+              "reason": null
+            },
+            "capacitance": {
+              "status": "pass",
+              "declared_ff": 26.161797,
+              "computed_ff": 26.161797,
+              "delta_ff": 0.0,
+              "reason": null,
+              "tolerance": {
+                "absolute_ff": 1e-06,
+                "relative": 1e-09
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "body_bias": {
+    "status": "biased",
+    "unbiased_device_count": 0,
+    "unbiased_nets": [],
+    "unbiased_pmos_body_nets": []
+  },
+  "measurement": {
+    "mode": "testbench",
+    "command": null,
+    "timeout_s": null,
+    "sides": null
+  },
+  "testbenches": [
+    {
+      "request": {
+        "path": null,
+        "scope": "external"
+      },
+      "request_sha256": "sha256:fc40a9cd1d6c6fd05d810cd8c12755384c1f130b267437427d0874fa27a9b311",
+      "netlist": {
+        "path": null,
+        "scope": "external"
+      },
+      "netlist_sha256": "sha256:38864597f550c116abaf2d988e89d44125b00ad1e7641a1f2d3fe622efbc64de",
+      "schematic_netlist": {
+        "path": null,
+        "scope": "external"
+      },
+      "schematic_netlist_sha256": "sha256:9a55370e6707906ada634d6715028dd15b9ba14810f329470bc793b3969bdb33",
+      "corner_count": 1,
+      "measurement_names": [
+        "drv_nl.t06_voh_droop_v",
+        "drv_nl.t06_vol_v",
+        "drv_ld.t06_voh_droop_v",
+        "drv_ld.t06_vol_v",
+        "drv_ld.t08_rout_up_ohm",
+        "drv_ld.t08_rout_dn_ohm",
+        "lk_0.t07_t28_ipin_a",
+        "lk_5.t07_t28_ipin_a",
+        "lk_10.t07_t28_ipin_a",
+        "pu_on.t28_rpu_ohm",
+        "pd_on.t28_rpd_ohm",
+        "cap_0.t24_cpin_ff",
+        "cap_5.t24_cpin_ff",
+        "cap_10.t24_cpin_ff"
+      ],
+      "sides": {
+        "schematic": {
+          "environment": {
+            "engine": "ngspice",
+            "engine_version": "47",
+            "ngspice_binary": "/home/ubuntu/.local/bin/ngspice",
+            "engine_host": "local"
+          },
+          "corners": [
+            {
+              "corner_id": "tt/1.200V/27C",
+              "status": "error",
+              "diagnostics": [
+                {
+                  "severity": "error",
+                  "code": "ngspice_fatal",
+                  "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+                  "analysis_started": false
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'drv_nl' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (drv_nl.t06_voh_droop_v, drv_nl.t06_vol_v) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'drv_ld' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (drv_ld.t06_voh_droop_v, drv_ld.t06_vol_v, drv_ld.t08_rout_up_ohm, drv_ld.t08_rout_dn_ohm) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'lk_0' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (lk_0.t07_t28_ipin_a) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'lk_5' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (lk_5.t07_t28_ipin_a) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'lk_10' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (lk_10.t07_t28_ipin_a) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'pu_on' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (pu_on.t28_rpu_ohm) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'pd_on' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (pd_on.t28_rpd_ohm) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'cap_0' (ac lin 1 500meg 500meg) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (cap_0.t24_cpin_ff) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'cap_5' (ac lin 1 500meg 500meg) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (cap_5.t24_cpin_ff) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'cap_10' (ac lin 1 500meg 500meg) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (cap_10.t24_cpin_ff) are reported without a value"
+                }
+              ],
+              "produced_value": false
+            }
+          ]
+        },
+        "extracted": {
+          "environment": {
+            "engine": "ngspice",
+            "engine_version": "47",
+            "ngspice_binary": "/home/ubuntu/.local/bin/ngspice",
+            "engine_host": "local"
+          },
+          "corners": [
+            {
+              "corner_id": "tt/1.200V/27C",
+              "status": "error",
+              "diagnostics": [
+                {
+                  "severity": "error",
+                  "code": "ngspice_fatal",
+                  "message": "Error on line 268 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+                  "analysis_started": false
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'drv_nl' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (drv_nl.t06_voh_droop_v, drv_nl.t06_vol_v) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'drv_ld' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (drv_ld.t06_voh_droop_v, drv_ld.t06_vol_v, drv_ld.t08_rout_up_ohm, drv_ld.t08_rout_dn_ohm) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'lk_0' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (lk_0.t07_t28_ipin_a) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'lk_5' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (lk_5.t07_t28_ipin_a) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'lk_10' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (lk_10.t07_t28_ipin_a) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'pu_on' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (pu_on.t28_rpu_ohm) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'pd_on' (op) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (pd_on.t28_rpd_ohm) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'cap_0' (ac lin 1 500meg 500meg) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (cap_0.t24_cpin_ff) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'cap_5' (ac lin 1 500meg 500meg) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (cap_5.t24_cpin_ff) are reported without a value"
+                },
+                {
+                  "severity": "error",
+                  "code": "step_failed",
+                  "message": "analysis step 'cap_10' (ac lin 1 500meg 500meg) produced no analysis plot -- the solve failed or never ran (see this corner's log); its measurements (cap_10.t24_cpin_ff) are reported without a value"
+                }
+              ],
+              "produced_value": false
+            }
+          ]
+        }
+      },
+      "nothing_simulated_corners": [
+        "tt/1.200V/27C"
+      ]
+    }
+  ],
+  "corner_count": 1,
+  "delta": [
+    {
+      "spec_row": "drv_nl.t06_voh_droop_v",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "drv_nl.t06_vol_v",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "drv_ld.t06_voh_droop_v",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "drv_ld.t06_vol_v",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "drv_ld.t08_rout_up_ohm",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "drv_ld.t08_rout_dn_ohm",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "lk_0.t07_t28_ipin_a",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "lk_5.t07_t28_ipin_a",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "lk_10.t07_t28_ipin_a",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "pu_on.t28_rpu_ohm",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "pd_on.t28_rpd_ohm",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "cap_0.t24_cpin_ff",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "cap_5.t24_cpin_ff",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    },
+    {
+      "spec_row": "cap_10.t24_cpin_ff",
+      "corner_id": "tt/1.200V/27C",
+      "schematic_value": null,
+      "extracted_value": null,
+      "delta_pct": null,
+      "status": "error",
+      "schematic_status": "error",
+      "extracted_status": "error",
+      "error": {
+        "side": "schematic",
+        "stage": "unknown",
+        "message": "Error on line 265 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)",
+        "code": "ngspice_fatal"
+      }
+    }
+  ],
+  "coverage": {
+    "testbenches": 1,
+    "delta_rows": 14,
+    "corners_compared": 1,
+    "schema_version": 1,
+    "known": true,
+    "checked": [],
+    "skipped": [
+      {
+        "id": "comparison:[0,\"tt/1.200V/27C\",\"drv_nl.t06_voh_droop_v\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[1,\"tt/1.200V/27C\",\"drv_nl.t06_vol_v\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[10,\"tt/1.200V/27C\",\"pd_on.t28_rpd_ohm\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[11,\"tt/1.200V/27C\",\"cap_0.t24_cpin_ff\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[12,\"tt/1.200V/27C\",\"cap_5.t24_cpin_ff\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[13,\"tt/1.200V/27C\",\"cap_10.t24_cpin_ff\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[2,\"tt/1.200V/27C\",\"drv_ld.t06_voh_droop_v\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[3,\"tt/1.200V/27C\",\"drv_ld.t06_vol_v\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[4,\"tt/1.200V/27C\",\"drv_ld.t08_rout_up_ohm\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[5,\"tt/1.200V/27C\",\"drv_ld.t08_rout_dn_ohm\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[6,\"tt/1.200V/27C\",\"lk_0.t07_t28_ipin_a\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[7,\"tt/1.200V/27C\",\"lk_5.t07_t28_ipin_a\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[8,\"tt/1.200V/27C\",\"lk_10.t07_t28_ipin_a\"]",
+        "reason": "unavailable_comparison"
+      },
+      {
+        "id": "comparison:[9,\"tt/1.200V/27C\",\"pu_on.t28_rpu_ohm\"]",
+        "reason": "unavailable_comparison"
+      }
+    ],
+    "inapplicable": [],
+    "unknown": [],
+    "nothing_checked": true,
+    "nothing_checked_reasons": [
+      "unavailable_comparison"
+    ]
+  },
+  "passed": 0,
+  "failed": 0,
+  "errored": 14,
+  "schematic_failed": 0,
+  "pin_count_mismatch": null,
+  "backend_failure": null,
+  "flat_dut_mismatch": null,
+  "pin_order_mismatch": null,
+  "model_mismatch": {
+    "kind": "model_set",
+    "reference_only": [
+      "aib_pad_esd",
+      "aib_tx_data"
+    ],
+    "extracted_only": [],
+    "counts": {
+      "reference": {
+        "aib_pad_esd": 1,
+        "aib_tx_data": 1,
+        "dpantenna": 2,
+        "rppd": 5,
+        "sg13_lv_nmos": 10,
+        "sg13_lv_pmos": 7
+      },
+      "extracted": {
+        "dpantenna": 2,
+        "rppd": 5,
+        "sg13_lv_nmos": 63,
+        "sg13_lv_pmos": 68
+      }
+    },
+    "detail": "the reference netlist is hierarchical (it instantiates at least one locally-defined `.subckt`), while `klt extract`'s output is always flat -- see docs/cli/extract.md's \"Extraction is flat, not hierarchical\" note and issue #1085 (the same shape `klt lvs`'s `options.flatten_reference` exists for). This divergence may simply be a hierarchy-representation artifact -- a device nested inside a locally-defined `.subckt` is counted once per definition here, not once per physical instance -- rather than a genuine device-flavour mismatch; re-run with `klt pex --flatten-schematic` (issue #2889), which flattens the schematic DUT to PDK leaf devices before the schematic-side run, before treating this as evidence the two sides are unrelated. Only in the reference netlist: aib_pad_esd, aib_tx_data. See docs/cli/pex.md's `model_mismatch` section"
+  },
+  "flatten_schematic": false,
+  "schematic_flatten": null,
+  "provenance": {
+    "klt_version": "0.9.0",
+    "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
+    "klt_reinstall_spec": "klayout-tools==0.9.0",
+    "klayout_version": "0.30.13",
+    "pdk": {
+      "name": "ihp-sg13g2",
+      "source": "PDK_ROOT environment variable",
+      "version": "fetched:0.3.0"
+    },
+    "deck": {
+      "name": "sg13g2",
+      "content_hash": "sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
+      "released": true
+    },
+    "input": {
+      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "role": "layout"
+    }
+  }
+}
