@@ -52,6 +52,65 @@ root), the cell counts and the exit code; there is no timing and no area claim. 
 run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
 `record.json`, append-only like the other records.
 
+## Item 5 / analog: the declared row set
+
+The three families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
+cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
+`SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and eight rows
+are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
+
+**Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
+
+| family | record | rows covered |
+|---|---|---|
+| dc-static | `dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 |
+| channel-eye (CH) | `channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
+| clock-path | `clock-path/records/20261113T095936Z/report.json` | T-17 |
+
+The **TC** channel-eye record (`channel-eye/records/20261110T083756Z-tc/`) is deliberately
+**not** cited: it carries the same row ids from the test configuration, and item 5 would then
+mix a modeled-channel claim with a test-configuration one. `spec/test-configuration.md` keeps
+those apart.
+
+**Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
+
+| row | why no envelope covers it | issue |
+|---|---|---|
+| T-02 | measured at 45 corners (clock-path) but report-only — the spec gives no numeric bound | #191 |
+| T-04 | measured at 45 corners (clock-path) but report-only — no numeric crossing bound | #191 |
+| T-05 | no testbench measures the redundancy mux's added load/delay (the `RTL` leg is covered) | #192 |
+| T-12 | channel-model *definition*, not a block measurable — see below | #193 |
+| T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
+| T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
+| T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
+| T-29 | no loopback mux exists in `design/`, so L1/L2 cannot be exercised; also a TC row | #176 |
+
+`SIM-MC` rows (T-10, T-13, T-14, T-19) belong to item 6, not here.
+
+### T-12 is an input definition, and separately a missing sensitivity run
+
+`spec/channel/channel_rc.cir` opens "A declared model, not a measured one." The CH-3MM-RC
+parameter set is the **input** to T-01/T-09/T-15/T-16/T-18/T-26, so citing it as a covered row
+would be circular, and it is not cited. It is still declared a gap, for a different reason: its
+grid column asks for "PVT-FULL, plus channel R/C ±20 %" and **no record varies `kr`/`kc`** —
+every channel record is nominal `kr = kc = 1`. So every CH claim here holds at the nominal
+channel and says nothing about the declared ±20 % spread (#193).
+
+### The decompressed `report.json` copies
+
+The channel-eye and clock-path records were written with only `report.json.gz`, and the pinned
+grader (0.9.0) grades a `.json.gz` citation `unmet` / `unreadable_evidence`
+(`2AMLogic/klayout-tools#5452`). Each of those two record directories therefore gained a plain
+`report.json`, produced by `gzip -dc` from the committed `.gz` — **no re-run, no new
+simulation**, byte-identical content. The `.gz` is untouched, so the `sim/` append-only check
+sees only an added file. Verify either copy with:
+
+```bash
+gzip -dc sim/clock-path/records/20261113T095936Z/report.json.gz \
+  | cmp - sim/clock-path/records/20261113T095936Z/report.json   # silent
+```
+
 ## channel-eye
 
 `sim/channel-eye/` is the PVT-FULL channel-transient family of the T1 item 5 (analog)
