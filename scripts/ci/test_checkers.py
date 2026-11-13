@@ -529,7 +529,8 @@ class PvtFullTableTests(unittest.TestCase):
 
     def test_every_generator_is_fresh_against_the_table(self):
         for gen in ("sim/channel-eye/gen_channel_eye.py", "sim/clock-path/gen_clock_path.py",
-                    "sim/mc/gen_mc.py", "sim/dc-static/gen_dc_static.py"):
+                    "sim/mc/gen_mc.py", "sim/dc-static/gen_dc_static.py",
+                    "sim/redundancy-mux/gen_redundancy_mux.py"):
             r = run(REPO / gen, "--check")
             self.assertEqual(r.returncode, 0, f"{gen} --check: {r.stdout}{r.stderr}")
 

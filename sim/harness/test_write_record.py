@@ -3,13 +3,13 @@
 
 Run: python3 -I sim/harness/test_write_record.py
 
-The record-writing step is replayed over every committed record of both families:
+The record-writing step is replayed over every committed record of every family:
 sim/harness/write_record.py is handed the committed report.json.gz / rows.json /
 request.json and must reproduce the committed record.json, field for field, apart
 from the job-id and runner-version fields that this harness exists to fix. Nothing
 under sim/**/records/ is written: records are append-only evidence.
 
-The family fields (claim_scope, energy_label, t04_bound, ...) are read back out of
+The family fields (claim_scope, energy_label, t04_bound, t05_bound, ...) are read back out of
 each committed record rather than restated here, so this test cannot drift away
 from what the runners actually emit.
 """
@@ -34,9 +34,9 @@ PRODUCED = {"record", "utc_stamp", "kind", "pdk", "klt_exit_code", "corners", "r
 JOB_FIELDS = {"batch_job_id", "batch_job_ids", "runner_klt_version"}
 
 
-# the two families sim/harness/batch_record.sh drives; the other sim/ record families
+# the families sim/harness/batch_record.sh drives; the other sim/ record families
 # (mc, pdk-smoke, rtl-synth, the local t16attr probes) follow a different procedure.
-FAMILIES = ("channel-eye", "clock-path")
+FAMILIES = ("channel-eye", "clock-path", "redundancy-mux")
 
 
 def committed_records():
@@ -148,7 +148,8 @@ class JobIdentityTests(unittest.TestCase):
 class NoDriftTests(unittest.TestCase):
     """The duplication this harness replaced must not grow back."""
 
-    ENTRY_POINTS = (SIM / "channel-eye/run_channel_eye.sh", SIM / "clock-path/run_clock_path.sh")
+    ENTRY_POINTS = (SIM / "channel-eye/run_channel_eye.sh", SIM / "clock-path/run_clock_path.sh",
+                    SIM / "redundancy-mux/run_redundancy_mux.sh")
 
     def test_only_the_shared_script_submits_to_the_fleet(self):
         for p in self.ENTRY_POINTS:
@@ -221,6 +222,17 @@ class EntryPointTests(unittest.TestCase):
         self.assertEqual(cfg["env_prefix"], "CLOCK_PATH")
         self.assertTrue(cfg["report_only_ranges"])
         self.assert_matches_committed(cfg, *self.committed("clock-path"))
+
+    def test_redundancy_mux(self):
+        cfg = self.dry_run(SIM / "redundancy-mux/run_redundancy_mux.sh")
+        self.assertEqual(cfg["record"], "redundancy-mux")
+        self.assertEqual(cfg["record_suffix"], "")
+        self.assertEqual(cfg["max_units_per_job"], "3")
+        self.assertEqual(cfg["env_prefix"], "REDUNDANCY_MUX")
+        self.assertTrue(cfg["report_only_ranges"])
+        # T-05's SIM leg has no bound of its own (DR-0023); the record must say so itself.
+        self.assertTrue(cfg["fields_tail"]["t05_bound"].startswith("none:"))
+        self.assert_matches_committed(cfg, *self.committed("redundancy-mux"))
 
     def test_an_unknown_kind_is_refused(self):
         r = subprocess.run([str(SIM / "channel-eye/run_channel_eye.sh"), "nope", "--dry-run"],
