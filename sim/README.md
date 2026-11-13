@@ -112,6 +112,19 @@ read only `environment.remote.job_id`, which a sharded run never sets. Those rec
 append-only evidence and were not edited: their job ids are in each record's `klt.stderr`
 and in the 45 `fleet` entries of its `report.json.gz`.
 
+**A record's `README.md` is narrative, not a measured datum.** Every data file in a record
+directory is frozen once committed, but a record README's *prose* may be corrected against
+the record's own data — and has been: `3cceaea` corrected the T-17 graded count in
+`clock-path/records/20261113T095936Z/README.md` after PR #178's review, and the
+20261113T174852Z README was corrected the same way in PR #249. `check_sim_append_only.py`
+permits this against a pull request's base, where a record added by that pull request reads
+as an addition. On a `push` event CI compares against the **previous push on the branch**
+instead, so correcting a newly-added record's README inside its own pull request makes that
+one push's `evidence` job fail even though the pull-request job passes; the next push that
+leaves record files alone clears it. The checker's docstring already says READMEs "may
+change", which its `is_record()` does not implement for a README nested in a record
+directory. Correct the prose, never a datum, and only before the record merges.
+
 ## pdk-smoke
 
 `sim/pdk-smoke/` runs one corner (`mos_tt`, 27 C) with a single local
