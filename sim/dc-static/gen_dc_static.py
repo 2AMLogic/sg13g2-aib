@@ -21,7 +21,6 @@ the matching MOS, poly-resistor and diode sections. Unlike sim/mc the MOS
 sections are the plain `mos_<corner>` ones — these are not Monte Carlo runs, so
 per-instance mismatch is not wanted.
 """
-import argparse
 import json
 import sys
 from pathlib import Path
@@ -29,6 +28,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
+import gen_common  # noqa: E402  (the one write-or-check implementation)
 
 LIBM = pvt_full.LIB_MOS
 # Host rule (one submit may wait for fleet capacity rather than fail) and
@@ -165,22 +165,9 @@ def requests() -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true",
-                    help="exit 1 if a committed request is stale, writing nothing")
-    args = ap.parse_args()
-    bad = 0
-    for name, req in requests().items():
-        p = HERE / name
-        text = json.dumps(req, indent=2) + "\n"
-        if args.check:
-            if not p.exists() or p.read_text() != text:
-                print(f"STALE: {p.name} (run python3 -I sim/dc-static/{Path(__file__).name})",
-                      file=sys.stderr)
-                bad = 1
-        else:
-            p.write_text(text)
-    return bad
+    outputs = {name: json.dumps(req, indent=2) + "\n" for name, req in requests().items()}
+    return gen_common.write_or_check(outputs, base=HERE,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":

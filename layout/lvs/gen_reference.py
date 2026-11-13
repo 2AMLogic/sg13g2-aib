@@ -30,6 +30,8 @@ import re
 import sys
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+sys.path.insert(0, os.path.join(ROOT, "sim"))
+import gen_common  # noqa: E402  (write_or_check and the seeded-defect substitution)
 DESIGN = os.path.join(ROOT, "design")
 OUT = os.path.join(ROOT, "layout", "lvs")
 PNR_V = os.path.join(ROOT, "layout", "pnr", ".klt", "place-and-route", "aib_datapath.v")
@@ -135,18 +137,6 @@ def cell(subs, name, pins, parts):
     return "\n".join(lines) + "\n"
 
 
-def seed(text, old, new, what):
-    """`text` with `old` replaced by `new`, which must match exactly once: a seeded defect.
-
-    The anchor spans the line it changes (or the part of it the defect is in), so a source edit
-    that moves it fails loudly here instead of silently producing a control with no defect, two
-    defects, or a defect in the wrong place."""
-    n = text.count(old)
-    if n != 1:
-        raise SystemExit(f"{what}: anchor {old!r} matched {n} times in its source, expected 1")
-    return text.replace(old, new)
-
-
 def neg(column):
     """The neg/ negative controls: one copy per seeded defect, byte-identical to the hand-made
     files whose sha256 the committed neg/*.report.json carry.
@@ -164,13 +154,13 @@ def neg(column):
         # at the device class, because the defect is the gate net and nothing else: a clamp
         # resize is meant to flow straight through into the control, while a rewiring of its
         # other terminals is not, and fails here.
-        "neg/aib_io_column.rewired.ref.spice": seed(
+        "neg/aib_io_column.rewired.ref.spice": gen_common.seed(
             column,
             "Mt0esd_Mclamp_f0 VDDIO VSS VSS VSS nfet ",
             "Mt0esd_Mclamp_f0 VDDIO VDDIO VSS VSS nfet ",
             "neg/aib_io_column.rewired.ref.spice"),
         # digital data path: one mux input is rewired from the TX wire to the RX wire
-        "neg/aib_datapath.rewired.v": seed(
+        "neg/aib_datapath.rewired.v": gen_common.seed(
             open(PNR_V).read(), "    .A1(tx_wire[0]),\n", "    .A1(rx_wire[0]),\n",
             "neg/aib_datapath.rewired.v"),
     }
@@ -223,21 +213,9 @@ def build():
 
 
 def main():
-    files = build()
-    bad = False
-    for rel, text in files.items():
-        path = os.path.join(OUT, *rel.split("/"))
-        if "--check" in sys.argv:
-            if not os.path.exists(path) or open(path).read() != text:
-                print("DIFFERS", path)
-                bad = True
-        else:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            open(path, "w").write(text)
-    if "--check" in sys.argv:
-        print("FAIL" if bad else "ok: committed reference netlists and neg/ controls match a fresh build")
-        sys.exit(1 if bad else 0)
+    return gen_common.write_or_check(build(), base=OUT,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

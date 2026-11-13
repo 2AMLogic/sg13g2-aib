@@ -19,11 +19,12 @@ Setup/hold are referred to the 50 % crossing of D (the input-stage output): the 
 delays dr (rising) and df (falling) are measured on the first hold cycle, away from the clock.
   setup = -(xs - DELTA/2 + dr),  hold = ys - DELTA/2 + df,  aperture = setup + hold.
 """
-import argparse
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent.parent))
+import gen_common  # noqa: E402  (the one write-or-check implementation)
 
 PERIOD_PS = 2000
 DELTA_PS = 10
@@ -145,19 +146,8 @@ def outputs() -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--check", action="store_true")
-    args = ap.parse_args()
-    bad = 0
-    for fname, text in outputs().items():
-        p = HERE / fname
-        if args.check:
-            if not p.exists() or p.read_text() != text:
-                print(f"STALE: {fname}", file=sys.stderr)
-                bad = 1
-        else:
-            p.write_text(text)
-    return bad
+    return gen_common.write_or_check(outputs(), base=HERE,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":
