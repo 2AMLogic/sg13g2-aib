@@ -26,10 +26,10 @@ placeholder) needs the PDK and the pinned klt: it is refused here with exit 2
 and stays with verification/klt/run_evidence.py.
 
 Every other way a request can fail to load exits 2 as well -- a missing file,
-malformed JSON, and a request that parses but is the wrong shape (a missing or
-wrong-typed field). Exit 1 is reserved for a suite that ran and failed, which is
-what a negative control requires, so a wrong-shaped neg_*.json must never reach
-it.
+malformed JSON, a request that parses but is the wrong shape (a missing or
+wrong-typed field), and a request carrying a key this runner does not read.
+Exit 1 is reserved for a suite that ran and failed, which is what a negative
+control requires, so a wrong-shaped neg_*.json must never reach it.
 """
 
 from __future__ import annotations
@@ -45,6 +45,23 @@ DEFAULT_REQUEST = HERE / "klt" / "shift_redundancy.json"
 PLACEHOLDER = re.compile(r"@[A-Z][A-Z0-9_]*@")
 
 EXIT_OK, EXIT_FAILED, EXIT_DID_NOT_RUN = 0, 1, 2
+
+# Exactly the keys load_request reads, one list per level. The pinned klt reads
+# more than this runner does -- testbench.testcase, options.includes,
+# options.coverage, options.trace, options.build_args -- so a request that gained
+# one of them would make klt run one bench and this runner another, with CI still
+# green: the drift #217 removed by deleting the second bench table, moved into an
+# unread key. A key outside these lists is refused (exit 2) rather than warned
+# about, because a warning in a green log is the silence this guards against.
+# Reading a new key later means adding it in one place, here.
+#
+# `--testcase` on the command line is not the same thing: it is a debug override
+# for one interactive run, not part of the bench definition the item 5 envelopes
+# cite, so `testbench.testcase` in a committed request is still refused.
+ALLOWED_TOP = frozenset({"schema", "engine", "sources", "hdl_toplevel",
+                         "testbench", "parameters", "options"})
+ALLOWED_TESTBENCH = frozenset({"module", "search_path"})
+ALLOWED_OPTIONS = frozenset({"defines", "timescale", "random_seed"})
 
 
 class Unsupported(Exception):
@@ -66,10 +83,24 @@ def _require(ok: bool, path: Path, message: str) -> None:
         raise Unsupported(f"{path}: {message}")
 
 
+def _reject_unknown(obj: dict, allowed: frozenset[str], prefix: str, path: Path) -> None:
+    """Refuse any key in `obj` outside `allowed`, naming it as `prefix` + key."""
+    unknown = sorted(set(obj) - allowed)
+    _require(not unknown, path,
+             "this runner does not read "
+             + ", ".join(prefix + key for key in unknown)
+             + "; the pinned klt may honour it, which would make the two run "
+             "different benches -- drop it from the request, or read it here "
+             "and add it to the allow-list")
+
+
 def load_request(path: Path) -> dict:
     """Read a klt functional-verification request into the arguments cocotb needs.
 
     Paths resolve against the request file's own directory, as klt resolves them.
+
+    A key outside the three allow-lists above is refused, so the request cannot
+    carry a setting that klt honours and this runner silently ignores.
 
     Every shape error raises Unsupported, so a request that is valid JSON but
     wrong-shaped exits 2 (the suite did not run) and never 1. That matters most
@@ -92,6 +123,12 @@ def load_request(path: Path) -> dict:
     if "sdf" in options:
         raise Unsupported(f"{path} annotates an SDF; the post-route run needs the PDK and the "
                           "pinned klt — run verification/klt/run_evidence.py")
+
+    # After the SDF and placeholder refusals, which name the post-route path and
+    # are the more useful message for the two requests that trip them.
+    _reject_unknown(req, ALLOWED_TOP, "", path)
+    _reject_unknown(options, ALLOWED_OPTIONS, "options.", path)
+
     engine = req.get("engine")
     if engine != "icarus":
         raise Unsupported(f"{path} asks for engine {engine!r}; this runner only drives icarus")
@@ -109,6 +146,7 @@ def load_request(path: Path) -> dict:
     testbench = req.get("testbench")
     _require(isinstance(testbench, dict), path,
              f"testbench is {_describe(testbench)}, expected an object")
+    _reject_unknown(testbench, ALLOWED_TESTBENCH, "testbench.", path)
     test_module = testbench.get("module")
     _require(isinstance(test_module, str), path,
              f"testbench.module is {_describe(test_module)}, expected a string")
