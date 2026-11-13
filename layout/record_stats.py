@@ -37,8 +37,10 @@ def main():
         b = stats[cell]["bbox_um"]
         return b["width"] if isinstance(b, dict) else None
     summary = {"record": "t22-t23-layout-measured", "klt_version": version, "stream": GDS,
-               "basis": "layout-measured: klt stats bounding box of the drawn cell; pre-extraction; "
-                        "DRC and LVS not run on this stream (issues #39, #40)", "cells": {}}
+               "basis": "layout-measured: klt stats bounding box of the drawn cell, pad included; "
+                        "pre-extraction, so no extracted device or parasitic area is in these numbers. "
+                        "DRC and LVS of this stream are graded in their own records (layout/records/, "
+                        "layout/lvs/); this record neither runs nor reports them", "cells": {}}
     for cell in CELLS:
         b = stats[cell]["bbox_um"]
         w, h = (b["width"], b["height"]) if isinstance(b, dict) else (b[2] - b[0], b[3] - b[1])
