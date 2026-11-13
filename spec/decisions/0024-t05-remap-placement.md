@@ -75,22 +75,26 @@ remap is inserted (it drives two mux inputs,
 
 | remap stage | load term at the serializer output | stage term | net at the pad, worst |
 |---|---|---|---|
-| drive 1 | −87.6 .. −40.7 ps | +94.5 .. +259.9 ps | 184.2 ps |
+| drive 1 | −87.6 .. −39.1 ps | +94.5 .. +259.9 ps | 184.2 ps |
 | drive 2 | −87.5 .. −38.4 ps | +64.0 .. +228.1 ps | 153.9 ps |
 | drive 1 + `buf_4` | −87.6 .. −39.1 ps | +86.8 .. +256.7 ps | 181.2 ps |
 
 (`t05_load*_*` and `t05_stage*_*`, rise and fall pooled.) The load term is the same in all
 three — the serializer drives a mux *input* either way, and `sg13g2_mux2_2`'s `A0`/`A1`
-devices are the same size as `sg13g2_mux2_1`'s — so sizing acts only on the stage term, and
-there it buys **26 %** at the best corner and **16 %** at the worst. The buffered stage buys
-less (11 % and 1.6 %): `sg13g2_buf_4` drives the load with four times the strength, and then
+devices are the same size as `sg13g2_mux2_1`'s — so sizing acts only on the stage term, which
+it cuts by **32 %** at its rise minimum (94.5 → 64.0 ps) and **12 %** at its fall maximum
+(259.9 → 228.1 ps). That carries the per-corner-worst **net added delay at the pad** down
+**26 %** at the best corner (71.2 → 52.9 ps) and **16 %** at the worst (184.2 → 153.9 ps).
+The buffered stage buys less — 8.2 % and 1.2 % of the stage term, 11 % and 1.6 % of the net
+at the pad: `sg13g2_buf_4` drives the load with four times the strength, and then
 spends most of what it saves on its own stage delay and on the extra input the mux has to
 charge.
 
 Sizing also makes one term **worse**. The remap adds pulse-width distortion to the data
 lane that the forwarded clock does not see — `t05_pwd*_s`, the fall-minus-rise of its own
-added delay — and doubling the output drive helps the rising edge about three times as much
-as the falling one:
+added delay — and doubling the output drive helps the rising edge about **twice** as much
+as the falling one (per-corner rise-gain / fall-gain ratio **1.18 .. 3.75**, median **1.93**;
+mean gains 48.0 ps rise against 24.0 ps fall):
 
 | remap stage | added pulse-width distortion |
 |---|---|
@@ -200,16 +204,20 @@ measured and why the stand-in was chosen.
 - Nothing is built by this record. `design/`, `rtl/` and the committed netlist are
   unchanged, exactly as they were under DR-0023.
 
-### Follow-ups this record files (all at `loom:triage`, none done here)
+### Follow-ups this record files (none done here)
 
-1. **#246 — instantiate the remap in the TX datapath**: two `tx_remap` instances on the
+1. **#246 — instantiate the remap in the TX datapath** (`loom:triage`, parked
+   `loom:blocked` behind this record): two `tx_remap` instances on the
    `d0` / `d1` buses ahead of 22 `aib_tx_slice` instances, with `rx_remap` mirrored behind
    the RX capture register; extend the datapath benches to the 22-wire direction. Note that
    **PR #107 rewrites `rtl/shift_redundancy.v`** and is operator-held — that follow-up meets
    it, this record does not (it edits no RTL).
-2. **#247 — re-synthesize and re-place-and-route** with the remap in, and confirm the new
+2. **#247 — re-synthesize and re-place-and-route** (`loom:triage`, parked `loom:blocked`
+   behind #246 and #232) with the remap in, and confirm the new
    `tx_d0`/`tx_d1` → input-register path closes setup at 500 MHz over the corners item 7 /
    digital grades. This is the claim decision point 3 defers, and it is where the moved term
    is answered.
-3. **#248 — the 22-wire I/O column**: the remap makes 22 wires per direction real in the
-   datapath, so the column skew work (T-13, #136) and the layout rows see 22, not 20.
+3. **#248 — spare placement and slot order in the I/O column** (`loom:curated`): put both
+   spares at one end per DR-0016 and check the slot order. The column already draws 22
+   cells per direction — which is what the remap makes real in the datapath — so the
+   column skew work (T-13, #136) and the layout rows see 22, not 20.

@@ -729,13 +729,16 @@ and the evidence DR-0024 rejects a sized in-lane stage on.
   | `sg13g2_mux2_1` + `buf_4` | 46.1 .. 113.9 ps | 63.0 .. 181.2 ps | 63.0 .. 181.2 ps | 25 / 45 | **45 / 45** |
 
   The best corner of the better sized option is **52.9 ps, 7.1 times** the 7.5 ps spare.
-  Sizing buys 26 % of the stage term at the best corner and 16 % at the worst; the buffered
-  stage buys 11 % and 1.6 %, and on the falling edge it is *worse* than the drive-1 cell at
-  the five `mos_fs` corners below 1.32 V.
+  Sizing buys 26 % of that per-corner worst at the best corner and 16 % at the worst, and
+  cuts the stage term itself 32 % at its rise minimum and 12 % at its fall maximum; the
+  buffered stage buys 11 % and 1.6 % of the per-corner worst (8.2 % and 1.2 % of the stage
+  term), and on the falling edge it is *worse* than the drive-1 cell at the five `mos_fs`
+  corners below 1.32 V.
 - **Sizing makes the pulse-width distortion worse**: `t05_pwd*_s` reads 15.2 .. 56.8 ps for
   drive 1, **24.8 .. 101.7 ps** for drive 2 and 0.5 .. 78.8 ps for the buffered stage.
-  Doubling the output drive helps the rising edge about three times as much as the falling
-  one, so the asymmetry the forwarded clock does not see nearly doubles.
+  Doubling the output drive helps the rising edge about twice as much as the falling
+  one (per-corner rise-gain / fall-gain ratio 1.18 .. 3.75, median 1.93), so the asymmetry
+  the forwarded clock does not see nearly doubles.
 - **The load term is unchanged by sizing**, as expected: `sg13g2_mux2_2`'s `A0`/`A1` devices
   are the same size as `sg13g2_mux2_1`'s, so all three lanes load the serializer identically
   (`t05_dcl*_f` −28.8 .. −24.9 fF) and sizing acts only on the stage term.

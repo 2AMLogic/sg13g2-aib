@@ -117,16 +117,18 @@ gains and the forwarded clock does not.
 | drive 2 | 24.8 .. **101.7 ps** |
 | drive 1 + `buf_4` | 0.5 .. 78.8 ps |
 
-Doubling the output drive helps the rising edge about three times as much as the falling one
+Doubling the output drive helps the rising edge about twice as much as the falling one
 (the rise range falls from 53.8–128.2 to 21.9–56.0 ps, the fall only from 71.1–183.9 to
-52.9–153.9 ps), so the asymmetry nearly doubles. A sized in-lane stage trades a sixth of the
-T-20 term for twice the duty-cycle term a capture aperture would pay for.
+52.9–153.9 ps; per corner the rise-gain / fall-gain ratio is 1.18 .. 3.75, median 1.93, and
+the mean gains are 48.0 ps rise against 24.0 ps fall), so the asymmetry nearly doubles.
+A sized in-lane stage trades a sixth of the T-20 term for twice the duty-cycle term a
+capture aperture would pay for.
 
 ## 3. The cost is the stage, not the load — and sizing only touches the stage
 
 | remap stage | load term at the serializer output | stage term | net at the pad, worst |
 |---|---|---|---|
-| drive 1 | −87.6 .. −40.7 ps | +94.5 .. +259.9 ps | 184.2 ps |
+| drive 1 | −87.6 .. −39.1 ps | +94.5 .. +259.9 ps | 184.2 ps |
 | drive 2 | −87.5 .. −38.4 ps | +64.0 .. +228.1 ps | 153.9 ps |
 | drive 1 + `buf_4` | −87.6 .. −39.1 ps | +86.8 .. +256.7 ps | 181.2 ps |
 
@@ -141,8 +143,11 @@ is the same in all three — it drives two mux *inputs* either way, and `sg13g2_
 | `t05_dcl_f` / `t05_dcl2_f` / `t05_dcl3_f` — **added** load | −28.72 .. −24.90 / −28.65 .. −24.87 / −28.75 .. −24.95 fF |
 
 So the whole added delay is the remap stage **inheriting** the ~30 fF `DIN` load the
-serializer used to drive. Sizing acts on that one term, and buys 26 % of it at the best
-corner and 16 % at the worst; the buffered stage buys 11 % and 1.6 %, because
+serializer used to drive. Sizing acts on that one term, cutting it 32 % at its rise minimum
+(94.5 → 64.0 ps) and 12 % at its fall maximum (259.9 → 228.1 ps); that carries the
+per-corner-worst net added delay at the pad down 26 % at the best corner (71.2 → 52.9 ps)
+and 16 % at the worst (184.2 → 153.9 ps). The buffered stage buys 8.2 % and 1.2 % of the
+stage term — 11 % and 1.6 % of the net at the pad — because
 `sg13g2_buf_4` spends most of what its drive saves on its own stage delay and on the input
 the mux must now charge.
 
