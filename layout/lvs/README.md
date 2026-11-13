@@ -7,7 +7,7 @@ gate-level netlist.
 | Partition | Result | Row |
 |---|---|---|
 | Digital (`aib_datapath`) | `status: match`, `power_connectivity.status: match` | `4.digital` reads `met` |
-| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 4224 / 4224 devices, 389 / 389 nets, 101 / 101 pins (DR-0017 stream, #140) | `4.analog` reads `met`, citing `aib_io_column.report.json` |
+| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 4320 / 4320 devices, 389 / 389 nets, 101 / 101 pins (predriver pull-up stream, #187) | `4.analog` reads `met`, citing `aib_io_column.report.json` |
 | Analog, per cell (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | `status: match` on all four (stream regenerated, issue #70; the earlier stream was `mismatch`) | not cited: item 4 takes one report per partition (2AMLogic/klayout-tools#4354) |
 
 Issue #40 recorded the analog result as a mismatch and did not change the generator. Issue #70 fixed the
@@ -108,8 +108,11 @@ nothing is claimed against it.
 2. **Finger width convention.** The item 1 netlists carry total `w` with `ng` fingers (the IHP
    model derives a finger as `w/ng`). The generator draws `w` per finger for every device with `ng > 1`
    except `Mp`, `Mn` and `Mclamp`: the eight TX logic devices (`Mnd1p`, `Mnd2p`, `Mnd1n`, `Mnd2n`, `Mnr1p`,
-   `Mnr2p`, `Mnr1n`, `Mnr2n`) and the four RX devices (`Mi1p`, `Mi1n`, `Mi2p`, `Mi2n`), all `ng = 2`. Those
-   are drawn twice as wide as simulated.
+   `Mnr2p`, `Mnr1n`, `Mnr2n`) and the four RX devices (`Mi1p`, `Mi1n`, `Mi2p`, `Mi2n`), which were `ng = 2`
+   throughout on the stream this diagnosis was made against. Those are drawn twice as wide as simulated.
+   (Finger counts have moved since: PR #164 took `Mnr1p` and `Mnr2p` to `ng = 4`, and the generator
+   followed in #187. The convention and the self-check that enforces it are unchanged - the check
+   compares `w * ng` with the netlist total for every device, whatever `ng` is.)
 
 Both were fixed in `layout/gen_io_column.py` (issue #70); the reference netlists were not touched:
 
@@ -123,6 +126,38 @@ Both were fixed in `layout/gen_io_column.py` (issue #70); the reference netlists
 The `*.diag.*` files are the localisation recorded against the old stream. They are kept as the
 record of that diagnosis and no longer reproduce (`--check` reports drift on the layout hash); they
 are not evidence about the current stream.
+
+## Issue #187: predriver pull-up regeneration (2026-11-13)
+
+PR #164 widened the TX predriver NOR pull-ups (`Mnr1p`, `Mnr2p`) to `w=8u ng=4` in the item 1
+netlists but left the layout and these references alone, so `4.analog` read `met` against a
+reference that no longer described the item 1 circuit. `gen_io_column.py` now draws both at four
+2 um fingers and the row-33 predriver pmos gaps closed from 2.0 um to 1.2 um to make room (see
+`layout/README.md`); `gen_reference.py` regenerated all five references (`--check` clean) and the
+five compares were re-run with klt 0.9.0:
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4320 / 4320 | 389 / 389 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | 138 / 138 | 17 / 17 | 7 / 7 |
+| `aib_io_rx.report.json` | `match` | 42 / 42 | 6 / 6 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | 276 / 276 | 29 / 29 | 9 / 9 |
+| `aib_io_rx_clk.report.json` | `match` | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Warning categories are the same as before (`device.geometry_not_compared`,
+`device.placeholder_value`, and on the column 45 `topology`). `--check` exits 0 on all five and
+`--check --rerun` exits 0 on all five. The device totals rise by 4 per TX unit (two devices x two
+extra fingers): 134 -> 138, 268 -> 276, 4224 -> 4320. Net and pin counts are unchanged, as expected
+for a change that only adds fingers in parallel.
+
+The negative control was rebuilt by hand on the new column reference with the same single change
+(`Mt0esd_Mclamp_f0` gate `VSS` -> `VDDIO`; `neg/aib_io_column.rewired.ref.spice` differs from
+`aib_io_column.ref.spice` on that one line and no other): `status: mismatch`, one
+`device.unmatched`, klt exit 3, 4319 / 4320 devices and 387 / 389 nets matched. `gen_reference.py`
+still does not write or check that file.
+
+The `*.diag.*` files are untouched history and do not reproduce. The sums in the Issue #140 and
+Issue #94 sections above describe earlier streams and are history.
 
 Column compare (issue #40, the `4.analog` citation): `aib_io_column.request.json` extracts the top
 cell (the TX column then the RX column; spares and the clk/clkb pair are ordinary units) and compares
