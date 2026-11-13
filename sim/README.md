@@ -58,30 +58,47 @@ install behind. `build-osdi.sh` likewise refuses an unverified compiler.
 
 ## Record harness
 
-`sim/channel-eye/run_channel_eye.sh`, `sim/clock-path/run_clock_path.sh` and
-`sim/redundancy-mux/run_redundancy_mux.sh` are thin entry points over one shared procedure,
-`sim/harness/batch_record.sh`: resolve the PDK, check the
+`sim/channel-eye/run_channel_eye.sh`, `sim/clock-path/run_clock_path.sh`,
+`sim/dc-static/run_dc_static.sh` and `sim/redundancy-mux/run_redundancy_mux.sh` are thin
+entry points over one shared procedure, `sim/harness/batch_record.sh`: resolve the PDK, check the
 generated files are fresh, refuse an existing record directory, submit **one** `klt sim
 --backend batch` request with `--wait-for-capacity 600`, scrub the fleet bucket name out of
 the captured stderr, classify the exit code, copy the request and bench into the record,
 post-process the report and write `record.json` (`sim/harness/write_record.py`). The entry
 points pass only what differs between the families: the request, the record suffix,
-`--max-units-per-job`, the bench files to copy, the generator to `--check`, and the family's
+`--max-units-per-job`, the bench files to copy, the generator to `--check`, the row grouping,
+and the family's
 own `record.json` fields. None submits anything itself, so a fleet-handling fix lands once
-(#189; the two copies had drifted apart on four fleet behaviours).
+(#189; the two original copies had drifted apart on four fleet behaviours).
+
+**All three item 5 (analog) families are on it.** dc-static was the last one recorded by
+hand, from a README recipe, and its four records have four different shapes — none holding
+the request or the bench, none recording `klt_exit_code`, and the one the manifest cites
+holding no `record.json` at all (#228). Those four are append-only evidence and are
+unchanged; `run_dc_static.sh nominal|2kv|esd-diode` is the procedure for the next run.
 
 A tool or fleet error writes **no** record (exit 6) and prints the
 `CHANNEL_EYE_WORK=<dir> CHANNEL_EYE_RESUME=1` line that retries the same batch jobs
-(`CLOCK_PATH_*` and `REDUNDANCY_MUX_*` for the other two runners); there is no local
-fallback. Only klt's summary sentence `were submitted but never launched` discards a
+(`CLOCK_PATH_*`, `DC_STATIC_*` and `REDUNDANCY_MUX_*` for the other three runners); there is
+no local fallback. Only klt's summary sentence `were submitted but never launched` discards a
 record — a successful `--resume` prints the same words per shard it recovers, and that
 record is kept. The redundancy-mux record of 2026-11-13 is exactly that case: the first
 submit left one of 15 shards unlaunched and wrote nothing, and the retry launched it and
 kept the record.
 
+`rows` is grouped by spec row. channel-eye and clock-path declare `spec_row` on each
+measurement in the request, so the post-processor reads the grouping straight off it.
+dc-static declares none and all its graded measurements are step-level, so the report names
+them `<step>.tNN_*` where a request would say `tNN_*`; its entry point hands the harness a
+`--row-map` of name prefixes instead (one prefix may name two rows — `t07_t28_ipin_a` grades
+T-07 and T-28). That resolves the rows without editing the committed request bytes the cited
+record was run from; adding `spec_row` tags there would change them and is a separate,
+deliberate re-run.
+
 ```bash
 sim/harness/test_batch_record.sh            # the procedure, against a stubbed klt sim
-python3 -I sim/harness/test_write_record.py  # replays every committed record of every family
+                                            # (+ the dc-static entry point and its row map)
+python3 -I sim/harness/test_write_record.py  # replays every committed harness record (no dc-static one exists yet)
 sim/channel-eye/run_channel_eye.sh ch --dry-run   # what an entry point passes; submits nothing
 ```
 
@@ -139,6 +156,12 @@ taken on this manifest's word, with nothing in the grader checking them. They we
 hand against the report; see `signoff/README.md` ("The declared row set is load-bearing, not
 decorative") for the per-row measurements and bounds, and re-check them there whenever a
 dc-static `rows` entry changes. Tool gap: `2AMLogic/klayout-tools#5462`.
+
+The grader still takes the manifest's word, but the grouping itself is no longer unchecked:
+`sim/harness/test_batch_record.sh` case 8 runs the record harness over this same cited
+`report.json` and checks that `run_dc_static.sh`'s prefix map reproduces exactly these six
+rows, their 45-corner pass counts and T-24's binding corner (#228). That is a check on the
+row *grouping*, not on the manifest's claim that these six are the rows item 5 covers.
 
 The **TC** channel-eye record (`channel-eye/records/20261110T083756Z-tc/`) is deliberately
 **not** cited: it carries the same row ids from the test configuration, and item 5 would then
@@ -680,3 +703,7 @@ Re-check after the #142 predriver change: `dc-static/records/20261112T001207Z/` 
 `klt-sim-f611a9ac49eb`, same `request.json`): 45/45 corners pass, 810/810 measurements pass,
 so T-06/T-08/T-24 (and T-07, T-11, T-28) are unchanged in verdict. Report only, no
 `record.json`.
+
+All four records above were built by hand. The next run goes through
+`sim/dc-static/run_dc_static.sh nominal|2kv|esd-diode` on the shared procedure ("Record
+harness" above, #228); nothing here is back-filled.

@@ -19,6 +19,14 @@
 #      PREFIX_WORK / PREFIX_RESUME retry line names a work directory that still exists;
 # plus: klt's own exit 3 (a limit failed) is a result and is still recorded, and a stale
 # generator refuses to submit anything at all.
+#
+# Cases 7 and 8 cover the dc-static entry point (#228), the third family on this procedure
+# and the one that needs `--row-map`: 7 is its resolved `--dry-run` configuration, 8 drives
+# the whole procedure over a real committed dc-static report and checks that the prefix map
+# reproduces the six spec rows that record asserts by hand. The other two entry points'
+# dry-run cases live in sim/harness/test_write_record.py, where each is compared against a
+# committed record of its own family; every dc-static record predates this harness, so there
+# is no harness-shaped record there to compare against -- hence the case belongs here.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -168,6 +176,115 @@ printf '%s\n' 'import sys; sys.exit(1)' > "${FAM}/gen_stub.py"
 rc="$(run_harness)"
 check "exit code is 4" "${rc}" "4"
 check "no record directory is left behind" "$(latest_record)" ""
+
+# --- 7. the dc-static entry point's resolved configuration ----------------------------
+echo "case 7: the dc-static entry point (--dry-run, no PDK and no fleet)"
+DC_RUNNER="${SIM_DIR}/dc-static/run_dc_static.sh"
+dc_dry() { "${DC_RUNNER}" "$1" --dry-run; }
+# shellcheck disable=SC2317  # invoked indirectly, through want() below
+dc_dry_quiet() { dc_dry "$1" >/dev/null; }
+for kind in nominal 2kv esd-diode; do
+  want "the ${kind} kind resolves a configuration" dc_dry_quiet "${kind}"
+done
+# shellcheck disable=SC2317  # invoked indirectly, through want() below
+dc_config_matches() { python3 -I - "$(dc_dry nominal)" <<'PY'
+import json, sys
+cfg = json.loads(sys.argv[1])
+assert cfg["record"] == "dc-static", cfg["record"]
+assert cfg["record_suffix"] == "", cfg["record_suffix"]
+assert cfg["request"] == "request.json", cfg["request"]
+assert cfg["generator"] == "gen_dc_static.py", cfg["generator"]
+assert cfg["env_prefix"] == "DC_STATIC", cfg["env_prefix"]
+# one unsharded job: options.timeout_s 60 puts the fleet's own ceiling at 58 units
+assert cfg["max_units_per_job"] == "45", cfg["max_units_per_job"]
+assert cfg["report_only_ranges"] is True
+# the three sub-benches tb_dc_static.cir .includes; the netlist itself is always copied
+assert set(cfg["copy"]) == {"tb_drive.cir", "tb_pin.cir", "tb_rx_hyst.cir"}, cfg["copy"]
+# the committed request declares no spec_row, so rows come from the prefix map
+assert set(cfg["row_map"]) == {"t06_", "t07_t28_", "t08_", "t11_", "t24_", "t28_"}, cfg["row_map"]
+assert cfg["row_map"]["t07_t28_"] == ["T-07", "T-28"], "one measurement grades T-07 and T-28"
+PY
+}
+want "the nominal configuration is the dc-static one" dc_config_matches
+# shellcheck disable=SC2317  # invoked indirectly, through want() below
+dc_esd_claims_nothing() { python3 -I - "$(dc_dry esd-diode)" <<'PY'
+import json, sys
+cfg = json.loads(sys.argv[1])
+assert cfg["record_suffix"] == "-esd-diode", cfg["record_suffix"]
+assert cfg["row_map"] == {}, "extraction only: nothing is graded, so no row is claimed"
+assert cfg["fields_head"]["claim_scope"].startswith("none:"), cfg["fields_head"]
+PY
+}
+want "the esd-diode kind grades no row and claims none" dc_esd_claims_nothing
+rc=0
+"${DC_RUNNER}" nope --dry-run >/dev/null 2>&1 || rc=$?
+check "an unknown kind is refused with exit 2" "${rc}" "2"
+
+# --- 8. the row map, over a real committed dc-static report ----------------------------
+echo "case 8: --row-map groups a real dc-static report by spec row"
+# sim/dc-static/records/20261112T001207Z/ is the record signoff/block-manifest.json cites for
+# item 5 / analog. It was built by hand and holds no record.json, so this is also the first
+# check that the harness reproduces the six rows that manifest asserts on its own word.
+SRC_DC="${SIM_DIR}/dc-static/records/20261112T001207Z/report.json"
+FAM2="${TMP}/dcfam"
+mkdir -p "${FAM2}"
+cp "${SIM_DIR}/dc-static/request.json" "${SIM_DIR}/dc-static/tb_dc_static.cir" \
+   "${SIM_DIR}/dc-static/tb_drive.cir" "${SIM_DIR}/dc-static/tb_pin.cir" \
+   "${SIM_DIR}/dc-static/tb_rx_hyst.cir" "${FAM2}/"
+printf '%s\n' 'import sys; sys.exit(0)' > "${FAM2}/gen_stub.py"
+gzip -c "${SRC_DC}" > "${TMP}/dc-static-report.json.gz"
+# read the map out of the entry point rather than restating it, so this cannot drift from
+# what the runner actually passes.
+DC_ROW_MAP="$(python3 -I -c 'import json,sys; print(json.dumps(json.loads(sys.argv[1])["row_map"]))' "$(dc_dry nominal)")"
+rc=0
+STUB_REPORT="${TMP}/dc-static-report.json.gz" "${HERE}/batch_record.sh" \
+  --self test-dc-static --dir "${FAM2}" --record test-dc-static \
+  --request request.json --generator gen_stub.py --post-label nominal \
+  --max-units-per-job 45 --env-prefix TESTDC \
+  --copy tb_drive.cir --copy tb_pin.cir --copy tb_rx_hyst.cir \
+  --row-map "${DC_ROW_MAP}" --report-only-ranges \
+  > "${TMP}/stdout" 2> "${TMP}/stderr" || rc=$?
+check "exit code is 0" "${rc}" "0"
+# shellcheck disable=SC2012  # the names are UTC stamps this script just created
+REC2="$(ls -1d "${FAM2}"/records/*/ 2>/dev/null | tail -1)"
+if [[ -z "${REC2}" ]]; then
+  fail "a dc-static record directory was written"
+else
+  ok "a dc-static record directory was written"
+  for f in record.json rows.json request.json tb_dc_static.cir tb_drive.cir tb_pin.cir tb_rx_hyst.cir; do
+    want "the record holds ${f}" test -f "${REC2}/${f}"
+  done
+  # shellcheck disable=SC2317  # invoked indirectly, through want() below
+  dc_rows_match() { python3 -I - "${REC2}" <<'PY'
+import json, sys
+rec = json.loads(open(f"{sys.argv[1]}/record.json").read())
+rows = rec["rows"]
+# exactly the six rows sim/dc-static/README.md and the manifest name for this family
+assert set(rows) == {"T-06", "T-07", "T-08", "T-11", "T-24", "T-28"}, sorted(rows)
+assert all(r["verdict"] == "pass" for r in rows.values()), rows
+# the 45/45-corner counts: 4 T-06 measurements, 2 T-08, 3 pin-current, 3 cap, 1 hysteresis,
+# and T-28 takes the 3 pin-current ones plus its own 2 weak-pull ones.
+assert [rows[k]["pass"] for k in ("T-06", "T-07", "T-08", "T-11", "T-24", "T-28")] == \
+    [180, 135, 90, 45, 135, 225], {k: rows[k]["pass"] for k in rows}
+# one measurement counted into BOTH of the rows it grades
+rj = json.loads(open(f"{sys.argv[1]}/rows.json").read())["rows"]
+assert "lk_0.t07_t28_ipin_a" in rj["T-07"]["measurements"]
+assert "lk_0.t07_t28_ipin_a" in rj["T-28"]["measurements"]
+assert "pu_on.t28_rpu_ohm" in rj["T-28"]["measurements"]
+assert "pu_on.t28_rpu_ohm" not in rj["T-07"]["measurements"]
+# the binding corner the hand-written record 20261108T004350Z noted for T-24:
+# "96.42 fF (pad=VDDIO/2, fs/1.32V/125C)"
+b = rows["T-24"]["binding"]
+assert b["measurement"] == "cap_5.t24_cpin_ff", b
+assert abs(b["value"] - 96.41907) < 1e-5, b
+assert b["corner"].startswith("fs/") and b["corner"].endswith("/125C"), b
+# the three ungraded receiver trip points grade no row and land in the ranges instead
+assert set(rec["report_only_ranges"]) == {"rx_dn.vth_dn", "rx_up.vddio_v", "rx_up.vth_up"}, \
+    sorted(rec["report_only_ranges"])
+PY
+  }
+  want "the prefix map reproduces the six rows the cited record asserts" dc_rows_match
+fi
 
 echo
 if [[ "${FAILED}" -eq 0 ]]; then echo "test_batch_record.sh: OK"; else echo "test_batch_record.sh: FAILED" >&2; fi
