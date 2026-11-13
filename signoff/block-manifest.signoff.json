@@ -704,7 +704,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:44da873f251308c6ebb36caa62e3c8c3e3d009ea06f49bf0adba48a86b410a79",
+          "content_hash": "sha256:7e4f1995fbd5408e6434d8206ce463933a130beca741ceaa3299cf91ccf67639",
           "status": "ratified",
           "row_count": 5
         },

@@ -101,19 +101,48 @@ Referring the flop's own `t_su`/`t_h` back to the pin through `d_r`/`d_f`:
 | `0` | fall / rise | fall | `t_su` | `t_h − Δ_rx` |
 | `0` | fall / rise | rise | `t_su − Δ_rx` | `t_h` |
 
-The binding pin-referred aperture is therefore **`t_su + t_h + |Δ_rx|`** — and
-Δ_rx lands on the **hold** side in row 1 and on the **setup** side in row 2. A
-single sampling-clock position cannot trade one against the other: shifting the
-clock earlier to relieve row 1's hold side tightens row 2's setup side by exactly
-the same amount. **Re-centring buys nothing, so no part of Δ_rx may be credited
-to T-21**, whose 0.0625 UI line is quantization and spacing error — a different
-quantity.
+Each pairing's own aperture is `setup + hold`, so the worst **single pairing** is
+`t_su + t_h + |Δ_rx|`. That is *not* the quantity the budget subtracts from the
+eye. T-21 is a single phase setting, so one placement has to satisfy **all four**
+pairings at once, and the four do not bind on the same side.
 
-This is why a *halved* figure is rejected. One can arrive at half of a measured
-asymmetry by looking at only two of the four pairings and quoting the per-side
-margin after optimal re-centring. That is an artefact of a bench whose stimulus
-is a fixed alternating pattern: rows 2 and 4 above follow from the same `d_r`,
-`d_f` without a new simulation, and they remove the trade.
+Write `x` for the sampling edge's position inside its own bit window, measured at
+the pin. Nominal DDR puts the rising and the falling clock edge one UI apart and
+consecutive bits one UI apart, so **both clock edges sit at the same `x`**
+(departures from that are T-17's duty-cycle distortion and T-16's skew, each
+graded by its own row, and neither is Δ_rx). Each pairing then bounds that same
+`x`:
+
+| pairing | lower bound on `x` (setup) | upper bound on `x` (hold) |
+|---|---|---|
+| `1` bit, rising clock | `t_su` | `UI − t_h − Δ_rx` |
+| `1` bit, falling clock | `t_su + Δ_rx` | `UI − t_h` |
+| `0` bit, falling clock | `t_su` | `UI − t_h + Δ_rx` |
+| `0` bit, rising clock | `t_su − Δ_rx` | `UI − t_h` |
+
+Intersecting all four gives `t_su + |Δ_rx| ≤ x ≤ UI − t_h − |Δ_rx|`, which has a
+solution only if
+
+> **`UI ≥ t_su + t_h + 2·|Δ_rx|`**
+
+For Δ_rx > 0 the binding pair is row 2's setup against row 1's hold; for Δ_rx < 0
+it is row 4's setup against row 3's hold. **The pin-referred capture aperture
+T-19 must cover is therefore `t_su + t_h + 2·|Δ_rx|`**: the asymmetry is paid
+once on each side, because the side it lands on depends on the pairing and a
+single placement sees all of them. The keep-out around one clock position is the
+**sum of the two worst sides**, not the worse of the four per-pairing sums.
+
+That is the same non-trade seen from the other end: shifting the clock earlier to
+relieve row 1's hold side tightens row 2's setup side by exactly the same amount,
+so the range of valid placements shrinks by `2·|Δ_rx|`, not `|Δ_rx|`.
+**Re-centring buys nothing, so no part of Δ_rx may be credited to T-21**, whose
+0.0625 UI line is quantization and spacing error — a different quantity.
+
+The same intersection is what rejects a *halved* figure. One can arrive at half
+of a measured asymmetry by looking at only two of the four pairings and quoting
+the per-side margin after optimal re-centring; that is an artefact of a bench
+whose stimulus is a fixed alternating pattern. Rows 2 and 4 follow from the same
+`d_r`, `d_f` without a new simulation, and they remove the trade.
 
 **The quantity is Δ_rx, not the clock-path record's end-to-end 0.103 UI.** The
 102.6 ps measured at the RX outputs is the asymmetry of the whole lane — TX cell,
@@ -122,7 +151,7 @@ T-17's and is bounded at the pin by T-16; only the receiver's own share belongs
 inside a pin-referred T-19. Charging the end-to-end figure to T-19 would
 double-count T-16's and T-17's terms.
 
-### 3. On the evidence that exists, T-19 still passes pin-referred — worst draw 80.0 ps of 150 ps
+### 3. On the evidence that exists, T-19 still passes pin-referred — worst draw 99.5 ps of 150 ps
 
 **A T-19 result exists and passes**, contrary to the premise of #177 that none
 does. `sim/mc/records/20261112T082047Z-t19/` drives `aib_rx_data` into the D pin
@@ -134,20 +163,39 @@ corner, as this finding predicts.
 
 That result is reported **referred to the D pin**, so by decision 1 it no longer
 answers the row as defined. It does not need a new simulation to do so: the record
-carries the pad-to-D delays `cw.dr` and `cw.df` **per draw**, so the pin-referred
-aperture is `t19_aperture_ps + |cw.dr − cw.df|` draw by draw. Computed over all
-900 draws of the committed `report.json.gz`:
+carries the pad-to-D delays `cw.dr` and `cw.df` **per draw**, so by decision 2 the
+pin-referred aperture is `t19_aperture_ps + 2·|cw.dr − cw.df|` draw by draw.
+Computed over all 900 draws of the committed `report.json.gz`:
 
 | quantity | over 900 draws | at `sf`/1.08 V/−40 °C (20 draws) |
 |---|---|---|
 | Δ_rx = `cw.dr − cw.df` | −1.44 … **+19.52** ps, mean 7.45, σ 3.70 | 10.54 … **19.11** ps |
 | aperture, D-referred | … **68.60** ps | 35.37 … 68.60 ps |
-| **aperture, pin-referred** | mean 35.0, **max 80.00** ps | — |
+| **aperture, pin-referred** (`aperture + 2·abs(Δ_rx)`) | mean 42.5, **max 99.52** ps | 64.63 … 97.92 ps |
 
 **0 of 900 draws exceed the 150 ps limit pin-referred.** The worst pin-referred
-draw is 80.00 ps at `sf`/1.08 V/−40 °C (aperture 63.54 + Δ_rx 16.46). So
-referring T-19 to the pin does **not** break the row on the evidence committed to
-`main`; it leaves about 70 ps of the 150 ps allocation.
+draw is 99.52 ps at `sf`/1.08 V/**125 °C** (aperture 60.48 + 2 × 19.52) — not the
+same draw as the worst D-referred one (68.60 ps at `sf`/1.08 V/−40 °C), because
+the two terms peak at different corners. So referring T-19 to the pin does **not**
+break the row on the evidence committed to `main`; it leaves about **50 ps** of
+the 150 ps allocation.
+
+Two properties of that figure, both carried over from the bench rather than added
+here:
+
+- **Rows 2–4 reuse row 1's measured `t_su`/`t_h` by assumption.** The bench
+  measures setup on a **rising** D edge and hold on a **falling** D edge of a
+  single posedge flop with an ideal clock (`record.json` →
+  `aperture_definition`), which is row 1's pairing. The record states that the
+  negedge flop "was not run as a second measurement"; the pin-referred figure
+  therefore inherits the assumption that the other three pairings have the same
+  flop-referred `t_su + t_h`. #198 is where that is either confirmed or replaced
+  by a second measurement.
+- **The `+ |Δ_rx|` part is grid-quantized.** `t19_aperture_ps + Δ_rx` is exactly
+  `cw.ys − cw.xs`, the clock-position sweep window, and every one of the 900
+  draws lands on the sweep's **10 ps** grid — so that term carries the ±5 ps
+  per-side quantisation the record declares. The second `|Δ_rx|` is a measured
+  delay difference and is not gridded.
 
 This derivation is stated here, not written into `measurements/row-evidence.json`
 or the characterization report. Recorded results are append-only, and
@@ -186,11 +234,14 @@ measure the pad slew, re-measure `d_r`/`d_f` at it, separate the residue, and
 re-report T-19 pin-referred.
 
 The consequence for the row's verdict is stated plainly: **pin-referred T-19
-passes at the recorded 100 ps pad slew with ~70 ps of margin, and its verdict at
+passes at the recorded 100 ps pad slew with ~50 ps of margin, and its verdict at
 the channel's actual slew is not established.** If the receiver's share there
 were near the ~82 ps the clock-path record assumes, the pin-referred aperture
-would be ≈ 68.6 + 82 ≈ 151 ps — at the limit. That is why #198 gates the row and
-not merely the arithmetic.
+would be ≈ 68.6 + 2 × 82 ≈ **233 ps — failing the 150 ps limit by about 83 ps**,
+not merely reaching it. That is why #198 gates the row and not merely the
+arithmetic: the doubling in decision 2 is what turns a hypothetical "at the
+limit" into a hypothetical clear failure, and it is the formula #198 must
+re-fire against a measured Δ_rx.
 
 ### 5. The resize follow-up stays filed, contingent on #198
 
@@ -223,8 +274,14 @@ This record adds no row and no budget line.
 - **Charge the clock-path record's end-to-end 0.103 UI to T-19.** Rejected: it
   double-counts T-17's TX-pad term and the pin-side term T-16 already bounds, and
   it is contradicted as a receiver figure by the per-stage measurement
-  (decisions 2 and 4). It would also have put T-19 at ≈ 171 ps — failing a row
-  that passes — on the strength of a subtraction.
+  (decisions 2 and 4). It would also have put T-19 at ≈ 68.6 + 2 × 102.6 ≈ 274 ps
+  — failing a row that passes — on the strength of a subtraction.
+- **Charge Δ_rx once — the worst single pairing, `t_su + t_h + |Δ_rx|`.**
+  Rejected by the intersection in decision 2. It takes the largest of the four
+  per-pairing apertures instead of asking which placements satisfy all four at
+  once; because Δ_rx lands on the hold side for one pairing and the setup side
+  for another, and T-21 sets one phase for both, the two worst sides **add**. The
+  valid-placement range shrinks by `2·|Δ_rx|`.
 - **Charge half of a measured asymmetry.** Rejected, with the argument in
   decision 2: the halving depends on only two of the four (bit, clock-edge)
   pairings.
@@ -251,9 +308,14 @@ This record adds no row and no budget line.
   does not answer the row — which the committed result is, so it is re-reported
   under #198. The derivation in decision 3 shows the existing record already
   contains what that re-report needs.
+- **The pin-referred aperture is `t_su + t_h + 2·|Δ_rx|`** (decision 2), so a
+  re-report that charges the receiver's rise/fall asymmetry once understates the
+  row by `|Δ_rx|`. This is the formula #198 re-fires, and the quantity any later
+  record must compare against the 150 ps limit.
 - **T-19's worst corner is a skew corner** (`sf`: aperture mean 40.7 / max 68.6 ps,
-  Δ_rx mean 12.1 / max 19.5 ps), not the classic slow/fast pair. This is already
-  observed, not predicted.
+  Δ_rx mean 12.1 / max 19.5 ps; worst pin-referred draw 99.5 ps at `sf`/1.08 V/
+  125 °C), not the classic slow/fast pair. This is already observed, not
+  predicted.
 - T-20's allocation and verdict are unchanged, and T-20's `ANALYSIS` now re-derives
   T-19's contribution from merged records rather than from an allocation alone.
 - **The open item is the pad slew, not the sizing.** #198 measures it and separates

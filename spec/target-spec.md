@@ -102,16 +102,18 @@ graded there, and T-19's aperture is *defined* there
 inside T-19 rather than between two rows. Two consequences, neither of which
 changes a line above:
 
-- The input stage's rise/fall delay asymmetry is charged to T-19, and **no
+- The input stage's rise/fall delay asymmetry `Δ_rx` is charged to T-19, and **no
   sampling-clock placement can absorb it**: over a DDR stream the same asymmetry
   falls on the setup side for one data/clock-edge pairing and on the hold side
-  for another, so re-centring trades one for the other (DR-0021 § decision 2).
-  It is not chargeable to T-21.
+  for another, so re-centring trades one for the other. Because T-21 sets a
+  single sampling phase for both clock edges, the two worst sides add and the
+  pin-referred aperture is **`t_su + t_h + 2·|Δ_rx|`** (DR-0021 § decision 2).
+  None of it is chargeable to T-21.
 - **T-19 still passes pin-referred.** `sim/mc/records/20261112T082047Z-t19/`
   (**simulated**, pre-layout, 900 mismatch draws over the 45-corner grid) records
   an aperture of 68.60 ps worst draw against the 150 ps limit *referred to the
   flop's D pin*, plus the pad-to-D delays per draw; re-referring it to the pin
-  gives a worst draw of **80.0 ps of 150 ps**, 0 of 900 draws over the limit
+  gives a worst draw of **99.5 ps of 150 ps**, 0 of 900 draws over the limit
   (DR-0021 § decision 3). T-19's worst corner is a skew corner (`mos_sf`), not
   the classic slow/fast pair.
 
