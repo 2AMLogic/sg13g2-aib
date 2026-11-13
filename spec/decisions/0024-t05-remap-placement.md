@@ -202,14 +202,14 @@ measured and why the stand-in was chosen.
 
 ### Follow-ups this record files (all at `loom:triage`, none done here)
 
-1. **Instantiate the remap in the TX datapath**: two `tx_remap` instances on the `d0` / `d1`
-   buses ahead of 22 `aib_tx_slice` instances, with `rx_remap` mirrored behind the RX
-   capture register; extend the datapath benches to the 22-wire direction. Note that
+1. **#246 — instantiate the remap in the TX datapath**: two `tx_remap` instances on the
+   `d0` / `d1` buses ahead of 22 `aib_tx_slice` instances, with `rx_remap` mirrored behind
+   the RX capture register; extend the datapath benches to the 22-wire direction. Note that
    **PR #107 rewrites `rtl/shift_redundancy.v`** and is operator-held — that follow-up meets
    it, this record does not (it edits no RTL).
-2. **Re-synthesize and re-place-and-route** with the remap in, and confirm the new
+2. **#247 — re-synthesize and re-place-and-route** with the remap in, and confirm the new
    `tx_d0`/`tx_d1` → input-register path closes setup at 500 MHz over the corners item 7 /
    digital grades. This is the claim decision point 3 defers, and it is where the moved term
    is answered.
-3. **The 22-wire I/O column**: the remap makes 22 wires per direction real in the datapath,
-   so the column skew work (T-13, #136) and the layout rows see 22, not 20.
+3. **#248 — the 22-wire I/O column**: the remap makes 22 wires per direction real in the
+   datapath, so the column skew work (T-13, #136) and the layout rows see 22, not 20.
