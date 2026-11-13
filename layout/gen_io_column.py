@@ -64,8 +64,6 @@ PAD_OPEN = (7.5, 56.0, 47.5, 96.0)     # passivation opening, 40 x 40 um
 PAD_TM1 = (5.5, 54.0, 49.5, 98.0)      # topmost metal, 2 um overlap
 PAD_PLATE = (6.0, 54.2, 49.0, 97.4)    # M3/M4/M5 landing under the pad stack
 
-FINGER = 0.57          # gate pitch for l = 0.13: 0.13 + 2 x 0.14 + 0.16
-
 
 def gx(i):
     return round(OX + P * i, 3)
@@ -186,8 +184,10 @@ def check_against_netlists(design_dir):
         assert nodes[:4] == [drain, "VSS", "VSS", "VSS"] and nodes[4].endswith(tbl[1]), tbl[0]
         assert abs(num(kv["w"]) - tbl[2] * tbl[4]) < 1e-9 and abs(num(kv["l"]) - tbl[3]) < 1e-9, tbl[0]
         assert int(kv["ng"]) == tbl[4], tbl[0]
-    nodes, kv = esd["Resd"]
-    assert nodes[:2] == ["PAD", "PADI"] and abs(num(kv["w"]) - 2.0) < 1e-9
+    rname, rw, rl, ra, rb = ESD_RES
+    nodes, kv = esd[rname]
+    assert nodes[:2] == [ra, rb], rname
+    assert abs(num(kv["w"]) - rw) < 1e-9 and abs(num(kv["l"]) - rl) < 1e-9, rname
     tx = parse(os.path.join(design_dir, "aib_tx_data.spice"))
     for name, w, l, a, b in TX_RES:
         nodes, kv = tx[name]
@@ -233,13 +233,12 @@ class Term:
 
 
 class Ctx:
-    """Per-unit-cell drawing state: terminals, anchors and the pin list."""
+    """Per-unit-cell drawing state: terminals and router anchors."""
 
     def __init__(self, d):
         self.d = d
         self.terms = []
         self.anchors = {}      # net -> list of (layer 0/1, col, row)
-        self.pins = []         # (layer, net, x, y)
 
     def add_term(self, t):
         self.terms.append(t)
@@ -610,7 +609,6 @@ def add_pin(ctx, router, net, col, y_label):
     for r in range(0, ROW_LO + 1):
         router.own(net, 0, col, r)
     ctx.anchor(net, 0, col, ROW_LO)
-    ctx.pins.append((net, x))
 
 
 def build_unit(layout, name, tx):
@@ -621,25 +619,35 @@ def build_unit(layout, name, tx):
     rails_and_pad(ctx, router, tx)
 
     # --- ESD block (aib_pad_esd) --------------------------------------------
+    # Type, W, L, ng, size and nets come from the checked device table; only the
+    # placement (x, source row, gate row) is local to the drawing.
+    esd_diode = {e[0]: e for e in ESD_DIODES}
+
+    def put_esd_mos(entry, x0, rs, grow):
+        nm, typ, w, l, ng, nets = entry
+        return mos(ctx, typ, w, l, ng, x0, rs, nets, nm, gate_row=grow)
+
+    def put_esd_diode(nm, cx_col, cy_row):
+        _, kind, size, net_a, net_c = esd_diode[nm]
+        return diode(ctx, nm, kind, size, cx_col, cy_row, net_a, net_c)
+
     band_row = 5
     # Mn1 / Dp1 / clamp / Resd / small diodes, left to right, one band.
     c_dn1 = col_of(3.2 + 5.8)
     r_dn1 = band_row + 8
-    # Mn1: grounded-gate nmos w=2 l=0.13 ng=10 (D=PAD, G=S=B=VSS), the PAD-to-VSS drain-junction diode.
-    mos(ctx, "nmos", 2.0, 0.13, 10, 4.4, band_row + 5,
-        dict(D="PAD", G="VSS", S="VSS"), "Mn1", gate_row=band_row + 8)
+    # Mn1: grounded-gate nmos (D=PAD, G=S=B=VSS), the PAD-to-VSS drain-junction diode.
+    put_esd_mos(ESD_MN1, 4.4, band_row + 5, band_row + 8)
     c_dp1 = col_of(gx(c_dn1) + 5.8 + 1.6 + 3.3)
-    diode(ctx, "Dp1", "p", 4.5, c_dp1, r_dn1, "PAD", "VDDIO")
+    put_esd_diode("Dp1", c_dp1, r_dn1)
     xr = gx(c_dp1) + 3.65
-    # Clamp: nmos w=2 l=0.35 ng=20 (D=VDDIO, G=VSS, S=VSS) -- drawn with its own l.
-    mos(ctx, "nmos", 2.0, 0.35, 20, r3(xr + 1.4), band_row + 1,
-        dict(D="VDDIO", G="VSS", S="VSS"), "Mclamp", gate_row=band_row + 6)
-    # Resd (2 um x 2 um) and the secondary diodes.
-    rppd(ctx, "Resd", 2.0, 2.0, r3(xr + 1.6), band_row + 15, "PAD", "PADI")
+    # Clamp -- drawn with its own l, longer than the logic devices'.
+    put_esd_mos(ESD_CLAMP, r3(xr + 1.4), band_row + 1, band_row + 6)
+    # Resd and the secondary diodes.
+    rname, rw, rl, ra, rb = ESD_RES
+    rppd(ctx, rname, rw, rl, r3(xr + 1.6), band_row + 15, ra, rb)
     c_dp2 = col_of(51.6)   # clear of the clamp bulk tap (shared node at 49.5)
-    diode(ctx, "Dp2", "p", 2.0, c_dp2, band_row + 3, "PADI", "VDDIO")
-    mos(ctx, "nmos", 1.0, 0.13, 1, r3(gx(c_dp2) - 0.6), band_row + 8,
-        dict(D="PADI", G="VSS", S="VSS"), "Mn2", gate_row=band_row + 11)
+    put_esd_diode("Dp2", c_dp2, band_row + 3)
+    put_esd_mos(ESD_MN2, r3(gx(c_dp2) - 0.6), band_row + 8, band_row + 11)
     if tx:
         build_tx(ctx, router)
     else:
@@ -665,11 +673,16 @@ def build_unit(layout, name, tx):
 
 def build_tx(ctx, router):
     dev = {n: (t, w, l, ng, nets) for n, t, w, l, ng, nets in TX_DEVICES}
+    res = {n: (w, l, a, b) for n, w, l, a, b in TX_RES}
     add_pin(ctx, router, "DIN", col_of(4.0), 0)
 
     def put(nm, x, row, grow=None):
         t, w, l, ng, nets = dev[nm]
         return mos(ctx, t, w, l, ng, r3(x), row, nets, nm, gate_row=grow)[0]
+
+    def put_res(nm, x, row):
+        w, l, a, b = res[nm]
+        return rppd(ctx, nm, w, l, x, row, a, b)
 
     put("Mp", 5.0, 25, 27)
     put("Mn", 28.0, 33)
@@ -687,10 +700,10 @@ def build_tx(ctx, router):
     x = 3.0
     for nm in ("Mi1p", "Mi1n", "Mpu", "Mpd"):
         x = put(nm, x + 1.5, 53)
-    rppd(ctx, "Rpu", 0.5, 24.0, 28.0, 56, "PUX", "PAD")
-    rppd(ctx, "Rpd", 0.5, 24.0, 28.0, 58, "PAD", "PDX")
-    rppd(ctx, "Rsp", 10.0, 0.5, 45.0, 41, "DP", "PAD")
-    rppd(ctx, "Rsn", 10.0, 0.5, 50.5, 41, "DN", "PAD")
+    put_res("Rpu", 28.0, 56)
+    put_res("Rpd", 28.0, 58)
+    put_res("Rsp", 45.0, 41)
+    put_res("Rsn", 50.5, 41)
 
 
 def build_rx(ctx, router):
@@ -704,10 +717,6 @@ def build_rx(ctx, router):
     for nm in ("Mi1n", "Mi2n"):
         t, w, l, ng, nets = dev[nm]
         x = mos(ctx, t, w, l, ng, r3(x + 2.0), 44, nets, nm)[0]
-
-
-def mirror_x(cell_w, x):
-    return cell_w - x
 
 
 def place(parent, child, slot, mirrored, x_off=0.0):
@@ -730,7 +739,7 @@ def child_width(cell):
     return _WIDTH[cell.name]
 
 
-def build_pair(layout, name, unit, labels):
+def build_pair(layout, name, unit):
     """clk | clkb pair of two unit cells; slot parity follows the column (left cell mirrored)."""
     cell = layout.create_cell(name)
     _WIDTH[name] = 2 * CELL_W
@@ -774,8 +783,8 @@ def main():
     tx, _, _ = build_unit(layout, "aib_io_tx", True)
     rx, _, _ = build_unit(layout, "aib_io_rx", False)
     _WIDTH["aib_io_tx"] = _WIDTH["aib_io_rx"] = CELL_W
-    txp = build_pair(layout, "aib_io_tx_clk", tx, None)
-    rxp = build_pair(layout, "aib_io_rx_clk", rx, None)
+    txp = build_pair(layout, "aib_io_tx_clk", tx)
+    rxp = build_pair(layout, "aib_io_rx_clk", rx)
     ctx_ = build_column(layout, "aib_io_column_tx", tx, txp, "TX")
     crx = build_column(layout, "aib_io_column_rx", rx, rxp, "RX")
     top = layout.create_cell("aib_io_column")

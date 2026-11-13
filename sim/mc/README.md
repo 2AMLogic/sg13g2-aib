@@ -16,12 +16,12 @@ The manifest declares all six under `spec_rows."6.analog"`; the two open rows (T
 
 ## Method
 
-`gen_mc.py` writes one nominal and one negative-control `klt sim` request per row
-(`--check` for staleness; CI runs it). Each request is the 45-corner PVT-FULL grid of
-`sim/pvt_full.py` with `mos_<corner>_mismatch` process sections (the PDK's per-instance
-mismatch sections), `monte_carlo.vary: mismatch`, a recorded seed, and goes to the batch
-fleet; the negative control is a bench copy of the cell with a seeded degradation. The two
-reports are joined by `klt yield-samples` and graded by `klt yield`:
+`gen_mc.py` writes one nominal and one negative-control `klt sim` request per row, and the
+T-10 control bench `tb_t10_ctl.cir` (`--check` for staleness; CI runs it). Each request is the
+45-corner PVT-FULL grid of `sim/pvt_full.py` with `mos_<corner>_mismatch` process sections (the
+PDK's per-instance mismatch sections), `monte_carlo.vary: mismatch`, a recorded seed, and goes to
+the batch fleet; the negative control is a bench copy of the cell with a seeded degradation. The
+two reports are joined by `klt yield-samples` and graded by `klt yield`:
 
 ```bash
 python3 -I sim/mc/gen_mc.py --check
@@ -43,6 +43,17 @@ are the row's +-60 mV with `target_sigma` 3 (the row says 3 sigma mismatch). 45 
 120 draws = 5400 samples (the sample-size verdict asked for 5178 at +-0.01 yield CI);
 seed 4410. Negative control: first-stage NMOS 4x narrower (`tb_t10_ctl.cir`), 900 draws,
 seed 4411, detected.
+
+`tb_t10_ctl.cir` is generated, not hand-copied (#202): `gen_mc.py` takes `tb_t10.cir`, inlines
+`design/aib_rx_data.spice` in place of its `.include`, and narrows the first-stage NMOS
+(`XMi1n` `w=1u ng=2` -> `w=0.25u ng=1`) as the one seeded degradation. The control's other three
+devices are copied from the design cell, so a change to them is carried into the control and
+`gen_mc.py --check` fails until it is regenerated — the control used to inline the sizes by hand,
+which would have left it on the old cell after a receiver resize (#190). A resize of `XMi1n`
+itself moves the substitution's anchor and stops the generator with a message naming it: what
+"4x narrower" means has to be restated on the new device, not guessed. The generated file is
+byte-identical to the bench the record cites
+(`records/20261108T035315Z-t10/tb_t10_ctl.cir`), so the recorded result is unchanged.
 
 **Result: T-10 fails.** Pooled over the grid the offset has mean +34.9 mV and sigma
 22.6 mV (sigma-to-spec 1.11 against 3); 16 % of draws fall outside +-60 mV, worst 94.6 mV in the 20-draw pilot. Most of the mean is the systematic
