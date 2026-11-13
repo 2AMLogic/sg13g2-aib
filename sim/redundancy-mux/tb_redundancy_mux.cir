@@ -2,7 +2,7 @@
 * Rows: T-05 (mux added load and delay). Reported, never graded: spec/target-spec.md T-05 states
 * no bound of its own for this leg, and none is invented here (spec/decisions/0023-*.md).
 *
-* Four lanes, one deck, one stimulus, one corner per run -- so every delta below is a difference
+* Six lanes, one deck, one stimulus, one corner per run -- so every delta below is a difference
 * measured inside the same simulation rather than between two runs:
 *
 *   b   baseline   serializer mux -> aib_tx_data DIN directly (what design/ has today)
@@ -10,6 +10,15 @@
 *                  the remap stage shorted out, which must reproduce the baseline.
 *   m0  with mux   serializer mux -> remap mux selected to A0 -> DIN  (an unrepaired wire)
 *   m1  with mux   serializer mux -> remap mux selected to A1 -> DIN  (a shifted wire)
+*   m2  sized      as m0, with sg13g2_mux2_2 (drive 2) as the remap stage
+*   m3  buffered   as m0, with sg13g2_mux2_1 -> sg13g2_buf_4 as the remap stage
+*
+* Lanes m2 and m3 are the sized-stage re-measurement of spec/decisions/0024-*.md (#232): the
+* first record under DR-0023 measured the drive-1 stand-in at up to 0.184 UI of common added
+* delay, and the question those two lanes answer is how much of that is the cell's drive
+* strength rather than the placement. They are selected to A0 only -- the select-dependent
+* term is a property of the select stack, which sizing does not change, and the first record
+* measured it at 0.289 ps worst case over the grid.
 *
 * Placement (DR-0023): the remap sits on the serialized wire, between the serializer mux and the
 * TX cell's DIN, which is what the ratified row's "inside T-12/T-13" presumes. sg13g2_mux2_1 is
@@ -31,11 +40,13 @@
 * Claim scope: CH -- the pad drives aib_pad_esd into the declared channel CH-3MM-RC, so the TX
 * output sees its declared load. The lane-internal deltas this record reports are properties of
 * the lane, not of the channel; the channel is here to load the pad realistically and is
-* identical in all four lanes.
+* identical in all six lanes.
 .include ../../spec/channel/channel_rc.cir
 .include ../../design/aib_tx_data.spice
 .include ../../design/aib_pad_esd.spice
 .include sg13g2_mux2_1.inc
+.include sg13g2_mux2_2.inc
+.include sg13g2_buf_4.inc
 .include redundancy_mux_stim.inc
 
 .subckt link txp rxp gnd
@@ -84,16 +95,49 @@ Xtx_m1  m1d oe oe 0 m1_pad vdd_tx 0 aib_tx_data
 Xesd_m1 m1_ch m1_pad vdd_tx 0 aib_pad_esd
 Xlk_m1  m1_ch m1_far 0 link
 
+* ---- lane m2: sized remap, sg13g2_mux2_2 (drive 2), measured through A0 -----------------
+* Same topology as m0; only the remap cell changes. The load-only twin Xrl_m2 is the sized
+* cell too, because wire j+2's remap is the same instance in any implementation that sizes
+* the stage -- and mux2_2's A0/A1 input devices are the same size as mux2_1's, so the load
+* this lane's serializer sees is the same either way.
+Xser_m2 m2s_x hi 0 clk vdd_tx 0 sg13g2_mux2_1
+Vpm2    m2s_x m2s 0
+Xnbr_m2 n2 0 hi clk vdd_tx 0 sg13g2_mux2_1
+Xrm_m2  m2d m2s n2 0 vdd_tx 0 sg13g2_mux2_2
+Xrl_m2  l2 n2 m2s 0 vdd_tx 0 sg13g2_mux2_2
+Xtx_m2  m2d oe oe 0 m2_pad vdd_tx 0 aib_tx_data
+Xesd_m2 m2_ch m2_pad vdd_tx 0 aib_pad_esd
+Xlk_m2  m2_ch m2_far 0 link
+
+* ---- lane m3: buffered remap, sg13g2_mux2_1 -> sg13g2_buf_4, measured through A0 --------
+* The remap mux keeps the minimum-strength cell -- so the serializer sees exactly the m0
+* fan-out -- and the ~30 fF DIN is driven by the buffer instead. The buffer is in the lane,
+* not on the load-only twin: Xrl_m3 models the input load wire j+2's remap presents, which
+* is the mux input in both arrangements.
+Xser_m3 m3s_x hi 0 clk vdd_tx 0 sg13g2_mux2_1
+Vpm3    m3s_x m3s 0
+Xnbr_m3 n3 0 hi clk vdd_tx 0 sg13g2_mux2_1
+Xrm_m3  m3x m3s n3 0 vdd_tx 0 sg13g2_mux2_1
+Xbuf_m3 m3d m3x vdd_tx 0 sg13g2_buf_4
+Xrl_m3  l3 n3 m3s 0 vdd_tx 0 sg13g2_mux2_1
+Xtx_m3  m3d oe oe 0 m3_pad vdd_tx 0 aib_tx_data
+Xesd_m3 m3_ch m3_pad vdd_tx 0 aib_pad_esd
+Xlk_m3  m3_ch m3_far 0 link
+
 * ---- mid-rail-referenced probes so every TRIG/TARG uses VAL=0 at any supply ------------
 Bhclk hclk 0 V = v(clk)    - 0.5*v(vdd_tx)
 Bhb   hb   0 V = v(b_pad)  - 0.5*v(vdd_tx)
 Bhc   hc   0 V = v(c_pad)  - 0.5*v(vdd_tx)
 Bhm0  hm0  0 V = v(m0_pad) - 0.5*v(vdd_tx)
 Bhm1  hm1  0 V = v(m1_pad) - 0.5*v(vdd_tx)
+Bhm2  hm2  0 V = v(m2_pad) - 0.5*v(vdd_tx)
+Bhm3  hm3  0 V = v(m3_pad) - 0.5*v(vdd_tx)
 Bhbs  hbs  0 V = v(bs)  - 0.5*v(vdd_tx)
 Bhcs  hcs  0 V = v(cs)  - 0.5*v(vdd_tx)
 Bhm0s hm0s 0 V = v(m0s) - 0.5*v(vdd_tx)
 Bhm1s hm1s 0 V = v(m1s) - 0.5*v(vdd_tx)
+Bhm2s hm2s 0 V = v(m2s) - 0.5*v(vdd_tx)
+Bhm3s hm3s 0 V = v(m3s) - 0.5*v(vdd_tx)
 
 * ---- 10 % / 90 % referenced copies of the serializer outputs (slew = what the load does)
 Bbs10  bs10  0 V = v(bs)  - 0.1*v(vdd_tx)
@@ -104,6 +148,10 @@ Bm0s10 m0s10 0 V = v(m0s) - 0.1*v(vdd_tx)
 Bm0s90 m0s90 0 V = v(m0s) - 0.9*v(vdd_tx)
 Bm1s10 m1s10 0 V = v(m1s) - 0.1*v(vdd_tx)
 Bm1s90 m1s90 0 V = v(m1s) - 0.9*v(vdd_tx)
+Bm2s10 m2s10 0 V = v(m2s) - 0.1*v(vdd_tx)
+Bm2s90 m2s90 0 V = v(m2s) - 0.9*v(vdd_tx)
+Bm3s10 m3s10 0 V = v(m3s) - 0.1*v(vdd_tx)
+Bm3s90 m3s90 0 V = v(m3s) - 0.9*v(vdd_tx)
 
 * ---- |load current| at each serializer output; integrated over one whole clock period it
 * ---- is 2*Ceff*VDD (one rise and one fall), so the window's endpoints need not be settled.
@@ -111,3 +159,5 @@ Bqb  qb  0 V = abs(i(Vpb))
 Bqc  qc  0 V = abs(i(Vpc))
 Bqm0 qm0 0 V = abs(i(Vpm0))
 Bqm1 qm1 0 V = abs(i(Vpm1))
+Bqm2 qm2 0 V = abs(i(Vpm2))
+Bqm3 qm3 0 V = abs(i(Vpm3))

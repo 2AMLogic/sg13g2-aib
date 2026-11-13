@@ -35,11 +35,21 @@ NUI = 24                  # stimulus length in UI (12 clock periods)
 N = 6                     # measured edge: the N-th crossing of each polarity (settled, > 10 ns)
 SUPPLIES = ["vdd_tx"]
 
-# The four lanes of tb_redundancy_mux.cir: (tag, pad probe, serializer probe, |i| probe).
+# The six lanes of tb_redundancy_mux.cir: (tag, pad probe, serializer probe, |i| probe).
+# b baseline, c control, m0/m1 the drive-1 remap selected to A0/A1, and the two sized
+# remap stages of spec/decisions/0024-*.md: m2 sg13g2_mux2_2, m3 sg13g2_mux2_1 + buf_4.
 LANES = (("b", "hb", "hbs", "qb", "bs10", "bs90"),
          ("c", "hc", "hcs", "qc", "cs10", "cs90"),
          ("m0", "hm0", "hm0s", "qm0", "m0s10", "m0s90"),
-         ("m1", "hm1", "hm1s", "qm1", "m1s10", "m1s90"))
+         ("m1", "hm1", "hm1s", "qm1", "m1s10", "m1s90"),
+         ("m2", "hm2", "hm2s", "qm2", "m2s10", "m2s90"),
+         ("m3", "hm3", "hm3s", "qm3", "m3s10", "m3s90"))
+
+# The remap variants whose common added delay is reported, by the suffix their terms carry:
+# "" is the drive-1 stand-in DR-0023 declared, "2" and "3" the two sized stages #232 asks for.
+VARIANTS = (("", "m0", "sg13g2_mux2_1, drive 1 (the DR-0023 stand-in)"),
+            ("2", "m2", "sg13g2_mux2_2, drive 2"),
+            ("3", "m3", "sg13g2_mux2_1 followed by sg13g2_buf_4"))
 
 
 def clk_crossing_ps(n, rise=True):
@@ -109,24 +119,34 @@ def measurements():
         ]
     # --- the three terms the row's "added load/delay" names -----------------------------
     # 1. common added delay: every data lane gains one remap stage, the clock lane does not,
-    #    so this is a data-to-clock offset and reports into T-20 (#177, #194).
-    out += [param("t05_add_r_s", "s", "t05_m0_dpr_s-t05_b_dpr_s"),
-            param("t05_add_f_s", "s", "t05_m0_dpf_s-t05_b_dpf_s"),
-            param("t05_add1_r_s", "s", "t05_m1_dpr_s-t05_b_dpr_s"),
+    #    so this is a data-to-clock offset and reports into T-20 (#177, #194). One set of
+    #    terms per remap variant -- unsuffixed for the drive-1 stand-in, "2" and "3" for the
+    #    two sized stages -- so the sizing comparison is a difference inside one simulation
+    #    too, read against the same baseline lane b.
+    for sfx, lane, _ in VARIANTS:
+        out += [param(f"t05_add{sfx}_r_s", "s", f"t05_{lane}_dpr_s-t05_b_dpr_s"),
+                param(f"t05_add{sfx}_f_s", "s", f"t05_{lane}_dpf_s-t05_b_dpf_s")]
+        # pulse-width distortion the remap adds to the data lane and the clock lane does not
+        out += [param(f"t05_pwd{sfx}_s", "s", f"t05_add{sfx}_f_s-t05_add{sfx}_r_s")]
+    out += [param("t05_add1_r_s", "s", "t05_m1_dpr_s-t05_b_dpr_s"),
             param("t05_add1_f_s", "s", "t05_m1_dpf_s-t05_b_dpf_s")]
     # 2. select-dependent delay: in a repaired direction, wires below `pos` take A0 and wires
     #    at or above it take A1, so any A1-A0 difference is lane-to-lane skew (T-13, #136).
+    #    Measured on the drive-1 stand-in only: it is a property of the select stack, which
+    #    sg13g2_mux2_2 does not change (same A0/A1 devices, a wider output inverter).
     out += [param("t05_sel_r_s", "s", "t05_m1_dpr_s-t05_m0_dpr_s"),
             param("t05_sel_f_s", "s", "t05_m1_dpf_s-t05_m0_dpf_s")]
     # 3. added load on the serializer output: two remap inputs instead of one DIN. Split the
     #    added delay into the load half (seen at the serializer output) and the stage half.
-    out += [param("t05_load_r_s", "s", "t05_m0_dsr_s-t05_b_dsr_s"),
-            param("t05_load_f_s", "s", "t05_m0_dsf_s-t05_b_dsf_s"),
-            param("t05_stage_r_s", "s", "t05_add_r_s-t05_load_r_s"),
-            param("t05_stage_f_s", "s", "t05_add_f_s-t05_load_f_s"),
-            param("t05_dtr_s", "s", "t05_m0_tr_s-t05_b_tr_s"),
-            param("t05_dtf_s", "s", "t05_m0_tf_s-t05_b_tf_s"),
-            param("t05_dcl_f", "F", "t05_m0_cl_f-t05_b_cl_f")]
+    #    Per variant, so the sized stages' cost is decomposed the same way.
+    for sfx, lane, _ in VARIANTS:
+        out += [param(f"t05_load{sfx}_r_s", "s", f"t05_{lane}_dsr_s-t05_b_dsr_s"),
+                param(f"t05_load{sfx}_f_s", "s", f"t05_{lane}_dsf_s-t05_b_dsf_s"),
+                param(f"t05_stage{sfx}_r_s", "s", f"t05_add{sfx}_r_s-t05_load{sfx}_r_s"),
+                param(f"t05_stage{sfx}_f_s", "s", f"t05_add{sfx}_f_s-t05_load{sfx}_f_s"),
+                param(f"t05_dtr{sfx}_s", "s", f"t05_{lane}_tr_s-t05_b_tr_s"),
+                param(f"t05_dtf{sfx}_s", "s", f"t05_{lane}_tf_s-t05_b_tf_s"),
+                param(f"t05_dcl{sfx}_f", "F", f"t05_{lane}_cl_f-t05_b_cl_f")]
     # --- negative control: lane c is lane b built a second time, i.e. the remap stage
     # --- shorted out. It must reproduce the baseline; it is the noise floor the three
     # --- terms above are read against, and it claims nothing about the design.
