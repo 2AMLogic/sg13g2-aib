@@ -13,6 +13,7 @@ import argparse
 import hashlib
 import json
 import operator
+import posixpath
 import re
 import sys
 from pathlib import Path
@@ -20,6 +21,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent.parent
 SPEC = "spec/target-spec.md"
 MAP = "measurements/row-evidence.json"
+MANIFEST = "signoff/block-manifest.json"
+CITED = ("5.analog", "6.analog")
 REPORT = "measurements/characterization-report.md"
 ENVELOPE = "signoff/attest/item8.json"
 OPS = {">=": operator.ge, "<=": operator.le, "==": operator.eq}
@@ -41,6 +44,28 @@ def spec_rows(root):
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
             rows.append((cells[0], cells[1]))
     return rows
+
+
+def manifest_citations(root):
+    """(record directory, row) pairs the manifest cites as analog per-row evidence."""
+    man = load(root, MANIFEST)["evidence"]
+    return sorted({(posixpath.dirname(e["file"]), row)
+                   for key in CITED for e in man.get(key, []) for row in e.get("rows", [])})
+
+
+def check_map_covers_manifest(root, mapping):
+    """Every (record, row) the manifest cites for signoff must be graded by the map.
+
+    The manifest is the list of which rows have a record; MAP says how each is graded. An
+    entry may cite a sibling of the manifest's file (a rows.json / yield.json digest beside a
+    klt sim envelope), so compare record directories, not file paths. Without this the map
+    silently omits a cited record and its row reads not-yet-measured (issue #230).
+    """
+    missing = [f"{row} from {d}/" for d, row in manifest_citations(root)
+               if not any(posixpath.dirname(e["record"]) == d for e in mapping.get(row, []))]
+    if missing:
+        sys.exit(f"{MANIFEST} cites row evidence under {'/'.join(CITED)} that {MAP} does not grade; "
+                 f"add an entry citing a file in that record: {', '.join(missing)}")
 
 
 def pick(obj, path):
@@ -105,6 +130,7 @@ def build_report(root):
     unknown = sorted(set(mapping) - {r for r, _ in rows})
     if unknown:
         sys.exit(f"{MAP} names rows not in the spec: {unknown}")
+    check_map_covers_manifest(root, mapping)
     table, counts = row_table(root, rows, mapping)
     dig, area = digital_table(root)
     text = "\n".join([
@@ -169,7 +195,7 @@ def main():
         if bad:
             print("stale (regenerate, then re-cite the hash in the manifest): " + ", ".join(bad), file=sys.stderr)
             return 1
-        man = json.loads((a.root / "signoff/block-manifest.json").read_text())["evidence"]
+        man = load(a.root, MANIFEST)["evidence"]
         for k in ("8.analog", "8.digital"):
             if man.get(k, {}).get("content_hash") != digest:
                 print(f"manifest {k} does not cite {digest}", file=sys.stderr)

@@ -1,7 +1,29 @@
 {
   "schema_version": 1,
-  "note": "Maps spec rows (spec/target-spec.md, T-01..T-30) to committed records. A row with no entry reads not-yet-measured. Add an entry when its record lands; never edit a spec target to make a row pass. Fields: record (repo path), field (dotted path; [name=X] picks a list item by its name), op (>= <= ==), value or value_field (sibling field of the same record), corner, scope (CH, TC, BOTH or n/a), basis (what the number is), note.",
+  "note": "Maps spec rows (spec/target-spec.md, T-01..T-30) to committed records. A row with no entry reads not-yet-measured. Every (record, row) pair signoff/block-manifest.json cites under evidence.\"5.analog\" and evidence.\"6.analog\" must be graded here by an entry citing a file in that same record directory; the generator fails when one is missing, so the manifest is the list of which rows have a record and this file is how each is graded. A row may carry extra entries the manifest does not cite. Grade a row from every record cited for it: one failing record fails the row. Prefer the record's own per-row digest (rows.json, yield.json) over the raw klt sim envelope when the record has one. An entry graded only on a `fail` count passes a row the record merely `reported` (no limits), so grade the record's own `verdict` alongside it. Never edit a spec target to make a row pass. Fields: record (repo path), field (dotted path; [name=X] picks a list item by its name), op (>= <= ==), value or value_field (sibling field of the same record), corner, scope (CH, TC, BOTH or n/a), basis (what the number is), note.",
   "rows": {
+    "T-01": [
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-01.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-01 (DDR edge recovery at 1 Gb/s over the modeled channel)",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t01_dout_edges_a = 64.0 edges. An edge count at the rate, not a BER measurement, and no TC value is in this record."
+      },
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-01.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-01 corner-measurements of 90",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t01_dout_edges_a = 64.0 edges. An edge count at the rate, not a BER measurement, and no TC value is in this record."
+      }
+    ],
     "T-05": [
       {
         "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",
@@ -24,28 +46,132 @@
         "note": "Repair claim in CH needs an assembly; the mux function is what this record covers."
       }
     ],
-    "T-27": [
+    "T-06": [
       {
-        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
-        "field": "tests[name=latency_ddr].status",
-        "op": "==",
-        "value": "passed",
-        "corner": "n/a (cycle accounting)",
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=drv_nl.t06_voh_droop_v].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
         "scope": "BOTH",
-        "basis": "RTL simulation, N = 20, DDR latency testbench",
-        "note": "The record carries the testbench verdict, not the cycle count."
+        "basis": "simulated DC, VDDIO - V(pad) driving high, driver unloaded, margin to the 0.1 V limit, V",
+        "note": "Unloaded leg. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=drv_nl.t06_vol_v].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, V(pad) driving low, driver unloaded, margin to the 0.1 V limit, V",
+        "note": "Unloaded leg. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=drv_ld.t06_voh_droop_v].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, VDDIO - V(pad) driving high, driver at the 1 mA load, margin to the 0.1 V limit, V",
+        "note": "Loaded leg: the 1 mA DC load is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=drv_ld.t06_vol_v].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, V(pad) driving low, driver at the 1 mA load, margin to the 0.1 V limit, V",
+        "note": "Loaded leg: the 1 mA DC load is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      }
+    ],
+    "T-07": [
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=lk_0.t07_t28_ipin_a].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, pin current with the driver tristated and the weak pulls off, pad at 0 V, margin to the 1 uA limit, A",
+        "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=lk_5.t07_t28_ipin_a].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, pin current with the driver tristated and the weak pulls off, pad at VDDIO/2, margin to the 1 uA limit, A",
+        "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=lk_10.t07_t28_ipin_a].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, pin current with the driver tristated and the weak pulls off, pad at VDDIO, margin to the 1 uA limit, A",
+        "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      }
+    ],
+    "T-08": [
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=drv_ld.t08_rout_up_ohm].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, driver chord resistance at 1 mA pulling up, margin to the 40-80 ohm band, ohm",
+        "note": "Two-sided limit: the margin is to whichever side binds at the worst corner. The 1 mA chord point is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=drv_ld.t08_rout_dn_ohm].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, driver chord resistance at 1 mA pulling down, margin to the 40-80 ohm band, ohm",
+        "note": "Two-sided limit: the margin is to whichever side binds at the worst corner. The 1 mA chord point is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       }
     ],
     "T-09": [
       {
-        "record": "sim/channel-eye/records/20261110T082948Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-09.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-09 (overshoot / undershoot level and dwell at the RX pin, both polarities)",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level). This is the CH record the manifest cites under 5.analog; it supersedes the earlier 20261110T082948Z-ch run."
+      },
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
         "field": "rows.T-09.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
-        "basis": "simulated, failing T-09 measurements over 720 corner-measurements (DR-0017 driver, head 282a9d4)",
-        "note": "Simulated, not measured. Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level)."
+        "basis": "simulated, failing T-09 corner-measurements of 720",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level). This is the CH record the manifest cites under 5.analog; it supersedes the earlier 20261110T082948Z-ch run."
+      },
+      {
+        "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
+        "field": "rows.T-09.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "TC",
+        "basis": "simulated, per-row verdict for T-09 on the L2 wire-bond loopback (reported separately from CH)",
+        "note": "Simulated, not measured. TC result only, not a CH claim. The spec expects TC to possibly fail the CH limit; here it did not."
       },
       {
         "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
@@ -56,6 +182,198 @@
         "scope": "TC",
         "basis": "simulated, failing T-09 measurements, L2 wire-bond loopback (reported separately from CH)",
         "note": "Simulated, not measured. TC result only, not a CH claim. The spec expects TC to possibly fail the CH limit; here it did not."
+      }
+    ],
+    "T-10": [
+      {
+        "record": "sim/mc/records/20261108T035315Z-t10/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "BOTH",
+        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t10_offset_mv over all limits",
+        "note": "Simulated, not measured; pre-layout. Record claim scope BOTH (receiver input stage, no channel model). T-10 FAILS as recorded: mean +34.9 mV, sigma 22.6 mV, sigma-to-spec 1.11 against the target 3, about 16 % of draws outside +-60 mV. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. Recorded, not tuned."
+      },
+      {
+        "record": "sim/mc/records/20261108T035315Z-t10/yield.json",
+        "field": "measurements[name=t10_offset_mv].capability.sigma_to_spec",
+        "op": ">=",
+        "value_field": "measurements[name=t10_offset_mv].limits.target_sigma",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "BOTH",
+        "basis": "simulated pre-layout, klt yield sigma-to-spec for the receiver trip point offset from VDDIO/2, mV",
+        "note": "Simulated, not measured; pre-layout. Record claim scope BOTH (receiver input stage, no channel model). T-10 FAILS as recorded: mean +34.9 mV, sigma 22.6 mV, sigma-to-spec 1.11 against the target 3, about 16 % of draws outside +-60 mV. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. Recorded, not tuned."
+      },
+      {
+        "record": "sim/mc/records/20261108T035315Z-t10/yield.json",
+        "field": "measurements[name=t10_offset_mv].distribution.max",
+        "op": "<=",
+        "value_field": "measurements[name=t10_offset_mv].limits.max",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "BOTH",
+        "basis": "simulated pre-layout, worst draw of the receiver trip point offset from VDDIO/2, mV",
+        "note": "Simulated, not measured; pre-layout. Record claim scope BOTH (receiver input stage, no channel model). T-10 FAILS as recorded: mean +34.9 mV, sigma 22.6 mV, sigma-to-spec 1.11 against the target 3, about 16 % of draws outside +-60 mV. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. Recorded, not tuned."
+      }
+    ],
+    "T-11": [
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=t11_hyst_mv].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, |up trip - down trip| of the receiver, margin to the 60 mV limit, mV",
+        "note": "A structural check that no hysteresis was added, not a measurement of a hysteretic circuit: a DC sweep of a memoryless inverter pair cannot show hysteresis (sim/dc-static/README.md). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      }
+    ],
+    "T-15": [
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-15.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-15 (lane-to-lane skew at the RX input over the modeled channel)",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
+      },
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-15.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-15 corner-measurements of 180",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
+      },
+      {
+        "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t15_skew_ps over all limits",
+        "note": "T-15 FAILS the 7-sigma gate as recorded: mean 31.9 ps, sigma 11.4 ps, sigma-to-spec 2.47 against 7, worst draw 62.6 ps against the +60 ps limit (0.4 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+      },
+      {
+        "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "field": "measurements[name=t15_skew_ps].capability.sigma_to_spec",
+        "op": ">=",
+        "value_field": "measurements[name=t15_skew_ps].limits.target_sigma",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "basis": "simulated pre-layout, klt yield sigma-to-spec for lane-to-lane skew at the RX input, ps",
+        "note": "T-15 FAILS the 7-sigma gate as recorded: mean 31.9 ps, sigma 11.4 ps, sigma-to-spec 2.47 against 7, worst draw 62.6 ps against the +60 ps limit (0.4 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+      },
+      {
+        "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "field": "measurements[name=t15_skew_ps].distribution.max",
+        "op": "<=",
+        "value_field": "measurements[name=t15_skew_ps].limits.max",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "basis": "simulated pre-layout, worst draw of lane-to-lane skew at the RX input, ps",
+        "note": "T-15 FAILS the 7-sigma gate as recorded: mean 31.9 ps, sigma 11.4 ps, sigma-to-spec 2.47 against 7, worst draw 62.6 ps against the +60 ps limit (0.4 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+      }
+    ],
+    "T-16": [
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-16.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-16 (data-to-clock skew at the RX input over the modeled channel)",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
+      },
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-16.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-16 corner-measurements of 360",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
+      },
+      {
+        "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t16_dev_from_half_ui_ps over all limits",
+        "note": "T-16 FAILS the 7-sigma gate as recorded: mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7, worst draw 37.1 ps against the +30 ps limit (3.6 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+      },
+      {
+        "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "field": "measurements[name=t16_dev_from_half_ui_ps].capability.sigma_to_spec",
+        "op": ">=",
+        "value_field": "measurements[name=t16_dev_from_half_ui_ps].limits.target_sigma",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "basis": "simulated pre-layout, klt yield sigma-to-spec for data-to-clock deviation from half a UI at the RX input, ps",
+        "note": "T-16 FAILS the 7-sigma gate as recorded: mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7, worst draw 37.1 ps against the +30 ps limit (3.6 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+      },
+      {
+        "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "field": "measurements[name=t16_dev_from_half_ui_ps].distribution.max",
+        "op": "<=",
+        "value_field": "measurements[name=t16_dev_from_half_ui_ps].limits.max",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "basis": "simulated pre-layout, worst draw of data-to-clock deviation from half a UI at the RX input, ps",
+        "note": "T-16 FAILS the 7-sigma gate as recorded: mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7, worst draw 37.1 ps against the +30 ps limit (3.6 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+      }
+    ],
+    "T-17": [
+      {
+        "record": "sim/clock-path/records/20261113T095936Z/rows.json",
+        "field": "rows.T-17.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-17 (forwarded-clock duty-cycle distortion on clk and clkb)",
+        "note": "Simulated, not measured. The record declares CH (modeled channel CH-3MM-RC, nominal) with an ideal 50 % complementary 500 MHz stimulus; the spec row's scope is BOTH, so the TC half is not covered here. Binding corner mos_sf/mixed/-40C, t17_dcd_c = -1.04 %."
+      },
+      {
+        "record": "sim/clock-path/records/20261113T095936Z/rows.json",
+        "field": "rows.T-17.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-17 corner-measurements of 270",
+        "note": "Simulated, not measured. The record declares CH (modeled channel CH-3MM-RC, nominal) with an ideal 50 % complementary 500 MHz stimulus; the spec row's scope is BOTH, so the TC half is not covered here. Binding corner mos_sf/mixed/-40C, t17_dcd_c = -1.04 %."
+      }
+    ],
+    "T-18": [
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-18.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-18 (far-end RX eye width and height over PRBS-7)",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_ss/mixed/125C, t18_eye_height_ok_v = 0.379 V."
+      },
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-18.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-18 corner-measurements of 1845",
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_ss/mixed/125C, t18_eye_height_ok_v = 0.379 V."
       }
     ],
     "T-19": [
@@ -112,6 +430,124 @@
         "scope": "BOTH",
         "basis": "layout-measured, klt stats bounding box area of the drawn aib_io_tx unit cell (55 x 100 um), pad included, um2",
         "note": "The LAYOUT (klt stats) figure the spec row's evidence column and DR-0013 call for once the cell exists; it supersedes the ANALYSIS estimate the row is labelled with. Layout-measured, pre-extraction, I/O cell only (pad, ESD, driver or receiver). Exactly at the 5500 um2 limit, no margin."
+      }
+    ],
+    "T-24": [
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=cap_0.t24_cpin_ff].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated, pin capacitance from the model small-signal admittance at 500 MHz, pad at 0 V, margin to the 100 fF limit, fF",
+        "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=cap_5.t24_cpin_ff].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated, pin capacitance from the model small-signal admittance at 500 MHz, pad at VDDIO/2, margin to the 100 fF limit, fF",
+        "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=cap_10.t24_cpin_ff].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated, pin capacitance from the model small-signal admittance at 500 MHz, pad at VDDIO, margin to the 100 fF limit, fF",
+        "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      }
+    ],
+    "T-26": [
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-26.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-26 (integrated supply energy per delivered bit over PRBS-7)",
+        "note": "SIMULATED energy per bit; no measurement exists (the record says so in `energy_label`). CH only (declared channel model CH-3MM-RC). Binding corner mos_ff/mixed/125C, t26_energy_per_bit_simulated_j = 0.637 pJ/bit."
+      },
+      {
+        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "field": "rows.T-26.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "CH",
+        "basis": "simulated, failing T-26 corner-measurements of 180",
+        "note": "SIMULATED energy per bit; no measurement exists (the record says so in `energy_label`). CH only (declared channel model CH-3MM-RC). Binding corner mos_ff/mixed/125C, t26_energy_per_bit_simulated_j = 0.637 pJ/bit."
+      }
+    ],
+    "T-27": [
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=latency_ddr].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (cycle accounting)",
+        "scope": "BOTH",
+        "basis": "RTL simulation, N = 20, DDR latency testbench",
+        "note": "The record carries the testbench verdict, not the cycle count."
+      }
+    ],
+    "T-28": [
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=pu_on.t28_rpu_ohm].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, weak pull-up equivalent resistance at VDDIO/2, margin to the 10-20 kohm band, ohm",
+        "note": "Pull-strength leg. T-28's tristate and pull *control* is the RTL leg, not this record. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=pd_on.t28_rpd_ohm].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, weak pull-down equivalent resistance at VDDIO/2, margin to the 10-20 kohm band, ohm",
+        "note": "Pull-strength leg. T-28's tristate and pull *control* is the RTL leg, not this record. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=lk_0.t07_t28_ipin_a].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, tristate leakage at the pin with the weak pulls off, pad at 0 V, margin to the 1 uA limit, A",
+        "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=lk_5.t07_t28_ipin_a].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, tristate leakage at the pin with the weak pulls off, pad at VDDIO/2, margin to the 1 uA limit, A",
+        "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      },
+      {
+        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "field": "measurements[name=lk_10.t07_t28_ipin_a].worst_case.margin",
+        "op": ">=",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "BOTH",
+        "basis": "simulated DC, tristate leakage at the pin with the weak pulls off, pad at VDDIO, margin to the 1 uA limit, A",
+        "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       }
     ]
   }

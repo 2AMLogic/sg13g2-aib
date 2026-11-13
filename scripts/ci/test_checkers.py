@@ -4,6 +4,7 @@
 Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
 import json
+import posixpath
 import shutil
 import subprocess
 import sys
@@ -247,7 +248,42 @@ class CharacterizationReportTests(unittest.TestCase):
             run(GEN, "--root", root)
             rows = [l for l in (root / "measurements/characterization-report.md").read_text().splitlines() if l.startswith("| T-")]
             self.assertEqual(len(rows), 30)
-            self.assertIn("not-yet-measured", rows[0])
+            mapped = json.loads((root / "measurements/row-evidence.json").read_text())["rows"]
+            unmapped = [l for l in rows if l.split("|")[1].strip() not in mapped]
+            self.assertTrue(unmapped, "expected at least one spec row with no map entry")
+            for line in unmapped:
+                self.assertIn("not-yet-measured", line)
+
+    def test_manifest_cited_row_missing_from_map_fails(self):
+        """A row the manifest cites as evidence must be graded, not silently not-yet-measured."""
+        def drop(r):
+            p = r / "measurements/row-evidence.json"
+            d = json.loads(p.read_text())
+            man = json.loads((r / "signoff/block-manifest.json").read_text())["evidence"]
+            cited = [row for k in ("5.analog", "6.analog") for e in man[k] for row in e["rows"]]
+            victim = next(row for row in cited if row in d["rows"])
+            del d["rows"][victim]
+            p.write_text(json.dumps(d, indent=2) + "\n")
+        out = self.scenario(drop, "--check")
+        self.assertNotEqual(out.returncode, 0)
+        self.assertIn("does not grade", out.stderr)
+
+    def test_map_citing_a_superseded_record_fails(self):
+        """Citing some other record for a cited row is the same drift: the manifest's own record must be graded."""
+        def repoint(r):
+            p = r / "measurements/row-evidence.json"
+            d = json.loads(p.read_text())
+            man = json.loads((r / "signoff/block-manifest.json").read_text())["evidence"]
+            cited = [(e["file"], row) for k in ("5.analog", "6.analog") for e in man[k] for row in e["rows"]]
+            f, victim = next((f, row) for f, row in cited if row in d["rows"])
+            keep = posixpath.dirname(f)
+            for entry in d["rows"][victim]:
+                if posixpath.dirname(entry["record"]) == keep:
+                    entry["record"] = posixpath.join(keep + "-superseded", posixpath.basename(entry["record"]))
+            p.write_text(json.dumps(d, indent=2) + "\n")
+        out = self.scenario(repoint, "--check")
+        self.assertNotEqual(out.returncode, 0)
+        self.assertIn("does not grade", out.stderr)
 
 
 class DesignSourcesTests(unittest.TestCase):
