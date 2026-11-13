@@ -7,6 +7,8 @@ rows (11 items x analog and digital partitions), item 1 (both partitions), `2.an
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable`, `6.analog` `unmet` / `check_failed` (see "Item 6")
 and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
+`7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
+runs extracted the cells and graded nothing, which is not the same as a spec row failing);
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
@@ -229,6 +231,32 @@ Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate
 ```bash
 PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ```
+
+## Item 7 / analog evidence
+
+`7.analog` reads `unmet` / `check_failed`, citing the four `klt pex --extract-only` reports in
+`layout/pex/records/20261113T130842Z/`. **`check_failed` here does not mean a spec row failed
+post-layout — no spec row was measured post-layout at all.** It means the cited `klt pex` runs
+report `status: "not_checked"`: they extracted the drawn I/O cells (cleanly, with
+`body_bias: "biased"` and the input hash equal to the committed `layout/aib_io_column.gds`) and
+graded nothing, because `klt pex` cannot simulate an sg13g2 extraction. The deck writes the
+pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a
+`.subckt`, so ngspice stops at netlist load. Reproduced in
+`layout/pex/records/20261113T130846Z/` and filed upstream as
+[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491); the full
+account, including the two alternatives that were rejected rather than used, is in
+[`../layout/pex/README.md`](../layout/pex/README.md). Two further gaps found in the same
+bring-up are filed there too: #5492 (a dropped `options.osdi_preload`, worked around by naming
+a backend) and #5493 (one `--top` per run cannot express a link testbench, which is why the
+`channel-eye` and `clock-path` rows have no bench here).
+
+The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
+naming it leads a reader to the reports, where `no_evidence` would have hidden that the
+extraction exists. `spec_rows."7.analog"` declares all 21 rows as gaps with the reason — the
+13 rows `5.analog` grades plus its 8 carried-forward gaps, with the same trackers (#216, #192,
+#193, #194, #195, #196, #176). Today's grader does not consume `spec_rows` for item 7 (only
+items 5 and 6), so that block is a declaration in the manifest rather than something the record
+rolls up; it is kept so the gap list is machine-readable in one place.
 
 ## Item 7 / digital evidence
 

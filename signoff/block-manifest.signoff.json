@@ -842,9 +842,39 @@
         "A `klt pex` citation is only as good as the **device-body bias** of the netlist it ran on (#1983). A device body left on an anonymous, deck-synthesized net has no DC bias path at all, which makes a resimulation of that extracted netlist *physically wrong, not merely imprecise* (`docs/cli/extract.md` \u2192 \"Coverage\") \u2014 the run converges and reports numbers, and those numbers are not comparable to the schematic leg they are being diffed against. A `klt pex` report states the condition in its own `body_bias` block (`docs/cli/pex.md`), and `klt signoff` surfaces it verbatim on this item's citation (`citation.body_bias`). **It does not grade on it**: an item-7 citation whose `body_bias.status` is `\"unbiased\"` still renders `met`, because the condition is a deck-coverage property some PDKs produce on every layout they extract, not a defect this command can adjudicate. So a claim citing item 7 must read that field and state whether its post-layout numbers were measured on a properly-biased netlist \u2014 claimant-enforced, exactly like item 3's DRC-coverage disclosure. The same discipline applies upstream at item 4: `klt lvs`'s `body_verification` block says whether the compare verified the body ties at all, and `\"unchecked\"` (a pre-extracted netlist) is not `\"verified\"`."
       ],
       "status": "unmet",
-      "reason": "no_evidence",
+      "reason": "check_failed",
       "graded_by_build": true,
-      "citation": null
+      "citation": null,
+      "citations_graded": [
+        {
+          "citation": "layout/pex/records/20261113T130842Z/aib_io_tx.extract.report.json",
+          "status": "unmet",
+          "reason": "check_failed"
+        },
+        {
+          "citation": "layout/pex/records/20261113T130842Z/aib_io_rx.extract.report.json",
+          "status": "unmet",
+          "reason": "check_failed"
+        },
+        {
+          "citation": "layout/pex/records/20261113T130842Z/aib_io_tx_clk.extract.report.json",
+          "status": "unmet",
+          "reason": "check_failed"
+        },
+        {
+          "citation": "layout/pex/records/20261113T130842Z/aib_io_rx_clk.extract.report.json",
+          "status": "unmet",
+          "reason": "check_failed"
+        }
+      ],
+      "detail": {
+        "failed_citations": [
+          "layout/pex/records/20261113T130842Z/aib_io_tx.extract.report.json",
+          "layout/pex/records/20261113T130842Z/aib_io_rx.extract.report.json",
+          "layout/pex/records/20261113T130842Z/aib_io_tx_clk.extract.report.json",
+          "layout/pex/records/20261113T130842Z/aib_io_rx_clk.extract.report.json"
+        ]
+      }
     },
     {
       "tier": "T1",

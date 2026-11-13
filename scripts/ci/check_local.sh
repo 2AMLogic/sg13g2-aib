@@ -79,6 +79,13 @@ run_rc() {
 if [ "$want_evidence" = 1 ]; then
   run "Self-test the checkers" \
     python3 -I scripts/ci/test_checkers.py
+
+  # The shared sim record harness, against a stubbed `klt sim`: no PDK and no
+  # batch fleet, so it belongs in the PDK-free list like every checker above.
+  run "Self-test the shared sim record harness (stubbed klt sim)" \
+    python3 -I sim/harness/test_write_record.py
+  run "Self-test the shared batch record harness (stubbed klt sim)" \
+    sim/harness/test_batch_record.sh
   run "Check evidence structure and sim/ record format" \
     python3 -I scripts/ci/check_evidence_format.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
@@ -89,6 +96,12 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I sim/mc/gen_mc.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
+  run "Check every committed sim/ and layout/ request against the one PVT-FULL corner table" \
+    python3 -I scripts/ci/check_corner_bundles.py
+  run "Check the item 7 pex benches against the generator" \
+    python3 -I layout/pex/gen_pex_benches.py --check
+  run "Self-test the item 7 pex benches (pin lists, one .include, row split)" \
+    python3 -I layout/pex/test_pex_benches.py
   run "Check the derived item 7 SDFs are pinned and reproduce from the routed SDF" \
     python3 -I scripts/ci/check_item7_sdf.py
   run "Check the committed routed SPEF and DEF match their manifest pins" \

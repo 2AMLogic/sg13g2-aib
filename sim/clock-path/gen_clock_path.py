@@ -17,16 +17,13 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
+import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
 UI_PS = 1000
 TR_PS = 100
 NUI = 24                  # stimulus length in UI (12 clock periods)
 N = 6                     # measured edge: the N-th crossing of each polarity (settled, > 10 ns)
 SUPPLIES = ["vdd_tx", "vdd_rx"]
-OSDI = ["psp103", "psp103_nqs", "r3_cmc", "mosvar"]
-PROCESS = {"mos_tt": ("res_typ", "dio_tt"), "mos_ss": ("res_wcs", "dio_ss"),
-           "mos_ff": ("res_bcs", "dio_ff"), "mos_sf": ("res_typ", "dio_tt"),
-           "mos_fs": ("res_typ", "dio_tt")}
-MODELS = "libs.tech/ngspice/models/"
 
 
 def pwl(points):
@@ -90,23 +87,18 @@ def measurements():
 
 
 def request():
-    sections = [{"name": c, "sections": [c, {"lib": MODELS + "cornerRES.lib", "section": r},
-                                         {"lib": MODELS + "cornerDIO.lib", "section": d}]}
-                for c, (r, d) in PROCESS.items()]
     return {
         "engine": "ngspice",
-        "models": {"pdk": "ihp-sg13g2", "lib": MODELS + "cornerMOSlv.lib"},
+        "models": {"pdk": "ihp-sg13g2", "lib": pvt_full.LIB_MOS},
         "netlist": "tb_clock_path.cir",
         "backend": "batch",
-        "corners": {"process": sections,
-                    "supply_v": {s: [1.08, 1.2, 1.32] for s in SUPPLIES},
-                    "temperature_c": [-40, 27, 125]},
+        "corners": pvt_full.corners(SUPPLIES),
         "analysis": {"kind": "tran", "args": f"2p {NUI}n 0 5p"},
         "measurements": measurements(),
         "batch": {"runner_version_check": "warn", "capacity_wait_s": 600},
         # ~6 s of ngspice per corner locally (measured, mos_tt/1.20 V/27 C); the per-unit cost in a
         # fleet job is much higher, so the budget is generous. 3 units x 1100 s fits the 3600 s job ceiling.
-        "options": {"osdi_preload": [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{o}.osdi" for o in OSDI],
+        "options": {"osdi_preload": pvt_full.osdi_preload(),
                     "timeout_s": 1100},
     }
 

@@ -1,0 +1,30 @@
+* T-06 / T-08: driver DC levels and output resistance at both rails, and
+* T-07 / T-24 / T-28 on the tristated TX pad. One `aib_io_tx` instance per
+* sub-bench: the drawn cell already contains the pad/ESD structure, so no
+* separate aib_pad_esd is instantiated (that is the merge this leg exists for).
+* Stimulus is sim/dc-static/tb_drive.cir and tb_pin.cir, rewired onto that cell;
+* the receiver tb_pin.cir hangs on the same node is not on a drawn TX pad and is
+* measured on the RX leg instead (layout/pex/README.md, "Row split").
+Vddio vddio 0 dc 1.2
+.include "aib_io_tx.dut.spice"
+
+* -- drive: Ih sinks from the high-driving pad, Il sources into the low one --
+Xtx_h vddio vddio pad_h 0 vddio vddio 0 aib_io_tx
+Ih pad_h 0 dc 0
+Xtx_l 0 vddio pad_l 0 vddio vddio 0 aib_io_tx
+Il vddio pad_l dc 0
+
+* -- tristated pin: controls as fractions of VDDIO, so one request tracks every
+* supply corner. Default state: output disabled, DIN low, PUN high, PD low.
+Voef oef 0 dc 0
+Vdinf dinf 0 dc 0
+Vpunf punf 0 dc 1
+Vpdf pdf 0 dc 0
+Boe oe_p 0 V=v(oef)*v(vddio)
+Bdin din_p 0 V=v(dinf)*v(vddio)
+Bpun pun_p 0 V=v(punf)*v(vddio)
+Bpd pd_p 0 V=v(pdf)*v(vddio)
+Vpf pf 0 dc 0
+Bpin pb 0 V=v(pf)*v(vddio)
+Vacp pad_p pb dc 0 ac 0
+Xtx_p din_p oe_p pad_p pd_p pun_p vddio 0 aib_io_tx
