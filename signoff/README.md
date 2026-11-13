@@ -159,11 +159,35 @@ The grader does **not** infer the row set. Verified against 0.9.0:
   read **`met`** on the 13 covered rows, with the 8 real gaps silently absent and
   `uncovered_rows` empty. Nothing flags the omission. This is why the full set is committed
   and must be re-derived from the spec table rather than edited by hand.
-- The `rows` list on a citation is **not** taken on trust, though. Listing a report-only row
-  (T-02, whose measurements carry `limits: null`) under the passing clock-path envelope
-  returns `uncovered_rows: ["T-02"]`, not coverage; so does claiming a row the envelope has no
-  measurements for (probed with T-05). `detail.row_sources` records `derived` where the grader
-  matched the row against the envelope's own measurement names and `asserted` where it did not.
+- The `rows` list on a citation is checked **only where the envelope's measurements carry
+  `spec_row` tags** — not on every envelope. The channel-eye and clock-path reports are tagged
+  (`T-01, T-09, T-15, T-16, T-18, T-26` and `T-02, T-04, T-17`), and under them a wrong `rows`
+  entry is caught: listing a report-only row (T-02, whose measurements carry `limits: null`)
+  under the passing clock-path envelope returns `uncovered_rows: ["T-02"]`, not coverage, and
+  so does claiming a row that envelope has no measurements for (probed with T-05). **The
+  dc-static report's measurements carry no `spec_row` field, and under it the grader accepts
+  whatever `rows` says**: the same two probes moved to the dc-static citation both return
+  `uncovered_rows: []` with `row_sources` `asserted`. So a row can be listed under an untagged
+  envelope that does not measure it and nothing fails.
+- `detail.row_sources` is what tells the two apart: `derived` where the grader matched the row
+  against the envelope's own measurement names, `asserted` where it did not. **An `asserted`
+  entry means "the grader did not check this row — verify it by hand", not "checked and
+  covered".** Under `5.analog` the six `asserted` rows are exactly the dc-static ones, and they
+  are covered on this manifest's word rather than the grader's check. Each was read against
+  `sim/dc-static/records/20261112T001207Z/report.json` by hand; all have bounded, passing
+  measurements over the envelope's 45/45 corners:
+
+  | row | measurements | bound |
+  | --- | --- | --- |
+  | T-06 | `drv_{nl,ld}.t06_vol_v`, `drv_{nl,ld}.t06_voh_droop_v` | `max` 0.1 V |
+  | T-07 | `lk_{0,5,10}.t07_t28_ipin_a` | `max` 1 uA |
+  | T-08 | `drv_ld.t08_rout_{up,dn}_ohm` | 40-80 ohm |
+  | T-11 | `t11_hyst_mv` | `max` 60 mV |
+  | T-24 | `cap_{0,5,10}.t24_cpin_ff` | `max` 100 fF |
+  | T-28 | `pu_on.t28_rpu_ohm`, `pd_on.t28_rpd_ohm`, `lk_*.t07_t28_ipin_a` | 10-20 kohm |
+
+  Re-check this table by hand whenever a dc-static row's `rows` entry changes: the grader will
+  not do it. The gap is filed upstream as `2AMLogic/klayout-tools#5462`.
 
 ## Item 5 / digital evidence
 

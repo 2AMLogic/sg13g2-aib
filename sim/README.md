@@ -68,6 +68,14 @@ are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the 
 | channel-eye (CH) | `channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
 | clock-path | `clock-path/records/20261113T095936Z/report.json` | T-17 |
 
+The channel-eye and clock-path records' measurements carry `spec_row` tags, so the grader
+derives their coverage from the envelope and catches a wrong `rows` entry. **The dc-static
+report has no `spec_row` tags**, so its six rows are `asserted` in `detail.row_sources` —
+taken on this manifest's word, with nothing in the grader checking them. They were checked by
+hand against the report; see `signoff/README.md` ("The declared row set is load-bearing, not
+decorative") for the per-row measurements and bounds, and re-check them there whenever a
+dc-static `rows` entry changes. Tool gap: `2AMLogic/klayout-tools#5462`.
+
 The **TC** channel-eye record (`channel-eye/records/20261110T083756Z-tc/`) is deliberately
 **not** cited: it carries the same row ids from the test configuration, and item 5 would then
 mix a modeled-channel claim with a test-configuration one. `spec/test-configuration.md` keeps
