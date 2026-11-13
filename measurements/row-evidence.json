@@ -79,6 +79,40 @@
         "basis": "simulated pre-layout, klt yield sigma-to-spec (one-sided, target 7 = the 14 sigma peak-to-peak reading)",
         "note": "Normal-model figure; the distribution is not normal (Anderson-Darling rejected), the empirical yield 900/900 and the worst draw are the tail used."
       }
+    ],
+    "T-22": [
+      {
+        "record": "layout/stats/t22-t23.json",
+        "field": "T-22.unit_cell_pitch_um",
+        "op": "<=",
+        "value_field": "T-22.target_um",
+        "corner": "n/a (geometric)",
+        "scope": "BOTH",
+        "basis": "layout-measured, klt stats bounding box width of the drawn aib_io_tx unit cell, pad included, um",
+        "note": "Layout-measured, pre-extraction: the bounding box of the drawn cell, not an extracted figure. Exactly at the 55 um target, no margin, so the 80 um fallback is not invoked. The same cell is in CH and TC, and the number is geometric, so it does not differ between them."
+      },
+      {
+        "record": "layout/stats/t22-t23.json",
+        "field": "T-22.pair_pitch_um",
+        "op": "<=",
+        "value_field": "T-22.target_um",
+        "corner": "n/a (geometric)",
+        "scope": "BOTH",
+        "basis": "layout-measured, half the klt stats bounding box width of the abutted aib_io_tx_clk pair, um",
+        "note": "The abutment leg of the spec's evidence column: the abutted pair measures 110.0 um, so the pitch holds under abutment and not only for a cell in isolation."
+      }
+    ],
+    "T-23": [
+      {
+        "record": "layout/stats/t22-t23.json",
+        "field": "T-23.area_per_wire_um2",
+        "op": "<=",
+        "value_field": "T-23.limit_um2",
+        "corner": "n/a (geometric)",
+        "scope": "BOTH",
+        "basis": "layout-measured, klt stats bounding box area of the drawn aib_io_tx unit cell (55 x 100 um), pad included, um2",
+        "note": "The LAYOUT (klt stats) figure the spec row's evidence column and DR-0013 call for once the cell exists; it supersedes the ANALYSIS estimate the row is labelled with. Layout-measured, pre-extraction, I/O cell only (pad, ESD, driver or receiver). Exactly at the 5500 um2 limit, no margin."
+      }
     ]
   }
 }
