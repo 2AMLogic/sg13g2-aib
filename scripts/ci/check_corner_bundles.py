@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
-"""Check every committed `klt sim` request under sim/ against the PVT-FULL table.
+"""Check every committed `klt sim` request against the one PVT-FULL corner table.
 
 Stdlib only, no PDK. Usage: python3 -I scripts/ci/check_corner_bundles.py [--root DIR]
 
 `sim/pvt_full.py` is the one definition of the PVT-FULL corner bundle
-(spec/target-spec.md). This checker reads every committed JSON under sim/ that
-has a `corners` object and requires each process entry to bundle the MOS,
-poly-resistor and diode sections that table pairs, and the supply and
-temperature values to come from the PVT-FULL lists. A reduced grid (a
+(spec/target-spec.md). This checker reads every committed JSON under the
+request trees below that has a `corners` object and requires each process entry
+to bundle the MOS, poly-resistor and diode sections that table pairs, and the
+supply and temperature values to come from the PVT-FULL lists. A reduced grid (a
 single-corner probe, a bench control) passes; a wrong pairing does not. That is
 the invariant three hand-kept copies had already broken (#184).
 
-Records under `sim/*/records/` are skipped: they are append-only evidence and
-keep the request they were run with, whatever the table says today. A file that
-is not readable as JSON is reported, not skipped -- a malformed request must not
-pass unexamined.
+The trees are `sim/` and `layout/`: the item 7 extracted-vs-schematic benches
+under `layout/pex/benches/` carry the same corner object as the item 5 benches
+they re-run, so a bundle that drifts there is the same defect in the same shape
+(#81). Any future tree that commits a `klt sim` request joins REQUEST_ROOTS.
+
+Records under `*/records/` are skipped in every tree: they are append-only
+evidence and keep the request they were run with, whatever the table says today.
+A file that is not readable as JSON is reported, not skipped -- a malformed
+request must not pass unexamined.
 
 Exit 0 if every request conforms, 1 otherwise (each problem on its own line).
 """
@@ -29,16 +34,19 @@ REPO = HERE.parent.parent
 sys.path.insert(0, str(REPO / "sim"))
 import pvt_full  # noqa: E402  (the one PVT-FULL definition)
 
+# Every tree that commits a `klt sim` request, relative to the repository root.
+REQUEST_ROOTS = ("sim", "layout")
 
-def requests(sim_root: Path):
-    """Committed JSON under sim/ (records aside), as (path, obj, problem) triples.
+
+def requests(root: Path):
+    """Committed JSON under `root` (records aside), as (path, obj, problem) triples.
 
     A file that cannot be read or parsed is reported rather than skipped: a
     malformed request would otherwise pass this check unexamined, which is the
     one way a wrong corner bundle could still reach a run.
     """
-    for path in sorted(sim_root.rglob("*.json")):
-        if "records" in path.relative_to(sim_root).parts[:-1]:
+    for path in sorted(root.rglob("*.json")):
+        if "records" in path.relative_to(root).parts[:-1]:
             continue
         try:
             obj = json.loads(path.read_text())
@@ -53,24 +61,28 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=str(REPO), help="repository root (default: this clone)")
     args = ap.parse_args(argv)
-    sim_root = Path(args.root) / "sim"
-    if not sim_root.is_dir():
-        print(f"no sim/ directory under {args.root}", file=sys.stderr)
+    roots = [Path(args.root) / r for r in REQUEST_ROOTS]
+    present = [r for r in roots if r.is_dir()]
+    if not present:
+        print(f"none of {', '.join(r + '/' for r in REQUEST_ROOTS)} exists under {args.root}",
+              file=sys.stderr)
         return 1
     bad, n = [], 0
-    for path, obj, problem in requests(sim_root):
-        if problem is not None:
-            bad.append(problem)
-            continue
-        n += 1
-        bad += pvt_full.check_corners(obj["corners"], where=str(path.relative_to(args.root)))
+    for root in present:
+        for path, obj, problem in requests(root):
+            if problem is not None:
+                bad.append(problem)
+                continue
+            n += 1
+            bad += pvt_full.check_corners(obj["corners"], where=str(path.relative_to(args.root)))
     for line in bad:
         print(f"::error::{line}" if os.environ.get("GITHUB_ACTIONS") else line, file=sys.stderr)
     if bad:
         print(f"{len(bad)} corner-bundle problem(s) in {n} request(s); "
               f"the table is sim/pvt_full.py", file=sys.stderr)
         return 1
-    print(f"{n} request(s) under sim/ agree with the PVT-FULL table in sim/pvt_full.py")
+    print(f"{n} request(s) under {', '.join(r.name + '/' for r in present)} "
+          f"agree with the PVT-FULL table in sim/pvt_full.py")
     return 0
 
 

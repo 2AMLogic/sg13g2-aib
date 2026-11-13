@@ -27,9 +27,11 @@ So this script writes, per extracted top:
   benches/request_dc_static_<top>.json  the `klt sim` request, with the corner
                                      grid, step set, measurement names and limits
                                      imported from sim/dc-static/gen_dc_static.py
-                                     rather than restated -- so a change to the
-                                     item 5 set shows up here as a --check failure
-                                     instead of silently diverging.
+                                     (and the OSDI preload list from the one
+                                     PVT-FULL table, sim/pvt_full.py) rather than
+                                     restated -- so a change to the item 5 set
+                                     shows up here as a --check failure instead
+                                     of silently diverging.
 
 Nothing in design/ or sim/ is read for anything but its text, and nothing is
 hand-copied: --check rebuilds every file and fails on any difference.
@@ -55,8 +57,10 @@ ROOT = HERE.parent.parent
 DESIGN = ROOT / "design"
 BENCHES = HERE / "benches"
 
+sys.path.insert(0, str(ROOT / "sim"))
 sys.path.insert(0, str(ROOT / "sim" / "dc-static"))
 import gen_dc_static as dc  # noqa: E402  (path set above; stdlib-only module)
+import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
 
 # --- the drawn cells, as layout/README.md "Assembly choice" assembles them ----
 # The pin list and order are NOT restated here: they are read from
@@ -361,7 +365,7 @@ def request(top: str) -> dict:
                     "fail_on_diagnostic": ["nonconvergence"],
                     "timeout_s": 60,
                     "keep_artifacts": False,
-                    "osdi_preload": dc.OSDI}
+                    "osdi_preload": pvt_full.osdi_preload()}
     r["backend"] = "batch"
     r["batch"] = {"runner_version_check": "warn", "capacity_wait_s": dc.CAPACITY_WAIT_S}
     return r

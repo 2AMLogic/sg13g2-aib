@@ -400,7 +400,7 @@ class PnrPinTests(unittest.TestCase):
 
 
 class CornerBundleTests(unittest.TestCase):
-    """Every committed request under sim/ must agree with the one PVT-FULL table."""
+    """Every committed request under sim/ or layout/ agrees with the PVT-FULL table."""
 
     def bundle(self, corner, res, dio):
         return {"name": corner, "sections": [
@@ -457,6 +457,32 @@ class CornerBundleTests(unittest.TestCase):
             (d / "request.json").write_text(json.dumps(
                 {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
             self.assertEqual(run(CORNERS, "--root", root).returncode, 0)
+
+    def test_layout_requests_are_checked(self):
+        # #81: the item 7 pex benches carry the same corner object as item 5's,
+        # so a held dio_tt there is the same #184 defect in a second tree.
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "layout/pex/benches").mkdir(parents=True)
+            (root / "layout/pex/benches/request_dc_static_top.json").write_text(json.dumps(
+                {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
+            r = run(CORNERS, "--root", root)
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("dio_tt", r.stdout + r.stderr)
+
+    def test_layout_records_are_not_checked(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            d = root / "layout/pex/records/20260101T000000Z"
+            d.mkdir(parents=True)
+            (d / "request_dc_static_top.json").write_text(json.dumps(
+                {"corners": self.grid(self.bundle("ss", "res_wcs", "dio_tt"))}))
+            self.assertEqual(run(CORNERS, "--root", root).returncode, 0)
+
+    def test_no_request_tree_at_all_is_an_error(self):
+        # a root with neither sim/ nor layout/ is a mis-invocation, not a pass
+        with tempfile.TemporaryDirectory() as t:
+            self.assertNotEqual(run(CORNERS, "--root", Path(t)).returncode, 0)
 
     def test_unparseable_json_is_reported_not_skipped(self):
         # a malformed request must not pass the check unexamined

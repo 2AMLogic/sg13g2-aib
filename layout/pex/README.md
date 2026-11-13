@@ -16,6 +16,14 @@ pad/ESD antenna diode as a card the SG13G2 PDK has no model for. That is a defec
 not in this design or these benches, and there is no caller-side way around it (defect 2
 below). Both defects are reproduced by a committed record and filed upstream.
 
+**The deferred measurement is owned, not dropped.** Issue #81 closes with `7.analog` `unmet`;
+submitting the committed 45-corner requests and recording `delta[]` once the tool is fixed is
+tracked by **#226** (blocked by
+[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491) and
+[#5493](https://github.com/2AMLogic/klayout-tools/issues/5493)), which also owns the two
+acceptance criteria #81 leaves unmet: the per-corner schematic/extracted/delta rows and T-24's
+`PEX` leg. The upstream issues track the tool defects; #226 tracks this repo's re-run.
+
 So this directory delivers the extraction evidence that does exist, the benches and requests
 the campaign needs, and the reproduction of what blocks it. **No claim is made here about any
 spec row's post-layout value.** Nothing in `spec/` is relaxed and no cell is changed.
@@ -252,6 +260,16 @@ the schematic DUTs here are generated separately rather than reusing it.
 | `20261113T130842Z` | `extract` | extraction of all four drawn cells: device/net counts, `extraction.model`, `body_bias: biased`, input hash = the committed stream |
 | `20261113T130846Z` | `probe` | the reproduction of both defects: `*.envbackend.*` (defect 1) and `*.named.*` (defect 2, with the schematic side passing) |
 
+Both records are append-only and keep the request they ran with, which is **not** today's
+committed request: #210 (merged after this branch was cut) paired the diode section with the
+MOS corner in `sim/pvt_full.py` (#184), so regenerating `benches/request_dc_static_<top>.json`
+moved `ss` to `dio_ss` and `ff` to `dio_ff`. The `tt` bundle — `mos_tt` / `res_typ` / `dio_tt` —
+is byte-identical before and after that change, and `20261113T130846Z` narrowed the grid to the
+single corner `tt / 1.200 V / 27 C` (`record.json` → `request_modifications`), so the schematic-leg
+reproduction above was taken on the same corner bundle the table defines today. The record's
+45-corner request differs from the committed one only at `ss` and `ff`, which this probe never
+ran.
+
 `--extract-only` reports carry `status: "not_checked"` and exit 4 by contract: they graded
 nothing, which is a result, not a failure. Extracted device counts cross-check against the LVS
 run that matched these cells — `aib_io_tx` 138, `aib_io_rx` 42, `aib_io_tx_clk` 276 (= 2 x 138),
@@ -263,7 +281,7 @@ to *load* a netlist, so they are corner-independent: 45 corners x 2 legs x 2 sid
 load failure would say exactly what the one-corner local probe says, at 180 times the cost and
 on fleet capacity other sweeps need. When the tool is fixed, `run_pex.sh delta` submits the
 committed 45-corner requests with `--backend batch --wait-for-capacity 600`; there is no local
-loop and no fallback.
+loop and no fallback. That re-run is tracked by #226.
 
 ## Reproduce
 
