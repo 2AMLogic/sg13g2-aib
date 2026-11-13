@@ -2,6 +2,10 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-13
+
+- **Issue #165** (closed): Generate LVS negative-control netlists instead of committing 290 KB near-copies
+
 ### 2026-11-12
 
 - **PR #169**: feat(mc): record T-19 capture-window Monte Carlo campaign (passes at 7 sigma)

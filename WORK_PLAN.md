@@ -20,6 +20,7 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02)
 
 ## Ready
 
@@ -32,6 +33,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 Issues currently being built (`loom:building`).
 
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares)
+- **#54**: T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02)
 - **#136**: T1 item 6 (Monte Carlo): TX skew campaigns T-13/T-14 (klt yield)
 
 ## PRs Awaiting Review
@@ -72,9 +74,9 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
-| Important | 1 |
+| Important | 2 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 3 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
 | Curated | 7 |
