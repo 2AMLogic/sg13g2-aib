@@ -257,10 +257,23 @@ the schematic DUTs here are generated separately rather than reusing it.
 
 | Record | Mode | What it establishes |
 |---|---|---|
-| `20261113T130842Z` | `extract` | extraction of all four drawn cells: device/net counts, `extraction.model`, `body_bias: biased`, input hash = the committed stream |
+| `20261113T130842Z` | `extract` | extraction of all four drawn cells: device/net counts, `extraction.model`, `body_bias: biased`. Input hash is the **pre-#248** stream, superseded by `20261114T025329Z` below — history, not the cited evidence |
 | `20261113T130846Z` | `probe` | the reproduction of both defects: `*.envbackend.*` (defect 1) and `*.named.*` (defect 2, with the schematic side passing) |
+| `20261114T025329Z` | `extract` | the same extraction re-run after #248 regenerated `layout/aib_io_column.gds` for the DR-0016 spare placement: input hash = the committed stream. This is what `signoff/block-manifest.json` cites under 7.analog |
 
-Both records are append-only and keep the request they ran with, which is **not** today's
+`20261114T025329Z` re-binds the extraction to the stream the repo ships, and in doing so
+measures the claim #248 made in passing — that renaming 24 `TM1lbl` strings inside
+`aib_io_column_tx`/`aib_io_column_rx` cannot move an extraction of the **unit** cells. It
+cannot: each new `*.extract.report.json` differs from its `20261113T130842Z` predecessor in
+exactly one field, `provenance.input.content_hash`. All four `extraction.netlist_sha256` are
+unchanged, so is `extraction.pdk.version` (`fetched:0.3.0`), so are the device counts
+(42/84/138/276) and net counts (6/10/17/29), and `benches/extraction.json` is byte-identical.
+The `20261113T130846Z` probe record still binds the pre-#248 hash and is deliberately left
+alone: it is never cited as 7.analog evidence, and what it establishes — an ngspice
+netlist-**load** failure — is independent of the stream.
+
+All three records are append-only. `20261113T130846Z`, the only one with a measurement leg and
+so the only one that ran a request, keeps the request it ran with, which is **not** today's
 committed request: #210 (merged after this branch was cut) paired the diode section with the
 MOS corner in `sim/pvt_full.py` (#184), so regenerating `benches/request_dc_static_<top>.json`
 moved `ss` to `dio_ss` and `ff` to `dio_ff`. The `tt` bundle — `mos_tt` / `res_typ` / `dio_tt` —
