@@ -5,7 +5,8 @@ Stdlib only. Usage (from anywhere):
   python3 -I sim/channel-eye/gen_channel_eye.py          # write the generated files
   python3 -I sim/channel-eye/gen_channel_eye.py --check  # exit 1 if they are stale
 
-Generated: prbs7_stim.inc, request_ch_1g.json, request_tc_1g.json, request_ctl_ch_tt.json.
+Generated: prbs7_stim.inc, request_ch_1g.json, request_ch_spread_1g.json,
+request_tc_1g.json, request_ctl_ch_tt.json.
 
 Timing: UI 1000 ps (1 Gb/s DDR, 500 MHz forwarded clock). The stimulus is the cyclic
 PRBS-7 sequence (x^7 + x^6 + 1) with the last WARM bits prepended, so the waveform is
@@ -34,6 +35,23 @@ EYE_H_V = 0.09            # +-90 mV (T-18)
 SUPPLIES = ["vdd_atx", "vdd_arx", "vdd_btx", "vdd_brx", "vdd_ctx", "vdd_crx"]
 RX = {"a": "vdd_arx", "b": "vdd_brx", "c": "vdd_crx", "cb": "vdd_crx"}
 PINS = {"a": "rxa", "b": "rxb", "c": "rxc", "cb": "rxcb"}
+# T-12: the declared +-20 % channel R/C spread, as the zipped (kr, kc) axis of one request.
+# `corners.params` is zipped by index, not crossed, so the four combinations are spelled out.
+# R and C spread independently and which combination binds differs by row, so all four are
+# run: the two diagonal corners alone cannot bound a row whose worst case is off-diagonal.
+CH_SPREAD = [(0.8, 0.8), (0.8, 1.2), (1.2, 0.8), (1.2, 1.2)]
+# The batch fleet refuses a submit whose per-job unit cap exceeds what its whole-job ceiling
+# allows (`batch_max_units_per_job_invalid`). The rule is the fleet's own, quoted from that
+# refusal: max_units_per_job = floor((max_job_seconds - 120) / options.timeout_s), i.e. a
+# 120 s per-job overhead off a 3600 s ceiling. Neither constant is queryable from the client,
+# so they are pinned here rather than rediscovered by a rejected submit each time (the
+# ceiling is undocumented: 2AMLogic/klayout-tools#4675, still open). The ceiling itself
+# assumes the units of a job run serially while the runner runs them concurrently, which is
+# why a correct job shape has to be bought with a shorter timeout: #5544, also open.
+FLEET_JOB_CEILING_S = 3600
+FLEET_JOB_OVERHEAD_S = 120
+SPREAD_TIMEOUT_S = 400                                  # ~18x the measured ~22 s per corner
+SPREAD_UNITS_PER_JOB = (FLEET_JOB_CEILING_S - FLEET_JOB_OVERHEAD_S) // SPREAD_TIMEOUT_S
 
 
 def prbs7():
@@ -210,6 +228,32 @@ def request(kind):
     }
 
 
+def spread_request():
+    """CH at the declared +-20 % channel R/C spread (T-12): PVT-FULL x the four (kr, kc) pairs.
+
+    The same `request("ch")` builder, so the measurements, limits, stimulus and analysis
+    cannot drift from the nominal request -- only the netlist and the added parameter axis
+    differ. `tb_ch_spread.cir` lifts the model's `kr`/`kc` to top-level `.param`, which is
+    the only thing `corners.params` can target. 45 PVT corners x 4 parameter rows = 180 units.
+    """
+    r = request("ch")
+    r["netlist"] = "tb_ch_spread.cir"
+    r["corners"] = dict(r["corners"],
+                        params={"ch_kr": [kr for kr, _ in CH_SPREAD],
+                                "ch_kc": [kc for _, kc in CH_SPREAD]})
+    # Why this request is re-timed: the per-job cap above means the nominal request's
+    # 2400 s allows one unit per job, so this grid would be 180 separate capacity grants.
+    # On a busy fleet those launch at a crawl -- measured 4 of 180 in 17 min, ETA 9 h. The
+    # 2400 s figure predates the Mn1 cell change and is superseded anyway: a full four-lane
+    # corner is about 22 s (sim/README.md, channel-eye "Measured"). SPREAD_TIMEOUT_S keeps
+    # ~18x margin on that while letting one job carry SPREAD_UNITS_PER_JOB corners, which
+    # turns the same 180 units into 23 jobs; that run launched at 3.1/min. Only this request
+    # is re-timed -- the nominal one keeps 2400 s, the value its committed records were run
+    # with.
+    r["options"] = dict(r["options"], timeout_s=SPREAD_TIMEOUT_S)
+    return r
+
+
 def control_request():
     """Bench positive control: CH netlist with the output-PMOS-fixed TX copy, one corner (tt, 1.20 V, 27 C)."""
     r = request("ch")
@@ -223,6 +267,7 @@ def outputs():
     o = {"prbs7_stim.inc": stim_include()}
     for k in ("ch", "tc"):
         o[f"request_{k}_1g.json"] = json.dumps(request(k), indent=2) + "\n"
+    o["request_ch_spread_1g.json"] = json.dumps(spread_request(), indent=2) + "\n"
     o["request_ctl_ch_tt.json"] = json.dumps(control_request(), indent=2) + "\n"
     return o
 

@@ -18,8 +18,13 @@ is never re-read once written: records are append-only evidence.
 The key order of the emitted object is fixed:
 
   record, utc_stamp, kind, <--fields-head, in order>, pdk, klt_exit_code,
-  corners, rows, [report_only_ranges], <--fields-tail, in order>,
+  corners, rows, [param_groups], [report_only_ranges], <--fields-tail, in order>,
   batch_job_ids, runner_klt_version
+
+`param_groups` is carried through from rows.json when the post-processor emitted it,
+which it does only for a request with a `corners.params` axis (T-12's channel +-20 %
+R/C spread): the same per-row summary once per parameter corner, so the record says
+which spread corner a verdict belongs to instead of pooling all of them.
 
 Job ids: a single batch job reports environment.remote.job_id, a sharded one
 reports environment.remote.fleet[]. Both are collected, so a sharded run (what
@@ -63,10 +68,19 @@ def report_only_ranges(report, row_of):
             for n, r in sorted(ranges.items())}
 
 
+ROW_FIELDS = ("verdict", "pass", "fail", "error", "binding")
+
+
+def row_summaries(rows):
+    """The record's view of a rows.json row map: the graded fields, measurements aside."""
+    return {r: {k: v[k] for k in ROW_FIELDS} for r, v in rows.items()}
+
+
 def build(rec: Path, record, stamp, pdk_tag, klt_exit_code, fields_head, fields_tail, with_ranges):
     with gzip.open(rec / "report.json.gz", "rt") as fh:
         rep = json.load(fh)
-    rows = json.loads((rec / "rows.json").read_text())["rows"]
+    rows_doc = json.loads((rec / "rows.json").read_text())
+    rows = rows_doc["rows"]
     job_ids, runner_vs = job_identity(rep)
 
     out = {"record": record, "utc_stamp": stamp, "kind": "simulated"}
@@ -74,8 +88,12 @@ def build(rec: Path, record, stamp, pdk_tag, klt_exit_code, fields_head, fields_
     out["pdk"] = {"release_tag": pdk_tag}
     out["klt_exit_code"] = int(klt_exit_code)
     out["corners"] = len(rep["corners"])
-    out["rows"] = {r: {k: v[k] for k in ("verdict", "pass", "fail", "error", "binding")}
-                   for r, v in rows.items()}
+    out["rows"] = row_summaries(rows)
+    if rows_doc.get("param_groups"):
+        # present only for a request with a `corners.params` axis; the pooled `rows`
+        # above cannot say which parameter corner a verdict belongs to
+        out["param_groups"] = {g: {"corners": v["corners"], "rows": row_summaries(v["rows"])}
+                               for g, v in rows_doc["param_groups"].items()}
     if with_ranges:
         # the report does not echo spec_row; the request declares it
         request = json.loads((rec / "request.json").read_text())

@@ -28,7 +28,7 @@ import write_record  # noqa: E402
 # fields write_record.py produces itself; everything else in a committed record is a
 # family field the entry point passes in.
 PRODUCED = {"record", "utc_stamp", "kind", "pdk", "klt_exit_code", "corners", "rows",
-            "report_only_ranges", "batch_job_ids", "runner_klt_version"}
+            "param_groups", "report_only_ranges", "batch_job_ids", "runner_klt_version"}
 # the two fields the channel-eye copy got wrong (it recorded only environment.remote.job_id,
 # which a sharded run never sets, so every committed channel-eye record has nulls).
 JOB_FIELDS = {"batch_job_id", "batch_job_ids", "runner_klt_version"}
@@ -111,8 +111,15 @@ class ReplayTests(unittest.TestCase):
                                  f"report.json.gz beside it")
 
     def test_a_sharded_channel_eye_run_now_records_its_job_ids(self):
-        """The fix: every committed channel-eye record has null ids; the replay recovers them."""
-        checked = 0
+        """The fix: a PRE-harness channel-eye record has null ids; the replay recovers them.
+
+        A record written BY this harness carries `batch_job_ids` instead of the old singular
+        `batch_job_id`, so it is checked the other way round: its ids must already be the ones
+        the replay derives, not null. Both directions are asserted, and each must have at
+        least one record to check -- the recovery claim is empty without a legacy record, and
+        the "writes them correctly now" claim is empty without a harness-written one.
+        """
+        legacy = current = 0
         for rec in committed_records():
             if rec.parent.parent.name != "channel-eye":
                 continue
@@ -121,13 +128,20 @@ class ReplayTests(unittest.TestCase):
             shards = (report.get("environment", {}).get("remote") or {}).get("fleet") or []
             if not shards:  # a single-job run; the old field was already right
                 continue
-            self.assertIsNone(committed["batch_job_id"], f"{rec.name}: expected the old null")
             job_ids, runner_vs = write_record.job_identity(report)
             self.assertEqual(len(job_ids), len(shards), f"{rec.name}: one id per shard")
             self.assertTrue(all(job_ids), f"{rec.name}: no empty id")
             self.assertTrue(runner_vs, f"{rec.name}: runner version recovered")
-            checked += 1
-        self.assertGreater(checked, 0, "no sharded channel-eye record found to check")
+            if "batch_job_id" in committed:   # pre-harness: the null this harness fixed
+                self.assertIsNone(committed["batch_job_id"], f"{rec.name}: expected the old null")
+                legacy += 1
+            else:                             # written by this harness: already correct
+                self.assertEqual(committed["batch_job_ids"], job_ids,
+                                 f"{rec.name}: recorded ids differ from the report's")
+                self.assertEqual(committed["runner_klt_version"], runner_vs, f"{rec.name}")
+                current += 1
+        self.assertGreater(legacy, 0, "no pre-harness channel-eye record found to check")
+        self.assertGreater(current, 0, "no harness-written channel-eye record found to check")
 
 
 class JobIdentityTests(unittest.TestCase):

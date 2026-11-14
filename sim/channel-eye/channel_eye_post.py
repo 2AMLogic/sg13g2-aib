@@ -12,6 +12,12 @@ errors), and the binding corner (the graded measurement with the smallest margin
 the first failing/erroring corner). Rows with no limits are `reported`, never `pass`.
 Nothing here relaxes a bound: it only reads the verdicts `klt sim` already graded.
 
+A request with a `corners.params` axis runs the whole PVT grid once per parameter row
+(T-12's channel +-20 % R/C spread: 45 PVT corners at each of four (kr, kc) pairs). For
+one of those, a second key `param_groups` carries the same per-row summary once per
+parameter corner, because a pooled summary cannot say which parameter corner a failure
+belongs to. It is absent for a request without the axis.
+
 A measurement is attached to its spec row(s) by `resolve_rows`, which tries three
 sources in order: the `spec_row` the report echoes, the `spec_row` the request
 declares for that name (`--request`), and a name-prefix map (`--row-map`). The
@@ -34,12 +40,37 @@ def load(path):
         return json.load(f)
 
 
+PARAMS_SEG = "params:"
+
+
+def split_params(cid):
+    """(corner id without its parameter segment, that segment's text or None).
+
+    `corners.params` appends a `params:<name>=<value>,...` segment to every corner id
+    (`mos_tt/vdd_...V/-40C/params:ch_kc=0.8,ch_kr=0.8`). Splitting it off keeps the PVT
+    part positional, which is what lets `short_corner` still find the temperature in the
+    last PVT segment instead of printing the parameters in its place.
+    """
+    parts = cid.split("/")
+    pvt = [s for s in parts if not s.startswith(PARAMS_SEG)]
+    params = [s[len(PARAMS_SEG):] for s in parts if s.startswith(PARAMS_SEG)]
+    return "/".join(pvt), (",".join(params) if params else None)
+
+
 def short_corner(cid):
-    """mos_tt/vdd_...=1.200_...V/27C -> mos_tt/1.20V/27C (all supplies swing together)."""
+    """mos_tt/vdd_...=1.200_...V/27C -> mos_tt/1.20V/27C (all supplies swing together).
+
+    A parameter segment is split off first and re-appended after the temperature, so a
+    spread corner reads `mos_tt/1.200V/-40C/ch_kc=0.8,ch_kr=0.8`. Taking `parts[-1]` as
+    the temperature without that split printed the parameters as the temperature and
+    dropped the temperature entirely.
+    """
+    cid, params = split_params(cid)
     parts = cid.split("/")
     volts = sorted({p.split("=")[1] for p in parts[1].split("_") if "=" in p}) if len(parts) > 2 else []
     v = volts[0] if len(volts) == 1 else "mixed"
-    return f"{parts[0]}/{v}/{parts[-1]}" if len(parts) > 2 else cid
+    short = f"{parts[0]}/{v}/{parts[-1]}" if len(parts) > 2 else cid
+    return f"{short}/{params}" if params else short
 
 
 def resolve_rows(m, row_of=None, row_map=None):
@@ -110,6 +141,26 @@ def summarise(report, row_of=None, row_map=None):
     return out
 
 
+def param_groups(report, row_of=None, row_map=None):
+    """One `summarise` result per parameter corner; `{}` without a `corners.params` axis.
+
+    A request with that axis runs the whole PVT grid once per parameter row, so the
+    pooled `rows` summary mixes the parameter corners together and cannot say which one
+    a failure belongs to. Grouping by the `params:` segment of the corner id and
+    summarising each group on its own reports a row that passes at three spread corners
+    and fails at the fourth as failing *at that corner* -- which is the result T-12's
+    grid column asks for. Nothing is relaxed or re-graded: the groups re-read the same
+    per-corner verdicts `klt sim` produced.
+    """
+    buckets = defaultdict(list)
+    for c in report["corners"]:
+        _, params = split_params(c["corner_id"])
+        if params is not None:
+            buckets[params].append(c)
+    return {k: {"corners": len(cs), "rows": summarise({"corners": cs}, row_of, row_map)}
+            for k, cs in sorted(buckets.items())}
+
+
 def main(argv):
     if not argv:
         print(__doc__, file=sys.stderr)
@@ -130,6 +181,9 @@ def main(argv):
             return 2
     res = {"label": label, "corners": len(rep["corners"]), "kind": "simulated",
            "rows": summarise(rep, row_of, row_map)}
+    groups = param_groups(rep, row_of, row_map)
+    if groups:  # only a request with a `corners.params` axis has any
+        res["param_groups"] = groups
     print(json.dumps(res, indent=2))
     return 0
 
