@@ -378,8 +378,14 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 10 \
   --inventory signoff/attest/item10.inventory.json -o signoff/attest/item10.json
 ```
 
-Then update the two `content_hash` values for item 10 in the manifest and
-regenerate the record.
+A content-only edit of a hashed hygiene member (`README.md`, `LICENSE`, the
+workflow file) needs only the re-attest above and a commit of the resulting
+`attest/item10.json`: the manifest cites the *inventory's* `content_hash`,
+which such an edit does not change, so no manifest edit and no record
+regeneration is needed. `scripts/ci/check_attested_paths.py` fails in seconds
+and names the path if a re-attest is forgotten. Update the manifest's two
+item-10 `content_hash` values and regenerate the record only when the
+*inventory itself* changes.
 
 Re-attest as the last step, after `README.md` and `.github/workflows/ci.yml`
 are final: both are hashed into the envelope, so any later edit to either

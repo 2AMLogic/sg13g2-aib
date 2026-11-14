@@ -5,6 +5,7 @@ Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
 import contextlib
 import fnmatch
+import hashlib
 import io
 import json
 import posixpath
@@ -24,6 +25,7 @@ GEN = HERE / "gen_characterization_report.py"
 SDF7 = HERE / "check_item7_sdf.py"
 PNR_PINS = HERE / "check_pnr_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
+ATTESTED = HERE / "check_attested_paths.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -108,6 +110,122 @@ class FormatTests(unittest.TestCase):
         def bad(r):
             (r / "sim/s/records/20260101T000000Z/record.json").write_text("{")
         self.assertNotEqual(self.check(GOOD, bad), 0)
+
+
+class AttestedPathsTests(unittest.TestCase):
+    """The hash-bound attested-path guard: a good tree passes, drift bites.
+
+    The fixture keeps the two skip classes hostile on purpose: the inventory
+    file holds invalid JSON (so ever reading it as an envelope would fail the
+    good tree) and the envelope with no attestation block is bare.
+    """
+
+    ENV = "signoff/attest/item10.json"
+
+    def scenario(self, mutate=None, extra=None):
+        """One consistent envelope over README.md; `extra` adds fixtures,
+        `mutate` seeds the bad state. Returns the checker's CompletedProcess."""
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            att = root / "signoff/attest"
+            att.mkdir(parents=True)
+            (root / "README.md").write_text("# attest me\n")
+            digest = hashlib.sha256((root / "README.md").read_bytes()).hexdigest()
+            env = {
+                "schema_version": 1, "kind": "generic", "status": "pass", "t1_item": 10,
+                "source": "signoff/attest/item10.inventory.json",
+                "attestation": {
+                    "producer": "klt signoff --attest",
+                    "checks": [
+                        {"check": "present", "role": "hygiene", "path": "README.md",
+                         "passed": True, "content_hash": "sha256:" + digest},
+                        {"check": "command", "role": "audit", "name": "self-test",
+                         "argv": ["/usr/bin/python3", "-I", "scripts/ci/test_checkers.py"],
+                         "cwd": ".", "exit_status": 0, "passed": True},
+                    ],
+                },
+            }
+            (att / "item10.json").write_text(json.dumps(env))
+            (att / "item10.inventory.json").write_text("{ not even json")
+            (att / "item8.json").write_text(json.dumps({"t1_item": 8, "status": "pass"}))
+            if extra:
+                extra(root)
+            if mutate:
+                mutate(root)
+            return run(ATTESTED, "--root", root)
+
+    def test_good_tree_passes(self):
+        self.assertEqual(self.scenario().returncode, 0)
+
+    def test_drifted_bytes_fail_and_name_the_repair(self):
+        def bad(r):
+            (r / "README.md").write_text("# edited without re-attesting\n")
+        p = self.scenario(bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("README.md", p.stderr)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertIn("klt signoff --attest", p.stderr)
+        self.assertIn("KLT_VERSION", p.stderr)
+
+    def test_deleted_attested_path_fails(self):
+        p = self.scenario(lambda r: (r / "README.md").unlink())
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("README.md", p.stderr)
+
+    def test_subdirectory_envelopes_are_walked(self):
+        def extra(r):
+            target = r / "verification/tb_top.v"
+            target.parent.mkdir(parents=True)
+            target.write_text("module tb_top; endmodule\n")
+            digest = hashlib.sha256(target.read_bytes()).hexdigest()
+            env = {"t1_item": 5, "source": "signoff/attest/item5-digital/x.inventory.json",
+                   "attestation": {"checks": [
+                       {"check": "present", "role": "testbench", "path": "verification/tb_top.v",
+                        "passed": True, "content_hash": "sha256:" + digest}]}}
+            (r / "signoff/attest/item5-digital").mkdir()
+            (r / "signoff/attest/item5-digital/fv_top.json").write_text(json.dumps(env))
+        self.assertEqual(self.scenario(extra=extra).returncode, 0)
+
+        def bad(r):
+            (r / "verification/tb_top.v").write_text("changed\n")
+        p = self.scenario(extra=extra, mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("verification/tb_top.v", p.stderr)
+
+    def test_envelope_without_present_members_is_skipped(self):
+        def extra(r):
+            env = {"t1_item": 2, "attestation": {"checks": [
+                {"check": "command", "role": "audit", "name": "x",
+                 "argv": ["true"], "exit_status": 0, "passed": True}]}}
+            (r / "signoff/attest/item2-analog.json").write_text(json.dumps(env))
+        self.assertEqual(self.scenario(extra=extra).returncode, 0)
+
+    def test_unparseable_envelope_fails_naming_the_file(self):
+        def bad(r):
+            (r / self.ENV).write_text("{")
+        p = self.scenario(bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+
+    def test_unsupported_hash_algorithm_fails(self):
+        def extra(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            env["attestation"]["checks"][0]["content_hash"] = "md5:abc"
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(extra=extra)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("unsupported hash", p.stderr)
+
+    def test_present_entry_without_hash_fails(self):
+        def extra(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            del env["attestation"]["checks"][0]["content_hash"]
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(extra=extra)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("no content_hash", p.stderr)
 
 
 class AppendOnlyTests(unittest.TestCase):
