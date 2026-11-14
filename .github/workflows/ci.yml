@@ -38,9 +38,18 @@ jobs:
 
       # Same single list as the local run (scripts/ci/check_local.sh); the
       # script prints a ::group:: per checker, so the log stays navigable.
+      # Facts, not logic: check_sim_append_only.py picks the base from these, so
+      # scripts/ci/test_checkers.py can drive the choice. A pull_request compares
+      # against the PR base; a push to a non-default branch against the
+      # merge-base with the default branch (NOT the pre-push head, which would
+      # freeze a record from its own first push); a push to the default branch
+      # against the pre-push head, where a merge-base would be the head itself.
       - name: Run the PDK-free evidence checkers
         env:
           BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_REF: ${{ github.ref }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: scripts/ci/check_local.sh evidence
 
       - name: Install pinned grader
