@@ -397,9 +397,13 @@ makes the CI `--check` exit 3 (`drifted`).
   measurements`) has a `README.md`;
 - each `sim/**/records/<stamp>/record.json` has `record`, `utc_stamp` and
   `pdk.release_tag`, and contains no absolute path;
-- `sim/` records (files under a `records/` or `corners/` directory) are
-  append-only against the PR base, or the pre-push SHA on a push: added
-  files pass, modified, deleted or renamed ones fail;
+- `sim/` records (files under a `records/` or `corners/` directory, the
+  record's own `README.md` included) are append-only once they are on the
+  default branch, which DR-0020 ratifies: added files pass, modified, deleted
+  or renamed ones fail. Both CI events ask that one question — the base is the
+  PR base on a `pull_request`, and the merge-base with the default branch on a
+  push to any other branch; a push to the default branch itself compares
+  against the pre-push SHA, where a merge-base would be the head (#255);
 - `scripts/ci/check_design_sources.py`: every inventory file re-hashes, the RTL
   sources match the synthesis report's input hash, the netlist matches its
   `netlist_sha256`, and the envelope and manifest pin the current inventory;

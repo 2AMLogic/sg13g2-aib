@@ -10,6 +10,7 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 - **#168**: feat(sim): record T-13/T-14 TX skew Monte Carlo and ratify skew definition (DR-0019)
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
+- **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
 
 ## Very Important
 
@@ -22,12 +23,13 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#251**: T-16 margin falls to 1.3 ps at the declared +20 % channel C (passes, but the +-20 % spread eats 9.5 of its 10.9 ps)
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
+- **#256**: Convert gen_redundancy_mux.py to the shared write-or-check helper: it still regenerates on a mistyped --check
 
 ## In Progress
 
@@ -37,14 +39,15 @@ Issues currently being built (`loom:building`).
 - **#136**: T1 item 6 (Monte Carlo): TX skew campaigns T-13/T-14 (klt yield)
 - **#176**: T-29 SIM: no loopback mux exists in design/, so loopback modes L1/L2 are unverifiable
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded
-- **#192**: T-05 SIM leg: no testbench measures the redundancy mux's added load and delay
-- **#193**: T-12 gap: no channel record varies kr/kc, so no CH result covers the declared +/-20 % R/C spread
+- **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target
+- **#248**: I/O column: put both spares at one end (DR-0016) and check the slot order - the column already draws 22 cells per direction
+- **#255**: check_sim_append_only.py: a record's README is frozen, contradicting the checker's own docstring (and the push-event BASE makes it worse)
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#233**: feat(sim,spec): measure the T-05 redundancy mux's added load and delay over PVT-FULL
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -53,6 +56,9 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 - **#168**: feat(sim): record T-13/T-14 TX skew Monte Carlo and ratify skew definition (DR-0019)
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
+- **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
+- **#254**: fix(layout): order the I/O-column slots with both spares at one end (DR-0016)
+- **#258**: fix(ci): base the append-only check on the default branch, not the pre-push head
 
 ## Proposed
 
@@ -66,17 +72,17 @@ Issues carrying `loom:curated`.
 - **#176**: T-29 SIM: no loopback mux exists in design/, so loopback modes L1/L2 are unverifiable *(curated)*
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded *(curated)*
 - **#185**: channel_eye_post's binding-corner label always reads `mixed` instead of the supply voltage *(curated)*
-- **#192**: T-05 SIM leg: no testbench measures the redundancy mux's added load and delay *(curated)*
-- **#193**: T-12 gap: no channel record varies kr/kc, so no CH result covers the declared +/-20 % R/C spread *(curated)*
+- **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
+- **#248**: I/O column: put both spares at one end (DR-0016) and check the slot order - the column already draws 22 cells per direction *(curated)*
+- **#255**: check_sim_append_only.py: a record's README is frozen, contradicting the checker's own docstring (and the push-event BASE makes it worse) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#213**: Remove sim/rtl-synth/run_synth.sh: the Yosys smoke is superseded by klt synthesize (keep its record) *(hermit)*
-- **#219**: Run the committed sim self-tests in CI: 18 tests and two generator --check modes are in no check list *(hermit)*
 - **#220**: Remove the channel-eye positive-control bench: its TX copy no longer matches design/aib_tx_data.spice and the defect it worked around is fixed *(hermit)*
-- **#227**: Share one write-or---check helper across the six generators: the loop is copied six times with three behaviours *(hermit)*
-- **#228**: Record dc-static runs through the shared batch harness: it is the one item 5 family still recorded by hand, and its four records have four shapes *(hermit)*
-- **#230**: Item 8 report grades from a hand-kept row map that omits 13 rows the manifest already cites, three of them recorded failures: check the map against the manifest *(hermit)*
+- **#241**: Remove the batch runner_version_check "warn" override from the five request generators: the fleet runner has matched the pinned klt since 2026-11-08 *(hermit)*
+- **#245**: Remove verification/run_tb.py: run the cocotb benches through the pinned klt functional-verification the evidence already uses *(hermit)*
+- **#257**: Consolidate duplicated PWL stimulus helpers into sim/gen_common.py *(hermit)*
 
 ## Epics
 
@@ -86,14 +92,14 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 3 |
+| Operator merge-risk holds | 4 |
 | Very important | 0 |
-| Important | 1 |
+| Important | 2 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 6 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 3 |
-| Curated | 10 |
-| Architect / Hermit proposals | 6 |
+| In Progress (`loom:building`) | 7 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 6 |
+| Curated | 11 |
+| Architect / Hermit proposals | 5 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->

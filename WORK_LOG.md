@@ -2,8 +2,19 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-14
+
+- **PR #252**: feat(sim): add the T-12 ±20 % channel R/C spread run and report it per spread corner
+- **Issue #193** (closed): T-12 gap: no channel record varies kr/kc, so no CH result covers the declared +/-20 % R/C spread
+- **PR #250**: test(ci): list the LVS reference check and assert the check list is complete
+- **Issue #236** (closed): Two more gaps in the one check list: layout/lvs/gen_reference.py --check is unlisted, and nothing asserts the list is complete
+
 ### 2026-11-13
 
+- **PR #243**: refactor(pex): reduce gen_pex_benches main() to the shared write-or-check helper
+- **Issue #239** (closed): Convert the seventh write-or-check copy: layout/pex/gen_pex_benches.py should use the shared helper
+- **PR #237**: feat(verification): refuse a request key run_tb.py does not read
+- **Issue #231** (closed): run_tb.py silently ignores request keys it does not read
 - **Issue #219** (closed): Run the committed sim self-tests in CI: 18 tests and two generator --check modes are in no check list
 - **PR #235**: ci: run the channel-eye and T-19 bench self-tests in the PDK-free list
 - **Issue #228** (closed): Record dc-static runs through the shared batch harness: it is the one item 5 family still recorded by hand, and its four records have four shapes

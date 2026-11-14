@@ -649,16 +649,24 @@ line and deleted that record; `run_clock_path.sh` now matches klt's summary sent
 (`were submitted but never launched`) only. No artefacts of that attempt survive, so nothing
 here rests on it.
 
-A record file is immutable from its **first push**, not from merge. `ci.yml` runs the
-append-only check on both the `pull_request` and the `push` event, and its base differs:
-`pull_request.base.sha` (the PR base) versus `github.event.before` (the previously pushed head,
-see `signoff/README.md` -> "What CI checks"). So a record directory that is still new relative to
-`main` — and therefore an addition the PR-event run accepts — is nevertheless already frozen for
-the push-event run as soon as it has been pushed once. Review feedback on a record's own
-`README.md` cannot be applied in place afterwards: the edit surfaces as `M` against the pre-push
-head and fails, and so does reverting it on the next push. Get a record directory's prose right
-in the commit that first pushes it; a correction found later belongs in this file, which is not
-under a `records/` directory and may change.
+A record file — including the record's own `README.md` — is immutable once it is **on `main`**,
+not from its first push. That is the rule DR-0020 ratifies: *"An unmerged result is a claim, not
+evidence, and this repo's recorded results are append-only on `main`"*
+(`spec/decisions/0020-dll-recomparison-t21.md`). `ci.yml` runs the append-only check on both the
+`pull_request` and the `push` event and both now ask that one question: the `pull_request` run
+compares against the PR base, and the `push` run against the merge-base with the default branch
+(see `signoff/README.md` -> "What CI checks"). So review feedback on a not-yet-merged record's
+prose **can** be applied in place: the whole record directory still reads as an addition relative
+to `main`. Correcting a record whose directory is already on `main` still fails, as it must — a
+correction found after merge belongs in this file, which is not under a `records/` directory and
+may change.
+
+Until #255 this was not so: the `push` run's base was `github.event.before`, the previously
+pushed head, which froze a record directory from its own first push and made the two events
+disagree about the same tree (PR #178, PR #233 and PR #249 each hit it). A push **to the default
+branch** is the one case that still compares against the pre-push head: there the merge-base
+would be the head itself, so the diff would go empty and a direct push rewriting landed evidence
+would pass unchecked.
 
 ## redundancy-mux
 
@@ -725,7 +733,7 @@ not settle.
 **Correction (2026-11-13, PR #233) to `records/20261113T160050Z/README.md` lines 84-85.**
 That record's README says the remap "exceeds the entire T-20 target on its own, at every
 corner of the grid", and its own parenthesis contradicts it (0.054 UI is below 0.10 UI).
-The record file is immutable from its first push, so the correction lives here. Recomputed
+That record is on `main`, so under DR-0020 it is immutable and the correction lives here. Recomputed
 from the record's committed `report.json.gz` — per corner, the worst of `t05_add_r_s`,
 `t05_add_f_s`, `t05_add1_r_s`, `t05_add1_f_s`:
 

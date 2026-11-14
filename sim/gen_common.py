@@ -15,7 +15,10 @@ the PVT-FULL corner table and is already imported from both trees -- `layout/` r
 
 `seed` lives here for the same reason: `sim/mc/gen_mc.py` and `layout/lvs/gen_reference.py`
 both derive a negative control by one anchored substitution, and both carried their own
-byte-for-byte copy of it.
+byte-for-byte copy of it. So do `pwl` and `level_pwl`, the PWL stimulus builders the
+clock-path, channel-eye and redundancy-mux generators had each copied (#256) -- the ramp
+width and the stimulus end time are parameters here because that is all the three copies
+differed in.
 """
 import argparse
 import sys
@@ -73,6 +76,31 @@ def write_or_check(outputs, argv=None, base=None, description=None) -> int:
     for path in stale:
         print(f"STALE: {_display(path)}", file=sys.stderr)
     return 1 if stale else 0
+
+
+def pwl(points) -> str:
+    """`points` as the body of a ngspice `pwl(...)` card: `(t_ps, level)` pairs, times in
+    picoseconds, written in seconds to six significant figures."""
+    return " ".join(f"{t * 1e-12:.6g} {v}" for t, v in points)
+
+
+def level_pwl(edges, tr_ps, end_ps, init=0):
+    """`(t_ps, level)` points for a piecewise-constant level sequence with ramped edges.
+
+    edges:   [(start_ps, level)] -- each edge holds the level it was at until `start_ps`,
+             then ramps to `level` over `tr_ps`. An empty list is a flat `init`.
+    tr_ps:   the ramp width. A parameter, not a constant, because the stimulus that wants
+             it is the generator's, not this module's.
+    end_ps:  the stimulus end time; the last level is held out to it so the card covers
+             the whole transient rather than ending at the final ramp.
+    init:    the level at t = 0, before the first edge.
+    """
+    pts, cur = [(0, init)], init
+    for t, v in edges:
+        pts += [(t, cur), (t + tr_ps, v)]
+        cur = v
+    pts.append((end_ps, cur))
+    return pts
 
 
 def seed(text: str, old: str, new: str, what: str) -> str:
