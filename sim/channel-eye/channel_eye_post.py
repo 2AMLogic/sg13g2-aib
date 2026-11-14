@@ -27,7 +27,17 @@ carry no tag -- dc-static is one -- because a report names a step measurement
 sources can reach it without editing the committed request. One prefix may name
 several rows (dc-static's `t07_t28_ipin_a` grades T-07 and T-28), in which case the
 measurement counts into each.
+
+Flags are parsed with argparse, so an unknown or value-less one exits 2 having printed
+nothing on stdout, and a summary that attaches no measurement to any spec row is refused
+the same way (#267). Scanning `argv` for each flag instead meant a mistyped `--request`
+was never looked for: it exited 0 printing `rows: {}`, which `sim/harness/write_record.py`
+passes through into an append-only `record.json` that `scripts/ci/check_evidence_format.py`
+accepts -- a batch run committable as evidence with no row verdicts at all. The typo-free
+path is the same: a family whose request declares no `spec_row` and which is missing its
+`--row-map` grades nothing either. Neither may produce a `rows.json`.
 """
+import argparse
 import gzip
 import json
 import sys
@@ -161,27 +171,72 @@ def param_groups(report, row_of=None, row_map=None):
             for k, cs in sorted(buckets.items())}
 
 
-def main(argv):
-    if not argv:
-        print(__doc__, file=sys.stderr)
-        return 2
-    rep = load(argv[0])
-    label = argv[argv.index("--label") + 1] if "--label" in argv else None
+def parse_row_map(text):
+    """`--row-map`'s JSON object of prefix -> row or [rows], as an argparse `type=`.
+
+    Malformed JSON and a well-formed value of the wrong shape are both argparse errors,
+    so each exits 2 having printed nothing on stdout rather than raising a traceback or
+    reaching `resolve_rows` as a silent `None`.
+    """
+    try:
+        row_map = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise argparse.ArgumentTypeError(f"--row-map is not valid JSON: {exc}")
+    if not isinstance(row_map, dict) or not all(
+            isinstance(v, str) or (isinstance(v, list) and all(isinstance(x, str) for x in v))
+            for v in row_map.values()):
+        raise argparse.ArgumentTypeError("--row-map must be an object of prefix -> row or [rows]")
+    return row_map
+
+
+def row_sources(report, row_of, row_map):
+    """What each of `resolve_rows`' three sources had to offer, for the refusal message.
+
+    A summary that grades nothing is almost always one missing source -- a request that
+    declares no `spec_row` for a report that echoes none either, with no prefix map to
+    fall back on -- so naming all three says which one to supply.
+    """
+    echoed = sum(1 for c in report["corners"] for m in c["measurements"] if m.get("spec_row"))
+    declared = "--request not given" if row_of is None else f"{len(row_of)} name(s)"
+    mapped = "--row-map not given" if row_map is None else f"{len(row_map)} prefix(es)"
+    return (f"report-echoed spec_row: {echoed} of "
+            f"{sum(len(c['measurements']) for c in report['corners'])} measurement(s); "
+            f"request-declared spec_row: {declared}; prefix map: {mapped}")
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("report", help="the `klt sim` report, .json or .json.gz")
+    ap.add_argument("--label", help="family label written to the summary's `label` field")
+    ap.add_argument("--request",
+                    help="the `klt sim` request, whose measurements declare the `spec_row` a "
+                         "report does not echo")
+    ap.add_argument("--row-map", type=parse_row_map,
+                    help="JSON object of measurement-name PREFIX -> spec row (or [rows]), for a "
+                         "family whose graded measurements carry no tag at all")
+    args = ap.parse_args(argv)
+
+    rep = load(args.report)
     row_of = None
-    if "--request" in argv:  # the report does not echo spec_row; the request declares it
-        req = json.load(open(argv[argv.index("--request") + 1]))
+    if args.request:  # the report does not echo spec_row; the request declares it
+        with open(args.request) as fh:
+            req = json.load(fh)
         row_of = {m["name"]: m["spec_row"] for m in req["measurements"] if "spec_row" in m}
-    row_map = None
-    if "--row-map" in argv:  # a family whose graded measurements carry no tag at all
-        row_map = json.loads(argv[argv.index("--row-map") + 1])
-        if not isinstance(row_map, dict) or not all(
-                isinstance(v, str) or (isinstance(v, list) and all(isinstance(x, str) for x in v))
-                for v in row_map.values()):
-            print("--row-map must be an object of prefix -> row or [rows]", file=sys.stderr)
-            return 2
-    res = {"label": label, "corners": len(rep["corners"]), "kind": "simulated",
-           "rows": summarise(rep, row_of, row_map)}
-    groups = param_groups(rep, row_of, row_map)
+    rows = summarise(rep, row_of, args.row_map)
+    if not rows:
+        # Refuse rather than print `rows: {}`: write_record.py:83 takes that as-is,
+        # check_evidence_format.py requires only record/utc_stamp/pdk.release_tag, and
+        # check_sim_append_only.py then freezes it -- a run committed as evidence with no
+        # row verdicts at all. The docstring above promises a summary per spec row; on
+        # this path there is none to make, so there is nothing to record.
+        print(f"{args.report}: no measurement reached a spec row, so this summary would grade "
+              f"nothing; refusing to write it. {row_sources(rep, row_of, args.row_map)}",
+              file=sys.stderr)
+        return 2
+    res = {"label": args.label, "corners": len(rep["corners"]), "kind": "simulated",
+           "rows": rows}
+    groups = param_groups(rep, row_of, args.row_map)
     if groups:  # only a request with a `corners.params` axis has any
         res["param_groups"] = groups
     print(json.dumps(res, indent=2))
@@ -189,4 +244,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main())

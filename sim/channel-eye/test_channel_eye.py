@@ -4,7 +4,9 @@
 Run: python3 -I sim/channel-eye/test_channel_eye.py
 """
 import json
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -12,6 +14,14 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import channel_eye_post as post  # noqa: E402
 import gen_channel_eye as gen  # noqa: E402
+
+POST = HERE / "channel_eye_post.py"
+
+
+def run_post(*args):
+    """`channel_eye_post.py` as the harness runs it, for the exit code and both streams."""
+    return subprocess.run([sys.executable, "-I", str(POST), *map(str, args)],
+                          capture_output=True, text=True)
 
 
 def meas(name, row, status, value=None, margin=None):
@@ -226,6 +236,93 @@ class ParamCornerTests(unittest.TestCase):
         self.assertEqual(sorted(groups), ["ch_kc=0.8,ch_kr=0.8", "ch_kc=0.8,ch_kr=1.2",
                                           "ch_kc=1.2,ch_kr=0.8", "ch_kc=1.2,ch_kr=1.2"])
         self.assertEqual([g["corners"] for g in groups.values()], [45, 45, 45, 45])
+
+
+class PostFlagAndRefusalTests(unittest.TestCase):
+    """`main`'s flag handling and the empty-summary refusal (#267).
+
+    The fixture is the one measured in that issue: one corner, one graded measurement
+    carrying no `spec_row`, whose row only the request declares. So the request is the
+    single source `resolve_rows` can reach, and a flag scan that never looked for a
+    mistyped `--request` printed `rows: {}` at exit 0 -- which `write_record.py` passes
+    through into a committed, append-only record with no verdicts in it.
+
+    These go through a subprocess rather than calling `main` directly, because the exit
+    code and the *absence* of JSON on stdout are the contract `sim/harness/batch_record.sh`
+    depends on: it redirects stdout into `rows.json` under `set -e`.
+    """
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        d = Path(tmp.name)
+        self.report, self.request = d / "report.json", d / "request.json"
+        untagged = {"name": "t18_eye_height_ok_v", "status": "pass", "value": 0.20,
+                    "margin": 0.11}
+        self.report.write_text(json.dumps({"corners": [
+            {"corner_id": "mos_tt/vdd_atx=1.200_vdd_arx=1.200V/27C",
+             "measurements": [untagged]}]}))
+        self.request.write_text(json.dumps(
+            {"measurements": [{"name": "t18_eye_height_ok_v", "spec_row": "T-18"}]}))
+
+    def test_the_good_invocation_still_grades_the_row(self):
+        """The control: without it every refusal below could pass for the wrong reason."""
+        r = run_post(self.report, "--request", self.request, "--label", "ch")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        out = json.loads(r.stdout)
+        self.assertEqual(out["label"], "ch")
+        self.assertEqual(out["rows"]["T-18"]["verdict"], "pass")
+
+    def test_a_mistyped_request_flag_exits_2_and_prints_no_json(self):
+        """#267's measured case: `--requst` exited 0 with every verdict silently gone."""
+        r = run_post(self.report, "--requst", self.request, "--label", "ch")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+
+    def test_a_mistyped_label_flag_exits_2_rather_than_labelling_null(self):
+        r = run_post(self.report, "--request", self.request, "--labl", "ch")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+
+    def test_a_value_less_flag_exits_2_rather_than_raising(self):
+        r = run_post(self.report, "--request", self.request, "--label")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+        self.assertNotIn("Traceback", r.stderr)
+
+    def test_no_arguments_exits_2(self):
+        r = run_post()
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+
+    def test_a_summary_that_grades_nothing_is_refused(self):
+        """The same empty `rows`, no typo needed: no source reaches a measurement.
+
+        A new family wired into `batch_record.sh` whose request declares no `spec_row`
+        and which is missing its (conditionally appended) `--row-map` lands here.
+        """
+        r = run_post(self.report, "--label", "ch")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+        self.assertIn("no measurement reached a spec row", r.stderr)
+        # the message names all three sources, so the reader knows which one to supply
+        self.assertIn("report-echoed spec_row: 0 of 1 measurement(s)", r.stderr)
+        self.assertIn("--request not given", r.stderr)
+        self.assertIn("--row-map not given", r.stderr)
+
+    def test_a_prefix_map_alone_is_enough_to_grade_the_row(self):
+        """The refusal is about grading nothing, not about `--request` specifically."""
+        r = run_post(self.report, "--label", "ch", "--row-map", '{"t18_": "T-18"}')
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(json.loads(r.stdout)["rows"]["T-18"]["verdict"], "pass")
+
+    def test_a_malformed_row_map_exits_2_rather_than_raising(self):
+        for bad in ("{", "[]", '{"t18_": 18}', '{"t18_": ["T-18", 7]}'):
+            with self.subTest(row_map=bad):
+                r = run_post(self.report, "--request", self.request, "--row-map", bad)
+                self.assertEqual(r.returncode, 2, r.stdout)
+                self.assertEqual(r.stdout, "")
+                self.assertNotIn("Traceback", r.stderr)
 
 
 if __name__ == "__main__":
