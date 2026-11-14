@@ -41,6 +41,13 @@ GENERATORS = {
     "layout/pex/gen_pex_benches.py": "layout/pex/benches/extraction.json",
 }
 
+# layout/attest_item2.py is not one of them: it writes no generated file, it builds a
+# `klt signoff --attest 2` command line. Its write targets are the two committed signoff
+# envelopes, which is why its own mistyped-flag fall-through was worse than a stale bench
+# file (#265) -- and why it gets an assertion of its own below.
+ATTEST_ITEM2 = "layout/attest_item2.py"
+ATTEST_ENVELOPES = ("signoff/attest/item2-analog.json", "signoff/attest/item2-digital.json")
+
 
 def run(*cmd, cwd=None):
     return subprocess.run([sys.executable, "-I", *map(str, cmd)], cwd=cwd, capture_output=True, text=True)
@@ -855,7 +862,23 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
     `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
     gen_redundancy_mux.py was added after that consolidation and was the last copy of the
     loop left (#256); the table above is now the eight generators that share the helper.
+    layout/attest_item2.py was the last site of the pattern anywhere in the tree (#265).
     """
+
+    def test_attest_item2_refuses_an_unknown_flag_and_writes_no_envelope(self):
+        # #265: `attest_item2.py digital --chek` used to take the write branch, rewrite
+        # signoff/attest/item2-digital.json and exit 0 printing "status: pass", so the
+        # operator who typed it read a check report over a freshly regenerated envelope.
+        # It now parses its arguments before importing klayout_tools, so this assertion
+        # holds in PDK-free CI as well as in the pinned klt environment.
+        for argv in (("--chek",), ("digital", "--chek"), ("analog", "--chek"), ("bogus",)):
+            with self.subTest(argv=argv):
+                before = [(REPO / e).stat().st_mtime_ns for e in ATTEST_ENVELOPES]
+                r = run(REPO / ATTEST_ITEM2, *argv, cwd=REPO)
+                self.assertEqual(r.returncode, 2,
+                                 f"{ATTEST_ITEM2} {' '.join(argv)}: {r.stdout}{r.stderr}")
+                self.assertEqual([(REPO / e).stat().st_mtime_ns for e in ATTEST_ENVELOPES],
+                                 before, f"{ATTEST_ITEM2} {' '.join(argv)} rewrote an envelope")
 
     def test_an_unknown_flag_exits_2_and_writes_nothing(self):
         for gen, generated in GENERATORS.items():
