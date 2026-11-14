@@ -51,7 +51,13 @@ def git(cwd, *args):
     return r.stdout.strip()
 
 
-def make_tree(root: Path, record=None):
+def make_tree(root: Path, record=None, record_readme=False):
+    """A minimal evidence tree; `record` seeds one sim record under sim/s/records/.
+
+    `record_readme` also writes that record's own README.md -- the narrative file
+    the append-only tests need present in the base commit. It is off by default
+    because only AppendOnlyTests cares whether it exists.
+    """
     for d in DIRS:
         (root / d).mkdir(parents=True, exist_ok=True)
         (root / d / "README.md").write_text("# " + d + "\n")
@@ -59,6 +65,8 @@ def make_tree(root: Path, record=None):
         p = root / "sim/s/records/20260101T000000Z"
         p.mkdir(parents=True)
         (p / "record.json").write_text(json.dumps(record))
+        if record_readme:
+            (p / "README.md").write_text("# landed record\n")
 
 
 class FormatTests(unittest.TestCase):
@@ -101,7 +109,7 @@ class AppendOnlyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
             git(root, "init", "-q", "-b", "main")
-            make_tree(root, GOOD)
+            make_tree(root, GOOD, record_readme=True)
             git(root, "add", "-A")
             git(root, "commit", "-qm", "base")
             base = git(root, "rev-parse", "HEAD")
@@ -190,6 +198,144 @@ class AppendOnlyTests(unittest.TestCase):
 
     def test_missing_base_falls_back_detects_edit(self):
         self.assertNotEqual(self.scenario_missing_base(lambda r: (r / self.REC).write_text("{}")), 0)
+
+    # --- a record's own README.md is a record file, not harness prose (#255) ---
+
+    REC_README = "sim/s/records/20260101T000000Z/README.md"
+
+    def test_record_readme_edit_fails(self):
+        """The README *inside* a record directory is frozen with the data beside it."""
+        self.assertNotEqual(self.scenario(lambda r: (r / self.REC_README).write_text("x\n")), 0)
+
+    def test_record_readme_delete_fails(self):
+        """Nothing else would notice: check_evidence_format.py checks only the seven top dirs."""
+        self.assertNotEqual(self.scenario(lambda r: (r / self.REC_README).unlink()), 0)
+
+    def test_new_record_readme_add_passes(self):
+        """A README arriving with its own new record is an addition."""
+        self.assertEqual(self.scenario(self.add_new_record), 0)
+
+    def test_family_readme_edit_passes(self):
+        """A README *above* a record directory is harness prose and may change."""
+        def edit(r):
+            p = r / "sim/s/README.md"
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("family prose\n")
+        self.assertEqual(self.scenario(edit), 0)
+
+    # --- base selection per event (#255) ---
+    #
+    # A push event reports the *previously pushed head* as its base, which would
+    # freeze a record from its own first push. The checker takes the event facts
+    # as flags so both rows below are drivable from here rather than from a
+    # ci.yml expression this suite cannot reach.
+
+    NEW_REC = "sim/s/records/20260102T000000Z"
+    FEATURE_PUSH = ("--event-name", "push", "--push-ref", "refs/heads/feature",
+                    "--default-branch", "main", "--fallback-ref", "main")
+    DEFAULT_PUSH = ("--event-name", "push", "--push-ref", "refs/heads/main",
+                    "--default-branch", "main", "--fallback-ref", "main")
+
+    def add_new_record(self, r):
+        p = r / self.NEW_REC
+        p.mkdir(parents=True)
+        (p / "record.json").write_text(json.dumps(GOOD))
+        (p / "README.md").write_text("# new record\n")
+
+    def amend_new_record_readme(self, r):
+        (r / self.NEW_REC / "README.md").write_text("# new record, corrected\n")
+
+    def touch_harness(self, r):
+        (r / "sim/README.md").write_text("harness prose\n")
+
+    @contextlib.contextmanager
+    def feature_branch(self, first, second):
+        """A temp repo whose feature branch carries two pushes over a seeded main.
+
+        Yields (root, before): `before` is the first push's head, i.e. exactly
+        what a push event reports as `github.event.before` for the second push.
+        """
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            git(root, "checkout", "-qb", "feature")
+            first(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "first push")
+            before = git(root, "rev-parse", "HEAD")
+            second(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "second push")
+            yield root, before
+
+    def test_prepush_base_fails_on_amendment_within_the_branch(self):
+        """The seeded-bad case: the pre-push base is what freezes a record too early.
+
+        Correcting a brand-new record's README inside its own branch touches
+        nothing that is on main, yet reads as M against the previously pushed
+        head. This is the asymmetry #255 reports; the flags are omitted so the
+        base is used as given.
+        """
+        with self.feature_branch(self.add_new_record, self.amend_new_record_readme) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, cwd=root).returncode, 0)
+
+    def test_push_to_feature_branch_uses_merge_base(self):
+        """Same tree, same base SHA, with the event facts: the merge-base accepts it."""
+        with self.feature_branch(self.add_new_record, self.amend_new_record_readme) as (root, before):
+            r = run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn("merge-base", r.stdout)
+
+    def test_push_to_feature_branch_fails_on_landed_record(self):
+        """What the merge-base rule must still catch: rewriting evidence from main."""
+        with self.feature_branch(self.touch_harness,
+                                 lambda r: (r / self.REC).write_text("{}")) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root).returncode, 0)
+
+    def test_push_to_feature_branch_fails_on_landed_record_readme(self):
+        with self.feature_branch(self.touch_harness,
+                                 lambda r: (r / self.REC_README).write_text("rewritten\n")) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root).returncode, 0)
+
+    def test_push_to_feature_branch_fails_on_landed_record_deletion(self):
+        """A deletion must not be read as an addition once the base moves."""
+        with self.feature_branch(self.touch_harness,
+                                 lambda r: (r / self.REC).unlink()) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root).returncode, 0)
+
+    def push_to_main(self, change, *flags):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            before = git(root, "rev-parse", "HEAD")
+            change(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "direct push")
+            return run(APP, "--base", before, *flags, cwd=root).returncode
+
+    def test_push_to_default_branch_keeps_prepush_base(self):
+        """On main, merge-base(main, HEAD) is HEAD and the diff would go empty.
+
+        The pre-push SHA is kept there, so a direct push that rewrites landed
+        evidence still fails instead of passing vacuously.
+        """
+        self.assertNotEqual(
+            self.push_to_main(lambda r: (r / self.REC).write_text("{}"), *self.DEFAULT_PUSH), 0)
+
+    def test_push_with_unknown_ref_keeps_prepush_base(self):
+        """A missing event fact degrades to the stricter base, never to a skip."""
+        self.assertNotEqual(
+            self.push_to_main(lambda r: (r / self.REC).write_text("{}"),
+                              "--event-name", "push", "--fallback-ref", "main"), 0)
+
+    def test_push_to_default_branch_passes_a_clean_push(self):
+        self.assertEqual(self.push_to_main(self.touch_harness, *self.DEFAULT_PUSH), 0)
 
 
 class CharacterizationReportTests(unittest.TestCase):

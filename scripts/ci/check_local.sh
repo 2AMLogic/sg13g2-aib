@@ -129,13 +129,18 @@ if [ "$want_evidence" = 1 ]; then
   run "Check the committed routed SPEF and DEF match their manifest pins" \
     python3 -I scripts/ci/check_pnr_pins.py
 
-  # CI passes the PR base (or the pre-push SHA) in BASE; locally fall back to
-  # the merge-base with origin/main. An empty or all-zero base (a new branch)
-  # is skipped by the checker, so do not substitute a merge-base for one.
+  # CI passes a base SHA in BASE plus the event facts the checker needs to
+  # choose between it and the merge-base with the default branch (#255; see the
+  # checker's docstring). Locally there is no event, so fall back to the
+  # merge-base with origin/main directly -- which is the same question CI now
+  # asks on every event. An empty or all-zero base (a new branch) is skipped by
+  # the checker, so do not substitute a merge-base for one.
   base="${BASE-}"
   [ -n "$base" ] || base="$(git merge-base origin/main HEAD 2>/dev/null || true)"
   run "Check sim/ records are append-only" \
-    python3 -I scripts/ci/check_sim_append_only.py --base "$base"
+    python3 -I scripts/ci/check_sim_append_only.py --base "$base" \
+      --event-name "${EVENT_NAME-}" --push-ref "${PUSH_REF-}" \
+      --default-branch "${DEFAULT_BRANCH:-main}"
 
   run "Check the item 8 characterization report is fresh and pinned" \
     python3 -I scripts/ci/gen_characterization_report.py --check
