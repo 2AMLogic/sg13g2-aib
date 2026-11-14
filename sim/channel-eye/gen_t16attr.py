@@ -9,6 +9,7 @@ connection) and corner in {ss (mos_ss, 1.08 V, 125 C, the binding corner), tt (m
 t16_* cards unchanged (self-check against the CH record) plus, for each of the eight edge
 pairs, the absolute 50 % crossing time of every probe stage (t16attr_probes.inc).
 """
+import argparse
 import json
 import re
 import sys
@@ -79,7 +80,19 @@ def request(link, corner):
 
 
 def main(argv):
-    out = Path(argv[0])
+    """Write the four requests into the one positional OUTDIR.
+
+    Parsed with argparse rather than read off `argv[0]`, so an unrecognised argument
+    exits 2 before anything is created instead of becoming a directory name: this
+    script has no `--check` mode (its outputs are gitignored and regenerated per run,
+    .gitignore:24-27), and a hand-typed `--check` answered with exit 0 is the one
+    shape most likely to be read as a check that passed (#271).
+    """
+    ap = argparse.ArgumentParser(
+        description="Write the four T-16 attribution `klt sim` requests into OUTDIR.")
+    ap.add_argument("outdir", metavar="OUTDIR",
+                    help="directory to write request_t16attr_<link>_<corner>.json into")
+    out = Path(ap.parse_args(argv).outdir)
     out.mkdir(parents=True, exist_ok=True)
     for link in LINKS:
         for corner in CORNERS:
