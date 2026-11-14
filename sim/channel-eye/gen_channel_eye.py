@@ -21,12 +21,13 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
-import gen_common  # noqa: E402  (the one write-or-check implementation)
+import gen_common  # noqa: E402  (write_or_check and the PWL stimulus builders)
 UI_PS = 1000
 TR_PS = 100
 WARM = 14                 # warm-up bits (cyclic prefix), excluded from every window
 PERIOD = 127
 NBITS = WARM + PERIOD     # 141 UI total
+END_PS = NBITS * UI_PS    # stimulus end time, held out to by every PWL card
 T0_NS, T1_NS = WARM * UI_PS // 1000, NBITS * UI_PS // 1000
 N_WIRES = 20              # data wires per forwarded clock (T-03)
 EYE_STEP_PS = 50          # 0.05 UI phase step of the eye-window search
@@ -81,21 +82,6 @@ def transitions(bits):
     return out
 
 
-def pwl(points):
-    return " ".join(f"{t * 1e-12:.6g} {v}" for t, v in points)
-
-
-def lane_pwl(levels_at):
-    """levels_at: [(edge_start_ps, level)] with an implied initial level first."""
-    (_, v0), rest = levels_at[0], levels_at[1:]
-    pts, cur = [(0, v0)], v0
-    for t, v in rest:
-        pts += [(t, cur), (t + TR_PS, v)]
-        cur = v
-    pts.append((NBITS * UI_PS, cur))
-    return pts
-
-
 def stim_include():
     b = stream()
     data = [(0, b[0])] + [(i * UI_PS, b[i]) for i in range(1, NBITS) if b[i] != b[i - 1]]
@@ -108,7 +94,9 @@ def stim_include():
         "* Normalised 0..1 levels; tb_body.inc scales them by the TX supply.",
     ]
     for name, node, pts in (("pa", "pa", data), ("pb", "pb", comp), ("pc", "pc", clk), ("pcb", "pcb", clkb)):
-        lines.append(f"V{name} {node} 0 dc 0 pwl({pwl(lane_pwl(pts))})")
+        # pts[0] carries the level at t = 0 (its time is always 0); the rest are edge starts.
+        ramp = gen_common.level_pwl(pts[1:], TR_PS, END_PS, init=pts[0][1])
+        lines.append(f"V{name} {node} 0 dc 0 pwl({gen_common.pwl(ramp)})")
     return "\n".join(lines) + "\n"
 
 
