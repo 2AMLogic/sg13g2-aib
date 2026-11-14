@@ -47,9 +47,11 @@ byte-identical to the hand-made copies they replace, so the `reference_sha256` t
 `neg/*.report.json` carry is unchanged and `klt lvs --check` still exits 0 on both (run from `neg/`:
 `--check` resolves a report's relative paths against the current directory).
 
-Limitation: `gen_reference.py --check` is still not run by `.github/workflows/ci.yml`, so this check
-only bites when someone runs it. Wiring it into CI is #173. The T-10 control bench is the covered case
-— `sim/mc/gen_mc.py` writes it and CI already runs `gen_mc.py --check` (`sim/mc/README.md`).
+`gen_reference.py --check` runs in CI: it is a line in `scripts/ci/check_local.sh` (the `evidence`
+part), which both jobs in `.github/workflows/ci.yml` call, so a source change that is not carried into
+the committed reference or into a `neg/` control fails the build rather than waiting for someone to run
+the check by hand (#236). The T-10 control bench is the neighbouring case — `sim/mc/gen_mc.py` writes it
+and the same list runs `gen_mc.py --check` (`sim/mc/README.md`).
 
 Provenance: the reference netlists are generated, not hand-written; `design/*.spice` is read only, so the
 item 1 hashes are unchanged. Assembly follows `layout/README.md` ("Assembly choice"): the pad is the

@@ -115,6 +115,15 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I layout/pex/gen_pex_benches.py --check
   run "Self-test the item 7 pex benches (pin lists, one .include, row split)" \
     python3 -I layout/pex/test_pex_benches.py
+
+  # The assembled I/O-cell LVS reference netlists AND the seeded negative
+  # controls under layout/lvs/neg/. #202 made those controls derived rather
+  # than hand-copied so that a change to a source is carried into the control;
+  # this is the check that the carrying actually happened. It reads committed
+  # files only (design/*.spice and layout/pnr/.klt/place-and-route/), so it is
+  # PDK-free and belongs in this list rather than beside the klt signoff steps.
+  run "Check the LVS reference netlists and the derived neg/ controls are fresh" \
+    python3 -I layout/lvs/gen_reference.py --check
   run "Check the derived item 7 SDFs are pinned and reproduce from the routed SDF" \
     python3 -I scripts/ci/check_item7_sdf.py
   run "Check the committed routed SPEF and DEF match their manifest pins" \

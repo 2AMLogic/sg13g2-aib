@@ -4,9 +4,11 @@
 Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
 import contextlib
+import fnmatch
 import io
 import json
 import posixpath
+import re
 import shutil
 import subprocess
 import sys
@@ -692,6 +694,259 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                 self.assertEqual(r.returncode, 2, f"{gen} --chek: {r.stdout}{r.stderr}")
                 self.assertEqual((REPO / generated).stat().st_mtime_ns, before,
                                  f"{gen} --chek rewrote {generated}")
+
+
+# ---------------------------------------------------------------------------
+# Completeness of the one check list (#236)
+#
+# scripts/ci/check_local.sh calls itself "the one list of PDK-free checks", but
+# it is kept by hand, so a checker can be added to the tree and never reach it.
+# That happened twice (#173, #219) before anything asserted otherwise. The test
+# below is that assertion: every self-test and every checkable generator in the
+# tracked tree is either *listed* in check_local.sh, *covered* by a listed file
+# that runs it, or *exempt* with a stated reason. Adding a 31st candidate
+# without doing one of the three fails this test.
+#
+# Discovery is by file NAME, deliberately, not by grepping for a `--check`
+# literal: scripts/ci/gen_item6_digital.py has no --check flag (checking is its
+# default mode, --regenerate rewrites), and since #227 the flag handling lives
+# in sim/gen_common.py rather than in each generator.
+#
+# layout/attest_item2.py is deliberately OUTSIDE the discovery set: it matches
+# none of the four globs, and widening them to reach it would also pull in
+# every other non-checker script in the tree. It needs the pinned klt
+# environment (it imports klayout_tools.signoff), so it is the same class as
+# the layout/check_io_column.py exemption below and would be exempt anyway.
+# ---------------------------------------------------------------------------
+
+CHECK_LIST = "scripts/ci/check_local.sh"
+CANDIDATE_GLOBS = ("gen_*.py", "check_*.py", "test_*.py", "test_*.sh")
+
+# candidate -> (file that runs it, why no line of its own is wanted).
+# The covering file must itself be listed in check_local.sh, and must mention
+# the candidate by name -- otherwise the coverage claim has quietly lapsed.
+COVERED = {
+    "sim/channel-eye/gen_channel_eye.py": (
+        "scripts/ci/test_checkers.py",
+        "--check runs in test_every_generator_is_fresh_against_the_table",
+    ),
+    "sim/clock-path/gen_clock_path.py": (
+        "scripts/ci/test_checkers.py",
+        "--check runs in test_every_generator_is_fresh_against_the_table",
+    ),
+    "sim/redundancy-mux/gen_redundancy_mux.py": (
+        "scripts/ci/test_checkers.py",
+        "--check runs in test_every_generator_is_fresh_against_the_table",
+    ),
+    "sim/mc/capture_window/gen_t19.py": (
+        "sim/mc/capture_window/test_t19.py",
+        "test_generated_files_are_fresh compares both T-19 netlists, the same comparison --check makes",
+    ),
+}
+
+# candidate -> why it is not a check this list can run at all.
+EXEMPT = {
+    "verification/test_datapath.py":
+        "cocotb bench module, imported by verification/run_tb.py; not a standalone suite",
+    "verification/test_shift_redundancy.py":
+        "cocotb bench module, imported by verification/run_tb.py; not a standalone suite",
+    "layout/check_io_column.py":
+        "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
+    "layout/gen_io_column.py": "generator with no check mode",
+    "layout/erc/gen_specs.py": "generator with no check mode",
+    "sim/channel-eye/gen_t16attr.py": "generator with no check mode",
+    "sim/gen_common.py": "the shared write-or-check helper (#227); imported, never run",
+}
+
+
+def strip_sh_comments(text):
+    """Drop `#` comments so a path named only in prose does not count as listed.
+
+    A `#` starts a comment at the start of a line or after whitespace, which
+    keeps `${0##*/}` intact. This is a heuristic, not a shell parser: a `#`
+    inside a quoted string after a space would over-strip. That bias is the
+    safe one -- over-stripping reports a listed check as unlisted (loud), while
+    under-stripping reports an unlisted check as listed (silent), which is the
+    exact failure this whole test exists to catch.
+    """
+    return "\n".join(re.sub(r"(?:^|(?<=\s))#.*$", "", line) for line in text.splitlines())
+
+
+def discover_candidates(tracked):
+    """Every tracked path whose basename matches one of CANDIDATE_GLOBS."""
+    return sorted(p for p in tracked
+                  if any(fnmatch.fnmatch(posixpath.basename(p), g) for g in CANDIDATE_GLOBS))
+
+
+def completeness_errors(tracked, check_list_text, covered, exempt, read_text):
+    """Return a sorted list of ways the check list and its table disagree with the tree.
+
+    Pure: every input is passed in, so the failure modes can be tested against
+    a fixture without touching the real tree. `read_text` maps a repo-relative
+    path to its contents and is only called for covering files.
+    """
+    tracked = set(tracked)
+    code = strip_sh_comments(check_list_text)
+    errors = []
+
+    def is_listed(path):
+        return path in code
+
+    # The table must not rot: it may only name tracked files that are not
+    # already listed on a command line of their own.
+    for path in sorted(set(covered) | set(exempt)):
+        if path in covered and path in exempt:
+            errors.append(f"{path}: in both COVERED and EXEMPT; it must be exactly one")
+        if path not in tracked:
+            errors.append(f"{path}: table entry names a path that is no longer tracked; drop it")
+        elif is_listed(path):
+            errors.append(f"{path}: table entry is now listed in {CHECK_LIST}; drop its table entry")
+
+    for path in discover_candidates(tracked):
+        if is_listed(path):
+            continue
+        if path in exempt:
+            if not exempt[path].strip():
+                errors.append(f"{path}: EXEMPT entry needs a reason")
+            continue
+        if path in covered:
+            cover, reason = covered[path]
+            if not reason.strip():
+                errors.append(f"{path}: COVERED entry needs a reason")
+            if cover not in tracked:
+                errors.append(f"{path}: covering file {cover} is not tracked")
+            elif not is_listed(cover):
+                errors.append(f"{path}: covering file {cover} is not itself in {CHECK_LIST}, "
+                              "so nothing runs it")
+            elif posixpath.basename(path) not in read_text(cover):
+                errors.append(f"{path}: covering file {cover} never mentions "
+                              f"{posixpath.basename(path)}; the coverage claim has lapsed")
+            continue
+        errors.append(f"{path}: in neither {CHECK_LIST} nor the COVERED/EXEMPT table in "
+                      "scripts/ci/test_checkers.py -- add a run line, or a table entry with a reason")
+    return sorted(errors)
+
+
+class CheckListCompletenessTests(unittest.TestCase):
+    """#236: assert the one check list has not fallen behind the tree again."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tracked = git(REPO, "ls-files").splitlines()
+        cls.text = (REPO / CHECK_LIST).read_text()
+
+    def read(self, path):
+        return (REPO / path).read_text()
+
+    # -- the real tree -------------------------------------------------------
+
+    def test_every_tracked_checker_is_listed_covered_or_exempt(self):
+        errors = completeness_errors(self.tracked, self.text, COVERED, EXEMPT, self.read)
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    def test_discovery_finds_both_the_shell_and_no_flag_classes(self):
+        # A discovery key of "*.py" would miss the shell self-test, and one of
+        # "has a --check flag" would miss the checker whose check is default.
+        found = discover_candidates(self.tracked)
+        self.assertIn("sim/harness/test_batch_record.sh", found)
+        self.assertIn("scripts/ci/gen_item6_digital.py", found)
+        # Both are listed outright, so neither needs a table entry.
+        code = strip_sh_comments(self.text)
+        self.assertIn("sim/harness/test_batch_record.sh", code)
+        self.assertIn("scripts/ci/gen_item6_digital.py", code)
+
+    def test_the_lvs_reference_check_is_listed(self):
+        # Step 1 of #236; also the guard on the derived neg/ controls (#202).
+        self.assertIn("layout/lvs/gen_reference.py", strip_sh_comments(self.text))
+
+    def test_run_tb_self_test_is_listed_not_exempt(self):
+        # Its two cocotb neighbours are exempt, but it is a standalone suite:
+        # a blanket "exclude verification/test_*.py" would be wrong.
+        self.assertIn("verification/test_run_tb.py", strip_sh_comments(self.text))
+        self.assertNotIn("verification/test_run_tb.py", EXEMPT)
+        self.assertNotIn("verification/test_run_tb.py", COVERED)
+
+    def test_the_cocotb_bench_modules_are_exempt_with_reasons(self):
+        for mod in ("verification/test_datapath.py", "verification/test_shift_redundancy.py"):
+            self.assertIn(mod, EXEMPT)
+            self.assertIn("cocotb", EXEMPT[mod])
+
+    def test_attest_item2_is_outside_the_discovery_set(self):
+        # Stated in the comment above: it matches no glob, and needs pinned klt.
+        self.assertIn("layout/attest_item2.py", self.tracked)
+        self.assertNotIn("layout/attest_item2.py", discover_candidates(self.tracked))
+
+    # -- the failure modes, against a fixture tree ---------------------------
+    #
+    # Each case patches the inputs rather than editing the real tree, so a
+    # failing assertion here can never leave the working tree dirty.
+
+    FIX_TRACKED = ["scripts/ci/check_local.sh", "scripts/ci/test_checkers.py",
+                   "sim/a/gen_a.py", "sim/b/test_b.py", "sim/c/gen_c.py"]
+    FIX_LIST = ('run "self-test" python3 -I scripts/ci/test_checkers.py\n'
+                'run "b" python3 -I sim/b/test_b.py\n')
+
+    def fixture(self, tracked=None, text=None, covered=None, exempt=None, files=None):
+        files = files or {}
+        return completeness_errors(
+            tracked if tracked is not None else self.FIX_TRACKED,
+            text if text is not None else self.FIX_LIST,
+            covered or {}, exempt or {},
+            lambda p: files.get(p, ""))
+
+    def test_a_new_candidate_that_is_neither_listed_nor_tabled_fails(self):
+        errors = self.fixture()
+        self.assertTrue(any(e.startswith("sim/a/gen_a.py:") for e in errors), errors)
+        self.assertTrue(any(e.startswith("sim/c/gen_c.py:") for e in errors), errors)
+        self.assertFalse(any(e.startswith("sim/b/test_b.py:") for e in errors), errors)
+
+    def test_a_covered_entry_whose_covering_file_is_unlisted_fails(self):
+        # sim/c/gen_c.py is tracked but has no run line, so it cannot cover.
+        errors = self.fixture(
+            covered={"sim/a/gen_a.py": ("sim/c/gen_c.py", "why")},
+            exempt={"sim/b/test_b.py": "n/a"},   # keep the rest quiet
+            files={"sim/c/gen_c.py": "gen_a.py"})
+        self.assertTrue(any("covering file sim/c/gen_c.py is not itself in" in e for e in errors),
+                        errors)
+
+    def test_a_covered_entry_whose_covering_file_never_mentions_it_fails(self):
+        errors = self.fixture(
+            covered={"sim/a/gen_a.py": ("sim/b/test_b.py", "why")},
+            exempt={"sim/c/gen_c.py": "no check mode"},
+            files={"sim/b/test_b.py": "this file runs something else entirely"})
+        self.assertTrue(any("the coverage claim has lapsed" in e for e in errors), errors)
+
+    def test_a_table_entry_for_an_untracked_path_fails(self):
+        errors = self.fixture(
+            covered={"sim/gone/gen_gone.py": ("sim/b/test_b.py", "why")},
+            exempt={"sim/a/gen_a.py": "r", "sim/c/gen_c.py": "r"})
+        self.assertTrue(any("no longer tracked" in e for e in errors), errors)
+
+    def test_a_table_entry_for_a_now_listed_file_fails(self):
+        # sim/b/test_b.py has a run line; an exemption for it is stale.
+        errors = self.fixture(
+            exempt={"sim/a/gen_a.py": "r", "sim/c/gen_c.py": "r", "sim/b/test_b.py": "r"})
+        self.assertTrue(any("drop its table entry" in e for e in errors), errors)
+
+    def test_a_candidate_named_only_in_a_comment_is_not_listed(self):
+        # The live case: #235 added a comment block naming gen_clock_path.py,
+        # which is now its only mention in check_local.sh.
+        text = '# see sim/a/gen_a.py for why\nrun "b" python3 -I sim/b/test_b.py\n'
+        errors = self.fixture(text=text, exempt={"sim/c/gen_c.py": "r"})
+        self.assertTrue(any(e.startswith("sim/a/gen_a.py:") for e in errors), errors)
+        # ...and a trailing comment on a real run line does not hide the line.
+        text2 = self.FIX_LIST + 'run "a" python3 -I sim/a/gen_a.py  # the A check\n'
+        self.assertEqual(self.fixture(text=text2, exempt={"sim/c/gen_c.py": "r"}), [])
+
+    def test_strip_sh_comments_keeps_a_parameter_expansion(self):
+        self.assertEqual(strip_sh_comments('echo "${0##*/}"  # usage'), 'echo "${0##*/}"  ')
+
+    def test_a_clean_fixture_tree_reports_nothing(self):
+        self.assertEqual(
+            self.fixture(covered={"sim/a/gen_a.py": ("sim/b/test_b.py", "run inside it")},
+                         exempt={"sim/c/gen_c.py": "generator with no check mode"},
+                         files={"sim/b/test_b.py": "subprocess.run(['gen_a.py', '--check'])"}),
+            [])
 
 
 if __name__ == "__main__":
