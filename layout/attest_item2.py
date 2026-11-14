@@ -12,13 +12,12 @@ resulting geometry digest. A failed check writes nothing.
 From the repo root, in the pinned klt environment:
     uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py analog|digital [--check]
 """
+import argparse
 import json
 import os
 import subprocess
 import sys
 import tempfile
-
-from klayout_tools.signoff import layout_geometry_digest as digest
 
 PNR_GDS = "layout/pnr/.klt/place-and-route/aib_datapath.gds"
 REPORT = "layout/pnr/request.report.json"
@@ -34,11 +33,25 @@ ITEMS = {
 
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ITEMS:
-        sys.exit(__doc__)
-    gds, out, generator = ITEMS[sys.argv[1]]
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("item", choices=tuple(ITEMS), help="which item 2 envelope to attest")
+    ap.add_argument("--check", action="store_true",
+                    help="compare the committed envelope instead of writing it")
+    args = ap.parse_args()
+    # klt is imported after parsing, so an argument this script does not know exits 2 having
+    # written nothing -- the one way of reading --check that sim/gen_common.py gives the
+    # generators (#227), applied to the last site that read it by membership test (#265).
+    # This script's write target is a committed signoff envelope, so the old
+    # `"--check" in sys.argv` fall-through meant `digital --chek` rewrote
+    # signoff/attest/item2-digital.json while reporting a pass. Deferring the import is
+    # also what lets scripts/ci/test_checkers.py assert the refusal without the pinned
+    # environment this script otherwise needs.
+    from klayout_tools.signoff import layout_geometry_digest as digest
+
+    gds, out, generator = ITEMS[args.item]
     got = digest(gds)
-    if sys.argv[1] == "analog":
+    if args.item == "analog":
         with tempfile.TemporaryDirectory() as tmp:
             scratch = os.path.join(tmp, "regen.gds")
             subprocess.run([sys.executable, "-I", "layout/gen_io_column.py", "-o", scratch], check=True)
@@ -55,7 +68,7 @@ def main():
             sys.exit("FAIL: report gds_path is not the committed stream")
     cmd = ["klt", "signoff", "--attest", "2", "--input", gds, "--generator", generator,
            "--regenerated-hash", got, "--hash-kind", "geometry"]
-    cmd += ["--check", out] if "--check" in sys.argv else ["-o", out]
+    cmd += ["--check", out] if args.check else ["-o", out]
     sys.exit(subprocess.run(cmd).returncode)
 
 
