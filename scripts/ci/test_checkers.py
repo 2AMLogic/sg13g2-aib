@@ -28,11 +28,12 @@ REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
 
-# The seven generators that share the one write-or-check helper (#227, #239), each with one
-# of its committed outputs, used to assert that a refused run writes nothing.
+# The eight generators that share the one write-or-check helper (#227, #239, #256), each
+# with one of its committed outputs, used to assert that a refused run writes nothing.
 GENERATORS = {
     "sim/channel-eye/gen_channel_eye.py": "sim/channel-eye/prbs7_stim.inc",
     "sim/clock-path/gen_clock_path.py": "sim/clock-path/clock_stim.inc",
+    "sim/redundancy-mux/gen_redundancy_mux.py": "sim/redundancy-mux/redundancy_mux_stim.inc",
     "sim/mc/capture_window/gen_t19.py": "sim/mc/capture_window/tb_t19.cir",
     "sim/mc/gen_mc.py": "sim/mc/tb_t10_ctl.cir",
     "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
@@ -51,7 +52,13 @@ def git(cwd, *args):
     return r.stdout.strip()
 
 
-def make_tree(root: Path, record=None):
+def make_tree(root: Path, record=None, record_readme=False):
+    """A minimal evidence tree; `record` seeds one sim record under sim/s/records/.
+
+    `record_readme` also writes that record's own README.md -- the narrative file
+    the append-only tests need present in the base commit. It is off by default
+    because only AppendOnlyTests cares whether it exists.
+    """
     for d in DIRS:
         (root / d).mkdir(parents=True, exist_ok=True)
         (root / d / "README.md").write_text("# " + d + "\n")
@@ -59,6 +66,8 @@ def make_tree(root: Path, record=None):
         p = root / "sim/s/records/20260101T000000Z"
         p.mkdir(parents=True)
         (p / "record.json").write_text(json.dumps(record))
+        if record_readme:
+            (p / "README.md").write_text("# landed record\n")
 
 
 class FormatTests(unittest.TestCase):
@@ -101,7 +110,7 @@ class AppendOnlyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
             git(root, "init", "-q", "-b", "main")
-            make_tree(root, GOOD)
+            make_tree(root, GOOD, record_readme=True)
             git(root, "add", "-A")
             git(root, "commit", "-qm", "base")
             base = git(root, "rev-parse", "HEAD")
@@ -190,6 +199,144 @@ class AppendOnlyTests(unittest.TestCase):
 
     def test_missing_base_falls_back_detects_edit(self):
         self.assertNotEqual(self.scenario_missing_base(lambda r: (r / self.REC).write_text("{}")), 0)
+
+    # --- a record's own README.md is a record file, not harness prose (#255) ---
+
+    REC_README = "sim/s/records/20260101T000000Z/README.md"
+
+    def test_record_readme_edit_fails(self):
+        """The README *inside* a record directory is frozen with the data beside it."""
+        self.assertNotEqual(self.scenario(lambda r: (r / self.REC_README).write_text("x\n")), 0)
+
+    def test_record_readme_delete_fails(self):
+        """Nothing else would notice: check_evidence_format.py checks only the seven top dirs."""
+        self.assertNotEqual(self.scenario(lambda r: (r / self.REC_README).unlink()), 0)
+
+    def test_new_record_readme_add_passes(self):
+        """A README arriving with its own new record is an addition."""
+        self.assertEqual(self.scenario(self.add_new_record), 0)
+
+    def test_family_readme_edit_passes(self):
+        """A README *above* a record directory is harness prose and may change."""
+        def edit(r):
+            p = r / "sim/s/README.md"
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("family prose\n")
+        self.assertEqual(self.scenario(edit), 0)
+
+    # --- base selection per event (#255) ---
+    #
+    # A push event reports the *previously pushed head* as its base, which would
+    # freeze a record from its own first push. The checker takes the event facts
+    # as flags so both rows below are drivable from here rather than from a
+    # ci.yml expression this suite cannot reach.
+
+    NEW_REC = "sim/s/records/20260102T000000Z"
+    FEATURE_PUSH = ("--event-name", "push", "--push-ref", "refs/heads/feature",
+                    "--default-branch", "main", "--fallback-ref", "main")
+    DEFAULT_PUSH = ("--event-name", "push", "--push-ref", "refs/heads/main",
+                    "--default-branch", "main", "--fallback-ref", "main")
+
+    def add_new_record(self, r):
+        p = r / self.NEW_REC
+        p.mkdir(parents=True)
+        (p / "record.json").write_text(json.dumps(GOOD))
+        (p / "README.md").write_text("# new record\n")
+
+    def amend_new_record_readme(self, r):
+        (r / self.NEW_REC / "README.md").write_text("# new record, corrected\n")
+
+    def touch_harness(self, r):
+        (r / "sim/README.md").write_text("harness prose\n")
+
+    @contextlib.contextmanager
+    def feature_branch(self, first, second):
+        """A temp repo whose feature branch carries two pushes over a seeded main.
+
+        Yields (root, before): `before` is the first push's head, i.e. exactly
+        what a push event reports as `github.event.before` for the second push.
+        """
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            git(root, "checkout", "-qb", "feature")
+            first(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "first push")
+            before = git(root, "rev-parse", "HEAD")
+            second(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "second push")
+            yield root, before
+
+    def test_prepush_base_fails_on_amendment_within_the_branch(self):
+        """The seeded-bad case: the pre-push base is what freezes a record too early.
+
+        Correcting a brand-new record's README inside its own branch touches
+        nothing that is on main, yet reads as M against the previously pushed
+        head. This is the asymmetry #255 reports; the flags are omitted so the
+        base is used as given.
+        """
+        with self.feature_branch(self.add_new_record, self.amend_new_record_readme) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, cwd=root).returncode, 0)
+
+    def test_push_to_feature_branch_uses_merge_base(self):
+        """Same tree, same base SHA, with the event facts: the merge-base accepts it."""
+        with self.feature_branch(self.add_new_record, self.amend_new_record_readme) as (root, before):
+            r = run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn("merge-base", r.stdout)
+
+    def test_push_to_feature_branch_fails_on_landed_record(self):
+        """What the merge-base rule must still catch: rewriting evidence from main."""
+        with self.feature_branch(self.touch_harness,
+                                 lambda r: (r / self.REC).write_text("{}")) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root).returncode, 0)
+
+    def test_push_to_feature_branch_fails_on_landed_record_readme(self):
+        with self.feature_branch(self.touch_harness,
+                                 lambda r: (r / self.REC_README).write_text("rewritten\n")) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root).returncode, 0)
+
+    def test_push_to_feature_branch_fails_on_landed_record_deletion(self):
+        """A deletion must not be read as an addition once the base moves."""
+        with self.feature_branch(self.touch_harness,
+                                 lambda r: (r / self.REC).unlink()) as (root, before):
+            self.assertNotEqual(run(APP, "--base", before, *self.FEATURE_PUSH, cwd=root).returncode, 0)
+
+    def push_to_main(self, change, *flags):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "base")
+            before = git(root, "rev-parse", "HEAD")
+            change(root)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "direct push")
+            return run(APP, "--base", before, *flags, cwd=root).returncode
+
+    def test_push_to_default_branch_keeps_prepush_base(self):
+        """On main, merge-base(main, HEAD) is HEAD and the diff would go empty.
+
+        The pre-push SHA is kept there, so a direct push that rewrites landed
+        evidence still fails instead of passing vacuously.
+        """
+        self.assertNotEqual(
+            self.push_to_main(lambda r: (r / self.REC).write_text("{}"), *self.DEFAULT_PUSH), 0)
+
+    def test_push_with_unknown_ref_keeps_prepush_base(self):
+        """A missing event fact degrades to the stricter base, never to a skip."""
+        self.assertNotEqual(
+            self.push_to_main(lambda r: (r / self.REC).write_text("{}"),
+                              "--event-name", "push", "--fallback-ref", "main"), 0)
+
+    def test_push_to_default_branch_passes_a_clean_push(self):
+        self.assertEqual(self.push_to_main(self.touch_harness, *self.DEFAULT_PUSH), 0)
 
 
 class CharacterizationReportTests(unittest.TestCase):
@@ -678,12 +825,36 @@ class WriteOrCheckHelperTests(unittest.TestCase):
             self.assertIn(f"matched {n} times", str(cm.exception))
             self.assertIn("what", str(cm.exception))
 
+    # -- the shared PWL builders (#256) --------------------------------------
+
+    def test_pwl_writes_picosecond_times_in_seconds(self):
+        self.assertEqual(self.gc.pwl([(0, 0), (500, 1)]), "0 0 5e-10 1")
+
+    def test_level_pwl_ramps_each_edge_over_tr_and_holds_to_the_end(self):
+        # One edge to 1 at 500 ps, a 100 ps ramp, a 2000 ps stimulus.
+        self.assertEqual(self.gc.level_pwl([(500, 1)], 100, 2000),
+                         [(0, 0), (500, 0), (600, 1), (2000, 1)])
+
+    def test_level_pwl_starts_from_init(self):
+        self.assertEqual(self.gc.level_pwl([(500, 0)], 100, 2000, init=1),
+                         [(0, 1), (500, 1), (600, 0), (2000, 0)])
+
+    def test_level_pwl_holds_a_flat_level_across_the_whole_span(self):
+        self.assertEqual(self.gc.level_pwl([], 100, 2000, init=1), [(0, 1), (2000, 1)])
+
+    def test_level_pwl_ramp_width_is_the_tr_that_was_passed(self):
+        # The parameter is why one helper can serve stimuli with different ramps.
+        for tr in (50, 100, 250):
+            self.assertEqual(self.gc.level_pwl([(500, 1)], tr, 2000)[2], (500 + tr, 1))
+
 
 class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
     """A mistyped --check must report, never silently regenerate (#227).
 
     Three of the six used to test `"--check" in argv`, so any other argument meant "write":
     `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
+    gen_redundancy_mux.py was added after that consolidation and was the last copy of the
+    loop left (#256); the table above is now the eight generators that share the helper.
     """
 
     def test_an_unknown_flag_exits_2_and_writes_nothing(self):
@@ -947,6 +1118,119 @@ class CheckListCompletenessTests(unittest.TestCase):
                          exempt={"sim/c/gen_c.py": "generator with no check mode"},
                          files={"sim/b/test_b.py": "subprocess.run(['gen_a.py', '--check'])"}),
             [])
+
+
+# ---------------------------------------------------------------------------
+# No generator keeps a private copy of a shared helper (#256)
+#
+# gen_redundancy_mux.py was written after the #227 consolidation and still
+# carried its own write-or-check loop and its own byte-identical `pwl` /
+# `level_pwl`. Nothing failed when it did, so the drift was only found by
+# reading. This test is that missing assertion: a tracked `gen_*.py` may not
+# define a builder whose name is one gen_common already owns, unless it is
+# listed below with the reason its version genuinely differs.
+# ---------------------------------------------------------------------------
+
+GEN_COMMON = "sim/gen_common.py"
+SHARED_BUILDERS = ("pwl", "level_pwl")
+
+# "<path>:<name>" -> why this generator's own version is not the shared one.
+PRIVATE_BUILDERS_OK = {
+    "sim/mc/capture_window/gen_t19.py:pwl":
+        "formats times in ns via its own ns() helper, not seconds; a different card body",
+}
+
+
+def private_builder_errors(tracked, read_text, ok=None):
+    """Return a sorted list of `gen_*.py` definitions that shadow a gen_common builder.
+
+    Pure: the tracked set, the reader and the exemption table are all passed in, so the
+    detector can be exercised against a fixture without touching the real tree.
+    """
+    ok = PRIVATE_BUILDERS_OK if ok is None else ok
+    tracked = set(tracked)
+    defs = re.compile(r"^def (%s)\(" % "|".join(SHARED_BUILDERS), re.M)
+    errors = []
+    for path in sorted(q for q in tracked
+                       if q != GEN_COMMON                      # the module that owns them
+                       and fnmatch.fnmatch(posixpath.basename(q), "gen_*.py")):
+        for name in defs.findall(read_text(path)):
+            key = f"{path}:{name}"
+            if key in ok:
+                if not ok[key].strip():
+                    errors.append(f"{key}: PRIVATE_BUILDERS_OK entry needs a reason")
+                continue
+            errors.append(f"{key}: a private copy of a sim/gen_common.py builder -- import it "
+                          "instead, or add a PRIVATE_BUILDERS_OK entry saying how it differs")
+    for key in sorted(ok):
+        path, _, name = key.rpartition(":")
+        if path not in tracked:
+            errors.append(f"{key}: entry names a path that is no longer tracked; drop it")
+        elif f"def {name}(" not in read_text(path):
+            errors.append(f"{key}: entry names a definition that is gone; drop it")
+    return sorted(errors)
+
+
+class NoPrivateCopyOfASharedBuilderTests(unittest.TestCase):
+    """#256: the consolidation must not quietly lapse the next time a generator is added."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tracked = git(REPO, "ls-files").splitlines()
+
+    def read(self, path):
+        return (REPO / path).read_text()
+
+    def test_no_tracked_generator_shadows_a_gen_common_builder(self):
+        errors = private_builder_errors(self.tracked, self.read)
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    def test_gen_common_actually_defines_every_name_this_test_guards(self):
+        # Otherwise the guard would pass by guarding nothing.
+        text = (REPO / "sim/gen_common.py").read_text()
+        for name in SHARED_BUILDERS:
+            self.assertIn(f"def {name}(", text)
+
+    # -- the detector itself, against a fixture ------------------------------
+
+    def test_an_unlisted_private_copy_is_reported(self):
+        errors = private_builder_errors(
+            ["sim/x/gen_x.py"], lambda p: "def pwl(points):\n    return 1\n", ok={})
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("sim/x/gen_x.py:pwl", errors[0])
+
+    def test_a_listed_private_copy_is_allowed(self):
+        self.assertEqual(
+            private_builder_errors(["sim/x/gen_x.py"], lambda p: "def pwl(points):\n    return 1\n",
+                                   ok={"sim/x/gen_x.py:pwl": "it formats times differently"}),
+            [])
+
+    def test_a_listed_private_copy_still_needs_a_reason(self):
+        errors = private_builder_errors(["sim/x/gen_x.py"], lambda p: "def pwl(points):\n    return 1\n",
+                                        ok={"sim/x/gen_x.py:pwl": "  "})
+        self.assertTrue(any("needs a reason" in e for e in errors), errors)
+
+    def test_a_generator_that_only_calls_the_shared_builder_is_clean(self):
+        self.assertEqual(
+            private_builder_errors(["sim/x/gen_x.py"],
+                                   lambda p: "x = gen_common.pwl(gen_common.level_pwl(e, 100, 2))\n",
+                                   ok={}),
+            [])
+
+    def test_a_stale_exemption_is_reported(self):
+        errors = private_builder_errors(["sim/x/gen_x.py"], lambda p: "def ns(ps):\n    return ps\n",
+                                        ok={"sim/x/gen_x.py:pwl": "gone now"})
+        self.assertTrue(any("definition that is gone" in e for e in errors), errors)
+
+    def test_gen_common_itself_is_not_its_own_private_copy(self):
+        # It matches the gen_*.py glob and defines both builders; it is the owner, not a copy.
+        self.assertEqual(
+            private_builder_errors([GEN_COMMON], lambda p: "def pwl(x):\n    return 1\n", ok={}),
+            [])
+
+    def test_an_exemption_for_an_untracked_path_is_reported(self):
+        errors = private_builder_errors([], lambda p: "", ok={"sim/gone/gen_gone.py:pwl": "r"})
+        self.assertTrue(any("no longer tracked" in e for e in errors), errors)
 
 
 if __name__ == "__main__":
