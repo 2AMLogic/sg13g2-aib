@@ -3,7 +3,7 @@
 An AIB Gen1-class die-to-die parallel I/O channel on IHP SG13G2, built to a
 ratified spec with every claim traced to a recorded result.
 
-Status as of 2026-11-13, `main` @ `4603363`.
+Status as of 2026-11-14, `main` @ `81f24a4`.
 
 The verdict of record is [`signoff/block-manifest.signoff.json`](signoff/block-manifest.signoff.json)
 (grader pinned at 0.9.0 in `signoff/KLT_VERSION`); the per-row table is
@@ -44,30 +44,26 @@ first rung not reached.
 
 ## Now
 
-Can start today; each is one pull request. Items 2 and 3 are in review.
+Can start today; each is one pull request. #260 is in build.
 
-1. **Convert `sim/redundancy-mux/gen_redundancy_mux.py` to the shared
-   write-or-check helper** (#256, ready). Done when `--check` exits 0 on an
-   unchanged tree and a mistyped flag exits 2 without regenerating.
-2. **Land the I/O-column slot order with both spares at one end** (#248, PR
-   #254 approved). Done when `layout/check_io_column.py` checks the slot order
-   against DR-0016 and the committed stream passes it.
-3. **Fix the append-only check's base commit and its treatment of a record's
-   README** (#255, PR #258 approved). Done when
-   `scripts/ci/check_sim_append_only.py` matches its own docstring.
-4. **Per-corner reading of the three failing Monte Carlo rows** (no issue
-   yet; seed drafted). `klt yield` pools the 45 corners, so the records do
-   not say which corners carry the T-10, T-15 and T-16 failures or how much
-   is systematic shift against mismatch. Done when a committed, generated
-   table gives per-corner mean, sigma and out-of-limit count for each row,
-   derived from the existing `sim/mc/records/` reports with no new simulation.
-5. **Bring the README status paragraph and ladder position in line with the
-   signoff record** (no issue yet; seed drafted). The README still says no
-   PVT or channel simulation exists and that I/O-cell LVS mismatches. Done
-   when both statements match the committed record.
-6. **Remove four stale `.gitignore` rules** (#260, proposal awaiting
-   promotion). Done when the rules are gone and the Yosys-log negation points
-   at `sim/rtl-synth/records`.
+1. **Per-corner reading of the three failing Monte Carlo rows** (#269).
+   `klt yield` pools the 45 corners, so the records do not say which corners
+   carry the T-10, T-15 and T-16 failures or how much is systematic shift
+   against mismatch. Done when a committed, generated table gives per-corner
+   mean, sigma and out-of-limit count for each row, derived from the existing
+   `sim/mc/records/` reports with no new simulation.
+2. **Bring the README status paragraph and ladder position in line with the
+   signoff record** (#270). The README still says no PVT or channel
+   simulation exists and that I/O-cell LVS mismatches. Done when both
+   statements match the committed record.
+3. **Remove four stale `.gitignore` rules** (#260, in build). Done when the
+   rules are gone and the Yosys-log negation points at
+   `sim/rtl-synth/records`.
+
+Recently landed: the `gen_redundancy_mux.py` strict-flag conversion and the
+PWL-helper consolidation it carried (#256, #257; PR #264), the I/O-column
+slot order with both spares at one end (#248, PR #254), and the append-only
+check's base commit and README treatment (#255, PR #258).
 
 ## Next
 
@@ -75,9 +71,9 @@ Can start today; each is one pull request. Items 2 and 3 are in review.
   (#246), then **re-synthesize and re-place-and-route and confirm the
   `tx_d0`/`tx_d1` path closes setup at 500 MHz** (#247). Both wait on PR
   #249, which carries the decision record placing the remap (closes #232).
-- **Re-run the item 7 analog extraction on the reordered stream** (#253),
-  after #248. Done when the `layout/pex/records/` citations bind the new
-  stream hash.
+- **Re-run the item 7 analog extraction on the reordered stream** (#253,
+  in build; unblocked by the #248 merge). Done when the
+  `layout/pex/records/` citations bind the new stream hash.
 - **Loopback follow-ups**, after #176 (PR #188): rename the `l1` port to
   what it selects (#181), draw and extract the L1 TopMetal2 loopback route
   (#182), fix the binding-corner label in `channel_eye_post` (#185).
@@ -90,8 +86,7 @@ Can start today; each is one pull request. Items 2 and 3 are in review.
 - **Grade T-03 (wires per direction) in the item 8 report**, after #248. Done
   when `measurements/row-evidence.json` cites an RTL and a layout record for
   N = 20 and the row no longer reads `not-yet-measured`. No issue yet.
-- **Consolidate the duplicated PWL stimulus helpers** (#257), after #256;
-  **pin the AIB 1.2 §3.3.1 shift pattern against the RTL** (#27), after #29.
+- **Pin the AIB 1.2 §3.3.1 shift pattern against the RTL** (#27), after #29.
 
 ## Later
 
