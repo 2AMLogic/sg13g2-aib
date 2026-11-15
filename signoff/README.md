@@ -265,7 +265,7 @@ pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defin
 account, including the two alternatives that were rejected rather than used, is in
 [`../layout/pex/README.md`](../layout/pex/README.md). Two further gaps found in the same
 bring-up are filed there too: #5492 (a dropped `options.osdi_preload`, worked around by naming
-a backend) and #5493 (one `--top` per run cannot express a link testbench, which is why the
+a backend) and #5494 (one `--top` per run cannot express a link testbench, which is why the
 `channel-eye` and `clock-path` rows have no bench here).
 
 The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`

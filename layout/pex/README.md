@@ -19,10 +19,16 @@ below). Both defects are reproduced by a committed record and filed upstream.
 **The deferred measurement is owned, not dropped.** Issue #81 closes with `7.analog` `unmet`;
 submitting the committed 45-corner requests and recording `delta[]` once the tool is fixed is
 tracked by **#226** (blocked by
-[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491) and
-[#5493](https://github.com/2AMLogic/klayout-tools/issues/5493)), which also owns the two
-acceptance criteria #81 leaves unmet: the per-corner schematic/extracted/delta rows and T-24's
-`PEX` leg. The upstream issues track the tool defects; #226 tracks this repo's re-run.
+[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491), with
+[#5494](https://github.com/2AMLogic/klayout-tools/issues/5494) narrowing what one fixed run
+can cover), which also owns the two acceptance criteria #81 leaves unmet: the per-corner
+schematic/extracted/delta rows and T-24's `PEX` leg. The blocking defect owns both criteria — every
+extracted leg dies at netlist load, so neither can produce a row while it is open — while
+the multi-top request blocks only the two link families (`channel-eye`
+T-01, T-09, T-15, T-16, T-18, T-26; `clock-path` T-17), which instantiate both channel ends
+in one netlist; T-24's `PEX` leg and the pin-leg rows run behind a single extracted `--top`
+and do not wait on it. The upstream issues track the tool defects; #226 tracks this repo's
+re-run.
 
 So this directory delivers the extraction evidence that does exist, the benches and requests
 the campaign needs, and the reproduction of what blocks it. **No claim is made here about any
@@ -188,8 +194,11 @@ column to get both ends in one top is 4320 devices over 45 corners of a 141 ns t
 new row coverage, and is not done.
 
 That limitation is filed upstream as a generic gap,
-[2AMLogic/klayout-tools#5493](https://github.com/2AMLogic/klayout-tools/issues/5493). It is the
-second reason the two link families carry no bench here yet: with defect 2 blocking every
+[2AMLogic/klayout-tools#5494](https://github.com/2AMLogic/klayout-tools/issues/5494); it was
+first filed as
+[#5493](https://github.com/2AMLogic/klayout-tools/issues/5493), which closed as docs-only on
+2026-11-13 — the one-`--top` limit is now documented in `klt`'s CLI docs, not removed. It is
+the second reason the two link families carry no bench here yet: with defect 2 blocking every
 extracted leg, there is nothing to validate a link bench against, and committing an unexercised
 one would be scaffolding presented as work. They stay declared gaps.
 
