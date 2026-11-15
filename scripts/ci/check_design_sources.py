@@ -16,7 +16,6 @@ Not covered here: the standard-cell liberty hash in the report
 Run `klt synthesize --check ... [--rerun]` locally for that (signoff/README.md).
 """
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
@@ -40,7 +39,7 @@ def klt_combined(paths) -> str:
     """klt's multi-source input digest: sha256 over the per-file hex digests,
     files sorted by path (klayout_tools._provenance._combined_content_hash)."""
     digests = [sha(p.read_bytes())[len("sha256:"):] for p in sorted(paths)]
-    return "sha256:" + hashlib.sha256("".join(digests).encode()).hexdigest()
+    return sha("".join(digests).encode())
 
 
 def load(path: Path):
