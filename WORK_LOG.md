@@ -4,6 +4,25 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-15
 
+- **PR #309**: ci: catch empty-directory and gitignored writes in the strict-flag refusal test
+- **PR #308**: ci: fail check_attested_paths on zero checked paths and require the declared hash_algorithm
+- **PR #306**: fix: verify evidence per-path pins without gating on the aggregate hash
+- **PR #305**: docs: re-point closed klayout-tools#5493 citations to open gap #5494
+- **PR #303**: ci: extend the manifest_pins guard to the scripts/ci generators
+- **PR #300**: fix: tolerate a request with no measurements; add --allow-empty-rows
+- **PR #298**: docs: state the graded T1 signoff status in the README, checked against the record
+- **PR #296**: ci: derive the strict-flag and freshness test subjects from tracked gen_*.py discovery
+- **PR #288**: ci: fail fast when a hash-bound attested path drifts from its envelope
+- **PR #268**: docs: roadmap as of 2026-11-13
+- **Issue #307** (closed): The strict-flag write assertion cannot see a gitignored or empty-directory write
+- **Issue #301** (closed): check_evidence_pins.py: a multi-source record with no aggregate content_hash skips its per-path pins entirely
+- **Issue #299** (closed): check_attested_paths.py: make its own assumptions loud (zero-paths-checked, declared hash_algorithm)
+- **Issue #292** (closed): The manifest-pin consolidation guard does not cover gen_*.py: a generator can regrow a private sha()
+- **Issue #287** (closed): layout/pex/README.md cites klayout-tools#5493 as an open blocker, but it closed 2026-11-13 (docs-only); the live capability gap is #5494
+- **Issue #284** (closed): Guard against docs PRs that edit README.md without re-attesting T1 item 10
+- **Issue #281** (closed): run_dc_static.sh esd-diode leg cannot write a record: a KeyError today, and #267's empty-rows refusal once that is fixed
+- **Issue #270** (closed): README status and maturity-ladder position contradict the committed signoff record
+- **Issue #266** (closed): Derive the strict-flag test's generator set in test_checkers.py: the hand-kept allowlist cannot contain a failing generator
 - **PR #297**: ci: check every cited evidence record binds the shipped stream
 - **Issue #273** (closed): Pin content_hash on stream-bound signoff evidence so a stale input binding fails a gate
 - **PR #295**: ci: fail when a tracked record file is matched by an ignore rule
