@@ -2,8 +2,28 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-15
+
+- **PR #290**: fix(sim): remove an aborted record dir and refuse record directories with no record.json
+- **Issue #276** (closed): A batch run aborted after the record dir is created leaves a committable records/ directory with no record.json
+- **PR #289**: refactor: define the manifest pin contract once in scripts/ci/manifest_pins.py
+- **Issue #283** (closed): Define the manifest pin check once: two checkers hand-keep the derived_inputs contract and four define sha()
+- **PR #286**: refactor: drop dead placement/router plumbing from gen_io_column
+- **Issue #274** (closed): Remove the dead placement/router plumbing in layout/gen_io_column.py: the _WIDTH global carries two constants
+- **PR #279**: fix(sim): parse gen_t16attr.py's OUTDIR with argparse so --check exits 2
+- **Issue #271** (closed): gen_t16attr.py takes --check as an output directory instead of a flag
+- **PR #272**: evidence(pex): re-bind item 7.analog extraction to the post-#248 stream
+- **Issue #253** (closed): pex: re-run the item 7.analog extraction on the post-#248 stream (the record binds the pre-#248 hash)
+- **PR #262**: fix(gitignore): un-ignore rtl-synth Yosys logs, drop two dead rules, re-aim stale comments
+- **Issue #260** (closed): Remove four .gitignore rules for paths this repo never had, and point the Yosys-log negation at sim/rtl-synth/records
+
 ### 2026-11-14
 
+- **PR #282**: fix(layout): parse attest_item2.py flags strictly so a typo cannot rewrite the envelope
+- **Issue #265** (closed): layout/attest_item2.py: strict flag parsing -- a mistyped --check rewrites the committed signoff attestation
+- **PR #275**: fix(sim): parse channel_eye_post flags strictly and refuse an ungraded summary
+- **Issue #267** (closed): channel_eye_post.py: lenient flag parsing and an unguarded empty rows summary commit a record with no verdicts
+- **Issue #257** (closed): Consolidate duplicated PWL stimulus helpers into sim/gen_common.py
 - **PR #264**: fix(sim): parse gen_redundancy_mux flags strictly and share the PWL builders
 - **Issue #256** (closed): Convert gen_redundancy_mux.py to the shared write-or-check helper: it still regenerates on a mistyped --check
 - **PR #258**: fix(ci): base the append-only check on the default branch, not the pre-push head
