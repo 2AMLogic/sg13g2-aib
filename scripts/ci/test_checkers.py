@@ -567,22 +567,22 @@ class Item7SdfTests(unittest.TestCase):
                 shutil.copy(f, root / "signoff/attest/item7-digital" / f.name)
             if mutate:
                 mutate(root)
-            return run(SDF7, "--root", root).returncode
+            return run(SDF7, "--root", root)
 
     def test_good(self):
-        self.assertEqual(self.check(), 0)
+        self.assertEqual(self.check().returncode, 0)
 
     def test_edited_derived_sdf_fails(self):
         def edit(r):
             with open(r / "signoff/attest/item7-digital/aib_datapath_route.tb.sdf", "a") as f:
                 f.write("\n")
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
 
     def test_edited_source_sdf_fails(self):
         def edit(r):
             with open(r / "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf", "a") as f:
                 f.write("\n")
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
 
     def test_stale_pin_fails(self):
         def edit(r):
@@ -590,7 +590,7 @@ class Item7SdfTests(unittest.TestCase):
             m = json.loads(p.read_text())
             m["derived_inputs"]["7.digital"]["files"][0]["content_hash"] = "sha256:" + "0" * 64
             p.write_text(json.dumps(m))
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
 
     def test_missing_pins_fail(self):
         def edit(r):
@@ -598,7 +598,18 @@ class Item7SdfTests(unittest.TestCase):
             m = json.loads(p.read_text())
             del m["derived_inputs"]
             p.write_text(json.dumps(m))
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
+
+    def test_missing_output_file_is_reported_not_crashed(self):
+        # The pre-consolidation checker read a pinned output unguarded, so an
+        # absent file died in a traceback instead of reporting it (#283). The
+        # exit code alone cannot tell those apart (both are 1); the stderr can.
+        def edit(r):
+            (r / "signoff/attest/item7-digital/aib_datapath_route.tb.sdf").unlink()
+        r = self.check(edit)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("file is missing", r.stderr)
+        self.assertNotIn("Traceback", r.stderr)
 
 
 class PnrPinTests(unittest.TestCase):
@@ -1268,27 +1279,27 @@ PRIVATE_BUILDERS_OK = {
 }
 
 
-def private_builder_errors(tracked, read_text, ok=None):
-    """Return a sorted list of `gen_*.py` definitions that shadow a gen_common builder.
+def shadowed_helper_errors(tracked, read_text, owner, names, glob_pattern, table, ok):
+    """Return a sorted list of definitions that shadow a helper `owner` already defines.
 
-    Pure: the tracked set, the reader and the exemption table are all passed in, so the
-    detector can be exercised against a fixture without touching the real tree.
+    Pure: the tracked set, the reader, the owning module, the guarded names and
+    their file glob, the exemption table and its name are all passed in, so each
+    guard can be exercised against a fixture without touching the real tree.
     """
-    ok = PRIVATE_BUILDERS_OK if ok is None else ok
     tracked = set(tracked)
-    defs = re.compile(r"^def (%s)\(" % "|".join(SHARED_BUILDERS), re.M)
+    defs = re.compile(r"^def (%s)\(" % "|".join(names), re.M)
     errors = []
     for path in sorted(q for q in tracked
-                       if q != GEN_COMMON                      # the module that owns them
-                       and fnmatch.fnmatch(posixpath.basename(q), "gen_*.py")):
+                       if q != owner                        # the module that owns them
+                       and fnmatch.fnmatch(posixpath.basename(q), glob_pattern)):
         for name in defs.findall(read_text(path)):
             key = f"{path}:{name}"
             if key in ok:
                 if not ok[key].strip():
-                    errors.append(f"{key}: PRIVATE_BUILDERS_OK entry needs a reason")
+                    errors.append(f"{key}: {table} entry needs a reason")
                 continue
-            errors.append(f"{key}: a private copy of a sim/gen_common.py builder -- import it "
-                          "instead, or add a PRIVATE_BUILDERS_OK entry saying how it differs")
+            errors.append(f"{key}: a private copy of a {owner} helper -- import it "
+                          f"instead, or add a {table} entry saying how it differs")
     for key in sorted(ok):
         path, _, name = key.rpartition(":")
         if path not in tracked:
@@ -1296,6 +1307,13 @@ def private_builder_errors(tracked, read_text, ok=None):
         elif f"def {name}(" not in read_text(path):
             errors.append(f"{key}: entry names a definition that is gone; drop it")
     return sorted(errors)
+
+
+def private_builder_errors(tracked, read_text, ok=None):
+    """Return a sorted list of `gen_*.py` definitions that shadow a gen_common builder."""
+    return shadowed_helper_errors(tracked, read_text, GEN_COMMON, SHARED_BUILDERS,
+                                  "gen_*.py", "PRIVATE_BUILDERS_OK",
+                                  PRIVATE_BUILDERS_OK if ok is None else ok)
 
 
 class NoPrivateCopyOfASharedBuilderTests(unittest.TestCase):
@@ -1358,6 +1376,77 @@ class NoPrivateCopyOfASharedBuilderTests(unittest.TestCase):
     def test_an_exemption_for_an_untracked_path_is_reported(self):
         errors = private_builder_errors([], lambda p: "", ok={"sim/gone/gen_gone.py:pwl": "r"})
         self.assertTrue(any("no longer tracked" in e for e in errors), errors)
+
+
+# ---------------------------------------------------------------------------
+# No checker keeps a private copy of a manifest_pins helper (#283)
+#
+# manifest_pins.py is the one definition of the derived_inputs pin contract;
+# before #283 two checkers each hand-kept a sha() and a pin loop and no test
+# compared them against each other. This is the #256 guard again, scoped to the
+# check_*.py family: a tracked check_*.py may not define a helper manifest_pins
+# already owns, unless it is listed below with the reason its version genuinely
+# differs. The generators keep their own guard above.
+# ---------------------------------------------------------------------------
+
+MANIFEST_PINS = "scripts/ci/manifest_pins.py"
+SHARED_PIN_HELPERS = ("sha", "manifest_block", "verify_pins")
+
+# "<path>:<name>" -> why this checker's own version is not the shared one.
+PIN_HELPERS_OK = {}
+
+
+def private_pin_helper_errors(tracked, read_text, ok=None):
+    """Return a sorted list of `check_*.py` definitions that shadow a manifest_pins helper."""
+    return shadowed_helper_errors(tracked, read_text, MANIFEST_PINS, SHARED_PIN_HELPERS,
+                                  "check_*.py", "PIN_HELPERS_OK",
+                                  PIN_HELPERS_OK if ok is None else ok)
+
+
+class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
+    """#283: the manifest-pin consolidation must not quietly lapse either."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tracked = git(REPO, "ls-files").splitlines()
+
+    def read(self, path):
+        return (REPO / path).read_text()
+
+    def test_no_tracked_checker_shadows_a_manifest_pins_helper(self):
+        errors = private_pin_helper_errors(self.tracked, self.read)
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    def test_manifest_pins_actually_defines_every_name_this_test_guards(self):
+        # Otherwise the guard would pass by guarding nothing.
+        text = (REPO / MANIFEST_PINS).read_text()
+        for name in SHARED_PIN_HELPERS:
+            self.assertIn(f"def {name}(", text)
+
+    # -- the detector, against a fixture --------------------------------------
+
+    def test_an_unlisted_private_copy_is_reported(self):
+        errors = private_pin_helper_errors(
+            ["scripts/ci/check_x.py"], lambda p: "def sha(data):\n    return 1\n")
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("scripts/ci/check_x.py:sha", errors[0])
+
+    def test_a_checker_that_only_imports_the_shared_helper_is_clean(self):
+        self.assertEqual(
+            private_pin_helper_errors(["scripts/ci/check_x.py"],
+                                      lambda p: "from manifest_pins import sha\nsha(b'x')\n"),
+            [])
+
+    def test_the_guard_is_scoped_to_the_check_family(self):
+        self.assertEqual(
+            private_pin_helper_errors(["scripts/ci/gen_x.py"],
+                                      lambda p: "def sha(d):\n    return 1\n"),
+            [])
+
+    def test_a_stale_exemption_is_reported(self):
+        errors = private_pin_helper_errors(["scripts/ci/check_x.py"], lambda p: "",
+                                           ok={"scripts/ci/check_x.py:sha": "gone now"})
+        self.assertTrue(any("definition that is gone" in e for e in errors), errors)
 
 
 if __name__ == "__main__":
