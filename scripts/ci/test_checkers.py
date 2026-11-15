@@ -28,8 +28,11 @@ REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
 
-# The eight generators that share the one write-or-check helper (#227, #239, #256), each
-# with one of its committed outputs, used to assert that a refused run writes nothing.
+# The strict-flag subjects: each generator is keyed to one committed output it writes,
+# used to assert that a refused run writes nothing. Most share the one write-or-check
+# helper (#227, #239, #256); gen_specs.py parses bare instead, because regenerating its
+# outputs needs the pinned klt environment (#277). Strict flags are the property under
+# test here, not the helper.
 GENERATORS = {
     "sim/channel-eye/gen_channel_eye.py": "sim/channel-eye/prbs7_stim.inc",
     "sim/clock-path/gen_clock_path.py": "sim/clock-path/clock_stim.inc",
@@ -39,6 +42,7 @@ GENERATORS = {
     "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
     "layout/lvs/gen_reference.py": "layout/lvs/aib_io_tx.ref.spice",
     "layout/pex/gen_pex_benches.py": "layout/pex/benches/extraction.json",
+    "layout/erc/gen_specs.py": "layout/erc/io_cells.erc-spec.json",
 }
 
 # layout/attest_item2.py is not one of them: it writes no generated file, it builds a
@@ -861,8 +865,10 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
     Three of the six used to test `"--check" in argv`, so any other argument meant "write":
     `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
     gen_redundancy_mux.py was added after that consolidation and was the last copy of the
-    loop left (#256); the table above is now the eight generators that share the helper.
-    layout/attest_item2.py was the last site of the pattern anywhere in the tree (#265).
+    loop left (#256). layout/attest_item2.py was the last site of the pattern anywhere in
+    the tree (#265); gen_specs.py then joined the table as the last generator that read
+    no argv at all, parsing bare because regenerating its two committed specs needs the
+    pinned klt environment (#277).
     """
 
     def test_attest_item2_refuses_an_unknown_flag_and_writes_no_envelope(self):
@@ -888,6 +894,16 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                 self.assertEqual(r.returncode, 2, f"{gen} --chek: {r.stdout}{r.stderr}")
                 self.assertEqual((REPO / generated).stat().st_mtime_ns, before,
                                  f"{gen} --chek rewrote {generated}")
+
+    def test_the_gen_specs_exemption_does_not_also_claim_loose_flags(self):
+        # #277 split the two properties this table's "generator with no check mode"
+        # reason used to answer at once. The reason has to state why there is no check
+        # mode -- the pinned klt environment owns regeneration -- without leaving a
+        # reader to infer that the script therefore accepts any argument.
+        reason = EXEMPT["layout/erc/gen_specs.py"]
+        self.assertIn("no check mode", reason)
+        self.assertIn("GENERATORS", reason)
+        self.assertIn("layout/erc/gen_specs.py", GENERATORS)
 
 
 # ---------------------------------------------------------------------------
@@ -947,7 +963,11 @@ EXEMPT = {
     "layout/check_io_column.py":
         "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
     "layout/gen_io_column.py": "generator with no check mode",
-    "layout/erc/gen_specs.py": "generator with no check mode",
+    "layout/erc/gen_specs.py":
+        "generator with no check mode: its two ERC specs are committed signoff inputs "
+        "regenerated only at a klt re-pin (signoff/README.md:429), so proving them fresh "
+        "would need the pinned klt environment no CI job runs. Flag strictness is a "
+        "separate property and is asserted -- see GENERATORS (#277)",
     "sim/channel-eye/gen_t16attr.py": "generator with no check mode",
     "sim/gen_common.py": "the shared write-or-check helper (#227); imported, never run",
 }
