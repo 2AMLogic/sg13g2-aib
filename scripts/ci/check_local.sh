@@ -129,6 +129,14 @@ if [ "$want_evidence" = 1 ]; then
   run "Check the committed routed SPEF and DEF match their manifest pins" \
     python3 -I scripts/ci/check_pnr_pins.py
 
+  # The #260 defect at class level: a tracked evidence file that an ignore
+  # rule still matches is a record a plain `git add` silently drops (its
+  # committed siblings were only tracked because someone force-added them).
+  # One hand-written negation per evidence family, so every rename or new
+  # record family can re-open the hole; this is the check that catches it.
+  run "Check no tracked record file is matched by an ignore rule" \
+    python3 -I scripts/ci/check_record_not_ignored.py
+
   # CI passes a base SHA in BASE plus the event facts the checker needs to
   # choose between it and the merge-base with the default branch (#255; see the
   # checker's docstring). Locally there is no event, so fall back to the
