@@ -94,6 +94,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/gen_item6_digital.py
   run "Check the Monte Carlo requests against the generator" \
     python3 -I sim/mc/gen_mc.py --check
+  run "Check the per-corner Monte Carlo tables against the committed records" \
+    python3 -I sim/mc/gen_per_corner.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
 
