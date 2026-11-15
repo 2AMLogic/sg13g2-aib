@@ -32,39 +32,7 @@ REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
 
-# The strict-flag subjects: each generator is keyed to one committed output it writes,
-# used to assert that a refused run writes nothing. Most share the one write-or-check
-# helper (#227, #239, #256); gen_specs.py parses bare instead, because regenerating its
-# outputs needs the pinned klt environment (#277). Strict flags are the property under
-# test here, not the helper.
-GENERATORS = {
-    "sim/channel-eye/gen_channel_eye.py": "sim/channel-eye/prbs7_stim.inc",
-    "sim/clock-path/gen_clock_path.py": "sim/clock-path/clock_stim.inc",
-    "sim/redundancy-mux/gen_redundancy_mux.py": "sim/redundancy-mux/redundancy_mux_stim.inc",
-    "sim/mc/capture_window/gen_t19.py": "sim/mc/capture_window/tb_t19.cir",
-    "sim/mc/gen_mc.py": "sim/mc/tb_t10_ctl.cir",
-    "sim/mc/gen_per_corner.py": "sim/mc/per_corner.md",
-    "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
-    "layout/lvs/gen_reference.py": "layout/lvs/aib_io_tx.ref.spice",
-    "layout/pex/gen_pex_benches.py": "layout/pex/benches/extraction.json",
-    "layout/erc/gen_specs.py": "layout/erc/io_cells.erc-spec.json",
-}
-
-# Generators with no committed output, which is why they cannot join GENERATORS above:
-# that table keys on one committed file's mtime to show a refused run wrote nothing. The
-# value here is instead one file a good run does write into the OUTDIR it is given, so
-# the refusal cannot be passed by a script that no longer works at all.
-#
-# A table of its own, not a corner of EXEMPT. EXEMPT answers "has no check mode", which
-# until #271 also meant "is not subject to strict flag parsing"; gen_t16attr.py is now
-# the first entry for which the two come apart -- it has no check mode (its outputs are
-# gitignored, see its EXEMPT reason) and it parses strictly. So a strict-flag subject
-# set derived off EXEMPT (#266) would filter out exactly the generator this table covers.
-STRICT_WITHOUT_COMMITTED_OUTPUT = {
-    "sim/channel-eye/gen_t16attr.py": "request_t16attr_ch_ss.json",
-}
-
-# layout/attest_item2.py is not one of them: it writes no generated file, it builds a
+# layout/attest_item2.py is not a generator: it writes no generated file, it builds a
 # `klt signoff --attest 2` command line. Its write targets are the two committed signoff
 # envelopes, which is why its own mistyped-flag fall-through was worse than a stale bench
 # file (#265) -- and why it gets an assertion of its own below.
@@ -1165,12 +1133,27 @@ class PvtFullTableTests(unittest.TestCase):
                          {"tt": "dio_tt", "ss": "dio_ss", "ff": "dio_ff",
                           "sf": "dio_tt", "fs": "dio_tt"})
 
-    def test_every_generator_is_fresh_against_the_table(self):
-        for gen in ("sim/channel-eye/gen_channel_eye.py", "sim/clock-path/gen_clock_path.py",
-                    "sim/mc/gen_mc.py", "sim/dc-static/gen_dc_static.py",
-                    "sim/redundancy-mux/gen_redundancy_mux.py"):
-            r = run(REPO / gen, "--check")
+    def test_every_check_capable_generator_is_fresh(self):
+        # Derived, not hand-kept (#266): every tracked gen_*.py that has a --check
+        # flag must report fresh. The filter is EXEMPT plus NO_CHECK_FLAG -- the two
+        # freshness questions -- never STRICTNESS_UNASSERTABLE, which answers flag
+        # strictness, a different property.
+        for gen in FRESHNESS_SUBJECTS:
+            r = run(REPO / gen, "--check", cwd=REPO)
             self.assertEqual(r.returncode, 0, f"{gen} --check: {r.stdout}{r.stderr}")
+
+    def test_no_check_flag_entries_are_real_and_reasoned(self):
+        # The freshness exemption is hand-kept, so it gets the completeness
+        # treatment too: every entry still tracked, with a stated reason. And it is
+        # a freshness exemption only -- an entry has no --check flag yet still
+        # parses strictly, so it stays a strict-flag subject (#266).
+        tracked = set(git(REPO, "ls-files").splitlines())
+        for path, reason in NO_CHECK_FLAG.items():
+            with self.subTest(path=path):
+                self.assertIn(path, tracked, "NO_CHECK_FLAG entry is no longer tracked; drop it")
+                self.assertTrue(reason.strip(), "NO_CHECK_FLAG entry needs a reason")
+                self.assertNotIn(path, FRESHNESS_SUBJECTS)
+                self.assertIn(path, STRICT_FLAG_SUBJECTS)
 
     def test_only_shape_restricts_the_grid(self):
         self.assertEqual([e["name"] for e in self.pvt.process(only=("tt",))], ["mos_tt"])
@@ -1292,13 +1275,17 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
 
     Three of the six used to test `"--check" in argv`, so any other argument meant "write":
     `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
-    gen_redundancy_mux.py was added after that consolidation and was the last copy of the
-    loop left (#256). layout/attest_item2.py was the last site of the pattern anywhere
-    in the tree (#265); gen_specs.py joined GENERATORS as the last generator that read
-    no argv at all, parsing bare because regenerating its two committed specs needs the
-    pinned klt environment (#277). STRICT_WITHOUT_COMMITTED_OUTPUT carries the
-    generators that parse strictly without sharing the helper, which have no committed
-    output to compare an mtime on (#271).
+    The consolidation fixed the tree (#227, #239, #256, #265); gen_specs.py read no
+    argv at all, parsing bare because regenerating its two committed specs needs the
+    pinned klt environment, until #277 moved its klayout import into the call path.
+    #266 fixed the test: its subjects used to be hand-kept tables of generators already
+    known to pass (GENERATORS, plus STRICT_WITHOUT_COMMITTED_OUTPUT for the ones with
+    no committed output to key an mtime on, #271), so a generator could join the tree
+    unasserted until its author remembered the table -- the exact rot the check-list
+    completeness test below exists for (#173, #219).
+    Subjects are now every tracked gen_*.py minus STRICTNESS_UNASSERTABLE, and a refused
+    run must leave `git status --porcelain` byte-identical -- not merely leave one named
+    output's mtime alone.
     """
 
     def test_attest_item2_refuses_an_unknown_flag_and_writes_no_envelope(self):
@@ -1317,62 +1304,85 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                                  before, f"{ATTEST_ITEM2} {' '.join(argv)} rewrote an envelope")
 
     def test_an_unknown_flag_exits_2_and_writes_nothing(self):
-        for gen, generated in GENERATORS.items():
+        # The tree snapshot, not one named output's mtime, is the write assertion
+        # (#266): it sees every output and any untracked byproduct -- a stray
+        # `--chek/` directory was invisible to the mtime check. cwd is pinned to the
+        # repo so a generator writing relative to the process cwd lands inside the
+        # snapshot.
+        for gen in STRICT_FLAG_SUBJECTS:
             with self.subTest(gen=gen):
-                before = (REPO / generated).stat().st_mtime_ns
-                r = run(REPO / gen, "--chek")
+                before = git(REPO, "status", "--porcelain")
+                r = run(REPO / gen, "--chek", cwd=REPO)
                 self.assertEqual(r.returncode, 2, f"{gen} --chek: {r.stdout}{r.stderr}")
-                self.assertEqual((REPO / generated).stat().st_mtime_ns, before,
-                                 f"{gen} --chek rewrote {generated}")
+                self.assertEqual(git(REPO, "status", "--porcelain"), before,
+                                 f"{gen} --chek wrote to the tree")
+
+    def test_strictness_unassertable_entries_are_real_and_reasoned(self):
+        # The one hand-kept table left in the subject selection is the exemption, so
+        # it gets the completeness treatment: every entry still tracked, still a
+        # gen_*.py script, with a reason that says something.
+        tracked = set(git(REPO, "ls-files").splitlines())
+        for path, reason in STRICTNESS_UNASSERTABLE.items():
+            with self.subTest(path=path):
+                self.assertIn(path, tracked,
+                              "STRICTNESS_UNASSERTABLE entry is no longer tracked; drop it")
+                self.assertTrue(fnmatch.fnmatch(posixpath.basename(path), "gen_*.py"),
+                                "STRICTNESS_UNASSERTABLE entry is not a gen_*.py script")
+                self.assertTrue(reason.strip(),
+                                "STRICTNESS_UNASSERTABLE entry needs a reason")
 
     def test_the_gen_specs_exemption_does_not_also_claim_loose_flags(self):
-        # #277 split the two properties this table's "generator with no check mode"
-        # reason used to answer at once. The reason has to state why there is no check
-        # mode -- the pinned klt environment owns regeneration -- without leaving a
-        # reader to infer that the script therefore accepts any argument.
+        # #277 split the two properties the "generator with no check mode" reason
+        # used to answer at once, then moved gen_specs.py's klayout import into the
+        # call path: the exemption states no check mode and nothing more, and strict
+        # parsing is asserted for it with every other derived subject (#266).
         reason = EXEMPT["layout/erc/gen_specs.py"]
         self.assertIn("no check mode", reason)
-        self.assertIn("GENERATORS", reason)
-        self.assertIn("layout/erc/gen_specs.py", GENERATORS)
+        self.assertNotIn("layout/erc/gen_specs.py", STRICTNESS_UNASSERTABLE)
+        self.assertIn("layout/erc/gen_specs.py", STRICT_FLAG_SUBJECTS)
 
-    def test_a_generator_without_committed_output_refuses_and_creates_nothing(self):
+    def test_gen_t16attr_refuses_every_argument_shape(self):
         """#271: gen_t16attr.py read its OUTDIR off argv[0], so every argument was a
         valid output path -- `--check` exited 0 having checked nothing and left a
-        directory named `--check` behind. Run from an empty cwd, so a stray relative
-        path shows up as a file in it rather than landing in the repo.
+        directory named `--check` behind. The derived test above pins `--chek` for it
+        like every other subject; this one keeps the wider argument shapes that defect
+        needed. Run from an empty cwd, so a stray relative path shows up as a file in
+        it rather than landing in the repo.
         """
-        for gen in STRICT_WITHOUT_COMMITTED_OUTPUT:
-            # no argument at all; an unknown flag; `--check` alone and after a good
-            # OUTDIR (ignoring a trailing flag is the same silent accept).
-            for argv in ([], ["--chek", "out"], ["--check"], ["out", "--check"]):
-                with self.subTest(gen=gen, argv=argv), tempfile.TemporaryDirectory() as t:
-                    r = run(REPO / gen, *argv, cwd=t)
-                    self.assertEqual(r.returncode, 2,
-                                     f"{gen} {' '.join(argv)}: {r.stdout}{r.stderr}")
-                    self.assertEqual(sorted(q.name for q in Path(t).iterdir()), [],
-                                     f"{gen} {' '.join(argv)} created something")
+        gen = "sim/channel-eye/gen_t16attr.py"
+        # no argument at all; an unknown flag; `--check` alone and after a good
+        # OUTDIR (ignoring a trailing flag is the same silent accept).
+        for argv in ([], ["--chek", "out"], ["--check"], ["out", "--check"]):
+            with self.subTest(argv=argv), tempfile.TemporaryDirectory() as t:
+                r = run(REPO / gen, *argv, cwd=t)
+                self.assertEqual(r.returncode, 2,
+                                 f"{gen} {' '.join(argv)}: {r.stdout}{r.stderr}")
+                self.assertEqual(sorted(q.name for q in Path(t).iterdir()), [],
+                                 f"{gen} {' '.join(argv)} created something")
 
-    def test_a_generator_without_committed_output_still_writes_when_given_an_outdir(self):
+    def test_gen_t16attr_still_writes_when_given_an_outdir(self):
         # The refusals above must not be bought by breaking the generator: its one
         # positional OUTDIR is load-bearing (sim/channel-eye/run_t16attr.sh:25).
-        for gen, written in STRICT_WITHOUT_COMMITTED_OUTPUT.items():
-            with self.subTest(gen=gen), tempfile.TemporaryDirectory() as t:
-                r = run(REPO / gen, t)
-                self.assertEqual(r.returncode, 0, f"{gen} OUTDIR: {r.stdout}{r.stderr}")
-                self.assertTrue((Path(t) / written).is_file(),
-                                f"{gen} OUTDIR did not write {written}")
+        gen = "sim/channel-eye/gen_t16attr.py"
+        written = "request_t16attr_ch_ss.json"
+        with tempfile.TemporaryDirectory() as t:
+            r = run(REPO / gen, t)
+            self.assertEqual(r.returncode, 0, f"{gen} OUTDIR: {r.stdout}{r.stderr}")
+            self.assertTrue((Path(t) / written).is_file(),
+                            f"{gen} OUTDIR did not write {written}")
 
     def test_the_strict_flag_subjects_are_not_decided_by_exempt_membership(self):
-        # #266 proposes deriving this test's subjects from discover_candidates()
-        # filtered against EXEMPT. That filter on its own would drop every generator
-        # in STRICT_WITHOUT_COMMITTED_OUTPUT -- they are exempt from the check list for
-        # having no check mode, which since #271 says nothing about flag strictness.
-        # Whoever makes that change has to keep these subjects, not exclude them.
-        subjects = set(GENERATORS) | set(STRICT_WITHOUT_COMMITTED_OUTPUT)
-        self.assertTrue(subjects & set(EXEMPT),
+        # #266 derives these subjects from discovery, filtered by
+        # STRICTNESS_UNASSERTABLE -- the only reason that actually blocks the
+        # assertion. The filter must never be EXEMPT, which answers "has no check
+        # mode", a question separate from flag strictness since #271: gen_t16attr.py
+        # is the witness, both EXEMPT from the check list and a strict-flag subject.
+        self.assertTrue(set(STRICT_FLAG_SUBJECTS) & set(EXEMPT),
                         "no EXEMPT generator is a strict-flag subject any more: being "
                         "EXEMPT has become what decides whether strictness is asserted, "
                         "which is the coupling #271 split apart")
+        self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_FLAG_SUBJECTS)
+        self.assertNotIn("layout/gen_io_column.py", STRICT_FLAG_SUBJECTS)
 
 
 # ---------------------------------------------------------------------------
@@ -1407,15 +1417,15 @@ CANDIDATE_GLOBS = ("gen_*.py", "check_*.py", "test_*.py", "test_*.sh")
 COVERED = {
     "sim/channel-eye/gen_channel_eye.py": (
         "scripts/ci/test_checkers.py",
-        "--check runs in test_every_generator_is_fresh_against_the_table",
+        "--check runs in test_every_check_capable_generator_is_fresh",
     ),
     "sim/clock-path/gen_clock_path.py": (
         "scripts/ci/test_checkers.py",
-        "--check runs in test_every_generator_is_fresh_against_the_table",
+        "--check runs in test_every_check_capable_generator_is_fresh",
     ),
     "sim/redundancy-mux/gen_redundancy_mux.py": (
         "scripts/ci/test_checkers.py",
-        "--check runs in test_every_generator_is_fresh_against_the_table",
+        "--check runs in test_every_check_capable_generator_is_fresh",
     ),
     "sim/mc/capture_window/gen_t19.py": (
         "sim/mc/capture_window/test_t19.py",
@@ -1436,14 +1446,54 @@ EXEMPT = {
         "generator with no check mode: its two ERC specs are committed signoff inputs "
         "regenerated only at a klt re-pin (signoff/README.md:429), so proving them fresh "
         "would need the pinned klt environment no CI job runs. Flag strictness is a "
-        "separate property and is asserted -- see GENERATORS (#277)",
+        "separate property and is asserted -- it stays a strict-flag subject (#266)",
     "sim/channel-eye/gen_t16attr.py":
         "generator with no check mode: its four request JSONs are gitignored "
         "(.gitignore:24-27) and run_t16attr.sh regenerates them before every run, so no "
         "committed tree exists for a --check to prove fresh. Flag strictness is a "
-        "separate property and is asserted -- see STRICT_WITHOUT_COMMITTED_OUTPUT (#271)",
+        "separate property and is asserted -- it stays a strict-flag subject (#271, #266)",
     "sim/gen_common.py": "the shared write-or-check helper (#227); imported, never run",
 }
+
+# Generators for which strict flag parsing cannot be asserted in PDK-free CI, with the
+# only reason that can excuse an entry: the script cannot be run here at all. The
+# strict-flag test above derives its subjects as every tracked gen_*.py minus this
+# table (#266) -- discovered, not hand-kept, so a generator that joins the tree
+# without an entry here is asserted, not silently untested. That is the same rule the
+# check-list completeness test below applies to checkers (#173, #219). It is a
+# different question from EXEMPT above, which answers "has no check mode" (#271
+# split the two): gen_t16attr.py is EXEMPT and still a subject.
+STRICTNESS_UNASSERTABLE = {
+    "layout/gen_io_column.py":
+        "imports klayout.db at module import; needs the pinned klt environment, "
+        "like layout/check_io_column.py",
+    "sim/gen_common.py":
+        "the shared write-or-check helper (#227); imported, never run",
+}
+
+# gen_*.py candidates the freshness test cannot run `--check` on, with the reason.
+# EXEMPT covers the ones with nothing committed to check; this table covers "the
+# check is the default mode" -- and the listed-outright case, since the completeness
+# check below refuses a table entry for a file check_local.sh runs itself. A
+# freshness-exemption reason only: every entry still parses strictly and stays a
+# strict-flag subject (#266).
+NO_CHECK_FLAG = {
+    "scripts/ci/gen_item6_digital.py":
+        "no --check flag: checking is its default mode and --regenerate rewrites; "
+        "listed outright in check_local.sh, so it cannot carry an EXEMPT entry",
+}
+
+
+def gen_scripts(tracked):
+    """Every tracked path whose basename matches gen_*.py: the generator-subject pool."""
+    return sorted(p for p in tracked
+                  if fnmatch.fnmatch(posixpath.basename(p), "gen_*.py"))
+
+
+TRACKED_GEN_SCRIPTS = gen_scripts(git(REPO, "ls-files").splitlines())
+STRICT_FLAG_SUBJECTS = [p for p in TRACKED_GEN_SCRIPTS if p not in STRICTNESS_UNASSERTABLE]
+FRESHNESS_SUBJECTS = [p for p in TRACKED_GEN_SCRIPTS
+                      if p not in set(EXEMPT) | set(NO_CHECK_FLAG)]
 
 
 def strip_sh_comments(text):
@@ -1561,11 +1611,11 @@ class CheckListCompletenessTests(unittest.TestCase):
     def test_the_no_check_mode_exemption_does_not_also_claim_loose_flags(self):
         # #271 split two properties this table used to answer at once. The reason has
         # to state why there is no check mode -- nothing committed to check -- without
-        # leaving a reader to infer that the script therefore accepts any argument.
+        # leaving a reader to infer that the script therefore accepts any argument:
+        # gen_t16attr.py parses strictly and stays a strict-flag subject (#266).
         reason = EXEMPT["sim/channel-eye/gen_t16attr.py"]
         self.assertIn("gitignored", reason)
-        self.assertIn("STRICT_WITHOUT_COMMITTED_OUTPUT", reason)
-        self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_WITHOUT_COMMITTED_OUTPUT)
+        self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_FLAG_SUBJECTS)
 
     def test_attest_item2_is_outside_the_discovery_set(self):
         # Stated in the comment above: it matches no glob, and needs pinned klt.
