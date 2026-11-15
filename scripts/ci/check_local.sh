@@ -94,6 +94,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/gen_item6_digital.py
   run "Check the Monte Carlo requests against the generator" \
     python3 -I sim/mc/gen_mc.py --check
+  run "Check the per-corner Monte Carlo tables against the committed records" \
+    python3 -I sim/mc/gen_per_corner.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
 
@@ -128,6 +130,23 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_item7_sdf.py
   run "Check the committed routed SPEF and DEF match their manifest pins" \
     python3 -I scripts/ci/check_pnr_pins.py
+
+  # The #248 incident: a stream regeneration left the cited pex reports
+  # declaring the pre-regeneration input hash and the grader re-graded
+  # byte-identically (#273). This walks the manifest citations -- not a
+  # records/ glob, which would flag the uncited stale and probe records --
+  # and fails when a cited record's declared input hash is not the shipped
+  # stream's sha256.
+  run "Check every cited evidence record binds the shipped stream" \
+    python3 -I scripts/ci/check_evidence_pins.py
+
+  # The #260 defect at class level: a tracked evidence file that an ignore
+  # rule still matches is a record a plain `git add` silently drops (its
+  # committed siblings were only tracked because someone force-added them).
+  # One hand-written negation per evidence family, so every rename or new
+  # record family can re-open the hole; this is the check that catches it.
+  run "Check no tracked record file is matched by an ignore rule" \
+    python3 -I scripts/ci/check_record_not_ignored.py
 
   # CI passes a base SHA in BASE plus the event facts the checker needs to
   # choose between it and the merge-base with the default branch (#255; see the

@@ -5,6 +5,7 @@ Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
 import contextlib
 import fnmatch
+import hashlib
 import io
 import json
 import posixpath
@@ -23,7 +24,9 @@ SRC = HERE / "check_design_sources.py"
 GEN = HERE / "gen_characterization_report.py"
 SDF7 = HERE / "check_item7_sdf.py"
 PNR_PINS = HERE / "check_pnr_pins.py"
+EV_PINS = HERE / "check_evidence_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
+IGN = HERE / "check_record_not_ignored.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -369,6 +372,82 @@ class AppendOnlyTests(unittest.TestCase):
         self.assertEqual(self.push_to_main(self.touch_harness, *self.DEFAULT_PUSH), 0)
 
 
+class RecordNotIgnoredTests(unittest.TestCase):
+    """A tracked record file an ignore rule still matches (#260, #263).
+
+    The seed is the force-add mask itself: the two evidence files are committed
+    with `git add -f`, so the tree is "clean" to `git status` and only the
+    checker can see that their rules are broken. A fix is a negation that
+    re-includes the path, the exact shape #262 landed for all four families.
+    """
+
+    LOG = "sim/s/records/20260101T000000Z/yosys_n1.log"
+    CORNER = "sim/s/corners/tt.json"
+
+    def scenario(self, gitignore, force_add=(LOG, CORNER)):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            for f in force_add:
+                p = root / f
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text("x\n")
+            (root / ".gitignore").write_text(gitignore)
+            git(root, "add", "-A")
+            git(root, "add", "-f", *force_add)
+            git(root, "commit", "-qm", "seed")
+            return run(IGN, cwd=root)
+
+    def test_correct_negations_pass(self):
+        self.assertEqual(self.scenario(
+            "*.log\n"
+            "!sim/s/records/**/*.log\n"
+            "sim/s/corners/*.json\n"
+            "!sim/s/corners/*.json\n").returncode, 0)
+
+    def test_tracked_but_ignored_fails(self):
+        # the negative control: both files committed, rules broken. Exactly 1
+        # -- an exit 2 here means the checker never ran, not that it caught it.
+        r = self.scenario("*.log\nsim/s/corners/*.json\n")
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.LOG, r.stderr)
+        self.assertIn(self.CORNER, r.stderr)
+        self.assertIn(".gitignore:", r.stderr)
+
+    def test_negation_fixed_for_one_family_still_flags_the_other(self):
+        r = self.scenario("*.log\n!sim/s/records/**/*.log\nsim/s/corners/*.json\n")
+        self.assertEqual(r.returncode, 1)
+        self.assertNotIn(self.LOG, r.stderr)
+        self.assertIn(self.CORNER, r.stderr)
+
+    def test_top_level_records_dir_counts(self):
+        # membership is "a records component below the root", so a top-level
+        # records/ directory is covered too -- not is_record()'s root-gated set
+        r = self.scenario("records/*.json\n", force_add=("records/top.json",))
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("records/top.json", r.stderr)
+
+    def test_non_record_ignored_file_is_out_of_scope(self):
+        r = self.scenario(
+            "*.log\n"
+            "!sim/s/records/**/*.log\n"
+            "sim/s/corners/*.json\n"
+            "!sim/s/corners/*.json\n",
+            force_add=("sim/s/scratch.log",))
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn("scratch.log", r.stderr)
+
+    def test_git_failure_exits_2(self):
+        # not a repository: git cannot answer at all, and exit 1 would let a
+        # broken environment satisfy the negative control above
+        with tempfile.TemporaryDirectory() as t:
+            r = run(IGN, cwd=Path(t))
+        self.assertEqual(r.returncode, 2)
+
+    PEX_REC = "layout/pex/records/20260101T000000Z/record.json"
+
+
 class CharacterizationReportTests(unittest.TestCase):
     """The item 8 report and envelope must reproduce; a stale or tampered one must fail."""
     FILES = ("spec/target-spec.md", "measurements/row-evidence.json", "measurements/characterization-report.md",
@@ -636,6 +715,176 @@ class PnrPinTests(unittest.TestCase):
         def drop(d):
             del d["pnr.digital"]["files"][1]
         self.assertNotEqual(self.check(self.edit_manifest(drop)), 0)
+
+
+class EvidencePinsTests(unittest.TestCase):
+    """Every cited record must bind the stream the repo ships (#273).
+
+    The fixture is a synthetic manifest plus fake records: the real
+    block-manifest.json cites 34 records and their streams, too heavy to
+    stage. It seeds every shape the resolution table covers, records the
+    population must skip, and a stale record that is uncited -- the case a
+    path glob over records/ would flag but the citation-driven population
+    must not.
+    """
+
+    STREAM = "layout/aib_stream.gds"
+    NETLIST = "design/synth/aib_netlist.v"
+    SCHEMS = ("design/a_pad.sch", "design/b_pad.sch", "design/c_pad.sch")
+    RECORD = "layout/pex/records/20260101T000000Z/aib_io_tx.extract.report.json"
+    PNR = "layout/pnr/request.report.json"
+    MULTI = "signoff/attest/item1-analog.json"
+    FV = "signoff/fv_post_route.json"
+    STALE = "layout/pex/records/20250101T000000Z/superseded.extract.report.json"
+    SPEC = "signoff/item6/digital-spec.json"
+    STATEMENT = "signoff/item6/digital-statement.json"
+
+    def check(self, mutate=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            self.tree(root)
+            if mutate:
+                mutate(root)
+            r = run(EV_PINS, "--root", root)
+            self.assertNotIn("Traceback", r.stderr)
+            return r
+
+    def put(self, root, rel, obj):
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(obj, indent=1) + "\n")
+        return p
+
+    def put_raw(self, root, rel, text):
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+        return p
+
+    def sha(self, root, rel):
+        return "sha256:" + hashlib.sha256((root / rel).read_bytes()).hexdigest()
+
+    def tree(self, root):
+        for rel, text in [(self.STREAM, "stream bytes v1\n"),
+                          (self.NETLIST, "module m; endmodule\n"),
+                          *[(s, f"schematic {s}\n") for s in self.SCHEMS]]:
+            self.put_raw(root, rel, text)
+        self.put(root, self.RECORD, {
+            "layout": {"path": self.STREAM, "scope": "repo"},
+            "netlist": {"path": None, "scope": "external"},
+            "provenance": {"input": {"content_hash": self.sha(root, self.STREAM),
+                                     "role": "layout"}},
+        })
+        self.put(root, self.PNR, {
+            "file": None,
+            "layout": {"path": None, "scope": "external"},
+            "netlist": {"path": self.NETLIST, "scope": "repo"},
+            "verilog_path": "/scratch/old-tree/layout/pnr/.klt/aib_datapath.v",
+            "provenance": {"input": {"content_hash": self.sha(root, self.NETLIST),
+                                     "role": "netlist"}},
+        })
+        self.put(root, self.MULTI, {
+            "provenance": {"input": {
+                "content_hash": "sha256:" + "4" * 64,
+                "paths": [{"path": {"path": s, "scope": "repo"},
+                           "content_hash": self.sha(root, s)} for s in self.SCHEMS],
+            }},
+        })
+        self.put(root, self.FV, {"status": "pass"})
+        self.put(root, self.SPEC, {"rows": [1, 2]})
+        self.put(root, self.STATEMENT, {"statement": "ok"})
+        self.put(root, self.STALE, {
+            "layout": {"path": self.STREAM, "scope": "repo"},
+            "provenance": {"input": {"content_hash": "sha256:" + "0" * 64,
+                                     "role": "layout"}},
+        })
+        self.put(root, "signoff/block-manifest.json", {
+            "evidence": {
+                "7.analog": [{"file": self.RECORD}],
+                "11.digital": [{"file": self.PNR}],
+                "1.analog": {"file": self.MULTI, "content_hash": "sha256:" + "1" * 64},
+                "5.digital": [{"file": self.FV}],
+                "6.digital": {"not_applicable": {
+                    "spec": {"file": self.SPEC, "content_hash": "sha256:" + "2" * 64},
+                    "statement": {"file": self.STATEMENT,
+                                  "content_hash": "sha256:" + "3" * 64},
+                }},
+            },
+        })
+
+    def test_good(self):
+        self.assertEqual(self.check().returncode, 0)
+
+    def test_the_uncited_stale_record_is_not_reported(self):
+        r = self.check()
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn(self.STALE, r.stderr)
+
+    def test_edited_stream_fails(self):
+        def edit(r):
+            with open(r / self.STREAM, "a") as f:
+                f.write("edited\n")
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.RECORD, r.stderr)
+        self.assertIn(self.STREAM, r.stderr)
+
+    def test_edited_netlist_fails(self):
+        def edit(r):
+            with open(r / self.NETLIST, "a") as f:
+                f.write("// edited\n")
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.PNR, r.stderr)
+
+    def test_edited_multi_source_path_fails(self):
+        def edit(r):
+            with open(r / self.SCHEMS[1], "a") as f:
+                f.write("edited\n")
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.SCHEMS[1], r.stderr)
+
+    def test_a_record_matching_no_resolution_key_fails_closed(self):
+        def edit(r):
+            p = r / self.RECORD
+            rec = json.loads(p.read_text())
+            rec["layout"] = {"path": None, "scope": "repo"}
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.RECORD, r.stderr)
+        self.assertIn("tried provenance.input.path, file, layout, netlist, verilog_path",
+                      r.stderr)
+
+    def test_an_empty_multi_source_paths_list_fails_closed(self):
+        def edit(r):
+            p = r / self.MULTI
+            rec = json.loads(p.read_text())
+            rec["provenance"]["input"]["paths"] = []
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.MULTI, r.stderr)
+
+    def test_missing_cited_record_fails(self):
+        def edit(r):
+            (r / self.RECORD).unlink()
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("cited record file is missing", r.stderr)
+
+    def test_missing_stream_fails(self):
+        def edit(r):
+            (r / self.STREAM).unlink()
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("which is missing", r.stderr)
+
+    def test_missing_manifest_fails(self):
+        def edit(r):
+            (r / "signoff/block-manifest.json").unlink()
+        self.assertEqual(self.check(edit).returncode, 1)
 
 
 
@@ -909,10 +1158,14 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
 
     Three of the six used to test `"--check" in argv`, so any other argument meant "write":
     `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
-    The consolidation fixed the tree (#227, #239, #256, #265); #266 fixed the test: its
-    subjects used to be hand-kept tables of generators already known to pass, so a
-    generator could join the tree unasserted until its author remembered the table --
-    the exact rot the check-list completeness test below exists for (#173, #219).
+    The consolidation fixed the tree (#227, #239, #256, #265); gen_specs.py read no
+    argv at all, parsing bare because regenerating its two committed specs needs the
+    pinned klt environment, until #277 moved its klayout import into the call path.
+    #266 fixed the test: its subjects used to be hand-kept tables of generators already
+    known to pass (GENERATORS, plus STRICT_WITHOUT_COMMITTED_OUTPUT for the ones with
+    no committed output to key an mtime on, #271), so a generator could join the tree
+    unasserted until its author remembered the table -- the exact rot the check-list
+    completeness test below exists for (#173, #219).
     Subjects are now every tracked gen_*.py minus STRICTNESS_UNASSERTABLE, and a refused
     run must leave `git status --porcelain` byte-identical -- not merely leave one named
     output's mtime alone.
@@ -960,6 +1213,16 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                                 "STRICTNESS_UNASSERTABLE entry is not a gen_*.py script")
                 self.assertTrue(reason.strip(),
                                 "STRICTNESS_UNASSERTABLE entry needs a reason")
+
+    def test_the_gen_specs_exemption_does_not_also_claim_loose_flags(self):
+        # #277 split the two properties the "generator with no check mode" reason
+        # used to answer at once, then moved gen_specs.py's klayout import into the
+        # call path: the exemption states no check mode and nothing more, and strict
+        # parsing is asserted for it with every other derived subject (#266).
+        reason = EXEMPT["layout/erc/gen_specs.py"]
+        self.assertIn("no check mode", reason)
+        self.assertNotIn("layout/erc/gen_specs.py", STRICTNESS_UNASSERTABLE)
+        self.assertIn("layout/erc/gen_specs.py", STRICT_FLAG_SUBJECTS)
 
     def test_gen_t16attr_refuses_every_argument_shape(self):
         """#271: gen_t16attr.py read its OUTDIR off argv[0], so every argument was a
@@ -1062,7 +1325,11 @@ EXEMPT = {
     "layout/check_io_column.py":
         "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
     "layout/gen_io_column.py": "generator with no check mode",
-    "layout/erc/gen_specs.py": "generator with no check mode",
+    "layout/erc/gen_specs.py":
+        "generator with no check mode: its two ERC specs are committed signoff inputs "
+        "regenerated only at a klt re-pin (signoff/README.md:429), so proving them fresh "
+        "would need the pinned klt environment no CI job runs. Flag strictness is a "
+        "separate property and is asserted -- it stays a strict-flag subject (#266)",
     "sim/channel-eye/gen_t16attr.py":
         "generator with no check mode: its four request JSONs are gitignored "
         "(.gitignore:24-27) and run_t16attr.sh regenerates them before every run, so no "
@@ -1083,9 +1350,6 @@ STRICTNESS_UNASSERTABLE = {
     "layout/gen_io_column.py":
         "imports klayout.db at module import; needs the pinned klt environment, "
         "like layout/check_io_column.py",
-    "layout/erc/gen_specs.py":
-        "imports klayout.db at module import; needs the pinned klt environment "
-        "(#277 moves the import into the call path and removes this entry)",
     "sim/gen_common.py":
         "the shared write-or-check helper (#227); imported, never run",
 }

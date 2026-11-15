@@ -35,6 +35,12 @@ klt yield samples.json --format json > yield.json
 `klt yield` needs the `yield` extra (`klayout-tools[yield]`), which resolves for 0.9.0 in a
 throwaway `uvx` environment.
 
+Each committed `report.json.gz` holds one entry per corner and draw. `gen_per_corner.py` reads
+the three failing records and regenerates [`per_corner.md`](per_corner.md) -- per corner, the
+draw count, mean, sample sigma (n-1, as `klt`), margin-ranked worst draw and draws outside the
+row's limits, with the pooled totals cross-checked against the record (`--check` in CI;
+`klt yield` itself pools the corners and cannot answer this).
+
 ## T-10
 
 Bench `tb_t10.cir` sweeps the RX input as a fraction of VDDIO and measures the crossing
@@ -56,10 +62,17 @@ byte-identical to the bench the record cites
 (`records/20261108T035315Z-t10/tb_t10_ctl.cir`), so the recorded result is unchanged.
 
 **Result: T-10 fails.** Pooled over the grid the offset has mean +34.9 mV and sigma
-22.6 mV (sigma-to-spec 1.11 against 3); 16 % of draws fall outside +-60 mV, worst 94.6 mV in the 20-draw pilot. Most of the mean is the systematic
+22.6 mV (sigma-to-spec 1.11 against 3); 16 % of draws fall outside +-60 mV, worst 94.6 mV
+(`sf/1.320V/125C`, this 5400-draw record's own worst draw -- not a 20-draw-pilot figure).
+Most of the mean is the systematic
 corner shift (N/P strength ratio), not mismatch. The spec is not relaxed; the cell is #35's. Note
 `klt yield` pools the 45 corners ("a worst-case envelope rather than a distribution anyone
-sampled"); a per-corner reading is not in this record.
+sampled"); the per-corner reading is derived from the record in
+[per_corner.md](per_corner.md): **13 of 45 corners** hold out-of-limit draws (all nine `sf`
+corners, plus `ff` and `tt` at 125 C at 1.20 V and 1.32 V), binding `sf/1.320V/125C`. At the
+three `sf` 125 C corners the corner mean alone (71.6-79.0 mV) is outside +-60 mV, so no
+reduction of mismatch spread closes them; per-corner sigma is 5.4-6.8 mV against the pooled
+22.6 mV.
 
 ## T-15, T-16 (RX-input skew, CH)
 
@@ -84,7 +97,11 @@ detected for both rows. Both rows ran on the batch fleet (`--backend batch --wai
 and sigma 6.6 ps (sigma-to-spec 2.03 against 7; 3.6 % outside +-30 ps, worst 37.1 ps). The mean is
 mostly systematic (rise/fall asymmetry across the channel and receiver, not mismatch), the
 distributions are skewed and the normality test rejects, so the empirical tail is the quantity to
-read. `klt yield` pools the 45 corners as for T-10. The limits are not relaxed. These are CH
+read. `klt yield` pools the 45 corners as for T-10; the per-corner reading is in
+[per_corner.md](per_corner.md): T-15 has out-of-limit draws at **2 of 45 corners** (both `ss` at
+1.080 V), binding `ss/1.080V/-40C`; T-16 at **6 of 45 corners** (`ss` and `fs`, every temperature,
+all at 1.080 V), binding `ss/1.080V/27C` -- every failing corner sits at the 1.080 V supply.
+The limits are not relaxed. These are CH
 results only; the L2 loopback does not observe RX-input skew, so no TC value is recorded here.
 
 ## T-19 (receiver capture window, BOTH)
