@@ -152,6 +152,11 @@ if [ "$want_evidence" = 1 ]; then
 
   run "Check the item 8 characterization report is fresh and pinned" \
     python3 -I scripts/ci/gen_characterization_report.py --check
+
+  # The README is hand-written prose carrying one volatile number (the T1 met
+  # count); this is the check that the prose and the record cannot drift apart.
+  run "Check the README status statement against the signoff record" \
+    python3 -I scripts/ci/check_readme_status.py
 fi
 
 if [ "$want_rtl" = 1 ]; then
