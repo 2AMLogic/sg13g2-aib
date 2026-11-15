@@ -783,7 +783,6 @@ class Item7SdfTests(unittest.TestCase):
 
 class PnrPinTests(unittest.TestCase):
     """The committed routed SPEF and DEF must match their manifest pins."""
-
     def check(self, mutate=None):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
@@ -1002,6 +1001,87 @@ class EvidencePinsTests(unittest.TestCase):
         def edit(r):
             (r / "signoff/block-manifest.json").unlink()
         self.assertEqual(self.check(edit).returncode, 1)
+
+
+
+README_STATUS = HERE / "check_readme_status.py"
+
+
+class ReadmeStatusTests(unittest.TestCase):
+    """The README's met-count sentence must match the committed signoff record.
+
+    One anchored sentence — "16 of 22 T1 signoff rows read `met`" — checked
+    against t1_met_count / t1_item_count; absent, wrong, or stated twice fail.
+    The anchor is the T1/signoff wording, so the item-8 aggregate ("16 pass,
+    3 fail, 11 not-yet-measured of 30 spec rows") and the characterization
+    report's "16 of 30 rows" cannot satisfy or collide with it (#270).
+    """
+
+    MET_SENTENCE = "16 of 22 T1 signoff rows read `met`"
+
+    def check(self, mutate=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            (root / "signoff").mkdir(parents=True)
+            shutil.copy(REPO / "signoff/block-manifest.signoff.json",
+                        root / "signoff/block-manifest.signoff.json")
+            (root / "README.md").write_text(
+                "Intro.\n\n" + self.MET_SENTENCE + "\n\nOutro.\n")
+            if mutate:
+                mutate(root)
+            return run(README_STATUS, "--root", root).returncode
+
+    def test_the_repo_conforms(self):
+        self.assertEqual(run(README_STATUS, "--root", REPO).returncode, 0)
+
+    def test_good_fixture(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_wrong_met_count_fails(self):
+        def edit(r):
+            p = r / "README.md"
+            p.write_text(p.read_text().replace("16 of 22", "15 of 22"))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_wrong_denominator_fails(self):
+        def edit(r):
+            p = r / "README.md"
+            p.write_text(p.read_text().replace("16 of 22", "16 of 21"))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_sentence_absent_fails(self):
+        def edit(r):
+            p = r / "README.md"
+            p.write_text(p.read_text().replace(self.MET_SENTENCE, "Most T1 rows read `met`."))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_duplicated_sentence_fails(self):
+        def edit(r):
+            p = r / "README.md"
+            p.write_text(p.read_text() + self.MET_SENTENCE + "\n")
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_characterization_phrasing_does_not_satisfy(self):
+        # the aggregate's different denominator must not pass for the T1 count
+        def edit(r):
+            p = r / "README.md"
+            p.write_text(p.read_text().replace(
+                self.MET_SENTENCE,
+                "16 of 30 rows have a recorded value that meets its target"))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_item8_summary_does_not_satisfy(self):
+        def edit(r):
+            p = r / "README.md"
+            p.write_text(p.read_text().replace(
+                self.MET_SENTENCE,
+                "16 pass, 3 fail, 11 not-yet-measured of 30 spec rows"))
+        self.assertNotEqual(self.check(edit), 0)
+
+    def test_missing_record_fails(self):
+        def edit(r):
+            (r / "signoff/block-manifest.signoff.json").unlink()
+        self.assertNotEqual(self.check(edit), 0)
 
 
 
