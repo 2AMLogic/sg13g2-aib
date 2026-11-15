@@ -5,8 +5,12 @@ Stdlib only; PDK-free. Usage: python3 -I scripts/ci/check_evidence_format.py [--
 
 Checks:
   * each evidence directory has a README.md;
-  * each sim/**/records/<stamp>/record.json parses, carries the required
-    fields (record, utc_stamp, pdk.release_tag) and holds no absolute path.
+  * each sim/**/records/<stamp>/ directory holds a `record.json` -- which must parse,
+    carry the required fields (record, utc_stamp, pdk.release_tag) and hold no absolute
+    path -- or its own `README.md` (a deliberately ungraded study, e.g. the T-16
+    attribution record; #255 froze record-local READMEs as evidence). A directory with
+    neither is an aborted batch run (#276): it looks like evidence, would be frozen
+    append-only once committed, and carries no graded result at all.
 With zero records the record check passes vacuously.
 """
 import argparse
@@ -56,10 +60,25 @@ def check_record(path: Path, root: Path):
     return errs
 
 
-def check_records(root: Path):
+def record_dirs(root: Path):
+    """Every sim record directory: one entry under each sim/**/records/.
+
+    A stamp directory one level below `records/`; deeper subdirectories are that
+    record's own data (the T-16 attribution study's `cur/` and `pre132/`) and are
+    not record directories.
+    """
+    return sorted(p for p in (root / "sim").glob("**/records/*/") if p.is_dir())
+
+
+def check_records(root: Path, records):
     errs = []
-    for p in sorted((root / "sim").glob("**/records/*/record.json")):
-        errs += check_record(p, root)
+    for d in records:
+        rec = d / "record.json"
+        if rec.is_file():
+            errs += check_record(rec, root)
+        elif not (d / "README.md").is_file():
+            errs.append(f"{d.relative_to(root)}: record directory holds neither "
+                        f"record.json nor README.md")
     return errs
 
 
@@ -67,11 +86,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=".")
     root = Path(ap.parse_args(argv).root).resolve()
-    errs = check_structure(root) + check_records(root)
+    records = record_dirs(root)
+    errs = check_structure(root) + check_records(root, records)
     for e in errs:
         print(f"FAIL: {e}", file=sys.stderr)
-    n = len(list((root / "sim").glob("**/records/*/record.json")))
-    print(f"evidence format: {'FAIL' if errs else 'ok'} ({n} sim record(s) checked)")
+    print(f"evidence format: {'FAIL' if errs else 'ok'} ({len(records)} sim record(s) checked)")
     return 1 if errs else 0
 
 

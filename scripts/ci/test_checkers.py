@@ -109,6 +109,42 @@ class FormatTests(unittest.TestCase):
             (r / "sim/s/records/20260101T000000Z/record.json").write_text("{")
         self.assertNotEqual(self.check(GOOD, bad), 0)
 
+    def test_record_dir_without_record_or_readme_fails(self):
+        # the abort leftover (#276): a records/<stamp>/ directory with a rows file but
+        # no record.json is not evidence and must not be committable
+        def bad(r):
+            p = r / "sim/s/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "rows.json").write_text("{}")
+        self.assertNotEqual(self.check(mutate=bad), 0)
+
+    def test_record_dir_readme_only_passes(self):
+        # a record directory that carries its own README.md is a deliberate,
+        # ungraded study -- the t16attr shape
+        def add(r):
+            p = r / "sim/s/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "README.md").write_text("# deliberately ungraded study\n")
+        self.assertEqual(self.check(mutate=add), 0)
+
+    def test_empty_records_dir_passes(self):
+        def add(r):
+            (r / "sim/s/records").mkdir(parents=True, exist_ok=True)
+        self.assertEqual(self.check(mutate=add), 0)
+
+    def test_count_line_counts_walked_dirs(self):
+        def add_readme_only(r):
+            p = r / "sim/s/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "README.md").write_text("# deliberately ungraded study\n")
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            make_tree(root, GOOD)
+            add_readme_only(root)
+            r = run(FMT, "--root", root)
+            self.assertEqual(r.returncode, 0)
+            self.assertIn("(2 sim record(s) checked)", r.stdout)
+
 
 class AppendOnlyTests(unittest.TestCase):
     REC = "sim/s/records/20260101T000000Z/record.json"
