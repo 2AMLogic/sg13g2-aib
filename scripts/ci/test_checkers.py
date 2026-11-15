@@ -161,6 +161,7 @@ class AttestedPathsTests(unittest.TestCase):
                 "source": "signoff/attest/item10.inventory.json",
                 "attestation": {
                     "producer": "klt signoff --attest",
+                    "hash_algorithm": "sha256-raw-bytes",
                     "checks": [
                         {"check": "present", "role": "hygiene", "path": "README.md",
                          "passed": True, "content_hash": "sha256:" + digest},
@@ -204,7 +205,7 @@ class AttestedPathsTests(unittest.TestCase):
             target.write_text("module tb_top; endmodule\n")
             digest = hashlib.sha256(target.read_bytes()).hexdigest()
             env = {"t1_item": 5, "source": "signoff/attest/item5-digital/x.inventory.json",
-                   "attestation": {"checks": [
+                   "attestation": {"hash_algorithm": "sha256-raw-bytes", "checks": [
                        {"check": "present", "role": "testbench", "path": "verification/tb_top.v",
                         "passed": True, "content_hash": "sha256:" + digest}]}}
             (r / "signoff/attest/item5-digital").mkdir()
@@ -251,6 +252,61 @@ class AttestedPathsTests(unittest.TestCase):
         p = self.scenario(extra=extra)
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("no content_hash", p.stderr)
+
+    def test_zero_attested_paths_fails(self):
+        with tempfile.TemporaryDirectory() as t:
+            p = run(ATTESTED, "--root", t)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(str(Path(t).resolve()), p.stderr)
+        self.assertIn("0 attested path(s) across 0 envelope(s)", p.stderr)
+
+    def test_empty_attest_dir_fails(self):
+        # distinct code path: the attest.is_dir() guard passes here and fails
+        # in test_zero_attested_paths_fails
+        with tempfile.TemporaryDirectory() as t:
+            (Path(t) / "signoff/attest").mkdir(parents=True)
+            p = run(ATTESTED, "--root", t)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 attested path(s) across 0 envelope(s)", p.stderr)
+
+    def test_renamed_present_discriminator_fails(self):
+        # the case an envelopes == 0 guard would miss: the envelope parses and
+        # counts, but nothing is verified
+        def bad(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            env["attestation"]["checks"][0]["check"] = "exists"
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 attested path(s) across 1 envelope(s)", p.stderr)
+
+    def test_missing_hash_algorithm_fails(self):
+        def bad(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            del env["attestation"]["hash_algorithm"]
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+
+    def test_declared_algorithm_mismatch_fails_without_reattest_advice(self):
+        # not test_unsupported_hash_algorithm_fails: that name is taken by the
+        # per-entry content_hash prefix case, whose message carries the
+        # re-attest repair on purpose. This one is a toolchain/checker gap --
+        # the message must name the declared value and carry no such advice.
+        def bad(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            env["attestation"]["hash_algorithm"] = "sha256-normalized"
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertIn("sha256-normalized", p.stderr)
+        self.assertNotIn("klt signoff --attest", p.stderr)
+        self.assertNotIn("re-attest", p.stderr)
 
 
 class AppendOnlyTests(unittest.TestCase):
