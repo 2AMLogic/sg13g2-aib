@@ -3,7 +3,7 @@
 An AIB Gen1-class die-to-die parallel I/O channel on IHP SG13G2, built to a
 ratified spec with every claim traced to a recorded result.
 
-Status as of 2026-11-15, `main` @ `d9bed2d`.
+Status as of 2026-11-15, `main` @ `432a578`.
 
 The verdict of record is [`signoff/block-manifest.signoff.json`](signoff/block-manifest.signoff.json)
 (grader pinned at 0.9.0 in `signoff/KLT_VERSION`); the per-row table is
@@ -44,20 +44,15 @@ first rung not reached.
 
 ## Now
 
-Can start today; each is one pull request. #269 is in build.
+Can start today; each is one pull request. #270 is in build.
 
-1. **Per-corner reading of the three failing Monte Carlo rows** (#269).
-   `klt yield` pools the 45 corners, so the records do not say which corners
-   carry the T-10, T-15 and T-16 failures or how much is systematic shift
-   against mismatch. Done when a committed, generated table gives per-corner
-   mean, sigma and out-of-limit count for each row, derived from the existing
-   `sim/mc/records/` reports with no new simulation.
-2. **Bring the README status paragraph and ladder position in line with the
+1. **Bring the README status paragraph and ladder position in line with the
    signoff record** (#270). The README still says no PVT or channel
    simulation exists and that I/O-cell LVS mismatches. Done when both
    statements match the committed record.
 
-Recently landed: the `.gitignore` cleanup (#260, PR #262), the item 7
+Recently landed: the per-corner reading of the three failing Monte Carlo
+rows (#269, PR #293), the `.gitignore` cleanup (#260, PR #262), the item 7
 analog extraction re-bound to the post-#248 reordered stream (#253,
 PR #272), the `gen_redundancy_mux.py` strict-flag conversion and the
 PWL-helper consolidation it carried (#256, #257; PR #264), the I/O-column
@@ -77,8 +72,6 @@ check's base commit and README treatment (#255, PR #258).
   sensitivity for T-19 (#198); size `aib_rx_data` for rise/fall symmetry or
   show T-19 closes without it (#190); then the T-20 end-to-end
   sampling-margin confirmation (#194), which also needs T-21.
-- **T-16 margin at the +20 % channel C corner** (#251, 1.3 ps recorded). Its
-  stated blocker #193 closed with #252, so it needs a fresh read first.
 - **Grade T-03 (wires per direction) in the item 8 report**, after #248. Done
   when `measurements/row-evidence.json` cites an RTL and a layout record for
   N = 20 and the row no longer reads `not-yet-measured`. No issue yet.
@@ -108,6 +101,11 @@ Waiting on a maintainer decision:
   referred to the RX pin), #249 (remap placement). Most of Next queues here.
 - **#107** rewrites the T-05 shift redundancy and conflicts with `main`; a
   triage note on #29 says a later merged change may have superseded it.
+- **#251** — T-16 margin at the +20 % channel-C corner (1.3 ps recorded,
+  `loom:very-important`): accept and record it, spend design effort to
+  recover margin, or narrow what the channel model's ±20 % C column claims.
+  The figures are re-verified on `main` and the decision filed 2026-11-14;
+  it needs a ruling, not another read.
 - **Spec questions**: T-21 placement-error allocation (#9); the T-21 SIM
   half, which this repo cannot close without designing a DLL (#195); the
   T-24/T-25 pad-diode trade that gates the ESD transient (#196); how item 5
