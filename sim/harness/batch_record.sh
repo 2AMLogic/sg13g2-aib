@@ -50,6 +50,10 @@
 # 6 a batch/fleet error (no record is written), otherwise 0. klt sim's own 0 (every limit
 # met), 3 (some limit failed) and 4 (unmeasurable corners) are all results: the record is
 # written either way and carries the code as record.json's `klt_exit_code`.
+# A failure after the record directory exists (the post-processor, write_record.py)
+# aborts with that command's exit code: the partial directory is removed and its
+# klt.stderr kept under sim/.work/aborted-*/ (gitignored) rather than left committable
+# as a record directory with no record.json in it (#276).
 set -euo pipefail
 
 SELF="$(basename "${0}")"
@@ -73,7 +77,7 @@ while [[ $# -gt 0 ]]; do
     --row-map) ROW_MAP="${2}"; shift 2 ;;
     --report-only-ranges) RANGES=1; shift ;;
     --dry-run) DRY=1; shift ;;
-    -h|--help) sed -n '2,52p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help) sed -n '2,56p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "${SELF}: unknown argument '${1}'" >&2; exit 2 ;;
   esac
 done
@@ -113,10 +117,36 @@ KLT=(uvx --from "klayout-tools==$(cat "${REPO}/signoff/KLT_VERSION")" klt)
 
 python3 -I "${DIR}/${GENERATOR}" --check || { echo "${SELF}: generated files are stale" >&2; exit 4; }
 
+# An aborted run must not leave a half-written directory under records/: it carries no
+# record.json, so check_evidence_format.py skips it, a git add freezes it append-only,
+# and nothing graded is in it (#276). Its klt.stderr is kept under sim/.work/ (the
+# gitignored harness scratch) instead of being discarded with the directory. ${WORK} is
+# never touched here: a batch error keeps it for `klt sim --resume` (RETRY below).
+preserve_stderr() {
+  local aside="${SIM_DIR}/.work/aborted-${DIR##*/}-${STAMP}${SUFFIX}" st=0
+  mkdir -p "${aside}" || st=$?
+  if [[ -f "${REC}/klt.stderr" ]]; then
+    cp "${REC}/klt.stderr" "${aside}/klt.stderr" || st=$?
+  fi
+  echo "${SELF}: the run's klt.stderr is kept at ${aside}/klt.stderr" >&2
+  return "${st}"
+}
+cleanup_abort() {
+  local rc=$?
+  trap - ERR
+  if [[ -d "${REC}" ]]; then
+    preserve_stderr || true
+    echo "${SELF}: aborted (exit ${rc}); no record written" >&2
+    rm -rf "${REC}"
+  fi
+  exit "${rc}"
+}
+
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REC="${DIR}/records/${STAMP}${SUFFIX}"
 [[ -e "${REC}" ]] && { echo "${SELF}: ${REC} exists (records are append-only)" >&2; exit 4; }
 mkdir -p "${REC}"
+trap cleanup_abort ERR
 WORK_VAR="${ENV_PREFIX}_WORK" ; RESUME_VAR="${ENV_PREFIX}_RESUME"
 WORK="${!WORK_VAR:-$(mktemp -d)}"   # kept on a batch error so `klt sim --resume` can reuse it
 RESUME="${!RESUME_VAR:-}"

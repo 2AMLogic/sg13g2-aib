@@ -4,6 +4,12 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-14
 
+- **PR #264**: fix(sim): parse gen_redundancy_mux flags strictly and share the PWL builders
+- **Issue #256** (closed): Convert gen_redundancy_mux.py to the shared write-or-check helper: it still regenerates on a mistyped --check
+- **PR #258**: fix(ci): base the append-only check on the default branch, not the pre-push head
+- **Issue #255** (closed): check_sim_append_only.py: a record's README is frozen, contradicting the checker's own docstring (and the push-event BASE makes it worse)
+- **PR #254**: fix(layout): order the I/O-column slots with both spares at one end (DR-0016)
+- **Issue #248** (closed): I/O column: put both spares at one end (DR-0016) and check the slot order - the column already draws 22 cells per direction
 - **PR #252**: feat(sim): add the T-12 ±20 % channel R/C spread run and report it per spread corner
 - **Issue #193** (closed): T-12 gap: no channel record varies kr/kc, so no CH result covers the declared +/-20 % R/C spread
 - **PR #250**: test(ci): list the LVS reference check and assert the check list is complete

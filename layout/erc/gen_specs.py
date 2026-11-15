@@ -9,10 +9,9 @@ instead). Run from the repo root with the pinned klt interpreter:
     uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/erc/gen_specs.py
 """
 
+import argparse
 import json
 import sys
-
-import klayout.db as db
 
 IO_GDS = "layout/aib_io_column.gds"
 IO_TOP = "aib_io_column"
@@ -47,6 +46,9 @@ VIAS = [
 
 def ntap_boxes(gds, top_name, whole_polygons):
     """Boxes over Activ inside NWell and outside pSD (the n-well taps)."""
+    # Imported here, not at module top, so argument parsing completes -- and refuses a
+    # mistyped flag -- on a plain interpreter that has no klayout installed (#277).
+    import klayout.db as db
     ly = db.Layout()
     ly.read(gds)
     top = ly.cell(top_name)
@@ -113,12 +115,26 @@ def write(path, doc, extra):
         f.write("\n")
 
 
-boxes, extra = ntap_boxes(IO_GDS, IO_TOP, whole_polygons=False)
-write("layout/erc/io_cells.erc-spec.json",
-      spec("VDDIO", "VSS", {"metal2": "10/1", "metal3": "30/1", "topmetal1": "126/1"}, boxes),
-      extra)
-boxes, extra = ntap_boxes(DP_GDS, DP_TOP, whole_polygons=True)
-write("layout/erc/aib_datapath.erc-spec.json",
-      spec("VDD", "VSS", {"metal1": "8/25", "metal3": "30/25", "topmetal2": "134/25"}, boxes,
-           pdk_names=True),
-      extra)
+def main():
+    """Regenerate both committed ERC specs in place.
+
+    The parser deliberately defines no arguments: this script has no --check mode
+    (regeneration needs the pinned klt interpreter), so any argument a hand types is a
+    mistake and must exit 2 before either write runs, not be silently ignored after
+    both committed specs were rewritten (#277).
+    """
+    argparse.ArgumentParser(
+        description="Regenerate the two committed `klt erc` supply specs.").parse_args()
+    boxes, extra = ntap_boxes(IO_GDS, IO_TOP, whole_polygons=False)
+    write("layout/erc/io_cells.erc-spec.json",
+          spec("VDDIO", "VSS", {"metal2": "10/1", "metal3": "30/1", "topmetal1": "126/1"}, boxes),
+          extra)
+    boxes, extra = ntap_boxes(DP_GDS, DP_TOP, whole_polygons=True)
+    write("layout/erc/aib_datapath.erc-spec.json",
+          spec("VDD", "VSS", {"metal1": "8/25", "metal3": "30/25", "topmetal2": "134/25"}, boxes,
+               pdk_names=True),
+          extra)
+
+
+if __name__ == "__main__":
+    main()

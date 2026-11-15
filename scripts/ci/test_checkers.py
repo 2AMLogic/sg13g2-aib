@@ -26,12 +26,16 @@ SDF7 = HERE / "check_item7_sdf.py"
 PNR_PINS = HERE / "check_pnr_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
 ATTESTED = HERE / "check_attested_paths.py"
+IGN = HERE / "check_record_not_ignored.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
 
-# The eight generators that share the one write-or-check helper (#227, #239, #256), each
-# with one of its committed outputs, used to assert that a refused run writes nothing.
+# The strict-flag subjects: each generator is keyed to one committed output it writes,
+# used to assert that a refused run writes nothing. Most share the one write-or-check
+# helper (#227, #239, #256); gen_specs.py parses bare instead, because regenerating its
+# outputs needs the pinned klt environment (#277). Strict flags are the property under
+# test here, not the helper.
 GENERATORS = {
     "sim/channel-eye/gen_channel_eye.py": "sim/channel-eye/prbs7_stim.inc",
     "sim/clock-path/gen_clock_path.py": "sim/clock-path/clock_stim.inc",
@@ -41,6 +45,21 @@ GENERATORS = {
     "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
     "layout/lvs/gen_reference.py": "layout/lvs/aib_io_tx.ref.spice",
     "layout/pex/gen_pex_benches.py": "layout/pex/benches/extraction.json",
+    "layout/erc/gen_specs.py": "layout/erc/io_cells.erc-spec.json",
+}
+
+# Generators with no committed output, which is why they cannot join GENERATORS above:
+# that table keys on one committed file's mtime to show a refused run wrote nothing. The
+# value here is instead one file a good run does write into the OUTDIR it is given, so
+# the refusal cannot be passed by a script that no longer works at all.
+#
+# A table of its own, not a corner of EXEMPT. EXEMPT answers "has no check mode", which
+# until #271 also meant "is not subject to strict flag parsing"; gen_t16attr.py is now
+# the first entry for which the two come apart -- it has no check mode (its outputs are
+# gitignored, see its EXEMPT reason) and it parses strictly. So a strict-flag subject
+# set derived off EXEMPT (#266) would filter out exactly the generator this table covers.
+STRICT_WITHOUT_COMMITTED_OUTPUT = {
+    "sim/channel-eye/gen_t16attr.py": "request_t16attr_ch_ss.json",
 }
 
 # layout/attest_item2.py is not one of them: it writes no generated file, it builds a
@@ -110,6 +129,42 @@ class FormatTests(unittest.TestCase):
         def bad(r):
             (r / "sim/s/records/20260101T000000Z/record.json").write_text("{")
         self.assertNotEqual(self.check(GOOD, bad), 0)
+
+    def test_record_dir_without_record_or_readme_fails(self):
+        # the abort leftover (#276): a records/<stamp>/ directory with a rows file but
+        # no record.json is not evidence and must not be committable
+        def bad(r):
+            p = r / "sim/s/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "rows.json").write_text("{}")
+        self.assertNotEqual(self.check(mutate=bad), 0)
+
+    def test_record_dir_readme_only_passes(self):
+        # a record directory that carries its own README.md is a deliberate,
+        # ungraded study -- the t16attr shape
+        def add(r):
+            p = r / "sim/s/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "README.md").write_text("# deliberately ungraded study\n")
+        self.assertEqual(self.check(mutate=add), 0)
+
+    def test_empty_records_dir_passes(self):
+        def add(r):
+            (r / "sim/s/records").mkdir(parents=True, exist_ok=True)
+        self.assertEqual(self.check(mutate=add), 0)
+
+    def test_count_line_counts_walked_dirs(self):
+        def add_readme_only(r):
+            p = r / "sim/s/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "README.md").write_text("# deliberately ungraded study\n")
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            make_tree(root, GOOD)
+            add_readme_only(root)
+            r = run(FMT, "--root", root)
+            self.assertEqual(r.returncode, 0)
+            self.assertIn("(2 sim record(s) checked)", r.stdout)
 
 
 class AttestedPathsTests(unittest.TestCase):
@@ -464,6 +519,82 @@ class AppendOnlyTests(unittest.TestCase):
         self.assertEqual(self.push_to_main(self.touch_harness, *self.DEFAULT_PUSH), 0)
 
 
+class RecordNotIgnoredTests(unittest.TestCase):
+    """A tracked record file an ignore rule still matches (#260, #263).
+
+    The seed is the force-add mask itself: the two evidence files are committed
+    with `git add -f`, so the tree is "clean" to `git status` and only the
+    checker can see that their rules are broken. A fix is a negation that
+    re-includes the path, the exact shape #262 landed for all four families.
+    """
+
+    LOG = "sim/s/records/20260101T000000Z/yosys_n1.log"
+    CORNER = "sim/s/corners/tt.json"
+
+    def scenario(self, gitignore, force_add=(LOG, CORNER)):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            for f in force_add:
+                p = root / f
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text("x\n")
+            (root / ".gitignore").write_text(gitignore)
+            git(root, "add", "-A")
+            git(root, "add", "-f", *force_add)
+            git(root, "commit", "-qm", "seed")
+            return run(IGN, cwd=root)
+
+    def test_correct_negations_pass(self):
+        self.assertEqual(self.scenario(
+            "*.log\n"
+            "!sim/s/records/**/*.log\n"
+            "sim/s/corners/*.json\n"
+            "!sim/s/corners/*.json\n").returncode, 0)
+
+    def test_tracked_but_ignored_fails(self):
+        # the negative control: both files committed, rules broken. Exactly 1
+        # -- an exit 2 here means the checker never ran, not that it caught it.
+        r = self.scenario("*.log\nsim/s/corners/*.json\n")
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.LOG, r.stderr)
+        self.assertIn(self.CORNER, r.stderr)
+        self.assertIn(".gitignore:", r.stderr)
+
+    def test_negation_fixed_for_one_family_still_flags_the_other(self):
+        r = self.scenario("*.log\n!sim/s/records/**/*.log\nsim/s/corners/*.json\n")
+        self.assertEqual(r.returncode, 1)
+        self.assertNotIn(self.LOG, r.stderr)
+        self.assertIn(self.CORNER, r.stderr)
+
+    def test_top_level_records_dir_counts(self):
+        # membership is "a records component below the root", so a top-level
+        # records/ directory is covered too -- not is_record()'s root-gated set
+        r = self.scenario("records/*.json\n", force_add=("records/top.json",))
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("records/top.json", r.stderr)
+
+    def test_non_record_ignored_file_is_out_of_scope(self):
+        r = self.scenario(
+            "*.log\n"
+            "!sim/s/records/**/*.log\n"
+            "sim/s/corners/*.json\n"
+            "!sim/s/corners/*.json\n",
+            force_add=("sim/s/scratch.log",))
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn("scratch.log", r.stderr)
+
+    def test_git_failure_exits_2(self):
+        # not a repository: git cannot answer at all, and exit 1 would let a
+        # broken environment satisfy the negative control above
+        with tempfile.TemporaryDirectory() as t:
+            r = run(IGN, cwd=Path(t))
+        self.assertEqual(r.returncode, 2)
+
+    PEX_REC = "layout/pex/records/20260101T000000Z/record.json"
+
+
 class CharacterizationReportTests(unittest.TestCase):
     """The item 8 report and envelope must reproduce; a stale or tampered one must fail."""
     FILES = ("spec/target-spec.md", "measurements/row-evidence.json", "measurements/characterization-report.md",
@@ -635,22 +766,22 @@ class Item7SdfTests(unittest.TestCase):
                 shutil.copy(f, root / "signoff/attest/item7-digital" / f.name)
             if mutate:
                 mutate(root)
-            return run(SDF7, "--root", root).returncode
+            return run(SDF7, "--root", root)
 
     def test_good(self):
-        self.assertEqual(self.check(), 0)
+        self.assertEqual(self.check().returncode, 0)
 
     def test_edited_derived_sdf_fails(self):
         def edit(r):
             with open(r / "signoff/attest/item7-digital/aib_datapath_route.tb.sdf", "a") as f:
                 f.write("\n")
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
 
     def test_edited_source_sdf_fails(self):
         def edit(r):
             with open(r / "layout/pnr/.klt/place-and-route/aib_datapath_route.sdf", "a") as f:
                 f.write("\n")
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
 
     def test_stale_pin_fails(self):
         def edit(r):
@@ -658,7 +789,7 @@ class Item7SdfTests(unittest.TestCase):
             m = json.loads(p.read_text())
             m["derived_inputs"]["7.digital"]["files"][0]["content_hash"] = "sha256:" + "0" * 64
             p.write_text(json.dumps(m))
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
 
     def test_missing_pins_fail(self):
         def edit(r):
@@ -666,7 +797,18 @@ class Item7SdfTests(unittest.TestCase):
             m = json.loads(p.read_text())
             del m["derived_inputs"]
             p.write_text(json.dumps(m))
-        self.assertNotEqual(self.check(edit), 0)
+        self.assertNotEqual(self.check(edit).returncode, 0)
+
+    def test_missing_output_file_is_reported_not_crashed(self):
+        # The pre-consolidation checker read a pinned output unguarded, so an
+        # absent file died in a traceback instead of reporting it (#283). The
+        # exit code alone cannot tell those apart (both are 1); the stderr can.
+        def edit(r):
+            (r / "signoff/attest/item7-digital/aib_datapath_route.tb.sdf").unlink()
+        r = self.check(edit)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("file is missing", r.stderr)
+        self.assertNotIn("Traceback", r.stderr)
 
 
 class PnrPinTests(unittest.TestCase):
@@ -979,8 +1121,12 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
     Three of the six used to test `"--check" in argv`, so any other argument meant "write":
     `gen_clock_path.py --chek` rewrote the generated files and exited 0 on a stale tree.
     gen_redundancy_mux.py was added after that consolidation and was the last copy of the
-    loop left (#256); the table above is now the eight generators that share the helper.
-    layout/attest_item2.py was the last site of the pattern anywhere in the tree (#265).
+    loop left (#256). layout/attest_item2.py was the last site of the pattern anywhere
+    in the tree (#265); gen_specs.py joined GENERATORS as the last generator that read
+    no argv at all, parsing bare because regenerating its two committed specs needs the
+    pinned klt environment (#277). STRICT_WITHOUT_COMMITTED_OUTPUT carries the
+    generators that parse strictly without sharing the helper, which have no committed
+    output to compare an mtime on (#271).
     """
 
     def test_attest_item2_refuses_an_unknown_flag_and_writes_no_envelope(self):
@@ -1006,6 +1152,55 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                 self.assertEqual(r.returncode, 2, f"{gen} --chek: {r.stdout}{r.stderr}")
                 self.assertEqual((REPO / generated).stat().st_mtime_ns, before,
                                  f"{gen} --chek rewrote {generated}")
+
+    def test_the_gen_specs_exemption_does_not_also_claim_loose_flags(self):
+        # #277 split the two properties this table's "generator with no check mode"
+        # reason used to answer at once. The reason has to state why there is no check
+        # mode -- the pinned klt environment owns regeneration -- without leaving a
+        # reader to infer that the script therefore accepts any argument.
+        reason = EXEMPT["layout/erc/gen_specs.py"]
+        self.assertIn("no check mode", reason)
+        self.assertIn("GENERATORS", reason)
+        self.assertIn("layout/erc/gen_specs.py", GENERATORS)
+
+    def test_a_generator_without_committed_output_refuses_and_creates_nothing(self):
+        """#271: gen_t16attr.py read its OUTDIR off argv[0], so every argument was a
+        valid output path -- `--check` exited 0 having checked nothing and left a
+        directory named `--check` behind. Run from an empty cwd, so a stray relative
+        path shows up as a file in it rather than landing in the repo.
+        """
+        for gen in STRICT_WITHOUT_COMMITTED_OUTPUT:
+            # no argument at all; an unknown flag; `--check` alone and after a good
+            # OUTDIR (ignoring a trailing flag is the same silent accept).
+            for argv in ([], ["--chek", "out"], ["--check"], ["out", "--check"]):
+                with self.subTest(gen=gen, argv=argv), tempfile.TemporaryDirectory() as t:
+                    r = run(REPO / gen, *argv, cwd=t)
+                    self.assertEqual(r.returncode, 2,
+                                     f"{gen} {' '.join(argv)}: {r.stdout}{r.stderr}")
+                    self.assertEqual(sorted(q.name for q in Path(t).iterdir()), [],
+                                     f"{gen} {' '.join(argv)} created something")
+
+    def test_a_generator_without_committed_output_still_writes_when_given_an_outdir(self):
+        # The refusals above must not be bought by breaking the generator: its one
+        # positional OUTDIR is load-bearing (sim/channel-eye/run_t16attr.sh:25).
+        for gen, written in STRICT_WITHOUT_COMMITTED_OUTPUT.items():
+            with self.subTest(gen=gen), tempfile.TemporaryDirectory() as t:
+                r = run(REPO / gen, t)
+                self.assertEqual(r.returncode, 0, f"{gen} OUTDIR: {r.stdout}{r.stderr}")
+                self.assertTrue((Path(t) / written).is_file(),
+                                f"{gen} OUTDIR did not write {written}")
+
+    def test_the_strict_flag_subjects_are_not_decided_by_exempt_membership(self):
+        # #266 proposes deriving this test's subjects from discover_candidates()
+        # filtered against EXEMPT. That filter on its own would drop every generator
+        # in STRICT_WITHOUT_COMMITTED_OUTPUT -- they are exempt from the check list for
+        # having no check mode, which since #271 says nothing about flag strictness.
+        # Whoever makes that change has to keep these subjects, not exclude them.
+        subjects = set(GENERATORS) | set(STRICT_WITHOUT_COMMITTED_OUTPUT)
+        self.assertTrue(subjects & set(EXEMPT),
+                        "no EXEMPT generator is a strict-flag subject any more: being "
+                        "EXEMPT has become what decides whether strictness is asserted, "
+                        "which is the coupling #271 split apart")
 
 
 # ---------------------------------------------------------------------------
@@ -1065,8 +1260,16 @@ EXEMPT = {
     "layout/check_io_column.py":
         "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
     "layout/gen_io_column.py": "generator with no check mode",
-    "layout/erc/gen_specs.py": "generator with no check mode",
-    "sim/channel-eye/gen_t16attr.py": "generator with no check mode",
+    "layout/erc/gen_specs.py":
+        "generator with no check mode: its two ERC specs are committed signoff inputs "
+        "regenerated only at a klt re-pin (signoff/README.md:429), so proving them fresh "
+        "would need the pinned klt environment no CI job runs. Flag strictness is a "
+        "separate property and is asserted -- see GENERATORS (#277)",
+    "sim/channel-eye/gen_t16attr.py":
+        "generator with no check mode: its four request JSONs are gitignored "
+        "(.gitignore:24-27) and run_t16attr.sh regenerates them before every run, so no "
+        "committed tree exists for a --check to prove fresh. Flag strictness is a "
+        "separate property and is asserted -- see STRICT_WITHOUT_COMMITTED_OUTPUT (#271)",
     "sim/gen_common.py": "the shared write-or-check helper (#227); imported, never run",
 }
 
@@ -1183,6 +1386,15 @@ class CheckListCompletenessTests(unittest.TestCase):
             self.assertIn(mod, EXEMPT)
             self.assertIn("cocotb", EXEMPT[mod])
 
+    def test_the_no_check_mode_exemption_does_not_also_claim_loose_flags(self):
+        # #271 split two properties this table used to answer at once. The reason has
+        # to state why there is no check mode -- nothing committed to check -- without
+        # leaving a reader to infer that the script therefore accepts any argument.
+        reason = EXEMPT["sim/channel-eye/gen_t16attr.py"]
+        self.assertIn("gitignored", reason)
+        self.assertIn("STRICT_WITHOUT_COMMITTED_OUTPUT", reason)
+        self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_WITHOUT_COMMITTED_OUTPUT)
+
     def test_attest_item2_is_outside_the_discovery_set(self):
         # Stated in the comment above: it matches no glob, and needs pinned klt.
         self.assertIn("layout/attest_item2.py", self.tracked)
@@ -1282,27 +1494,27 @@ PRIVATE_BUILDERS_OK = {
 }
 
 
-def private_builder_errors(tracked, read_text, ok=None):
-    """Return a sorted list of `gen_*.py` definitions that shadow a gen_common builder.
+def shadowed_helper_errors(tracked, read_text, owner, names, glob_pattern, table, ok):
+    """Return a sorted list of definitions that shadow a helper `owner` already defines.
 
-    Pure: the tracked set, the reader and the exemption table are all passed in, so the
-    detector can be exercised against a fixture without touching the real tree.
+    Pure: the tracked set, the reader, the owning module, the guarded names and
+    their file glob, the exemption table and its name are all passed in, so each
+    guard can be exercised against a fixture without touching the real tree.
     """
-    ok = PRIVATE_BUILDERS_OK if ok is None else ok
     tracked = set(tracked)
-    defs = re.compile(r"^def (%s)\(" % "|".join(SHARED_BUILDERS), re.M)
+    defs = re.compile(r"^def (%s)\(" % "|".join(names), re.M)
     errors = []
     for path in sorted(q for q in tracked
-                       if q != GEN_COMMON                      # the module that owns them
-                       and fnmatch.fnmatch(posixpath.basename(q), "gen_*.py")):
+                       if q != owner                        # the module that owns them
+                       and fnmatch.fnmatch(posixpath.basename(q), glob_pattern)):
         for name in defs.findall(read_text(path)):
             key = f"{path}:{name}"
             if key in ok:
                 if not ok[key].strip():
-                    errors.append(f"{key}: PRIVATE_BUILDERS_OK entry needs a reason")
+                    errors.append(f"{key}: {table} entry needs a reason")
                 continue
-            errors.append(f"{key}: a private copy of a sim/gen_common.py builder -- import it "
-                          "instead, or add a PRIVATE_BUILDERS_OK entry saying how it differs")
+            errors.append(f"{key}: a private copy of a {owner} helper -- import it "
+                          f"instead, or add a {table} entry saying how it differs")
     for key in sorted(ok):
         path, _, name = key.rpartition(":")
         if path not in tracked:
@@ -1310,6 +1522,13 @@ def private_builder_errors(tracked, read_text, ok=None):
         elif f"def {name}(" not in read_text(path):
             errors.append(f"{key}: entry names a definition that is gone; drop it")
     return sorted(errors)
+
+
+def private_builder_errors(tracked, read_text, ok=None):
+    """Return a sorted list of `gen_*.py` definitions that shadow a gen_common builder."""
+    return shadowed_helper_errors(tracked, read_text, GEN_COMMON, SHARED_BUILDERS,
+                                  "gen_*.py", "PRIVATE_BUILDERS_OK",
+                                  PRIVATE_BUILDERS_OK if ok is None else ok)
 
 
 class NoPrivateCopyOfASharedBuilderTests(unittest.TestCase):
@@ -1372,6 +1591,77 @@ class NoPrivateCopyOfASharedBuilderTests(unittest.TestCase):
     def test_an_exemption_for_an_untracked_path_is_reported(self):
         errors = private_builder_errors([], lambda p: "", ok={"sim/gone/gen_gone.py:pwl": "r"})
         self.assertTrue(any("no longer tracked" in e for e in errors), errors)
+
+
+# ---------------------------------------------------------------------------
+# No checker keeps a private copy of a manifest_pins helper (#283)
+#
+# manifest_pins.py is the one definition of the derived_inputs pin contract;
+# before #283 two checkers each hand-kept a sha() and a pin loop and no test
+# compared them against each other. This is the #256 guard again, scoped to the
+# check_*.py family: a tracked check_*.py may not define a helper manifest_pins
+# already owns, unless it is listed below with the reason its version genuinely
+# differs. The generators keep their own guard above.
+# ---------------------------------------------------------------------------
+
+MANIFEST_PINS = "scripts/ci/manifest_pins.py"
+SHARED_PIN_HELPERS = ("sha", "manifest_block", "verify_pins")
+
+# "<path>:<name>" -> why this checker's own version is not the shared one.
+PIN_HELPERS_OK = {}
+
+
+def private_pin_helper_errors(tracked, read_text, ok=None):
+    """Return a sorted list of `check_*.py` definitions that shadow a manifest_pins helper."""
+    return shadowed_helper_errors(tracked, read_text, MANIFEST_PINS, SHARED_PIN_HELPERS,
+                                  "check_*.py", "PIN_HELPERS_OK",
+                                  PIN_HELPERS_OK if ok is None else ok)
+
+
+class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
+    """#283: the manifest-pin consolidation must not quietly lapse either."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tracked = git(REPO, "ls-files").splitlines()
+
+    def read(self, path):
+        return (REPO / path).read_text()
+
+    def test_no_tracked_checker_shadows_a_manifest_pins_helper(self):
+        errors = private_pin_helper_errors(self.tracked, self.read)
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    def test_manifest_pins_actually_defines_every_name_this_test_guards(self):
+        # Otherwise the guard would pass by guarding nothing.
+        text = (REPO / MANIFEST_PINS).read_text()
+        for name in SHARED_PIN_HELPERS:
+            self.assertIn(f"def {name}(", text)
+
+    # -- the detector, against a fixture --------------------------------------
+
+    def test_an_unlisted_private_copy_is_reported(self):
+        errors = private_pin_helper_errors(
+            ["scripts/ci/check_x.py"], lambda p: "def sha(data):\n    return 1\n")
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("scripts/ci/check_x.py:sha", errors[0])
+
+    def test_a_checker_that_only_imports_the_shared_helper_is_clean(self):
+        self.assertEqual(
+            private_pin_helper_errors(["scripts/ci/check_x.py"],
+                                      lambda p: "from manifest_pins import sha\nsha(b'x')\n"),
+            [])
+
+    def test_the_guard_is_scoped_to_the_check_family(self):
+        self.assertEqual(
+            private_pin_helper_errors(["scripts/ci/gen_x.py"],
+                                      lambda p: "def sha(d):\n    return 1\n"),
+            [])
+
+    def test_a_stale_exemption_is_reported(self):
+        errors = private_pin_helper_errors(["scripts/ci/check_x.py"], lambda p: "",
+                                           ok={"scripts/ci/check_x.py:sha": "gone now"})
+        self.assertTrue(any("definition that is gone" in e for e in errors), errors)
 
 
 if __name__ == "__main__":
