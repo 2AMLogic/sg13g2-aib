@@ -129,6 +129,15 @@ if [ "$want_evidence" = 1 ]; then
   run "Check the committed routed SPEF and DEF match their manifest pins" \
     python3 -I scripts/ci/check_pnr_pins.py
 
+  # The #248 incident: a stream regeneration left the cited pex reports
+  # declaring the pre-regeneration input hash and the grader re-graded
+  # byte-identically (#273). This walks the manifest citations -- not a
+  # records/ glob, which would flag the uncited stale and probe records --
+  # and fails when a cited record's declared input hash is not the shipped
+  # stream's sha256.
+  run "Check every cited evidence record binds the shipped stream" \
+    python3 -I scripts/ci/check_evidence_pins.py
+
   # The #260 defect at class level: a tracked evidence file that an ignore
   # rule still matches is a record a plain `git add` silently drops (its
   # committed siblings were only tracked because someone force-added them).
