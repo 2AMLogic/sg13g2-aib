@@ -4,6 +4,14 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-15
 
+- **PR #297**: ci: check every cited evidence record binds the shipped stream
+- **Issue #273** (closed): Pin content_hash on stream-bound signoff evidence so a stale input binding fails a gate
+- **PR #295**: ci: fail when a tracked record file is matched by an ignore rule
+- **Issue #263** (closed): Add a CI check that no tracked evidence file is silently ignored
+- **PR #293**: mc: per-corner reading of the failing T-10, T-15 and T-16 MC records
+- **Issue #269** (closed): Monte Carlo: add a per-corner reading of the failing T-10, T-15 and T-16 records (klt yield pools the 45 corners)
+- **PR #291**: fix: gen_specs.py parses argv strictly before touching the committed ERC specs
+- **Issue #277** (closed): layout/erc/gen_specs.py reads no sys.argv: a mistyped --check silently rewrites both committed ERC specs
 - **PR #290**: fix(sim): remove an aborted record dir and refuse record directories with no record.json
 - **Issue #276** (closed): A batch run aborted after the record dir is created leaves a committable records/ directory with no record.json
 - **PR #289**: refactor: define the manifest pin contract once in scripts/ci/manifest_pins.py
