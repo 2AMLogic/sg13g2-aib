@@ -1823,7 +1823,8 @@ class NoPrivateCopyOfASharedBuilderTests(unittest.TestCase):
 # compared them against each other. This is the #256 guard again, scoped to the
 # check_*.py family: a tracked check_*.py may not define a helper manifest_pins
 # already owns, unless it is listed below with the reason its version genuinely
-# differs. The generators keep their own guard above.
+# differs. The generators keep their builder guard above and, since #292, their
+# own pin guard below.
 # ---------------------------------------------------------------------------
 
 MANIFEST_PINS = "scripts/ci/manifest_pins.py"
@@ -1840,6 +1841,37 @@ def private_pin_helper_errors(tracked, read_text, ok=None):
                                   PIN_HELPERS_OK if ok is None else ok)
 
 
+# ---------------------------------------------------------------------------
+# No generator beside manifest_pins keeps a private copy of a pin helper (#292)
+#
+# #283's guard is scoped to check_*.py, so the gap it left regrew: the
+# generators under scripts/ci hand-kept the same digest formula again --
+# gen_characterization_report.py its own MANIFEST and sha256 line,
+# check_design_sources.py the combined-hash formula. This is that guard
+# again, scoped to the gen_*.py directly beside manifest_pins. It is
+# deliberately narrower than the builder guard above (which reaches every
+# tracked gen_*.py): only a generator in this directory imports manifest_pins
+# without a cross-tree dependency, and the layout/ and sim/ generators
+# compute bare-hex digests with a different formula that must keep their own.
+# Only `sha` is guarded: a generator writes artefacts, it does not verify
+# pins, so manifest_block/verify_pins are not names a gen_*.py would
+# plausibly regrow.
+# ---------------------------------------------------------------------------
+
+GEN_PIN_HELPERS = ("sha",)
+
+# "<path>:<name>" -> why this generator's own version is not the shared one.
+GEN_PIN_HELPERS_OK = {}
+
+
+def private_gen_pin_helper_errors(tracked, read_text, ok=None):
+    """Return a sorted list of scripts/ci `gen_*.py` defs shadowing a manifest_pins helper."""
+    beside_pins = [p for p in tracked if posixpath.dirname(p) == "scripts/ci"]
+    return shadowed_helper_errors(beside_pins, read_text, MANIFEST_PINS, GEN_PIN_HELPERS,
+                                  "gen_*.py", "GEN_PIN_HELPERS_OK",
+                                  GEN_PIN_HELPERS_OK if ok is None else ok)
+
+
 class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
     """#283: the manifest-pin consolidation must not quietly lapse either."""
 
@@ -1854,10 +1886,20 @@ class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
         errors = private_pin_helper_errors(self.tracked, self.read)
         self.assertEqual(errors, [], "\n" + "\n".join(errors))
 
+    def test_no_tracked_ci_generator_shadows_a_manifest_pins_helper(self):
+        errors = private_gen_pin_helper_errors(self.tracked, self.read)
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
     def test_manifest_pins_actually_defines_every_name_this_test_guards(self):
         # Otherwise the guard would pass by guarding nothing.
         text = (REPO / MANIFEST_PINS).read_text()
         for name in SHARED_PIN_HELPERS:
+            self.assertIn(f"def {name}(", text)
+
+    def test_manifest_pins_actually_defines_every_name_the_gen_guard_guards(self):
+        # Same for the generator guard's narrower name list.
+        text = (REPO / MANIFEST_PINS).read_text()
+        for name in GEN_PIN_HELPERS:
             self.assertIn(f"def {name}(", text)
 
     # -- the detector, against a fixture --------------------------------------
@@ -1868,21 +1910,55 @@ class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("scripts/ci/check_x.py:sha", errors[0])
 
+    def test_an_unlisted_ci_generator_private_copy_is_reported(self):
+        # The gap #292 closes: before the gen guard this fixture was clean
+        # under every pin guard in this file.
+        errors = private_gen_pin_helper_errors(
+            ["scripts/ci/gen_x.py"], lambda p: "def sha(data):\n    return 1\n", ok={})
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("scripts/ci/gen_x.py:sha", errors[0])
+
     def test_a_checker_that_only_imports_the_shared_helper_is_clean(self):
         self.assertEqual(
             private_pin_helper_errors(["scripts/ci/check_x.py"],
                                       lambda p: "from manifest_pins import sha\nsha(b'x')\n"),
             [])
 
-    def test_the_guard_is_scoped_to_the_check_family(self):
+    def test_a_ci_generator_that_only_imports_the_shared_helper_is_clean(self):
         self.assertEqual(
-            private_pin_helper_errors(["scripts/ci/gen_x.py"],
-                                      lambda p: "def sha(d):\n    return 1\n"),
+            private_gen_pin_helper_errors(["scripts/ci/gen_x.py"],
+                                          lambda p: "from manifest_pins import sha\nsha(b'x')\n",
+                                          ok={}),
+            [])
+
+    def test_the_pin_guards_stay_out_of_the_unrelated_families(self):
+        # The check-family guard does not reach generators, and the generator
+        # pin guard does not reach check_*.py, run_*.py, or a gen_*.py outside
+        # scripts/ci (those import nothing from this directory).
+        sha_def = "def sha(d):\n    return 1\n"
+        self.assertEqual(
+            private_pin_helper_errors(["scripts/ci/gen_x.py"], lambda p: sha_def),
+            [])
+        self.assertEqual(
+            private_gen_pin_helper_errors(
+                ["scripts/ci/check_x.py", "scripts/ci/run_x.py", "sim/gen_common.py"],
+                lambda p: sha_def),
+            [])
+
+    def test_manifest_pins_itself_is_not_its_own_private_copy(self):
+        self.assertEqual(
+            private_gen_pin_helper_errors(
+                [MANIFEST_PINS], lambda p: "def sha(d):\n    return 1\n", ok={}),
             [])
 
     def test_a_stale_exemption_is_reported(self):
         errors = private_pin_helper_errors(["scripts/ci/check_x.py"], lambda p: "",
                                            ok={"scripts/ci/check_x.py:sha": "gone now"})
+        self.assertTrue(any("definition that is gone" in e for e in errors), errors)
+
+    def test_a_stale_gen_exemption_is_reported(self):
+        errors = private_gen_pin_helper_errors(["scripts/ci/gen_x.py"], lambda p: "",
+                                               ok={"scripts/ci/gen_x.py:sha": "gone now"})
         self.assertTrue(any("definition that is gone" in e for e in errors), errors)
 
 

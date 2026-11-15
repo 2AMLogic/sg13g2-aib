@@ -10,7 +10,6 @@ simulation.
   python3 -I scripts/ci/gen_characterization_report.py --check    # exit 1 on any diff
 """
 import argparse
-import hashlib
 import json
 import operator
 import posixpath
@@ -18,10 +17,12 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from manifest_pins import MANIFEST, sha  # noqa: E402  (the one manifest pin definition, #283, #292)
+
 REPO = Path(__file__).resolve().parent.parent.parent
 SPEC = "spec/target-spec.md"
 MAP = "measurements/row-evidence.json"
-MANIFEST = "signoff/block-manifest.json"
 CITED = ("5.analog", "6.analog")
 REPORT = "measurements/characterization-report.md"
 ENVELOPE = "signoff/attest/item8.json"
@@ -166,7 +167,7 @@ def build_report(root):
 
 
 def build_envelope(text, counts):
-    digest = "sha256:" + hashlib.sha256(text.encode()).hexdigest()
+    digest = sha(text.encode())
     env = {
         "schema_version": 1,
         "kind": "generic",
