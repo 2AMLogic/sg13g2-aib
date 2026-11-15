@@ -36,6 +36,7 @@ GENERATORS = {
     "sim/redundancy-mux/gen_redundancy_mux.py": "sim/redundancy-mux/redundancy_mux_stim.inc",
     "sim/mc/capture_window/gen_t19.py": "sim/mc/capture_window/tb_t19.cir",
     "sim/mc/gen_mc.py": "sim/mc/tb_t10_ctl.cir",
+    "sim/mc/gen_per_corner.py": "sim/mc/per_corner.md",
     "sim/dc-static/gen_dc_static.py": "sim/dc-static/request.json",
     "layout/lvs/gen_reference.py": "layout/lvs/aib_io_tx.ref.spice",
     "layout/pex/gen_pex_benches.py": "layout/pex/benches/extraction.json",
