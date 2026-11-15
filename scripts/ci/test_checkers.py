@@ -1913,14 +1913,19 @@ PRIVATE_BUILDERS_OK = {
 }
 
 
-def shadowed_helper_errors(tracked, read_text, owner, names, glob_pattern, table, ok):
+def shadowed_helper_errors(tracked, read_text, owner, names, glob_pattern, table, ok,
+                           all_tracked=None):
     """Return a sorted list of definitions that shadow a helper `owner` already defines.
 
     Pure: the tracked set, the reader, the owning module, the guarded names and
     their file glob, the exemption table and its name are all passed in, so each
     guard can be exercised against a fixture without touching the real tree.
+    When `tracked` is path-scoped, pass the unfiltered set as `all_tracked` so
+    the stale-entry loop can tell "no longer tracked" from "tracked but outside
+    this guard's scope".
     """
     tracked = set(tracked)
+    known = tracked if all_tracked is None else set(all_tracked)
     defs = re.compile(r"^def (%s)\(" % "|".join(names), re.M)
     errors = []
     for path in sorted(q for q in tracked
@@ -1936,8 +1941,10 @@ def shadowed_helper_errors(tracked, read_text, owner, names, glob_pattern, table
                           f"instead, or add a {table} entry saying how it differs")
     for key in sorted(ok):
         path, _, name = key.rpartition(":")
-        if path not in tracked:
+        if path not in known:
             errors.append(f"{key}: entry names a path that is no longer tracked; drop it")
+        elif path not in tracked:
+            errors.append(f"{key}: entry names a path outside this guard's scope; drop it")
         elif f"def {name}(" not in read_text(path):
             errors.append(f"{key}: entry names a definition that is gone; drop it")
     return sorted(errors)
@@ -2066,7 +2073,170 @@ def private_gen_pin_helper_errors(tracked, read_text, ok=None):
     beside_pins = [p for p in tracked if posixpath.dirname(p) == "scripts/ci"]
     return shadowed_helper_errors(beside_pins, read_text, MANIFEST_PINS, GEN_PIN_HELPERS,
                                   "gen_*.py", "GEN_PIN_HELPERS_OK",
-                                  GEN_PIN_HELPERS_OK if ok is None else ok)
+                                  GEN_PIN_HELPERS_OK if ok is None else ok,
+                                  all_tracked=tracked)
+
+
+# ---------------------------------------------------------------------------
+# No file beside manifest_pins spells the digest formula or manifest path
+# constant inline (#304)
+#
+# The name guards above match `^def <name>(` and so cannot see the forms
+# #292's two live defect instances actually took: a private `MANIFEST`
+# constant and the digest formula written out as an expression
+# (`gen_characterization_report.py` kept both, `check_design_sources.py`
+# re-spelled the combined-hash formula). This asserts over the tracked
+# scripts/ci *.py that neither spelling regrows. The sha256 pattern is keyed
+# on the whole `"sha256:" + hashlib.sha256(` expression, not the bare prefix:
+# the prefix alone also matches the `"sha256:" + "0" * 64` fixture literals
+# used throughout this file. It is a substring gate, so an occurrence inside
+# a comment or docstring is reported like any other -- a commented-out copy
+# of the formula should not survive either.
+# ---------------------------------------------------------------------------
+
+FORMULA_PATTERNS = {
+    "sha256-formula": re.compile(re.escape('"sha256:" + hashlib.sha256('), re.M),
+    "manifest-constant": re.compile(r"^MANIFEST\s*=", re.M),
+}
+
+# "<path>:<pattern>" -> why this site is the formula's legitimate home.
+INLINE_FORMULA_OK = {
+    "scripts/ci/manifest_pins.py:sha256-formula":
+        "the canonical owner: manifest_pins.sha() spells the digest formula once",
+    "scripts/ci/test_checkers.py:sha256-formula":
+        "the fixture helper these self-tests drive, not a second definition",
+    "scripts/ci/manifest_pins.py:manifest-constant":
+        "the canonical owner of the manifest path constant",
+}
+
+
+def inline_formula_errors(tracked, read_text, ok=None):
+    """Return a sorted list of scripts/ci files spelling a guarded formula inline.
+
+    Pure: the tracked set, the reader and the exemption table are all passed
+    in, so the guard can be exercised against a fixture without touching the
+    real tree. `tracked` is the unfiltered tracked set; the guard derives its
+    scripts/ci *.py scope from it, so a stale entry naming a tracked file
+    elsewhere is reported as out of scope rather than untracked.
+    """
+    ok = INLINE_FORMULA_OK if ok is None else ok
+    beside_pins = [p for p in tracked
+                   if posixpath.dirname(p) == "scripts/ci" and p.endswith(".py")]
+    known = set(tracked)
+    errors = []
+    for path in sorted(beside_pins):
+        text = read_text(path)
+        for name, pattern in FORMULA_PATTERNS.items():
+            if not pattern.search(text):
+                continue
+            key = f"{path}:{name}"
+            if key not in ok:
+                errors.append(f"{key}: a private copy of a manifest_pins formula -- "
+                              f"import it from manifest_pins instead, or add an "
+                              f"INLINE_FORMULA_OK entry saying why this site spells it")
+            elif not ok[key].strip():
+                errors.append(f"{key}: INLINE_FORMULA_OK entry needs a reason")
+    for key in sorted(ok):
+        path, _, name = key.rpartition(":")
+        if name not in FORMULA_PATTERNS:
+            errors.append(f"{key}: entry names a pattern this guard does not check; drop it")
+        elif path not in known:
+            errors.append(f"{key}: entry names a path that is no longer tracked; drop it")
+        elif path not in beside_pins:
+            errors.append(f"{key}: entry names a path outside this guard's scope; drop it")
+        elif not FORMULA_PATTERNS[name].search(read_text(path)):
+            errors.append(f"{key}: entry names a formula site that is gone; drop it")
+    return sorted(errors)
+
+
+class NoInlineFormulaDuplicationTests(unittest.TestCase):
+    """#304: the digest formula must be spelled exactly once, and by manifest_pins."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tracked = git(REPO, "ls-files").splitlines()
+
+    def read(self, path):
+        return (REPO / path).read_text()
+
+    # -- the live tree --------------------------------------------------------
+
+    def test_no_tracked_ci_file_spells_a_guarded_formula_inline(self):
+        errors = inline_formula_errors(self.tracked, self.read)
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    # -- the detector, against a fixture --------------------------------------
+
+    def test_an_unlisted_inline_digest_formula_is_reported(self):
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py"],
+            lambda p: 'return "sha256:" + hashlib.sha256(b).hexdigest()\n', ok={})
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("scripts/ci/gen_x.py:sha256-formula", errors[0])
+
+    def test_a_private_manifest_constant_is_reported(self):
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py"],
+            lambda p: 'MANIFEST = "signoff/block-manifest.json"\n', ok={})
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("scripts/ci/gen_x.py:manifest-constant", errors[0])
+
+    def test_the_anchored_manifest_pattern_stays_off_the_prefixed_names(self):
+        # MANIFEST_KEY (check_design_sources.py) and MANIFEST_PINS (this file)
+        # are different constants; the ^ anchor is what keeps them out.
+        text = 'MANIFEST_KEY = "1.digital"\nMANIFEST_PINS = "scripts/ci/manifest_pins.py"\n'
+        self.assertEqual(
+            inline_formula_errors(["scripts/ci/check_x.py"], lambda p: text, ok={}),
+            [])
+
+    def test_an_occurrence_inside_a_comment_is_reported_too(self):
+        # Decided: the gate is a substring gate and does not parse comments.
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py"],
+            lambda p: '# return "sha256:" + hashlib.sha256(b).hexdigest()\n', ok={})
+        self.assertEqual(len(errors), 1, errors)
+
+    def test_the_owner_is_allowed_by_the_table(self):
+        fixture = {
+            "scripts/ci/manifest_pins.py":
+                'MANIFEST = "signoff/block-manifest.json"\n'
+                'return "sha256:" + hashlib.sha256(data).hexdigest()\n',
+            "scripts/ci/test_checkers.py":
+                'return "sha256:" + hashlib.sha256((root / rel).read_bytes()).hexdigest()\n',
+        }
+        errors = inline_formula_errors(sorted(fixture), fixture.get)
+        self.assertEqual(errors, [])
+
+    def test_an_exemption_still_needs_a_reason(self):
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py"],
+            lambda p: 'return "sha256:" + hashlib.sha256(b).hexdigest()\n',
+            ok={"scripts/ci/gen_x.py:sha256-formula": "  "})
+        self.assertTrue(any("needs a reason" in e for e in errors), errors)
+
+    def test_a_stale_exemption_is_reported(self):
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py"], lambda p: "import hashlib\n",
+            ok={"scripts/ci/gen_x.py:sha256-formula": "gone now"})
+        self.assertTrue(any("site that is gone" in e for e in errors), errors)
+
+    def test_an_exemption_for_an_untracked_path_is_reported(self):
+        errors = inline_formula_errors([], lambda p: "", ok={
+            "scripts/ci/gone.py:sha256-formula": "r"})
+        self.assertTrue(any("no longer tracked" in e for e in errors), errors)
+
+    def test_an_exemption_outside_the_guard_scope_says_so(self):
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py", "sim/gen_x.py"], lambda p: "", ok={
+                "sim/gen_x.py:sha256-formula": "tracked, but not beside manifest_pins"})
+        self.assertTrue(any("outside this guard's scope" in e for e in errors), errors)
+
+    def test_a_table_entry_for_an_unknown_pattern_is_reported(self):
+        errors = inline_formula_errors(
+            ["scripts/ci/gen_x.py"], lambda p: "",
+            ok={"scripts/ci/gen_x.py:sha256 formula": "typo"})
+        self.assertTrue(any("pattern this guard does not check" in e for e in errors),
+                        errors)
 
 
 class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
@@ -2157,6 +2327,24 @@ class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
         errors = private_gen_pin_helper_errors(["scripts/ci/gen_x.py"], lambda p: "",
                                                ok={"scripts/ci/gen_x.py:sha": "gone now"})
         self.assertTrue(any("definition that is gone" in e for e in errors), errors)
+
+    def test_a_gen_exemption_outside_the_guard_scope_says_so(self):
+        # The gen guard scans only scripts/ci, so a GEN_PIN_HELPERS_OK entry
+        # naming a genuinely tracked path elsewhere must not be reported as
+        # "no longer tracked" -- the file exists, it is just out of scope.
+        errors = private_gen_pin_helper_errors(
+            ["scripts/ci/gen_x.py", "sim/gen_common.py"], lambda p: "",
+            ok={"sim/gen_common.py:sha": "tracked, but not beside manifest_pins"})
+        self.assertTrue(any("outside this guard's scope" in e for e in errors), errors)
+        self.assertFalse(any("no longer tracked" in e for e in errors), errors)
+
+    def test_a_full_tracked_set_caller_keeps_the_untracked_message(self):
+        # The check-family guard passes the whole tracked set, so a path that
+        # is not in it is genuinely untracked and keeps the original message.
+        errors = private_pin_helper_errors([], lambda p: "",
+                                           ok={"sim/gone/gen_gone.py:sha": "r"})
+        self.assertTrue(any("no longer tracked" in e for e in errors), errors)
+        self.assertFalse(any("outside this guard's scope" in e for e in errors), errors)
 
 
 if __name__ == "__main__":
