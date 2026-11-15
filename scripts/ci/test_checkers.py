@@ -983,6 +983,51 @@ class EvidencePinsTests(unittest.TestCase):
         self.assertEqual(r.returncode, 1)
         self.assertIn(self.MULTI, r.stderr)
 
+    def test_multi_source_without_aggregate_hash_still_checks_its_pins(self):
+        def edit(r):
+            p = r / self.MULTI
+            rec = json.loads(p.read_text())
+            del rec["provenance"]["input"]["content_hash"]
+            rec["provenance"]["input"]["paths"][1]["content_hash"] = "sha256:" + "0" * 64
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.MULTI, r.stderr)
+        self.assertIn(self.SCHEMS[1], r.stderr)
+
+    def test_multi_source_without_aggregate_hash_passes_when_pins_are_good(self):
+        def edit(r):
+            p = r / self.MULTI
+            rec = json.loads(p.read_text())
+            del rec["provenance"]["input"]["content_hash"]
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn(self.MULTI, r.stderr)
+
+    def test_an_empty_paths_list_without_aggregate_is_skipped(self):
+        def edit(r):
+            p = r / self.MULTI
+            rec = json.loads(p.read_text())
+            del rec["provenance"]["input"]["content_hash"]
+            rec["provenance"]["input"]["paths"] = []
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn(self.MULTI, r.stderr)
+
+    def test_a_non_list_paths_fails_closed(self):
+        def edit(r):
+            p = r / self.MULTI
+            rec = json.loads(p.read_text())
+            del rec["provenance"]["input"]["content_hash"]
+            rec["provenance"]["input"]["paths"] = {"0": "not a list"}
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.MULTI, r.stderr)
+        self.assertIn("provenance.input.paths is not a list", r.stderr)
+
     def test_missing_cited_record_fails(self):
         def edit(r):
             (r / self.RECORD).unlink()

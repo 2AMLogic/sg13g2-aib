@@ -31,17 +31,20 @@ null path, while the P&R report's top-level `verilog_path` is a bare string a
 scratch worktree left behind).
 
 The multi-source attest shape (`provenance.input.paths[]`, item 1 analog) is
-verified per path. The envelope's aggregate `provenance.input.content_hash`
-is deliberately not recomputed: check_design_sources.py measured that klt's
-aggregate recipe is not reproducible from the paths alone, so reimplementing
-it here would be a guess.
+verified per path, whether or not the envelope also declares an aggregate
+`provenance.input.content_hash`: the aggregate is klt's field, so its
+presence must not gate the per-path checks -- a future klt that drops or
+renames it must not leave the pins unverified with no error. The aggregate
+itself is deliberately not recomputed: check_design_sources.py measured that
+klt's aggregate recipe is not reproducible from the paths alone, so
+reimplementing it here would be a guess.
 
 A record that declares an input hash but matches no resolution key is an
 error naming the record and the keys tried, not a silent skip: that is what
 surfaces a future klt schema change instead of quietly shrinking the
-population. Records with no `provenance.input` hash are skipped outright --
-`klt functional-verification` carries none, nor do the item 6 spec/statement
-inputs (signoff/README.md).
+population. Records with neither an input hash nor a `paths` list are
+skipped outright -- `klt functional-verification` carries none, nor do the
+item 6 spec/statement inputs (signoff/README.md).
 """
 import json
 import sys
@@ -124,13 +127,19 @@ def check_record(root: Path, name: str) -> list:
         return [f"{name}: not valid JSON ({exc})"]
     input_block = (record.get("provenance") or {}).get("input") or {}
     declared = input_block.get("content_hash")
+    paths = input_block.get("paths")
+    if paths is not None:
+        if not isinstance(paths, list):
+            return [f"{name}: provenance.input.paths is not a list"]
+        if paths:
+            return [err for entry in paths for err in check_paths_entry(root, name, entry)]
+        if declared:
+            return [f"{name}: declares {declared} but provenance.input.paths is empty"]
+        # An empty paths list with no aggregate declares no pins at all:
+        # nothing to verify, so it is skipped like a record with no input hash.
+        return []
     if not declared:
         return []
-    paths = input_block.get("paths")
-    if isinstance(paths, list):
-        if not paths:
-            return [f"{name}: declares {declared} but provenance.input.paths is empty"]
-        return [err for entry in paths for err in check_paths_entry(root, name, entry)]
     key, stream = stream_of(record)
     if stream is None:
         return [f"{name}: declares {declared} but names no repo-scoped stream "
