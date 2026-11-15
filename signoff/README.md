@@ -83,6 +83,19 @@ re-cite the hash and regenerate the record:
 uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py analog [--check]
 ```
 
+That sha256 binding is checked, not just declared: the manifest pins a record's
+*declared* input hash, so a stream that moves underneath a cited record re-grades
+byte-identically — the #248 regeneration left four cited pex reports declaring the
+pre-regeneration hash and nothing failed (#273). `scripts/ci/check_evidence_pins.py`
+requires every record cited under `evidence` that declares a
+`provenance.input.content_hash` to name the shipped stream and to declare its sha256.
+The stream is found by a fixed key order (`provenance.input.path`, `file`, `layout`,
+`netlist`, `verilog_path` — the first repo-scoped `{path, scope}` object wins, never
+`provenance.input.role`, which is not reliable), the item 1 analog envelope per
+`paths[]` entry with its aggregate left unrecomputed, and records with no
+`provenance.input` block skipped. The population is citation-driven: uncited records
+under a `records/` directory may declare stale hashes by design.
+
 ## Item 2 (layout, digital)
 
 `layout/attest_item2.py digital` writes `attest/item2-digital.json` through
@@ -412,6 +425,10 @@ makes the CI `--check` exit 3 (`drifted`).
   edited RTL or a stale netlist fails. It does not re-hash the standard-cell
   liberty (no PDK on the runner); `klt synthesize --check <report> [--rerun]`
   covers that locally (`design/README.md`);
+- `scripts/ci/check_evidence_pins.py`: every record cited under `evidence` that
+  declares a `provenance.input.content_hash` binds the shipped stream it names —
+  the gap a manifest pin cannot see (#273). Uncited records are out of the
+  population by design;
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 

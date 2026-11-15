@@ -5,6 +5,7 @@ Run before the checkers in CI: python3 -I scripts/ci/test_checkers.py
 """
 import contextlib
 import fnmatch
+import hashlib
 import io
 import json
 import posixpath
@@ -23,6 +24,7 @@ SRC = HERE / "check_design_sources.py"
 GEN = HERE / "gen_characterization_report.py"
 SDF7 = HERE / "check_item7_sdf.py"
 PNR_PINS = HERE / "check_pnr_pins.py"
+EV_PINS = HERE / "check_evidence_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
 IGN = HERE / "check_record_not_ignored.py"
 REPO = HERE.parent.parent
@@ -745,6 +747,176 @@ class PnrPinTests(unittest.TestCase):
         def drop(d):
             del d["pnr.digital"]["files"][1]
         self.assertNotEqual(self.check(self.edit_manifest(drop)), 0)
+
+
+class EvidencePinsTests(unittest.TestCase):
+    """Every cited record must bind the stream the repo ships (#273).
+
+    The fixture is a synthetic manifest plus fake records: the real
+    block-manifest.json cites 34 records and their streams, too heavy to
+    stage. It seeds every shape the resolution table covers, records the
+    population must skip, and a stale record that is uncited -- the case a
+    path glob over records/ would flag but the citation-driven population
+    must not.
+    """
+
+    STREAM = "layout/aib_stream.gds"
+    NETLIST = "design/synth/aib_netlist.v"
+    SCHEMS = ("design/a_pad.sch", "design/b_pad.sch", "design/c_pad.sch")
+    RECORD = "layout/pex/records/20260101T000000Z/aib_io_tx.extract.report.json"
+    PNR = "layout/pnr/request.report.json"
+    MULTI = "signoff/attest/item1-analog.json"
+    FV = "signoff/fv_post_route.json"
+    STALE = "layout/pex/records/20250101T000000Z/superseded.extract.report.json"
+    SPEC = "signoff/item6/digital-spec.json"
+    STATEMENT = "signoff/item6/digital-statement.json"
+
+    def check(self, mutate=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            self.tree(root)
+            if mutate:
+                mutate(root)
+            r = run(EV_PINS, "--root", root)
+            self.assertNotIn("Traceback", r.stderr)
+            return r
+
+    def put(self, root, rel, obj):
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(obj, indent=1) + "\n")
+        return p
+
+    def put_raw(self, root, rel, text):
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+        return p
+
+    def sha(self, root, rel):
+        return "sha256:" + hashlib.sha256((root / rel).read_bytes()).hexdigest()
+
+    def tree(self, root):
+        for rel, text in [(self.STREAM, "stream bytes v1\n"),
+                          (self.NETLIST, "module m; endmodule\n"),
+                          *[(s, f"schematic {s}\n") for s in self.SCHEMS]]:
+            self.put_raw(root, rel, text)
+        self.put(root, self.RECORD, {
+            "layout": {"path": self.STREAM, "scope": "repo"},
+            "netlist": {"path": None, "scope": "external"},
+            "provenance": {"input": {"content_hash": self.sha(root, self.STREAM),
+                                     "role": "layout"}},
+        })
+        self.put(root, self.PNR, {
+            "file": None,
+            "layout": {"path": None, "scope": "external"},
+            "netlist": {"path": self.NETLIST, "scope": "repo"},
+            "verilog_path": "/scratch/old-tree/layout/pnr/.klt/aib_datapath.v",
+            "provenance": {"input": {"content_hash": self.sha(root, self.NETLIST),
+                                     "role": "netlist"}},
+        })
+        self.put(root, self.MULTI, {
+            "provenance": {"input": {
+                "content_hash": "sha256:" + "4" * 64,
+                "paths": [{"path": {"path": s, "scope": "repo"},
+                           "content_hash": self.sha(root, s)} for s in self.SCHEMS],
+            }},
+        })
+        self.put(root, self.FV, {"status": "pass"})
+        self.put(root, self.SPEC, {"rows": [1, 2]})
+        self.put(root, self.STATEMENT, {"statement": "ok"})
+        self.put(root, self.STALE, {
+            "layout": {"path": self.STREAM, "scope": "repo"},
+            "provenance": {"input": {"content_hash": "sha256:" + "0" * 64,
+                                     "role": "layout"}},
+        })
+        self.put(root, "signoff/block-manifest.json", {
+            "evidence": {
+                "7.analog": [{"file": self.RECORD}],
+                "11.digital": [{"file": self.PNR}],
+                "1.analog": {"file": self.MULTI, "content_hash": "sha256:" + "1" * 64},
+                "5.digital": [{"file": self.FV}],
+                "6.digital": {"not_applicable": {
+                    "spec": {"file": self.SPEC, "content_hash": "sha256:" + "2" * 64},
+                    "statement": {"file": self.STATEMENT,
+                                  "content_hash": "sha256:" + "3" * 64},
+                }},
+            },
+        })
+
+    def test_good(self):
+        self.assertEqual(self.check().returncode, 0)
+
+    def test_the_uncited_stale_record_is_not_reported(self):
+        r = self.check()
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn(self.STALE, r.stderr)
+
+    def test_edited_stream_fails(self):
+        def edit(r):
+            with open(r / self.STREAM, "a") as f:
+                f.write("edited\n")
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.RECORD, r.stderr)
+        self.assertIn(self.STREAM, r.stderr)
+
+    def test_edited_netlist_fails(self):
+        def edit(r):
+            with open(r / self.NETLIST, "a") as f:
+                f.write("// edited\n")
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.PNR, r.stderr)
+
+    def test_edited_multi_source_path_fails(self):
+        def edit(r):
+            with open(r / self.SCHEMS[1], "a") as f:
+                f.write("edited\n")
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.SCHEMS[1], r.stderr)
+
+    def test_a_record_matching_no_resolution_key_fails_closed(self):
+        def edit(r):
+            p = r / self.RECORD
+            rec = json.loads(p.read_text())
+            rec["layout"] = {"path": None, "scope": "repo"}
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.RECORD, r.stderr)
+        self.assertIn("tried provenance.input.path, file, layout, netlist, verilog_path",
+                      r.stderr)
+
+    def test_an_empty_multi_source_paths_list_fails_closed(self):
+        def edit(r):
+            p = r / self.MULTI
+            rec = json.loads(p.read_text())
+            rec["provenance"]["input"]["paths"] = []
+            p.write_text(json.dumps(rec))
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.MULTI, r.stderr)
+
+    def test_missing_cited_record_fails(self):
+        def edit(r):
+            (r / self.RECORD).unlink()
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("cited record file is missing", r.stderr)
+
+    def test_missing_stream_fails(self):
+        def edit(r):
+            (r / self.STREAM).unlink()
+        r = self.check(edit)
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("which is missing", r.stderr)
+
+    def test_missing_manifest_fails(self):
+        def edit(r):
+            (r / "signoff/block-manifest.json").unlink()
+        self.assertEqual(self.check(edit).returncode, 1)
 
 
 
