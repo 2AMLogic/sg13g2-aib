@@ -324,6 +324,71 @@ class PostFlagAndRefusalTests(unittest.TestCase):
                 self.assertEqual(r.stdout, "")
                 self.assertNotIn("Traceback", r.stderr)
 
+    # --- the esd-diode leg (#281): a request that declares no measurements at all --------
+
+    def write_ungraded_request(self, **extra):
+        self.request.write_text(json.dumps(dict(extra) or {"netlist": "tb_esd_diode.cir"}))
+
+    def test_a_request_without_measurements_is_refused_not_raising(self):
+        """Wall 1 of #281: `req["measurements"]` raised KeyError before any refusal could.
+
+        request_esd_diode.json has no top-level `measurements` key at all, so the
+        comprehension that reads it must treat the key as declaring no row -- and
+        still refuse (#267), having printed no traceback and no JSON.
+        """
+        self.write_ungraded_request()
+        r = run_post(self.report, "--request", self.request, "--label", "esd-diode")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+        self.assertNotIn("Traceback", r.stderr)
+        self.assertIn("no measurement reached a spec row", r.stderr)
+        self.assertIn("request-declared spec_row: 0 name(s)", r.stderr)
+
+    def test_allow_empty_rows_writes_the_ungraded_summary(self):
+        """The opt-out a leg states for itself: ungraded by construction, exit 0, `rows: {}`.
+
+        This is dc-static's esd-diode arm only; nothing about the emptiness itself
+        may select this path.
+        """
+        self.write_ungraded_request()
+        r = run_post(self.report, "--request", self.request, "--label", "esd-diode",
+                     "--allow-empty-rows")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        out = json.loads(r.stdout)
+        self.assertEqual(out["label"], "esd-diode")
+        self.assertEqual(out["rows"], {})
+
+    def test_an_empty_measurements_list_is_the_same_as_none(self):
+        self.write_ungraded_request(measurements=[])
+        r = run_post(self.report, "--request", self.request, "--allow-empty-rows")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(json.loads(r.stdout)["rows"], {})
+        r = run_post(self.report, "--request", self.request)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+
+    def test_measurements_without_a_spec_row_still_refuse_without_the_flag(self):
+        """A request that HAS measurements, none declaring a row: not the opt-out case."""
+        self.request.write_text(json.dumps(
+            {"measurements": [{"name": "t18_eye_height_ok_v"}]}))
+        r = run_post(self.report, "--request", self.request)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+        self.assertIn("request-declared spec_row: 0 name(s)", r.stderr)
+
+    def test_allow_empty_rows_is_a_no_op_when_something_grades(self):
+        """The flag permits an empty `rows`; it must not force one."""
+        r = run_post(self.report, "--allow-empty-rows", "--row-map", '{"t18_": "T-18"}')
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(json.loads(r.stdout)["rows"]["T-18"]["verdict"], "pass")
+
+    def test_a_misspelled_allow_empty_rows_exits_2_under_strict_flag_parsing(self):
+        self.write_ungraded_request()
+        r = run_post(self.report, "--request", self.request, "--alow-empty-rows")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertEqual(r.stdout, "")
+        self.assertNotIn("Traceback", r.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

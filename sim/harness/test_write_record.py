@@ -17,6 +17,7 @@ import gzip
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -157,6 +158,55 @@ class JobIdentityTests(unittest.TestCase):
 
     def test_no_remote_block_at_all(self):
         self.assertEqual(write_record.job_identity({}), ([], []))
+
+
+class UngradedRequestTests(unittest.TestCase):
+    """Wall 3 of #281: a request with no top-level `measurements`, under --report-only-ranges.
+
+    dc-static's esd-diode leg is this shape: no limits anywhere, `rows` empty by
+    construction, the numbers in report_only_ranges. `request["measurements"]` used to
+    raise KeyError before any record could be written -- and the leg always sets
+    `--report-only-ranges`, so this fired whether or not the post-processor was given
+    `--request`: the request is opened out of the record directory itself.
+    """
+
+    def write_rec(self, rec, measurements_key):
+        """A record directory shaped like the leg's, with the request's key as requested."""
+        rep = {"corners": [{"corner_id": "mos_tt/vdd_io=1.320V/-40C",
+                            "measurements": [{"name": "cap_a_0.cpad_a_0_ff", "status": "pass",
+                                              "value": 20.44502}]}]}
+        with gzip.open(rec / "report.json.gz", "wt") as f:
+            json.dump(rep, f)
+        (rec / "rows.json").write_text(json.dumps({"rows": {}}))
+        request = {"netlist": "tb_esd_diode.cir"}
+        if measurements_key:
+            request["measurements"] = []
+        (rec / "request.json").write_text(json.dumps(request))
+
+    def test_a_request_without_measurements_writes_its_ranges(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        rec = Path(tmp.name)
+        self.write_rec(rec, measurements_key=False)
+        out = write_record.build(rec, "dc-static-esd-diode", "20261115T000000Z", "test-tag", 0,
+                                 {"claim_scope": "none: pad-diode device extraction only"},
+                                 {}, with_ranges=True)
+        self.assertEqual(out["rows"], {})
+        self.assertEqual(out["claim_scope"], "none: pad-diode device extraction only")
+        ranges = out["report_only_ranges"]
+        self.assertEqual(set(ranges), {"cap_a_0.cpad_a_0_ff"})
+        self.assertIsNone(ranges["cap_a_0.cpad_a_0_ff"]["spec_row"])
+        self.assertEqual(ranges["cap_a_0.cpad_a_0_ff"]["min"], [20.44502, "mos_tt/vdd_io=1.320V/-40C"])
+
+    def test_an_empty_measurements_list_writes_its_ranges_too(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        rec = Path(tmp.name)
+        self.write_rec(rec, measurements_key=True)
+        out = write_record.build(rec, "dc-static-esd-diode", "20261115T000000Z", "test-tag", 0,
+                                 {}, {}, with_ranges=True)
+        self.assertEqual(out["rows"], {})
+        self.assertIn("cap_a_0.cpad_a_0_ff", out["report_only_ranges"])
 
 
 class NoDriftTests(unittest.TestCase):
