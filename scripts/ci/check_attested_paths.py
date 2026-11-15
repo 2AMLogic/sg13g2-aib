@@ -19,6 +19,13 @@ Report, never regenerate: the failure carries the copy-pasteable re-attest
 command (pinned via signoff/KLT_VERSION, never a bare host klt); the checker
 never runs klt and never writes an envelope. *.inventory.json files and JSON
 files with no attestation.checks[] list are not envelopes and are skipped.
+
+Two of the guard's own assumptions are loud, not silent: a run that checks
+zero attested paths fails (naming the resolved root and the likely causes --
+a renamed or missing signoff/attest/, or a renamed "present" discriminator),
+and every envelope that hashes a path must declare attestation.hash_algorithm
+equal to SUPPORTED_HASH_ALGORITHM. A declared-algorithm mismatch is a
+toolchain/checker gap, not drift, so its message carries no re-attest advice.
 """
 import argparse
 import hashlib
@@ -27,6 +34,7 @@ import sys
 from pathlib import Path
 
 ATTEST_DIR = Path("signoff/attest")
+SUPPORTED_HASH_ALGORITHM = "sha256-raw-bytes"
 
 
 def reattest_command(env_rel, env):
@@ -76,6 +84,27 @@ def check_envelopes(root: Path):
             if not isinstance(checks, list):
                 continue
             envelopes += 1
+            if any(isinstance(e, dict) and e.get("check") == "present" for e in checks):
+                # The declared algorithm is load-bearing only where an entry is
+                # hashed: an envelope with no "present" entry never reads it.
+                declared = att.get("hash_algorithm")
+                if declared is None:
+                    errs.append(
+                        f"{env_rel}: attestation declares no hash_algorithm; this"
+                        f" checker requires {SUPPORTED_HASH_ALGORITHM!r} for every"
+                        " envelope that hashes a path. The tree is fine and no"
+                        " envelope edit fixes it -- the checker is behind the"
+                        " toolchain: extend this checker's supported algorithm set"
+                    )
+                elif declared != SUPPORTED_HASH_ALGORITHM:
+                    errs.append(
+                        f"{env_rel}: attestation declares hash_algorithm"
+                        f" {declared!r}; this checker supports only"
+                        f" {SUPPORTED_HASH_ALGORITHM!r}. This is a"
+                        " toolchain/checker gap, not tree drift, and no envelope"
+                        " edit fixes it -- extend this checker's supported"
+                        " algorithm set"
+                    )
             cmd = reattest_command(env_rel, env)
             for entry in checks:
                 if isinstance(entry, dict) and entry.get("check") == "present":
@@ -89,6 +118,16 @@ def main(argv=None):
     ap.add_argument("--root", default=".")
     root = Path(ap.parse_args(argv).root).resolve()
     errs, checked, envelopes = check_envelopes(root)
+    if checked == 0:
+        # Keyed on checked, not envelopes: a schema rename of the
+        # check == "present" discriminator leaves the envelopes parsing
+        # (envelopes counts up) while nothing at all is verified.
+        errs.append(
+            f"{root}: checked 0 attested path(s) across {envelopes} envelope(s)"
+            " -- signoff/attest/ may be renamed or missing under this root, or"
+            ' the envelopes no longer declare any check == "present" entry'
+            " (a renamed schema discriminator makes this guard vacuous)"
+        )
     for e in errs:
         print(f"FAIL: {e}", file=sys.stderr)
     print(f"attested paths: {'FAIL' if errs else 'ok'} "
