@@ -95,9 +95,11 @@ def build(rec: Path, record, stamp, pdk_tag, klt_exit_code, fields_head, fields_
         out["param_groups"] = {g: {"corners": v["corners"], "rows": row_summaries(v["rows"])}
                                for g, v in rows_doc["param_groups"].items()}
     if with_ranges:
-        # the report does not echo spec_row; the request declares it
+        # the report does not echo spec_row; the request declares it -- and a request may
+        # declare none at all (#281: request_esd_diode.json has no `measurements` key),
+        # which leaves every range's spec_row null instead of raising
         request = json.loads((rec / "request.json").read_text())
-        row_of = {m["name"]: m["spec_row"] for m in request["measurements"] if "spec_row" in m}
+        row_of = {m["name"]: m["spec_row"] for m in request.get("measurements", []) if "spec_row" in m}
         out["report_only_ranges"] = report_only_ranges(rep, row_of)
     out.update(fields_tail)
     out["batch_job_ids"] = job_ids

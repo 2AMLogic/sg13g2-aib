@@ -3,7 +3,7 @@
 
 Stdlib only. Usage:
   python3 -I channel_eye_post.py REPORT.json[.gz] [--request REQUEST.json]
-      [--label ch|tc|control|...] [--row-map JSON]
+      [--label ch|tc|control|...] [--row-map JSON] [--allow-empty-rows]
 
 Reads `corners[].measurements[]` (each entry carries `spec_row`, `status`, `value`,
 `margin`) and prints one JSON object: per spec row, how many corners pass, fail or
@@ -36,6 +36,14 @@ passes through into an append-only `record.json` that `scripts/ci/check_evidence
 accepts -- a batch run committable as evidence with no row verdicts at all. The typo-free
 path is the same: a family whose request declares no `spec_row` and which is missing its
 `--row-map` grades nothing either. Neither may produce a `rows.json`.
+
+The one way out is to state it: `--allow-empty-rows` writes `rows: {}` at exit 0 for a
+run that is ungraded by construction (dc-static's esd-diode pad-diode extraction, whose
+request carries no `limits` anywhere and whose numbers live in `report_only_ranges`).
+The refusal is never relaxed by anything inferred from the emptiness itself -- the flag
+must be passed, deliberately, by the leg that claims no row (#281). A request without a
+top-level `measurements` key declares no row either (the key is read with `.get`), which
+is the same statement the esd-diode request makes by omission.
 """
 import argparse
 import gzip
@@ -215,6 +223,9 @@ def main(argv=None):
     ap.add_argument("--row-map", type=parse_row_map,
                     help="JSON object of measurement-name PREFIX -> spec row (or [rows]), for a "
                          "family whose graded measurements carry no tag at all")
+    ap.add_argument("--allow-empty-rows", action="store_true",
+                    help="write `rows: {}` at exit 0 for a run ungraded by construction (the "
+                         "esd-diode extraction); without it an empty summary is refused (#267)")
     args = ap.parse_args(argv)
 
     rep = load(args.report)
@@ -222,18 +233,23 @@ def main(argv=None):
     if args.request:  # the report does not echo spec_row; the request declares it
         with open(args.request) as fh:
             req = json.load(fh)
-        row_of = {m["name"]: m["spec_row"] for m in req["measurements"] if "spec_row" in m}
+        # no top-level `measurements` declares no spec_row from the request at all
+        # (#281: request_esd_diode.json); an empty dict grades nothing, as before
+        row_of = {m["name"]: m["spec_row"] for m in req.get("measurements", []) if "spec_row" in m}
     rows = summarise(rep, row_of, args.row_map)
     if not rows:
         # Refuse rather than print `rows: {}`: write_record.py:83 takes that as-is,
         # check_evidence_format.py requires only record/utc_stamp/pdk.release_tag, and
         # check_sim_append_only.py then freezes it -- a run committed as evidence with no
         # row verdicts at all. The docstring above promises a summary per spec row; on
-        # this path there is none to make, so there is nothing to record.
-        print(f"{args.report}: no measurement reached a spec row, so this summary would grade "
-              f"nothing; refusing to write it. {row_sources(rep, row_of, args.row_map)}",
-              file=sys.stderr)
-        return 2
+        # this path there is none to make, so there is nothing to record. The only way
+        # past it is the caller stating the leg is ungraded by construction
+        # (--allow-empty-rows); the emptiness itself never selects that (#281).
+        if not args.allow_empty_rows:
+            print(f"{args.report}: no measurement reached a spec row, so this summary would "
+                  f"grade nothing; refusing to write it. {row_sources(rep, row_of, args.row_map)}",
+                  file=sys.stderr)
+            return 2
     res = {"label": args.label, "corners": len(rep["corners"]), "kind": "simulated",
            "rows": rows}
     groups = param_groups(rep, row_of, args.row_map)
