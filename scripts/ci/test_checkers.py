@@ -1430,10 +1430,17 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
 
     def test_an_unknown_flag_exits_2_and_writes_nothing(self):
         # The tree snapshot, not one named output's mtime, is the write assertion
-        # (#266): it sees every output and any untracked byproduct -- a stray
-        # `--chek/` directory was invisible to the mtime check. cwd is pinned to the
-        # repo so a generator writing relative to the process cwd lands inside the
-        # snapshot.
+        # (#266): it sees every output and any untracked byproduct visible to
+        # `git status --porcelain`. It has two blind shapes (#307): an empty
+        # directory -- git tracks no empty directories, so --porcelain never
+        # lists one -- and a write into a gitignored path, invisible without
+        # --ignored, which on this tree includes anything matching the
+        # tree-wide *.raw/*.log/*.vcd/*.vvp rules. cwd is pinned to the repo
+        # so a generator writing relative to the process cwd lands inside the
+        # snapshot. The two checks below are complementary, and both stay:
+        # the snapshot sees writes relative to the repo, the empty-cwd run
+        # sees empty-directory and gitignored writes relative to cwd; neither
+        # subsumes the other.
         for gen in STRICT_FLAG_SUBJECTS:
             with self.subTest(gen=gen):
                 before = git(REPO, "status", "--porcelain")
@@ -1441,6 +1448,15 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                 self.assertEqual(r.returncode, 2, f"{gen} --chek: {r.stdout}{r.stderr}")
                 self.assertEqual(git(REPO, "status", "--porcelain"), before,
                                  f"{gen} --chek wrote to the tree")
+                # #307: the same refusal from an empty cwd must leave that
+                # directory empty -- exactly the shapes the snapshot cannot
+                # see (an empty directory, a gitignored name).
+                with tempfile.TemporaryDirectory() as t:
+                    r = run(REPO / gen, "--chek", cwd=t)
+                    self.assertEqual(r.returncode, 2,
+                                     f"{gen} --chek from an empty cwd: {r.stdout}{r.stderr}")
+                    self.assertEqual(sorted(q.name for q in Path(t).iterdir()), [],
+                                     f"{gen} --chek created something in an empty cwd")
 
     def test_strictness_unassertable_entries_are_real_and_reasoned(self):
         # The one hand-kept table left in the subject selection is the exemption, so
