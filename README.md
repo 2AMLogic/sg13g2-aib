@@ -119,6 +119,8 @@ verification/  cocotb testbenches
 design/        analog schematics (driver, receiver, ESD)
 sim/           testbenches + PVT corner results (ngspice), channel studies
 layout/        GDS + DRC/LVS reports, including the I/O column
+signoff/       pinned-grader attestations + block manifest
+scripts/       CI checkers (evidence format, append-only, check list)
 measurements/  silicon characterization (empty until tape-out)
 ```
 
