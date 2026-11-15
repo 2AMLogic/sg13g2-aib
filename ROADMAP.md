@@ -3,7 +3,7 @@
 An AIB Gen1-class die-to-die parallel I/O channel on IHP SG13G2, built to a
 ratified spec with every claim traced to a recorded result.
 
-Status as of 2026-11-14, `main` @ `81f24a4`.
+Status as of 2026-11-15, `main` @ `d9bed2d`.
 
 The verdict of record is [`signoff/block-manifest.signoff.json`](signoff/block-manifest.signoff.json)
 (grader pinned at 0.9.0 in `signoff/KLT_VERSION`); the per-row table is
@@ -44,7 +44,7 @@ first rung not reached.
 
 ## Now
 
-Can start today; each is one pull request. #260 is in build.
+Can start today; each is one pull request. #269 is in build.
 
 1. **Per-corner reading of the three failing Monte Carlo rows** (#269).
    `klt yield` pools the 45 corners, so the records do not say which corners
@@ -56,11 +56,10 @@ Can start today; each is one pull request. #260 is in build.
    signoff record** (#270). The README still says no PVT or channel
    simulation exists and that I/O-cell LVS mismatches. Done when both
    statements match the committed record.
-3. **Remove four stale `.gitignore` rules** (#260, in build). Done when the
-   rules are gone and the Yosys-log negation points at
-   `sim/rtl-synth/records`.
 
-Recently landed: the `gen_redundancy_mux.py` strict-flag conversion and the
+Recently landed: the `.gitignore` cleanup (#260, PR #262), the item 7
+analog extraction re-bound to the post-#248 reordered stream (#253,
+PR #272), the `gen_redundancy_mux.py` strict-flag conversion and the
 PWL-helper consolidation it carried (#256, #257; PR #264), the I/O-column
 slot order with both spares at one end (#248, PR #254), and the append-only
 check's base commit and README treatment (#255, PR #258).
@@ -71,9 +70,6 @@ check's base commit and README treatment (#255, PR #258).
   (#246), then **re-synthesize and re-place-and-route and confirm the
   `tx_d0`/`tx_d1` path closes setup at 500 MHz** (#247). Both wait on PR
   #249, which carries the decision record placing the remap (closes #232).
-- **Re-run the item 7 analog extraction on the reordered stream** (#253,
-  in build; unblocked by the #248 merge). Done when the
-  `layout/pex/records/` citations bind the new stream hash.
 - **Loopback follow-ups**, after #176 (PR #188): rename the `l1` port to
   what it selects (#181), draw and extract the L1 TopMetal2 loopback route
   (#182), fix the binding-corner label in `channel_eye_post` (#185).
@@ -91,7 +87,8 @@ check's base commit and README treatment (#255, PR #258).
 ## Later
 
 - **Post-layout delta for item 7 / analog** (#226): the 45-corner campaign
-  is committed and waits on klayout-tools#5491 and #5493. Question: does the
+  is committed and waits on klayout-tools#5491; the multi-top capability the
+  graded run needs is klayout-tools#5494. Question: does the
   extracted netlist hold the pre-layout margins, T-16 and T-19 above all?
 - **Post-layout legs of T-13 and T-14, and the T-30 signoff row**, after
   item 7 / analog. Question: what does the pre-layout campaign (#136) show?
@@ -115,10 +112,12 @@ Waiting on a maintainer decision:
   half, which this repo cannot close without designing a DLL (#195); the
   T-24/T-25 pad-diode trade that gates the ESD transient (#196); how item 5
   accounts for rows with no gradable leg (#216).
-- **Proposed removals** labelled for a decision: #213, #220, #241, #245.
+- **Proposed removals** awaiting a decision: #213, #220, #241, #245, #261,
+  #285. New `loom:hermit` proposals land between stamps; the live set is the
+  tracker's open `loom:operator` queue, not this list.
 
-Waiting on an upstream tool fix: klayout-tools#5491 and #5493, for item 7 /
-analog (#226).
+Waiting on an upstream tool fix: klayout-tools#5491, for item 7 / analog
+(#226).
 
 Item 5 / analog cannot read `met` until #216 is ruled. Items 6 and 8 cannot
 read `met` while T-10, T-15 and T-16 fail; the spec is not relaxed for that.
