@@ -9,21 +9,20 @@ The manifest's `derived_inputs."7.digital"` block pins the source and both outpu
 sha256 (kept outside `evidence`: the grader reads every `evidence` entry as an envelope).
 This fails if the source is not the pinned one, if regenerating from it does not reproduce
 the committed bytes, or if the committed bytes are not the pinned ones.
+
+What is specific here is the source pin and the run_evidence.py regeneration comparison,
+which check_pnr_pins.py deliberately does not do; the exists-and-hash contract for the
+pinned outputs is manifest_pins.py's (#283).
 """
-import argparse
-import hashlib
 import importlib.util
-import json
 import sys
 from pathlib import Path
 
-MANIFEST = "signoff/block-manifest.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import manifest_pins  # noqa: E402  (the one manifest pin definition, #283)
+
 KEY = "7.digital"
 GENERATOR = "verification/klt/run_evidence.py"
-
-
-def sha(data: bytes) -> str:
-    return "sha256:" + hashlib.sha256(data).hexdigest()
 
 
 def load_generator(root: Path):
@@ -34,39 +33,29 @@ def load_generator(root: Path):
 
 
 def check(root: Path) -> list:
-    errs = []
-    block = json.loads((root / MANIFEST).read_text()).get("derived_inputs", {}).get(KEY)
-    if not block:
-        return [f"{MANIFEST}: derived_inputs.{KEY} is missing"]
+    block, errs = manifest_pins.manifest_block(root, KEY)
+    if block is None:
+        return errs
     src = root / block["source"]["file"]
-    if sha(src.read_bytes()) != block["source"]["content_hash"]:
+    if manifest_pins.sha(src.read_bytes()) != block["source"]["content_hash"]:
         return [f"{block['source']['file']}: sha256 differs from the manifest pin; re-cite deliberately"]
     gen = load_generator(root)
     raw = src.read_text()
     want = {"aib_datapath_route.tb.sdf": gen.scope_sdf(raw, False),
             "aib_datapath_route.tb.neg_timing.sdf": gen.scope_sdf(raw, True)}
+    errs += manifest_pins.verify_pins(root, KEY, block)
     pins = {Path(f["file"]).name: f for f in block["files"]}
     if set(pins) != set(want):
-        return [f"{MANIFEST}: derived_inputs.{KEY} pins {sorted(pins)}, run_evidence.py writes {sorted(want)}"]
-    for name, text in want.items():
-        f = pins[name]
-        committed = (root / f["file"]).read_bytes()
-        if committed != text.encode():
-            errs.append(f"{f['file']}: not reproduced by run_evidence.py regeneration from the pinned source")
-        if sha(committed) != f["content_hash"]:
-            errs.append(f"{f['file']}: sha256 {sha(committed)} != manifest pin {f['content_hash']}")
+        errs.append(f"{manifest_pins.MANIFEST}: derived_inputs.{KEY} pins {sorted(pins)}, "
+                    f"run_evidence.py writes {sorted(want)}")
+    else:
+        for name, text in want.items():
+            p = root / pins[name]["file"]
+            if p.is_file() and p.read_bytes() != text.encode():
+                errs.append(f"{pins[name]['file']}: not reproduced by run_evidence.py "
+                            "regeneration from the pinned source")
     return errs
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
-    errs = check(ap.parse_args().root)
-    for e in errs:
-        print(e, file=sys.stderr)
-    print(f"item7 derived SDFs: {'FAIL' if errs else 'ok'}")
-    return 1 if errs else 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(manifest_pins.cli("item7 derived SDFs", check))
