@@ -24,14 +24,12 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
 - **#194**: T-20 SIM leg: no end-to-end sampling-margin confirmation exists, and two of its inputs are open
-- **#265**: layout/attest_item2.py: strict flag parsing -- a mistyped --check rewrites the committed signoff attestation
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#265**: layout/attest_item2.py: strict flag parsing -- a mistyped --check rewrites the committed signoff attestation
-- **#274**: Remove the dead placement/router plumbing in layout/gen_io_column.py: the _WIDTH global carries two constants
+_None._
 
 ## In Progress
 
@@ -42,16 +40,12 @@ Issues currently being built (`loom:building`).
 - **#176**: T-29 SIM: no loopback mux exists in design/, so loopback modes L1/L2 are unverifiable
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target
-- **#253**: pex: re-run the item 7.analog extraction on the post-#248 stream (the record binds the pre-#248 hash)
-- **#260**: Remove four .gitignore rules for paths this repo never had, and point the Yosys-log negation at sim/rtl-synth/records
-- **#267**: channel_eye_post.py: lenient flag parsing and an unguarded empty rows summary commit a record with no verdicts
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#268**: docs: roadmap as of 2026-11-13
-- **#275**: fix(sim): parse channel_eye_post flags strictly and refuse an ungraded summary
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -61,8 +55,6 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
 - **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
-- **#262**: fix(gitignore): un-ignore rtl-synth Yosys logs, drop two dead rules, re-aim stale comments
-- **#272**: evidence(pex): re-bind item 7.analog extraction to the post-#248 stream
 
 ## Proposed
 
@@ -77,8 +69,6 @@ Issues carrying `loom:curated`.
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded *(curated)*
 - **#185**: channel_eye_post's binding-corner label always reads `mixed` instead of the supply voltage *(curated)*
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
-- **#253**: pex: re-run the item 7.analog extraction on the post-#248 stream (the record binds the pre-#248 hash) *(curated)*
-- **#271**: gen_t16attr.py takes --check as an output directory instead of a flag *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -86,9 +76,9 @@ Issues carrying `loom:curated`.
 - **#220**: Remove the channel-eye positive-control bench: its TX copy no longer matches design/aib_tx_data.spice and the defect it worked around is fixed *(hermit)*
 - **#241**: Remove the batch runner_version_check "warn" override from the five request generators: the fleet runner has matched the pinned klt since 2026-11-08 *(hermit)*
 - **#245**: Remove verification/run_tb.py: run the cocotb benches through the pinned klt functional-verification the evidence already uses *(hermit)*
-- **#257**: Consolidate duplicated PWL stimulus helpers into sim/gen_common.py *(hermit)*
 - **#261**: Stop restating the OSDI pins in sim/pdk.json: one of the two copies is wrong about who reads it *(hermit)*
-- **#266**: Derive the strict-flag test's generator set in test_checkers.py: the hand-kept allowlist cannot contain a failing generator *(hermit)*
+- **#280**: Move the shared klt sim row summariser out of sim/channel-eye: four families post-process through another family's directory *(hermit)*
+- **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(hermit)*
 
 ## Epics
 
@@ -100,12 +90,12 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 4 |
 | Very important | 1 |
-| Important | 3 |
-| Ready (`loom:issue`) | 2 |
-| In Progress (`loom:building`) | 8 |
-| PRs awaiting review | 2 |
-| Approved PRs awaiting merge | 6 |
-| Curated | 11 |
+| Important | 2 |
+| Ready (`loom:issue`) | 0 |
+| In Progress (`loom:building`) | 5 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 4 |
+| Curated | 9 |
 | Architect / Hermit proposals | 7 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
