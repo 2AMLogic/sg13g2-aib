@@ -24,6 +24,7 @@ GEN = HERE / "gen_characterization_report.py"
 SDF7 = HERE / "check_item7_sdf.py"
 PNR_PINS = HERE / "check_pnr_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
+IGN = HERE / "check_record_not_ignored.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 GOOD = {"record": "x", "utc_stamp": "20260101T000000Z", "pdk": {"release_tag": "v0.3.0"}, "log": "ngspice.log"}
@@ -394,6 +395,82 @@ class AppendOnlyTests(unittest.TestCase):
 
     def test_push_to_default_branch_passes_a_clean_push(self):
         self.assertEqual(self.push_to_main(self.touch_harness, *self.DEFAULT_PUSH), 0)
+
+
+class RecordNotIgnoredTests(unittest.TestCase):
+    """A tracked record file an ignore rule still matches (#260, #263).
+
+    The seed is the force-add mask itself: the two evidence files are committed
+    with `git add -f`, so the tree is "clean" to `git status` and only the
+    checker can see that their rules are broken. A fix is a negation that
+    re-includes the path, the exact shape #262 landed for all four families.
+    """
+
+    LOG = "sim/s/records/20260101T000000Z/yosys_n1.log"
+    CORNER = "sim/s/corners/tt.json"
+
+    def scenario(self, gitignore, force_add=(LOG, CORNER)):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD, record_readme=True)
+            for f in force_add:
+                p = root / f
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text("x\n")
+            (root / ".gitignore").write_text(gitignore)
+            git(root, "add", "-A")
+            git(root, "add", "-f", *force_add)
+            git(root, "commit", "-qm", "seed")
+            return run(IGN, cwd=root)
+
+    def test_correct_negations_pass(self):
+        self.assertEqual(self.scenario(
+            "*.log\n"
+            "!sim/s/records/**/*.log\n"
+            "sim/s/corners/*.json\n"
+            "!sim/s/corners/*.json\n").returncode, 0)
+
+    def test_tracked_but_ignored_fails(self):
+        # the negative control: both files committed, rules broken. Exactly 1
+        # -- an exit 2 here means the checker never ran, not that it caught it.
+        r = self.scenario("*.log\nsim/s/corners/*.json\n")
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.LOG, r.stderr)
+        self.assertIn(self.CORNER, r.stderr)
+        self.assertIn(".gitignore:", r.stderr)
+
+    def test_negation_fixed_for_one_family_still_flags_the_other(self):
+        r = self.scenario("*.log\n!sim/s/records/**/*.log\nsim/s/corners/*.json\n")
+        self.assertEqual(r.returncode, 1)
+        self.assertNotIn(self.LOG, r.stderr)
+        self.assertIn(self.CORNER, r.stderr)
+
+    def test_top_level_records_dir_counts(self):
+        # membership is "a records component below the root", so a top-level
+        # records/ directory is covered too -- not is_record()'s root-gated set
+        r = self.scenario("records/*.json\n", force_add=("records/top.json",))
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("records/top.json", r.stderr)
+
+    def test_non_record_ignored_file_is_out_of_scope(self):
+        r = self.scenario(
+            "*.log\n"
+            "!sim/s/records/**/*.log\n"
+            "sim/s/corners/*.json\n"
+            "!sim/s/corners/*.json\n",
+            force_add=("sim/s/scratch.log",))
+        self.assertEqual(r.returncode, 0)
+        self.assertNotIn("scratch.log", r.stderr)
+
+    def test_git_failure_exits_2(self):
+        # not a repository: git cannot answer at all, and exit 1 would let a
+        # broken environment satisfy the negative control above
+        with tempfile.TemporaryDirectory() as t:
+            r = run(IGN, cwd=Path(t))
+        self.assertEqual(r.returncode, 2)
+
+    PEX_REC = "layout/pex/records/20260101T000000Z/record.json"
 
 
 class CharacterizationReportTests(unittest.TestCase):
