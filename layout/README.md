@@ -197,13 +197,17 @@ is the evidence that a label rename is what it looks like. `stats/t22-t23.json` 
 report re-derive unchanged (`klt stats` measures bounding boxes; a label at the cell centre moves
 nothing), so they are not re-committed. No spec row, bound or decision record was touched.
 
-**Not re-run:** `pex/records/20261113T130842Z/` (the four `klt extract` reports under item
-7.analog) still binds the pre-fix stream hash. Re-running needs `PDK_ROOT` (ihp-sg13g2 0.3.0),
-which the host this ran on does not have, and `pex/run_pex.sh` appends a new stamped record
-rather than editing that one. The four extracted cells are the **unit** cells
-(`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`), whose contents this change does not
-touch at all, so the extraction is unaffected in substance; the record's citation carries no
-stream-hash pin in `signoff/block-manifest.json` and the re-grade is unchanged. Tracked in #253.
+**Re-run separately (#253):** `pex/records/20261113T130842Z/` (the four `klt extract` reports
+under item 7.analog) bound the pre-fix stream hash, and re-running needs `PDK_ROOT`
+(ihp-sg13g2 0.3.0), which the host this ran on does not have. It was re-run on a host that does
+as `pex/records/20261114T025329Z/`, which binds the committed stream
+`175eb50e…`; `signoff/block-manifest.json` now cites that record under 7.analog and the
+re-grade is unchanged (`unmet` / `check_failed`). The four extracted cells are the **unit**
+cells (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`), whose contents this change
+does not touch at all, and the re-run confirms it measurably: every one of the four
+`extraction.netlist_sha256` values is unchanged, as are the device counts (42/84/138/276) and
+net counts (6/10/17/29), so the two records differ in exactly one field each —
+`provenance.input.content_hash`. `20261113T130842Z/` is append-only history and was not edited.
 The `lvs/*.diag.*` reports are untouched history and already did not reproduce (they bind a
 stream older than either of these).
 

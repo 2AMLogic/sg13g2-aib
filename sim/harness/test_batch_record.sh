@@ -17,8 +17,10 @@
 #      launched it" per shard it RECOVERS, still writes the record;
 #   4. a tool/fleet exit code is exit 6 with the record directory removed, and the
 #      PREFIX_WORK / PREFIX_RESUME retry line names a work directory that still exists;
-# plus: klt's own exit 3 (a limit failed) is a result and is still recorded, and a stale
-# generator refuses to submit anything at all.
+# plus: klt's own exit 3 (a limit failed) is a result and is still recorded, a stale
+# generator refuses to submit anything at all, and a post-processor refusal (#267's
+# designed abort, issue #276) leaves no record directory behind and keeps the aborted
+# run's klt.stderr outside records/.
 #
 # Cases 7 and 8 cover the dc-static entry point (#228), the third family on this procedure
 # and the one that needs `--row-map`: 7 is its resolved `--dry-run` configuration, 8 drives
@@ -285,6 +287,37 @@ PY
   }
   want "the prefix map reproduces the six rows the cited record asserts" dc_rows_match
 fi
+
+# --- 9. a refused post-processor leaves no record directory (#276) ---------------------
+echo "case 9: a post-processor refusal leaves no record and keeps klt.stderr"
+printf '%s\n' 'import sys; sys.exit(0)' > "${FAM}/gen_stub.py"
+python3 -I - "${TMP}/grades-nothing.json.gz" <<'PY'
+import gzip, json, sys
+# A report whose measurement echoes no spec_row and whose name is declared nowhere:
+# channel_eye_post.py refuses the summary with exit 2 (#267). This aborts the harness
+# after the record directory exists -- the leftover used to stay behind committable,
+# with no record.json in it.
+rep = {"corners": [{"corner_id": "mos_tt/1.20V/27C",
+                    "measurements": [{"name": "unmapped.no_such_row", "status": "pass"}]}]}
+with gzip.open(sys.argv[1], "wt") as f:
+    json.dump(rep, f)
+PY
+rc="$(STUB_REPORT="${TMP}/grades-nothing.json.gz" run_harness)"
+check "exit code is the post-processor's refusal (2)" "${rc}" "2"
+check "no record directory is left behind" "$(latest_record)" ""
+want "the abort names the kept stderr location" grep -q 'kept at' "${TMP}/stderr"
+want "nothing was written to stdout" test ! -s "${TMP}/stdout"
+ASIDE="$(sed -n 's/^.*kept at //p' "${TMP}/stderr" | tail -1)"
+if [[ -z "${ASIDE}" || ! -f "${ASIDE}" ]]; then
+  fail "the aborted run's klt.stderr is kept outside records/"
+else
+  ok "the aborted run's klt.stderr is kept outside records/"
+  check "the kept stderr is scrubbed like the record's" \
+    "$(grep -c 's3://<bucket>' "${ASIDE}")" "1"
+  want_not "the kept stderr is not under the family's records/" \
+    test -e "${FAM}/records/$(basename "$(dirname "${ASIDE}")")"
+fi
+if [[ -n "${ASIDE}" ]]; then rm -rf "$(dirname "${ASIDE}")"; fi
 
 echo
 if [[ "${FAILED}" -eq 0 ]]; then echo "test_batch_record.sh: OK"; else echo "test_batch_record.sh: FAILED" >&2; fi
