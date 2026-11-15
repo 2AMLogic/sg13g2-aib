@@ -90,6 +90,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_evidence_format.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
     python3 -I scripts/ci/check_design_sources.py
+  run "Check every attested path matches its envelope's content_hash" \
+    python3 -I scripts/ci/check_attested_paths.py
   run "Check the item 6 digital not_applicable documents are fresh against the spec" \
     python3 -I scripts/ci/gen_item6_digital.py
   run "Check the Monte Carlo requests against the generator" \
