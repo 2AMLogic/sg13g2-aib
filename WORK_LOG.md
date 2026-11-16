@@ -4,6 +4,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-15
 
+- **PR #311**: ci: guard the inline sha256-formula duplication class under scripts/ci
 - **PR #309**: ci: catch empty-directory and gitignored writes in the strict-flag refusal test
 - **PR #308**: ci: fail check_attested_paths on zero checked paths and require the declared hash_algorithm
 - **PR #306**: fix: verify evidence per-path pins without gating on the aggregate hash
@@ -14,6 +15,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 - **PR #296**: ci: derive the strict-flag and freshness test subjects from tracked gen_*.py discovery
 - **PR #288**: ci: fail fast when a hash-bound attested path drifts from its envelope
 - **PR #268**: docs: roadmap as of 2026-11-13
+- **Issue #304** (closed): The inline-sha256-formula duplication class under scripts/ci has no guard
 - **Issue #307** (closed): The strict-flag write assertion cannot see a gitignored or empty-directory write
 - **Issue #301** (closed): check_evidence_pins.py: a multi-source record with no aggregate content_hash skips its per-path pins entirely
 - **Issue #299** (closed): check_attested_paths.py: make its own assumptions loud (zero-paths-checked, declared hash_algorithm)
