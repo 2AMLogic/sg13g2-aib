@@ -77,7 +77,10 @@ extract)
     "${K[@]}" pex "${LAYOUT}" "${args[@]}" --extract-only --format json \
       -o "${WORK}/out/${top}.extracted.spice" \
       > "${WORK}/out/${top}.extract.report.json" 2> "${WORK}/out/${top}.extract.stderr" || status=$?
-    [[ ${status} -le 4 ]] || { echo "run_pex.sh: ${top} extraction failed" >&2
+    # Only klt's own result exits (0, 3, 4) are recordable here too; anything
+    # else -- a tool or usage error, e.g. argparse's 2 for a rejected flag --
+    # stops the run before any record is written.
+    [[ ${status} -eq 0 || ${status} -eq 3 || ${status} -eq 4 ]] || { echo "run_pex.sh: ${top} extraction failed (exit ${status})" >&2
                                cat "${WORK}/out/${top}.extract.stderr" >&2; exit 6; }
     status=0
   done
@@ -137,7 +140,7 @@ PY
     # klt pex's own 0 (every delta row within tolerance), 3 (a row failed) and 4
     # (a row could not be measured) are all results and are recorded. Anything
     # else is a tool or fleet error: no record is written.
-    [[ ${status} -le 4 ]] || { echo "run_pex.sh: ${tag} pex failed (exit ${status})" >&2
+    [[ ${status} -eq 0 || ${status} -eq 3 || ${status} -eq 4 ]] || { echo "run_pex.sh: ${tag} pex failed (exit ${status})" >&2
                                cat "${WORK}/out/${tag}.pex.stderr" >&2; exit 6; }
     echo "${status}" > "${WORK}/out/${tag}.pex.exit"
     status=0

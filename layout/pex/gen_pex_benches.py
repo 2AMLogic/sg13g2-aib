@@ -348,10 +348,12 @@ def request(top: str) -> dict:
     """The `klt sim` request `klt pex` re-runs against both netlists.
 
     `osdi_preload` keeps the portable `$PDK_ROOT/...` spelling every committed
-    request under sim/ uses. `klt pex` 0.9.0 drops entries in that form from the
-    decks it drives (layout/pex/README.md, defect 1); layout/pex/run_pex.sh
-    materialises an absolute-path copy at run time and records it, rather than
-    committing a host path here.
+    request under sim/ uses. Per layout/pex/README.md, defect 1
+    (2AMLogic/klayout-tools#5492), `klt pex` drops `options.osdi_preload` from
+    the decks it drives when no backend is named: it resolves one from
+    `$KLT_SIM_BACKEND` and then still runs the local ngspice. This request
+    always states its `backend`, so the campaign never takes that path; no
+    absolute-path copy is committed here and none is rewritten at run time.
     """
     steps, tops = leg_steps(top)
     r = {"engine": "ngspice",
