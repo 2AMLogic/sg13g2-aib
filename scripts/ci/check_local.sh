@@ -120,6 +120,12 @@ if [ "$want_evidence" = 1 ]; then
   run "Self-test the item 7 pex benches (pin lists, one .include, row split)" \
     python3 -I layout/pex/test_pex_benches.py
 
+  # The pex record runner's abort contract, against a stubbed `klt pex`: no PDK
+  # and no network, so it belongs in the PDK-free list like every checker above
+  # (#315 -- the empty-report refusal and the no-partial-record EXIT trap).
+  run "Self-test the pex record runner's abort contract (stubbed klt pex)" \
+    layout/pex/test_run_pex.sh
+
   # The assembled I/O-cell LVS reference netlists AND the seeded negative
   # controls under layout/lvs/neg/. #202 made those controls derived rather
   # than hand-copied so that a change to a source is carried into the control;

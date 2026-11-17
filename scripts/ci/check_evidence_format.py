@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-"""Check the repo evidence structure and the format of sim/ records.
+"""Check the repo evidence structure and the format of simulation records.
 
 Stdlib only; PDK-free. Usage: python3 -I scripts/ci/check_evidence_format.py [--root DIR]
 
 Checks:
   * each evidence directory has a README.md;
-  * each sim/**/records/<stamp>/ directory holds a `record.json` -- which must parse,
-    carry the required fields (record, utc_stamp, pdk.release_tag) and hold no absolute
-    path -- or its own `README.md` (a deliberately ungraded study, e.g. the T-16
-    attribution record; #255 froze record-local READMEs as evidence). A directory with
-    neither is an aborted batch run (#276): it looks like evidence, would be frozen
-    append-only once committed, and carries no graded result at all.
+  * every record directory under the shared record roots (check_sim_append_only.py's
+    RECORD_ROOTS: `sim/**/records/<stamp>/` and `layout/pex/records/<stamp>/`) holds a
+    `record.json` -- which, for a sim/ record, must parse, carry the required fields
+    (record, utc_stamp, pdk.release_tag) and hold no absolute path -- or its own
+    `README.md` (a deliberately ungraded study, e.g. the T-16 attribution record;
+    #255 froze record-local READMEs as evidence). A directory with neither is an
+    aborted run (#276, #315): it looks like evidence, would be frozen append-only
+    once committed, and carries no graded result at all. A layout/pex record.json is
+    only presence-checked: the committed ones predate the sim schema and are frozen.
 With zero records the record check passes vacuously.
 """
 import argparse
+import ast
 import json
 import re
 import sys
@@ -60,14 +64,35 @@ def check_record(path: Path, root: Path):
     return errs
 
 
-def record_dirs(root: Path):
-    """Every sim record directory: one entry under each sim/**/records/.
+def record_roots():
+    """The record roots, read from check_sim_append_only.py's RECORD_ROOTS.
 
-    A stamp directory one level below `records/`; deeper subdirectories are that
-    record's own data (the T-16 attribution study's `cur/` and `pre132/`) and are
-    not record directories.
+    One shared definition (#315): both checkers run as `python3 -I`, which drops the
+    script directory from sys.path, so a sibling import is not available and the
+    constant is parsed out of the owner instead. A second copy here is exactly how
+    the two checks came to disagree about what counts as a record root.
     """
-    return sorted(p for p in (root / "sim").glob("**/records/*/") if p.is_dir())
+    owner = Path(__file__).with_name("check_sim_append_only.py")
+    for node in ast.parse(owner.read_text()).body:
+        if isinstance(node, ast.Assign) and any(
+                isinstance(t, ast.Name) and t.id == "RECORD_ROOTS" for t in node.targets):
+            return tuple(ast.literal_eval(node.value))
+    raise SystemExit(f"FAIL: {owner.name}: RECORD_ROOTS not found")
+
+
+RECORD_ROOTS = record_roots()
+
+
+def record_dirs(root: Path):
+    """Every record directory under the shared record roots (#315).
+
+    One entry under each `records/` found anywhere below a root: `sim/**/records/*/`
+    and `layout/pex/records/*/`. A stamp directory one level below `records/`; deeper
+    subdirectories are that record's own data (the T-16 attribution study's `cur/` and
+    `pre132/`) and are not record directories.
+    """
+    return sorted(p for r in RECORD_ROOTS for p in (root / r).glob("**/records/*/")
+                  if p.is_dir())
 
 
 def check_records(root: Path, records):
@@ -75,7 +100,10 @@ def check_records(root: Path, records):
     for d in records:
         rec = d / "record.json"
         if rec.is_file():
-            errs += check_record(rec, root)
+            # the sim schema applies to sim/ records only: the committed pex
+            # records predate it and are append-only frozen (#315)
+            if d.relative_to(root).parts[0] == "sim":
+                errs += check_record(rec, root)
         elif not (d / "README.md").is_file():
             errs.append(f"{d.relative_to(root)}: record directory holds neither "
                         f"record.json nor README.md")
@@ -90,7 +118,7 @@ def main(argv=None):
     errs = check_structure(root) + check_records(root, records)
     for e in errs:
         print(f"FAIL: {e}", file=sys.stderr)
-    print(f"evidence format: {'FAIL' if errs else 'ok'} ({len(records)} sim record(s) checked)")
+    print(f"evidence format: {'FAIL' if errs else 'ok'} ({len(records)} record(s) checked)")
     return 1 if errs else 0
 
 

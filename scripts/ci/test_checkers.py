@@ -118,6 +118,33 @@ class FormatTests(unittest.TestCase):
             (p / "README.md").write_text("# deliberately ungraded study\n")
         self.assertEqual(self.check(mutate=add), 0)
 
+    def test_pex_record_readme_only_passes(self):
+        # a pex record directory that carries its own README.md is accepted,
+        # matching the sim behaviour (#315)
+        def add(r):
+            p = r / "layout/pex/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "README.md").write_text("# deliberately ungraded study\n")
+        self.assertEqual(self.check(mutate=add), 0)
+
+    def test_pex_record_without_sim_schema_passes(self):
+        # the committed pex records carry no utc_stamp and no pdk and are
+        # append-only frozen: the sim schema must not be demanded of them (#315)
+        def add(r):
+            p = r / "layout/pex/records/20260101T000000Z"
+            p.mkdir(parents=True)
+            (p / "record.json").write_text(json.dumps({"record": "pex", "mode": "extract"}))
+        self.assertEqual(self.check(mutate=add), 0)
+
+    def test_pex_record_dir_without_record_or_readme_fails(self):
+        # the run_pex.sh abort leftover (#315): layout/pex is a record root too,
+        # so a records/<stamp>/ with a report but no record.json must fail there
+        def bad(r):
+            p = r / "layout/pex/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "aib_io_tx.extract.report.json").write_text("")
+        self.assertNotEqual(self.check(mutate=bad), 0)
+
     def test_empty_records_dir_passes(self):
         def add(r):
             (r / "sim/s/records").mkdir(parents=True, exist_ok=True)
@@ -128,13 +155,20 @@ class FormatTests(unittest.TestCase):
             p = r / "sim/s/records/20260102T000000Z"
             p.mkdir(parents=True)
             (p / "README.md").write_text("# deliberately ungraded study\n")
+        def add_pex_record(r):
+            p = r / "layout/pex/records/20260103T000000Z"
+            p.mkdir(parents=True)
+            (p / "record.json").write_text(json.dumps({"record": "pex", "mode": "extract"}))
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
             make_tree(root, GOOD)
             add_readme_only(root)
+            add_pex_record(root)
             r = run(FMT, "--root", root)
             self.assertEqual(r.returncode, 0)
-            self.assertIn("(2 sim record(s) checked)", r.stdout)
+            # both roots are walked and the line no longer says "sim" (#315)
+            self.assertIn("(3 record(s) checked)", r.stdout)
+            self.assertNotIn("sim record(s)", r.stdout)
 
 
 class AttestedPathsTests(unittest.TestCase):
