@@ -47,7 +47,10 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REC="${HERE}/records/${STAMP}"
 [[ -e "${REC}" ]] && { echo "run_pex.sh: record ${REC} already exists" >&2; exit 4; }
 WORK="$(mktemp -d)"
-trap 'rm -rf "${WORK}"' EXIT
+# An abort after the record directory is created below must leave no partial record:
+# a records/<stamp>/ without record.json is frozen append-only once committed (#315),
+# so the EXIT trap also clears ${REC} unless the record completed.
+trap 'rm -rf "${WORK}"; [[ -f "${REC}/record.json" ]] || rm -rf "${REC}"' EXIT
 
 LAYOUT="${HERE}/$(json 'print(d["layout"])')"
 DECK="$(json 'print(d["deck"])')"
@@ -153,6 +156,13 @@ esac
 mkdir -p "${REC}"
 for f in "${WORK}"/out/*.report.json "${WORK}"/out/*.exit; do
   [[ -e "${f}" ]] && cp "${f}" "${REC}/"
+done
+# An empty report is a tool failure, not a result: the record writer below would
+# json.load it and die, leaving the partial directory behind (#315). Refuse here
+# the way batch_record.sh refuses an empty report.json.gz.
+for f in "${REC}"/*.report.json; do
+  [[ -e "${f}" ]] || continue
+  [[ -s "${f}" ]] || { echo "run_pex.sh: empty report ${f##*/}; no record written" >&2; exit 6; }
 done
 # klt's stderr only when it said something: a clean run leaves an empty file,
 # and an empty file in an append-only record is noise, not evidence.

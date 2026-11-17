@@ -45,6 +45,9 @@ import subprocess
 import sys
 
 RECORD_PARTS = ("records", "corners")
+# check_evidence_format.py reads this constant (parsed, not imported: both checkers
+# run under python3 -I), so the two cannot disagree about what counts as a record
+# root again (#315).
 RECORD_ROOTS = ("sim", "layout/pex")
 
 
