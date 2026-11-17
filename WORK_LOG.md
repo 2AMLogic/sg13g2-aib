@@ -2,6 +2,12 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-17
+
+- **PR #316**: ci: cover layout/pex records in the structural evidence check and clean up run_pex.sh aborts
+- **PR #314**: fix(pex): stop run_pex.sh recording a klt usage error as a result
+- **Issue #315** (closed): layout/pex records are append-only frozen but never structurally checked: a partial records/<stamp>/ with no record.json is committable
+
 ### 2026-11-15
 
 - **PR #311**: ci: guard the inline sha256-formula duplication class under scripts/ci
