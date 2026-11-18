@@ -74,6 +74,5 @@ and the latency tests fail; the PRBS round trips still pass, so only the cycle
 accounting catches it. These results hold for the test configuration (zero-delay
 wire, ideal eye-centred `rx_clk`); they are not channel results.
 
-Synthesis smoke: `sim/rtl-synth/` (Yosys against `sg13g2_stdcell`; mapping only, no
-timing). The mux on the TX wire is selected by the clock, a structure the P&R flow
-will need to treat deliberately; that is not judged here.
+Synthesis: `design/synth/` (`klt synthesize`); place-and-route: `layout/pnr/`. An early
+dated Yosys smoke is kept as history under `sim/rtl-synth/records/`.

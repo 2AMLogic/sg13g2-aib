@@ -126,12 +126,12 @@ models built by the pinned OpenVAF-R. The PDK's `versions.txt` documents 43.
 
 ## rtl-synth
 
-`sim/rtl-synth/run_synth.sh` elaborates `rtl/aib_datapath.v` with Yosys and maps it to
-`sg13g2_stdcell` (typ 1.20 V 25 C liberty from the pinned PDK) for N = 20 and N = 8.
-**Smoke only**: it records the Yosys version, the liberty file (relative to the PDK
-root), the cell counts and the exit code; there is no timing and no area claim. Each
-run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
-`record.json`, append-only like the other records.
+`sim/rtl-synth/records/20261023T171257Z/` is a dated Yosys synthesis smoke of
+`rtl/aib_datapath.v` (N = 20 and N = 8, typ 1.20 V 25 C). It is kept as recorded history,
+append-only. For N = 20 it is superseded by `klt synthesize` (`design/synth/`), which is
+guarded by the hash chain checked in CI. Its generator, `run_synth.sh`, was removed; it is
+in git history at `4bfc8fc`. The N = 8 and typical-corner mappings exist only in that
+record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
 
 ## Item 5 / analog: the declared row set
 
