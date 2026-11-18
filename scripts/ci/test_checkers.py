@@ -2385,15 +2385,17 @@ class ClkPairStructureTests(unittest.TestCase):
     SCRIPT = REPO / "sim/clock-path/check_clk_pair.py"
     FILES = ("design/aib_tx_clk.spice", "design/aib_rx_clk.spice", "sim/clock-path/tb_clock_path.cir")
 
-    def check(self, rel=None, old=None, new=None):
+    def check(self, rel=None, old=None, new=None, edits=()):
+        edits = list(edits) + ([(rel, old, new)] if rel else [])
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
             for f in self.FILES:
                 (root / f).parent.mkdir(parents=True, exist_ok=True)
                 text = (REPO / f).read_text()
-                if f == rel:
-                    self.assertIn(old, text)
-                    text = text.replace(old, new)
+                for r, o, n in edits:
+                    if f == r:
+                        self.assertIn(o, text)
+                        text = text.replace(o, n)
                 (root / f).write_text(text)
             return run(self.SCRIPT, "--root", root).returncode
 
@@ -2408,6 +2410,25 @@ class ClkPairStructureTests(unittest.TestCase):
 
     def test_rx_clkb_output_unconverted_fails(self):
         self.assertEqual(self.check(self.FILES[1], "Xclkb CLKB_PAD CLKB_O", "Xclkb CLKB_PAD CLK_O"), 1)
+
+    TB = FILES[2]
+
+    def test_subckt_local_nets_do_not_bridge_a_cut_clkb_leg(self):
+        # The testbench's `link` subckt has formal ports txp/rxp. Name the clkb leg's channel
+        # nets the same and cut that leg: a parser that returns the subckt-local Xch would
+        # add a txp-rxp edge and bridge the cut, a false pass.
+        self.assertEqual(self.check(edits=[
+            (self.TB, "txpcb", "txp"), (self.TB, "rxpcb", "rxp"),
+            (self.TB, "Xlcb  txp rxp 0 link", "Xlcb  txp nc 0 link")]), 1)
+
+    def test_trailing_param_on_a_cell_instance_keeps_it_recognised(self):
+        # The model is the last positional token, so a key=value tail changes nothing.
+        self.assertEqual(self.check(self.TB, "vdd_rx 0 aib_rx_clk", "vdd_rx 0 aib_rx_clk m=1"), 0)
+
+    def test_trailing_param_on_a_cell_instance_still_fails_a_shorted_pair(self):
+        self.assertEqual(self.check(edits=[
+            (self.TB, "vdd_rx 0 aib_rx_clk", "vdd_rx 0 aib_rx_clk m=1"),
+            (self.TB, "Xlcb  txpcb rxpcb 0 link", "Xlcb  txpcb rxpc 0 link")]), 1)
 
 
 if __name__ == "__main__":
