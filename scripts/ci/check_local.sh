@@ -196,11 +196,38 @@ if [ "$want_rtl" = 1 ]; then
     run_rc "$1" 3 fv "$2"
   }
 
-  run "Run the shift-redundancy bench (expect 41/41)" fv shift_redundancy
+  # fv_counted <request-stem> <want> — fv, then the suite must have run exactly
+  # <want> tests and passed all of them. Exit 0 from klt alone does not say the
+  # bench still has its tests: a bench shrunk to fewer (non-zero) tests still
+  # exits 0. A report with missing keys or non-JSON stdout fails, never passes.
+  # The count lives here, once, and the run label below is built from it.
+  fv_counted() {
+    fv "$1" || return $?
+    python3 -I - "$1" "$2" "$fv_out/$1.stdout" <<'PY'
+import json, sys
+stem, want, path = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+try:
+    with open(path) as f:
+        r = json.load(f)
+    got = {k: r[k] for k in ("test_count", "passed_count", "failed_count")}
+except (OSError, ValueError, KeyError, TypeError) as e:
+    sys.exit(f"{stem}: no usable test counts in klt report ({e!r})")
+if got["test_count"] != want or got["passed_count"] != want or got["failed_count"] != 0:
+    sys.exit(f"{stem}: expected {want}/{want} passed, 0 failed; klt reported "
+             f"test_count={got['test_count']} passed_count={got['passed_count']} "
+             f"failed_count={got['failed_count']}")
+PY
+  }
+
+  want_shift=41
+  run "Run the shift-redundancy bench (expect $want_shift/$want_shift)" \
+    fv_counted shift_redundancy "$want_shift"
   run_neg_fv "Negative control must exit exactly 3" neg_shift_edge
 
+  want_dp=8
   for req in datapath_n20 datapath_n8; do
-    run "Run the datapath bench from $req.json (expect 8/8)" fv "$req"
+    run "Run the datapath bench from $req.json (expect $want_dp/$want_dp)" \
+      fv_counted "$req" "$want_dp"
   done
   run_neg_fv "Latency negative control must exit exactly 3" neg_extra_stage
 fi
