@@ -517,6 +517,9 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    requests set `batch.runner_version_check: "warn"`; a 0.7.0 client lacks `--dry-run`,
    `--report-out` and rejects `osdi_preload` on the batch backend. Fleet launches were
    refused at times by the instance cap (`batch_concurrency_cap`).
+   *Superseded (#241, 2026-11-18):* the fleet runner has matched the pinned klt 0.9.0 since
+   2026-11-08, so the generators no longer set `runner_version_check` and klt's default
+   (`enforce`) applies; the sentence above is kept as history.
 
 T-15 note: lanes A and B carry complementary data, so the measured skew is the
 rise/fall (opposite-polarity) arrival difference of one instance, not a layout skew.
