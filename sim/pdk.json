@@ -12,7 +12,7 @@
     "xschem": "3.4.6"
   },
   "osdi_toolchain": {
-    "_comment": "The PDK tarball ships Verilog-A sources, not .osdi binaries. sim/harness/common/build-osdi.sh is vendored from the sibling (see reuse.lock.json) and is the executable source of truth for these pins. No .osdi is committed; they are rebuilt locally.",
+    "_comment": "The PDK tarball ships Verilog-A sources, not .osdi binaries. sim/harness/common/build-osdi.sh is vendored from the sibling (see reuse.lock.json) and is the executable source of truth for these pins; sim/pdk-smoke/run_smoke.sh also reads compiler_tag and compiler_asset_sha256 from this block for its record. No .osdi is committed; they are rebuilt locally.",
     "approach": "compile the PDK's own Verilog-A with a checksum-pinned OpenVAF-Reloaded",
     "build_script": "sim/harness/common/build-osdi.sh",
     "compiler_repo": "OpenVAF/OpenVAF-Reloaded",
