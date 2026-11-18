@@ -2,9 +2,9 @@
   "schema_version": 1,
   "kind": "t1-attestation-inventory",
   "t1_item": 9,
-  "description": "Digital partition: the cocotb + Icarus benches over the data path and shift redundancy, plus the Yosys synthesis smoke script.",
+  "description": "Digital partition: the cocotb + Icarus benches (run through klt functional-verification) over the data path and shift redundancy, plus the Yosys synthesis smoke script.",
   "testbenches": [
-    "verification/run_tb.py",
+    "verification/klt/shift_redundancy.json",
     "verification/test_datapath.py",
     "verification/test_shift_redundancy.py",
     "verification/tb_top.v",
@@ -12,7 +12,18 @@
     "sim/rtl-synth/run_synth.sh"
   ],
   "cold_start": {
-    "argv": ["/usr/bin/python3", "verification/run_tb.py"],
+    "argv": [
+      "uvx",
+      "--from",
+      "klayout-tools[functional-verification]==0.9.0",
+      "klt",
+      "functional-verification",
+      "verification/klt/shift_redundancy.json",
+      "-o",
+      "/tmp/item9-digital-cold-start",
+      "--format",
+      "json"
+    ],
     "local_only": true
   },
   "pins": {
@@ -24,7 +35,7 @@
       "iverilog": "13.0",
       "cocotb": "2.1.0",
       "yosys": "0.67",
-      "klt": "0.8.0"
+      "klt": "0.9.0"
     }
   }
 }

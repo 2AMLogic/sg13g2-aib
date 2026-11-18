@@ -117,11 +117,14 @@ CI (`.github/workflows/ci.yml`) runs the PDK-free ones; the rest need the PDK,
 ngspice or Yosys and run on a worker.
 
 ```bash
-# RTL: cocotb + Icarus (pip install "cocotb>=2.0,<3"; iverilog on PATH).
-# The bench is defined once, by the klt request the item 5 evidence cites.
-python3 verification/run_tb.py                                   # shift redundancy, 41/41
-python3 verification/run_tb.py verification/klt/datapath_n20.json  # 8/8
-python3 verification/run_tb.py verification/klt/datapath_n8.json   # 8/8
+# RTL: cocotb + Icarus through the pinned klt (iverilog on PATH; the
+# extra pulls cocotb). The bench is defined once, by the klt request the
+# item 5 evidence cites. The negative controls must exit exactly 3.
+K="uvx --from klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION) klt"
+env -u PDK_ROOT $K functional-verification verification/klt/shift_redundancy.json -o /tmp/fv  # 41/41
+env -u PDK_ROOT $K functional-verification verification/klt/datapath_n20.json -o /tmp/fv      # 8/8
+env -u PDK_ROOT $K functional-verification verification/klt/datapath_n8.json -o /tmp/fv       # 8/8
+scripts/ci/check_local.sh rtl                                      # all five, as CI runs them
 
 # Evidence format and harness self-tests (no tools needed)
 python3 -I scripts/ci/test_checkers.py
