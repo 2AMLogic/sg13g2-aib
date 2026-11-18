@@ -148,7 +148,8 @@ its own), so closing the pending gap issues does not by itself make this item re
 and T-04 are **not** in the declared set: DR-0026 removes their `SIM` leg (the specification
 states no bound for either), so the "plain `SIM` leg" derivation no longer produces them. That
 removal is authorised by the record, not a silent deletion of a row; the two rows are verified
-by `RTL` and graded where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-18).
+(T-02 by `RTL`; T-04's clk/clkb arrangement by the clock-path netlist structure check, DR-0027)
+and graded where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-18).
 
 | envelope | rows | result |
 |---|---|---|

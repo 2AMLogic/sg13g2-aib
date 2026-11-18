@@ -30,7 +30,7 @@ OUT_STATEMENT = "signoff/item6/digital-statement.json"
 # Digital partition rows (synthesized data path, rtl/aib_datapath.v) and why
 # each is deterministic. T-04 (clk/clkb crossing at the RX over PVT-FULL) and
 # T-28 (weak pull resistance, tristate leakage) are analog-cell rows and are
-# deliberately not listed; no STAT row is listed.
+# deliberately not listed (T-04's arrangement leg: DR-0027); no STAT row is listed.
 DIGITAL = {
     "T-02": ("rtl-format",
              "Exchange format is a property of the RTL: data launched and captured on both "

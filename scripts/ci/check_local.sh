@@ -88,6 +88,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I sim/mc/gen_per_corner.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
+  run "Check T-04's clk/clkb arrangement is wired through the clock-path netlists (DR-0027)" \
+    python3 -I sim/clock-path/check_clk_pair.py
 
   # The two sim bench self-tests. Each covers its post-processor -- the code
   # that turns a recorded report into a pass/fail -- and asserts its generated
