@@ -553,7 +553,7 @@
         "declared_gaps": [
           {
             "id": "T-05",
-            "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #216"
+            "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #333"
           },
           {
             "id": "T-12",

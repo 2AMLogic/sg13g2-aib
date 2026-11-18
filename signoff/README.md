@@ -271,7 +271,7 @@ a backend) and #5494 (one `--top` per run cannot express a link testbench, which
 The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
 naming it leads a reader to the reports, where `no_evidence` would have hidden that the
 extraction exists. `spec_rows."7.analog"` declares all 19 rows as gaps with the reason — the
-13 rows `5.analog` grades plus its 6 carried-forward gaps, with the same trackers (#216, #192,
+13 rows `5.analog` grades plus its 6 carried-forward gaps, with the same trackers (#333, #192,
 #193, #194, #195, #196, #176). Today's grader does not consume `spec_rows` for item 7 (only
 items 5 and 6), so that block is a declaration in the manifest rather than something the record
 rolls up; it is kept so the gap list is machine-readable in one place.

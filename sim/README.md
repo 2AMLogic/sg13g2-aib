@@ -178,7 +178,7 @@ declared: DR-0026 removes their `SIM` leg (no bound exists in the specification)
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #216 |
+| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #333 |
 | T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for now exists) — see below | #193 |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
