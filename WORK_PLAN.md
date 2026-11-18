@@ -16,18 +16,18 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-- **#251**: T-16 margin falls to 1.3 ps at the declared +20 % channel C (passes, but the +-20 % spread eats 9.5 of its 10.9 ps)
+- **#251**: T-16 margin falls to 1.3 ps at the declared +20 % channel C (passes, but the +-20 % spread eats 9.5 of its 10.9 ps) *(held)*
 
 ## Important
 
 `loom:important`; taken before unlabelled work.
 
-- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
-- **#194**: T-20 SIM leg: no end-to-end sampling-margin confirmation exists, and two of its inputs are open
+- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(held)*
+- **#194**: T-20 SIM leg: no end-to-end sampling-margin confirmation exists, and two of its inputs are open *(held)*
 
 ## Ready
 
-Human-approved issues ready for implementation (`loom:issue`).
+Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
 _None._
 
@@ -51,35 +51,35 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#168**: feat(sim): record T-13/T-14 TX skew Monte Carlo and ratify skew definition (DR-0019)
-- **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
-- **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
-- **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
+- **#168**: feat(sim): record T-13/T-14 TX skew Monte Carlo and ratify skew definition (DR-0019) — closes #136
+- **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record — closes #176
+- **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021 — closes #177
+- **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register — closes #232
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
 - **#3**: Track the gap to T1 (klayout-tools design-evidence-tiers.md) *(curated)*
-- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)*
-- **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)*
+- **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(curated)* *(held)*
+- **#27**: Pin down AIB 1.2 §3.3.1 shift pattern against rtl/shift_redundancy.v (T-05) *(curated)* *(held)*
 - **#29**: spec: decide the T-05 shift-redundancy layout (AIB 1.2 shifts two signals, shared spares) *(curated)*
 - **#136**: T1 item 6 (Monte Carlo): TX skew campaigns T-13/T-14 (klt yield) *(curated)*
 - **#176**: T-29 SIM: no loopback mux exists in design/, so loopback modes L1/L2 are unverifiable *(curated)*
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded *(curated)*
-- **#185**: channel_eye_post's binding-corner label always reads `mixed` instead of the supply voltage *(curated)*
-- **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction *(curated)*
+- **#185**: channel_eye_post's binding-corner label always reads `mixed` instead of the supply voltage *(curated)* *(held)*
+- **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction *(curated)* *(held)*
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#213**: Remove sim/rtl-synth/run_synth.sh: the Yosys smoke is superseded by klt synthesize (keep its record) *(hermit)*
-- **#220**: Remove the channel-eye positive-control bench: its TX copy no longer matches design/aib_tx_data.spice and the defect it worked around is fixed *(hermit)*
-- **#241**: Remove the batch runner_version_check "warn" override from the five request generators: the fleet runner has matched the pinned klt since 2026-11-08 *(hermit)*
-- **#245**: Remove verification/run_tb.py: run the cocotb benches through the pinned klt functional-verification the evidence already uses *(hermit)*
-- **#261**: Stop restating the OSDI pins in sim/pdk.json: one of the two copies is wrong about who reads it *(hermit)*
-- **#280**: Move the shared klt sim row summariser out of sim/channel-eye: four families post-process through another family's directory *(hermit)*
-- **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(hermit)*
+- **#213**: Remove sim/rtl-synth/run_synth.sh: the Yosys smoke is superseded by klt synthesize (keep its record) *(hermit)* *(held)*
+- **#220**: Remove the channel-eye positive-control bench: its TX copy no longer matches design/aib_tx_data.spice and the defect it worked around is fixed *(hermit)* *(held)*
+- **#241**: Remove the batch runner_version_check "warn" override from the five request generators: the fleet runner has matched the pinned klt since 2026-11-08 *(hermit)* *(held)*
+- **#245**: Remove verification/run_tb.py: run the cocotb benches through the pinned klt functional-verification the evidence already uses *(hermit)* *(held)*
+- **#261**: Stop restating the OSDI pins in sim/pdk.json: one of the two copies is wrong about who reads it *(hermit)* *(held)*
+- **#280**: Move the shared klt sim row summariser out of sim/channel-eye: four families post-process through another family's directory *(hermit)* *(held)*
+- **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(hermit)* *(held)*
 
 ## Epics
 
@@ -92,7 +92,7 @@ _None._
 | Operator merge-risk holds | 4 |
 | Very important | 1 |
 | Important | 2 |
-| Ready (`loom:issue`) | 0 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
 | In Progress (`loom:building`) | 5 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 4 |
