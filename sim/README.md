@@ -126,19 +126,19 @@ models built by the pinned OpenVAF-R. The PDK's `versions.txt` documents 43.
 
 ## rtl-synth
 
-`sim/rtl-synth/run_synth.sh` elaborates `rtl/aib_datapath.v` with Yosys and maps it to
-`sg13g2_stdcell` (typ 1.20 V 25 C liberty from the pinned PDK) for N = 20 and N = 8.
-**Smoke only**: it records the Yosys version, the liberty file (relative to the PDK
-root), the cell counts and the exit code; there is no timing and no area claim. Each
-run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
-`record.json`, append-only like the other records.
+`sim/rtl-synth/records/20261023T171257Z/` is a dated Yosys synthesis smoke of
+`rtl/aib_datapath.v` (N = 20 and N = 8, typ 1.20 V 25 C). It is kept as recorded history,
+append-only. For N = 20 it is superseded by `klt synthesize` (`design/synth/`), which is
+guarded by the hash chain checked in CI. Its generator, `run_synth.sh`, was removed; it is
+in git history at `4bfc8fc`. The N = 8 and typical-corner mappings exist only in that
+record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
 
 ## Item 5 / analog: the declared row set
 
 The three families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
 cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
 `SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
-`partial_coverage`: every cited envelope passes, no covered row is uncovered, and eight rows
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and six rows
 are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
 
 **Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
@@ -169,18 +169,15 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Five of the eight are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-02, T-04 and T-05 are standing gaps**: DR-0022 decided the `SIM` legs of the
-first two have no gradable bound by design (#191, closed as completed), and DR-0023 decides
-the same for T-05 — its added load and delay are *measured*, over the full grid, and reported
-into the rows that carry the numbers rather than graded against a bound of their own. A
-standing gap does not close through verification work. Whether item 5 / analog can ever read
-`met` with three standing gaps declared is **not settled here** — it is tracked in #216.
+Five of the six are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-05 is a standing gap**: DR-0023 decides its added load and delay are *measured*,
+over the full grid, and reported into the rows that carry the numbers rather than graded against
+a bound of their own, so it does not close through verification work. T-02 and T-04 are no longer
+declared: DR-0026 removes their `SIM` leg (no bound exists in the specification), so the "plain
+`SIM` leg" rule yields this 19-row set mechanically.
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-02 | `SIM` leg is a **pointer**, not a bound of its own (DR-0022): format by `RTL`, timing graded at T-16/T-19/T-20; the 45-corner clock-path `t02_*` measurements are reported inputs to those rows. **Standing gap** | #216 |
-| T-04 | `SIM` leg is **report-only by design** (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements are reported evidence, not a graded claim; the arrangement is verified by `RTL`. **Standing gap** | #216 |
 | T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #216 |
 | T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for now exists) — see below | #193 |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
@@ -288,7 +285,8 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    works. With DIN high the pad stays at ~0 V. Every row therefore fails at every corner
    until the cell is fixed (#35's files; not edited here). `control/aib_tx_data_ctl.spice`
    is a diagnostic copy with that one device changed to `w=2u ng=14` (same 28 um total) and
-   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**.
+   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**. (The control copy, its bench and its request were
+   later removed; recoverable from commit `103f15e`.)
 2. *Even with that copy the four-lane transient does not complete.* At the first clock
    edge the solve aborts (`Timestep too small ... trouble with node "vdd_crx#branch"`,
    ~0.83 ns). Single-lane isolation runs of 3 ns: TX -> channel -> RX without the pad ESD
@@ -517,6 +515,9 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    requests set `batch.runner_version_check: "warn"`; a 0.7.0 client lacks `--dry-run`,
    `--report-out` and rejects `osdi_preload` on the batch backend. Fleet launches were
    refused at times by the instance cap (`batch_concurrency_cap`).
+   *Superseded (#241, 2026-11-18):* the fleet runner has matched the pinned klt 0.9.0 since
+   2026-11-08, so the generators no longer set `runner_version_check` and klt's default
+   (`enforce`) applies; the sentence above is kept as history.
 
 T-15 note: lanes A and B carry complementary data, so the measured skew is the
 rise/fall (opposite-polarity) arrival difference of one instance, not a layout skew.

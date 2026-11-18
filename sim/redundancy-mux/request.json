@@ -393,7 +393,6 @@
     }
   ],
   "batch": {
-    "runner_version_check": "warn",
     "capacity_wait_s": 600
   },
   "options": {

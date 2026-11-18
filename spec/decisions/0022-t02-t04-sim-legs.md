@@ -1,6 +1,6 @@
 # DR-0022: the T-02 and T-04 `SIM` legs — a pointer and a report-only leg
 
-**Status**: accepted. **Rows**: T-02, T-04. **Amended by**: this record's own
+**Status**: accepted. **Superseded in part by** [DR-0026](0026-t02-t04-drop-sim-leg.md) (the "declared gaps" bullet only). **Rows**: T-02, T-04. **Amended by**: this record's own
 Amendment, 2026-11-13 (where a wrongly cited T-02 lands; the Decision is unchanged).
 
 ## Context

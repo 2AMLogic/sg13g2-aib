@@ -117,7 +117,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:98c43fe746701fb91de922263295f4676bcbeaff1aebcf005fb8d504f43f1c22"
+          "content_hash": "sha256:d3bb48291800d733ae3fdae6765db536e3d2bdc0cf290fc56496fad1accf2d06"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
@@ -156,7 +156,7 @@
     },
     "9.digital": {
       "file": "signoff/attest/item9-digital.json",
-      "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"
+      "content_hash": "sha256:53e1ce98bf7222844f5a8737478b85fb3f0aaf575a672705219a149c272c252e"
     },
     "10.analog": {
       "file": "signoff/attest/item10.json",
@@ -190,14 +190,6 @@
     "5.analog": [
       {
         "id": "T-01"
-      },
-      {
-        "id": "T-02",
-        "gap": "SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
-      },
-      {
-        "id": "T-04",
-        "gap": "SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
       },
       {
         "id": "T-05",
@@ -286,14 +278,6 @@
       {
         "id": "T-01",
         "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
-      },
-      {
-        "id": "T-02",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
-      },
-      {
-        "id": "T-04",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
       },
       {
         "id": "T-05",
