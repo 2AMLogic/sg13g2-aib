@@ -53,7 +53,7 @@ itself is not ratified until this record is.
   standing gaps and no others.
 - It does **not** re-decide the item 6 digital partition. `scripts/ci/gen_item6_digital.py`
   lists T-02 (`rtl-format`) and deliberately omits T-04. T-04's `RTL` leg is therefore not
-  graded under item 6 today; that is filed separately rather than settled here.
+  graded under item 6 today; that is filed separately as #327 rather than settled here.
 
 ## Alternatives rejected
 
