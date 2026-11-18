@@ -45,7 +45,7 @@ def request(row: str, ctl: bool) -> dict:
                     "timeout_s": spec.get("timeout_s", 10), "keep_artifacts": False,
                     "osdi_preload": pvt_full.osdi_preload()},
         "backend": "batch",
-        "batch": {"runner_version_check": "warn", "capacity_wait_s": 1800},
+        "batch": {"capacity_wait_s": 1800},
     }
 
 

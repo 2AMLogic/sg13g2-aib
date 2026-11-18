@@ -369,7 +369,7 @@ def request(top: str) -> dict:
                     "keep_artifacts": False,
                     "osdi_preload": pvt_full.osdi_preload()}
     r["backend"] = "batch"
-    r["batch"] = {"runner_version_check": "warn", "capacity_wait_s": dc.CAPACITY_WAIT_S}
+    r["batch"] = {"capacity_wait_s": dc.CAPACITY_WAIT_S}
     return r
 
 

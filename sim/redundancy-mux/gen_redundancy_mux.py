@@ -133,7 +133,7 @@ def request():
         "corners": pvt_full.corners(SUPPLIES),
         "analysis": {"kind": "tran", "args": f"2p {NUI}n 0 5p"},
         "measurements": measurements(),
-        "batch": {"runner_version_check": "warn", "capacity_wait_s": 600},
+        "batch": {"capacity_wait_s": 600},
         # ~13 s of ngspice per corner locally (measured, mos_tt/1.20 V/27 C); the per-unit cost
         # in a fleet job is much higher, so the budget is generous. 3 units x 1100 s fits the
         # 3600 s job ceiling, the same split sim/clock-path uses.
