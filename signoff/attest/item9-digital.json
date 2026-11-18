@@ -15,9 +15,9 @@
       {
         "check": "present",
         "role": "testbench",
-        "path": "verification/run_tb.py",
+        "path": "verification/klt/shift_redundancy.json",
         "passed": true,
-        "content_hash": "sha256:1668892a32c5082262525e4b454ea310ed4d6cb7aeab65aecea9d0e0cf1ea94a"
+        "content_hash": "sha256:de5d6669ad27b204292f28d847a9ca869a59ce99c68d693140f1a3c8d58dc216"
       },
       {
         "check": "present",
@@ -51,8 +51,16 @@
         "check": "command",
         "role": "cold_start",
         "argv": [
-          "/usr/bin/python3",
-          "verification/run_tb.py"
+          "uvx",
+          "--from",
+          "klayout-tools[functional-verification]==0.9.0",
+          "klt",
+          "functional-verification",
+          "verification/klt/shift_redundancy.json",
+          "-o",
+          "/tmp/item9-digital-cold-start",
+          "--format",
+          "json"
         ],
         "cwd": ".",
         "exit_status": 0,
@@ -75,7 +83,7 @@
         "value": {
           "cocotb": "2.1.0",
           "iverilog": "13.0",
-          "klt": "0.8.0",
+          "klt": "0.9.0",
           "yosys": "0.67"
         }
       }
@@ -91,7 +99,7 @@
         "path": "signoff/attest/item9-digital.inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:dabbf6b774ee7f7ef783598a3e09aaa3e469451511b16b7fd3f440d0220e7452"
+      "content_hash": "sha256:53e1ce98bf7222844f5a8737478b85fb3f0aaf575a672705219a149c272c252e"
     }
   }
 }

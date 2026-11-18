@@ -1667,9 +1667,9 @@ COVERED = {
 # candidate -> why it is not a check this list can run at all.
 EXEMPT = {
     "verification/test_datapath.py":
-        "cocotb bench module, imported by verification/run_tb.py; not a standalone suite",
+        "cocotb bench module, imported by the klt functional-verification requests; not a standalone suite",
     "verification/test_shift_redundancy.py":
-        "cocotb bench module, imported by verification/run_tb.py; not a standalone suite",
+        "cocotb bench module, imported by the klt functional-verification requests; not a standalone suite",
     "layout/check_io_column.py":
         "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
     "layout/gen_io_column.py": "generator with no check mode",
@@ -1826,13 +1826,6 @@ class CheckListCompletenessTests(unittest.TestCase):
     def test_the_lvs_reference_check_is_listed(self):
         # Step 1 of #236; also the guard on the derived neg/ controls (#202).
         self.assertIn("layout/lvs/gen_reference.py", strip_sh_comments(self.text))
-
-    def test_run_tb_self_test_is_listed_not_exempt(self):
-        # Its two cocotb neighbours are exempt, but it is a standalone suite:
-        # a blanket "exclude verification/test_*.py" would be wrong.
-        self.assertIn("verification/test_run_tb.py", strip_sh_comments(self.text))
-        self.assertNotIn("verification/test_run_tb.py", EXEMPT)
-        self.assertNotIn("verification/test_run_tb.py", COVERED)
 
     def test_the_cocotb_bench_modules_are_exempt_with_reasons(self):
         for mod in ("verification/test_datapath.py", "verification/test_shift_redundancy.py"):
