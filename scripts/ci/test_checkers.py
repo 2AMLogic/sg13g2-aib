@@ -2378,5 +2378,37 @@ class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
         self.assertFalse(any("outside this guard's scope" in e for e in errors), errors)
 
 
+class ClkPairStructureTests(unittest.TestCase):
+    """sim/clock-path/check_clk_pair.py (DR-0027): passes on the committed netlists and fails
+    when the clkb leg is broken at the TX cell, the channel or the RX cell."""
+
+    SCRIPT = REPO / "sim/clock-path/check_clk_pair.py"
+    FILES = ("design/aib_tx_clk.spice", "design/aib_rx_clk.spice", "sim/clock-path/tb_clock_path.cir")
+
+    def check(self, rel=None, old=None, new=None):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for f in self.FILES:
+                (root / f).parent.mkdir(parents=True, exist_ok=True)
+                text = (REPO / f).read_text()
+                if f == rel:
+                    self.assertIn(old, text)
+                    text = text.replace(old, new)
+                (root / f).write_text(text)
+            return run(self.SCRIPT, "--root", root).returncode
+
+    def test_committed_netlists_pass(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_clkb_cut_in_the_channel_fails(self):
+        self.assertEqual(self.check(self.FILES[2], "Xlcb  txpcb rxpcb 0 link", "Xlcb  txpcb nc 0 link"), 1)
+
+    def test_clkb_pad_shorted_to_clk_in_the_tx_cell_fails(self):
+        self.assertEqual(self.check(self.FILES[0], "Xclkb CLKB_D OE PUN PD CLKB_PAD", "Xclkb CLKB_D OE PUN PD CLK_PAD"), 1)
+
+    def test_rx_clkb_output_unconverted_fails(self):
+        self.assertEqual(self.check(self.FILES[1], "Xclkb CLKB_PAD CLKB_O", "Xclkb CLKB_PAD CLK_O"), 1)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

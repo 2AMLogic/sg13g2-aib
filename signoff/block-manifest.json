@@ -117,7 +117,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:d3bb48291800d733ae3fdae6765db536e3d2bdc0cf290fc56496fad1accf2d06"
+          "content_hash": "sha256:a5b7a17644be072b456a0e040dbd0550c2ae4900ef99c39c52f9757890f48e2a"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
