@@ -26,7 +26,7 @@ C {lab_pin.sym} 660 170 0 0 {name=l5 lab=VDDIO}
 C {lab_pin.sym} 620 200 0 0 {name=l6 lab=VSS}
 C {lab_pin.sym} 660 230 0 0 {name=l7 lab=VSS}
 C {lab_pin.sym} 660 200 0 0 {name=l8 lab=VSS}
-C {sg13g2_pr/rppd.sym} 860 200 0 0 {name=Resd model=rppd w=2u l=2u b=0 m=1 body=VSS spiceprefix=X}
+C {sg13g2_pr/rppd.sym} 860 200 0 0 {name=Resd model=rppd w=2u l=1u b=0 m=1 body=VSS spiceprefix=X}
 C {lab_pin.sym} 860 170 0 0 {name=l9 lab=PAD}
 C {lab_pin.sym} 860 230 0 0 {name=l10 lab=PADI}
 C {sg13g2_pr/dpantenna.sym} 1080 200 0 0 {name=Dp2 model=dpantenna l=2u w=2u spiceprefix=X}
