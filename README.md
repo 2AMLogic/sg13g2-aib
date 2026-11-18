@@ -121,9 +121,9 @@ ngspice or Yosys and run on a worker.
 # extra pulls cocotb). The bench is defined once, by the klt request the
 # item 5 evidence cites. The negative controls must exit exactly 3.
 K="uvx --from klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION) klt"
-env -u PDK_ROOT $K functional-verification verification/klt/shift_redundancy.json -o /tmp/fv  # 41/41
-env -u PDK_ROOT $K functional-verification verification/klt/datapath_n20.json -o /tmp/fv      # 8/8
-env -u PDK_ROOT $K functional-verification verification/klt/datapath_n8.json -o /tmp/fv       # 8/8
+env -u PDK_ROOT $K functional-verification verification/klt/shift_redundancy.json -o /tmp/fv
+env -u PDK_ROOT $K functional-verification verification/klt/datapath_n20.json -o /tmp/fv
+env -u PDK_ROOT $K functional-verification verification/klt/datapath_n8.json -o /tmp/fv
 scripts/ci/check_local.sh rtl                                      # all five, as CI runs them
 
 # Evidence format and harness self-tests (no tools needed)
