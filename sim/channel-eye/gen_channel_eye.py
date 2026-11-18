@@ -208,8 +208,6 @@ def request(kind):
         "corners": pvt_full.corners(SUPPLIES),
         "analysis": {"kind": "tran", "args": f"2p {T1_NS}n 0 5p"},
         "measurements": measurements(kind),
-        # fleet runner is klt 0.7.0 and rejects the 0.8.0 pinned client without this (see README)
-        "batch": {"runner_version_check": "warn"},
         # measured ~8 s of ngspice per ns of stimulus at mos_tt/1.2 V/27 C: ~1100 s per corner
         "options": {"osdi_preload": pvt_full.osdi_preload(),
                     "timeout_s": 2400},
