@@ -3,7 +3,7 @@
 
 Stdlib only. Usage:
   python3 -I channel_eye_post.py REPORT.json[.gz] [--request REQUEST.json]
-      [--label ch|tc|control|...] [--row-map JSON] [--allow-empty-rows]
+      [--label ch|tc|...] [--row-map JSON] [--allow-empty-rows]
 
 Reads `corners[].measurements[]` (each entry carries `spec_row`, `status`, `value`,
 `margin`) and prints one JSON object: per spec row, how many corners pass, fail or
