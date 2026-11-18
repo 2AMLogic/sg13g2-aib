@@ -79,7 +79,7 @@ rec = {
     "tools": {
         "ngspice": ngspice_version,
         "openvaf_reloaded_tag": pin["osdi_toolchain"]["compiler_tag"],
-        "openvaf_r_asset_sha256_linux_x86_64": pin["osdi_toolchain"]["compiler_asset_sha256"][f'openvaf-r-{pin["osdi_toolchain"]["compiler_tag"]}-linux-x86_64.tar.gz'],
+        "openvaf_r_asset_sha256_linux_x86_64": pin["osdi_toolchain"]["compiler_asset_sha256"]["openvaf-r-v24.0.1mob-linux-x86_64.tar.gz"],
     },
     "ngspice_exit_code": int(rc),
     "devices": devices,
