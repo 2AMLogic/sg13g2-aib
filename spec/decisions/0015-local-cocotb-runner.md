@@ -62,3 +62,29 @@ requires `options.timescale` and `options.random_seed` rather than defaulting
 them, so no value has a second home in the runner.
 `verification/test_run_tb.py` asserts the class and
 `scripts/ci/check_local.sh` asserts the exit code end to end.
+
+## Amendment, 2026-11-18: superseded; the benches run through the pinned klt (issue #245)
+
+**Status of this amendment: proposed, awaiting ratification.** It is submitted
+through the repo's usual ratification path and is not self-ratified by the agent
+that wrote it. The operator decision it follows (issue #245, option (a)) was
+auto-selected under `--yolo`, so it is not itself a ratified ruling.
+
+`verification/run_tb.py`, its self-test `verification/test_run_tb.py` and the
+wrong-shape fixture are removed. Every bench is run by
+`klt functional-verification` at the `signoff/KLT_VERSION` pin, from the same
+request file the item 5 digital envelopes cite, so the runner is no longer a
+second reader of the request schema (it had needed three patches in one day to
+keep up with the first). The five requests were confirmed under klt 0.9.0 before
+removal: the three positives exit 0 and both negative controls exit 3.
+
+The exit contract changes with the tool: 0 all passed, 3 the suite ran and a test
+failed, 1 the bench did not build. The Consequence line still binds, restated for
+klt: a negative control must require exit 3 exactly, so a request that does not
+build (exit 1) can never satisfy one. `scripts/ci/check_local.sh rtl` asserts it.
+
+**Accepted cost: no klt-free cold start.** The item 9 digital cold start and the CI
+`rtl` job now need the pinned klt package (with the `functional-verification`
+extra) to be fetchable; a fetch failure fails the job loudly, it does not skip.
+The item 9 digital envelope was re-cut with the new cold start. A klt-free
+runner is out of scope here and would need its own decision.
