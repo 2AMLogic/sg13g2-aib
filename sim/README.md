@@ -777,3 +777,14 @@ so T-06/T-08/T-24 (and T-07, T-11, T-28) are unchanged in verdict. Report only, 
 All four records above were built by hand. The next run goes through
 `sim/dc-static/run_dc_static.sh nominal|2kv|esd-diode` on the shared procedure ("Record
 harness" above, #228); nothing here is back-filled.
+
+## io-cell-study
+
+`sim/io-cell-study/` is the issue #196 study of the PDK's own `sg13g2_io` pad cells as the AIB
+pin (operator ruling q107): pin capacitance (T-24), driver output resistance (T-08) and a receiver
+level check, one 45-corner `klt sim` request on the batch fleet through the shared procedure
+(`run_io_cell.sh`). Record `records/20261118T213945Z/` (first batch job `klt-sim-3b19c005842a`): 45/45 corners
+solved, nothing graded. Simulated. The cell that fits both T-24's and T-08's fallback columns is
+`IOPadInOut16mA` (163-195 fF; 46-107 / 37-88 ohm), only at its own 3.0-3.6 V `iovdd`; T-16 over the
+channel with this cell is **not measured** (the cell's transient does not converge in ngspice 47).
+See `sim/io-cell-study/README.md`.
