@@ -1,7 +1,7 @@
 {
   "status": "ratified",
   "derived_from": "spec/target-spec.md",
-  "derived_from_sha256": "sha256:bdf95b041379f5f73c9326eaf4c4ee96d74201d981da35e94d1474f65c452e33",
+  "derived_from_sha256": "sha256:7fc9595f5cc6728cf54a59e8eca7c5841e7207fdfaf302e911a83235029ab368",
   "partition": "digital",
   "rows": [
     {
