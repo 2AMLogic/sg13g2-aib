@@ -9,8 +9,8 @@ pinned klt (`signoff/KLT_VERSION`) that graded that evidence. There is no second
 reader of the request schema.
 
     K="uvx --from klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION) klt"
-    env -u PDK_ROOT $K functional-verification verification/klt/shift_redundancy.json -o <dir>   # exit 0, 41/41
-    env -u PDK_ROOT $K functional-verification verification/klt/datapath_n20.json -o <dir>       # also _n8; exit 0, 8/8
+    env -u PDK_ROOT $K functional-verification verification/klt/shift_redundancy.json -o <dir>   # exit 0
+    env -u PDK_ROOT $K functional-verification verification/klt/datapath_n20.json -o <dir>       # also _n8; exit 0
     env -u PDK_ROOT $K functional-verification verification/klt/neg_shift_edge.json -o <dir>     # exit 3
     env -u PDK_ROOT $K functional-verification verification/klt/neg_extra_stage.json -o <dir>    # exit 3
 
