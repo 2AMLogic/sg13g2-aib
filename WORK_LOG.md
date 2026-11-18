@@ -2,6 +2,30 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-18
+
+- **PR #338**: spec: grade T-04's clk/clkb arrangement on the clock-path netlist, not RTL
+- **PR #335**: docs(verification): drop unenforced pass counts from klt snippet
+- **PR #332**: feat(design): shorten aib_pad_esd XResd to 1u for T-16 margin
+- **PR #331**: docs: drop unenforced bench pass counts from README repro snippet
+- **PR #329**: ci(rtl): assert expected test counts for positive klt benches
+- **PR #328**: docs(spec): drop the SIM leg from T-02 and T-04 and leave the analog row set
+- **PR #325**: refactor: run RTL benches through the pinned klt, remove local cocotb runner
+- **PR #323**: fix(sim): drop runner_version_check warn override from request generators
+- **PR #322**: chore: remove superseded Yosys smoke generator, re-attest item 9
+- **PR #321**: docs(spec): add DR-0025 recording sibling results as T-21 SIM evidence
+- **PR #320**: chore(sim): remove unrecorded channel-eye positive-control bench
+- **Issue #334** (closed): Unenforced bench pass counts survive in verification/README.md after #330
+- **Issue #330** (closed): README repro snippet carries a second, unenforced copy of the bench pass counts
+- **Issue #327** (closed): T-04 RTL leg is not graded under item 6 digital partition
+- **Issue #326** (closed): check_local.sh rtl asserts only klt's exit code, not the pass counts its own labels claim
+- **Issue #251** (closed): T-16 margin falls to 1.3 ps at the declared +20 % channel C (passes, but the +-20 % spread eats 9.5 of its 10.9 ps)
+- **Issue #245** (closed): Remove verification/run_tb.py: run the cocotb benches through the pinned klt functional-verification the evidence already uses
+- **Issue #241** (closed): Remove the batch runner_version_check "warn" override from the five request generators
+- **Issue #220** (closed): Remove the channel-eye positive-control bench: its TX copy no longer matches design/aib_tx_data.spice
+- **Issue #216** (closed): Item 5 / analog can never read `met` while T-02 and T-04 are by-design standing gaps
+- **Issue #213** (closed): Remove sim/rtl-synth/run_synth.sh: the Yosys smoke is superseded by klt synthesize (keep its record)
+
 ### 2026-11-17
 
 - **PR #316**: ci: cover layout/pex records in the structural evidence check and clean up run_pex.sh aborts
