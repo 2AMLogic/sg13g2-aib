@@ -288,7 +288,8 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    works. With DIN high the pad stays at ~0 V. Every row therefore fails at every corner
    until the cell is fixed (#35's files; not edited here). `control/aib_tx_data_ctl.spice`
    is a diagnostic copy with that one device changed to `w=2u ng=14` (same 28 um total) and
-   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**.
+   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**. (The control copy, its bench and its request were
+   later removed; recoverable from commit `103f15e`.)
 2. *Even with that copy the four-lane transient does not complete.* At the first clock
    edge the solve aborts (`Timestep too small ... trouble with node "vdd_crx#branch"`,
    ~0.83 ns). Single-lane isolation runs of 3 ns: TX -> channel -> RX without the pad ESD
