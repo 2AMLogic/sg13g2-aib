@@ -67,6 +67,12 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
 - `aib_pad_esd`: `XDp1` is 4.5u x 4.5u (was 10u x 10u) because the wider driver and the
   primary diode do not both fit T-24. **T-25 (ESD level) is not evaluated**: no ESD-transient
   simulation exists. DR-0017 states the trade and what would reverse it.
+- `aib_pad_esd` (#251): `XResd` is `w=2u l=1u` (was `l=2u`). The channel-bench T-16 margin at the
+  declared kr = kc = 1.2 corner was 1.331 ps; with this change the worst margin over PVT-FULL x the four
+  (kr, kc) spread pairs is 19.92 ps. T-08 (min margin bound 42.86 ohm) and T-24 (worst 96.42 fF) are unchanged
+  in the dc-static runs. **T-25 is still not evaluated** and `XResd` is the receiver-isolation element, so the
+  halved resistance is an unmeasured ESD cost. `design/aib_pad_esd_2kv.spice` keeps `l=2u` until #196 decides
+  the diode. Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. Layout is stale (#140).
 
 Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;

@@ -1,0 +1,440 @@
+{
+  "record": "dc-static",
+  "utc_stamp": "20261118T213814Z",
+  "kind": "simulated",
+  "claim_scope": "BOTH rows, simulated; pad-cell sizing study for #251 (T-24 is an extracted-capacitance estimate at 500 MHz, no bond pad)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 3,
+  "corners": 180,
+  "rows": {
+    "T-06": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "drv_ld.t06_voh_droop_v",
+        "value": 0.07510152,
+        "why": "smallest margin"
+      }
+    },
+    "T-07": {
+      "verdict": "pass",
+      "pass": 540,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.422204e-07,
+        "why": "smallest margin"
+      }
+    },
+    "T-08": {
+      "verdict": "pass",
+      "pass": 360,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "drv_ld.t08_rout_up_ohm",
+        "value": 42.86275,
+        "why": "smallest margin"
+      }
+    },
+    "T-11": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "t11_hyst_mv",
+        "value": 0.001728,
+        "why": "smallest margin"
+      }
+    },
+    "T-24": {
+      "verdict": "fail",
+      "pass": 364,
+      "fail": 176,
+      "error": 0,
+      "binding": {
+        "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "cap_5.t24_cpin_ff",
+        "value": 108.9244,
+        "why": "fail"
+      }
+    },
+    "T-28": {
+      "verdict": "pass",
+      "pass": 900,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.422204e-07,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "param_groups": {
+    "sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510152,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "fail",
+          "pass": 66,
+          "fail": 69,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 108.9231,
+            "why": "fail"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510152,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "fail",
+          "pass": 62,
+          "fail": 73,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 108.9244,
+            "why": "fail"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510136,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "fail",
+          "pass": 118,
+          "fail": 17,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 103.7671,
+            "why": "fail"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510136,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "fail",
+          "pass": 118,
+          "fail": 17,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "cap_10.t24_cpin_ff",
+            "value": 103.9164,
+            "why": "fail"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.422204e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    }
+  },
+  "report_only_ranges": {
+    "rx_dn.vth_dn": {
+      "spec_row": null,
+      "min": [
+        0.4945999,
+        "fs/1.080V/-40C/params:sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06"
+      ],
+      "max": [
+        0.5669977,
+        "sf/1.080V/125C/params:sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06"
+      ]
+    },
+    "rx_up.vddio_v": {
+      "spec_row": null,
+      "min": [
+        1.08,
+        "ff/1.080V/-40C/params:sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06"
+      ],
+      "max": [
+        1.32,
+        "tt/1.320V/27C/params:sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06"
+      ]
+    },
+    "rx_up.vth_up": {
+      "spec_row": null,
+      "min": [
+        0.4946001,
+        "fs/1.080V/-40C/params:sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06"
+      ],
+      "max": [
+        0.5669978,
+        "sf/1.080V/125C/params:sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06"
+      ]
+    }
+  },
+  "t25_note": "T-25 (ESD level) is not evaluated by this record.",
+  "batch_job_ids": [
+    "klt-sim-80ebed14bd1e",
+    "klt-sim-7e1906cc733d",
+    "klt-sim-aa6946f77e89",
+    "klt-sim-d8f655888990"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

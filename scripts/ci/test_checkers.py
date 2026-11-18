@@ -1650,6 +1650,10 @@ COVERED = {
         "scripts/ci/test_checkers.py",
         "--check runs in test_every_check_capable_generator_is_fresh",
     ),
+    "sim/channel-eye/gen_t16sizing.py": (
+        "scripts/ci/test_checkers.py",
+        "--check runs in test_every_check_capable_generator_is_fresh",
+    ),
     "sim/clock-path/gen_clock_path.py": (
         "scripts/ci/test_checkers.py",
         "--check runs in test_every_check_capable_generator_is_fresh",
