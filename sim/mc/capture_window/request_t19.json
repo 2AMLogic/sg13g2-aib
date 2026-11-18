@@ -180,7 +180,6 @@
   },
   "backend": "batch",
   "batch": {
-    "runner_version_check": "warn",
     "capacity_wait_s": 1800
   }
 }
