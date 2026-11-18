@@ -31,6 +31,18 @@ def logical_lines(text):
     return out
 
 
+PARAM = re.compile(r"^[^=\s]+=\S*$")
+
+
+def instance(ln):
+    """(instance, nodes, model) of one X line, nets lower-cased. Trailing key=value
+    parameters are stripped first, so the model is the last positional token."""
+    tok = ln.split()
+    while len(tok) > 2 and PARAM.match(tok[-1]):
+        tok.pop()
+    return (tok[0], [t.lower() for t in tok[1:-1]], tok[-1].lower())
+
+
 def subckt_body(text, name):
     """Instance lines of one .subckt, as (instance, nodes, model) with lower-cased nets."""
     inside, body = False, []
@@ -41,17 +53,21 @@ def subckt_body(text, name):
         elif low.startswith(".ends"):
             inside = False
         elif inside and ln[0] in "xX":
-            tok = ln.split()
-            body.append((tok[0], [t.lower() for t in tok[1:-1]], tok[-1].lower()))
+            body.append(instance(ln))
     return body
 
 
 def top_instances(text):
-    body = []
+    """Instances outside every .subckt: a subckt's own formal nets are not testbench nets."""
+    depth, body = 0, []
     for ln in logical_lines(text):
-        if ln[0] in "xX":
-            tok = ln.split()
-            body.append((tok[0], [t.lower() for t in tok[1:-1]], tok[-1].lower()))
+        low = ln.lower()
+        if low.startswith(".subckt"):
+            depth += 1
+        elif low.startswith(".ends"):
+            depth = max(depth - 1, 0)
+        elif depth == 0 and ln[0] in "xX":
+            body.append(instance(ln))
     return body
 
 
