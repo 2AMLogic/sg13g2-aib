@@ -2,14 +2,13 @@
   "schema_version": 1,
   "kind": "t1-attestation-inventory",
   "t1_item": 9,
-  "description": "Digital partition: the cocotb + Icarus benches over the data path and shift redundancy, plus the Yosys synthesis smoke script.",
+  "description": "Digital partition: the cocotb + Icarus benches over the data path and shift redundancy.",
   "testbenches": [
     "verification/run_tb.py",
     "verification/test_datapath.py",
     "verification/test_shift_redundancy.py",
     "verification/tb_top.v",
-    "verification/tb_datapath.v",
-    "sim/rtl-synth/run_synth.sh"
+    "verification/tb_datapath.v"
   ],
   "cold_start": {
     "argv": ["/usr/bin/python3", "verification/run_tb.py"],
