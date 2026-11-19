@@ -2,6 +2,12 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-19
+
+- **PR #343**: signoff: repoint T-05 standing-gap tracker to #333
+- **PR #345**: refactor(sim): read OpenVAF pins from build-osdi.sh --print-pins, drop restated copy
+- **Issue #261** (closed): Stop restating the OSDI pins in sim/pdk.json: one of the two copies is wrong about who reads it
+
 ### 2026-11-18
 
 - **PR #342**: fix(clock-path): scope clk-pair parser to top-level instances and positional model
