@@ -204,8 +204,13 @@ per-row, per-spread-corner table; the headline is that the spread is a shunt-**C
 (`kr` moves T-18 by at most 2.8 mV, `kc` by 83.6 mV), that T-15, T-18 and T-26 each bind at
 an **off-diagonal** corner (`kr` 0.8 / `kc` 1.2), and that **T-16's margin narrows to 1.3 ps**
 against its 470 ps edge, from 10.9 ps at the nominal channel. T-16 still passes; no bound was
-relaxed, and whether a 1.3 ps worst-case margin is acceptable is a `spec/` question tracked in
-#251.
+relaxed. That 1.3 ps is the historical passing margin: its acceptability was ruled on
+2026-11-18 ([the closed
+#251](https://github.com/2AMLogic/sg13g2-aib/issues/251#issuecomment-6991500973)) — recover the
+margin in the design, with the 470-530 ps window and the declared +20 % channel-C corner
+(DR-0005) unchanged. The sizing study the ruling asked for found it: finalist `S07` leaves a
+**19.92 ps** worst-case T-16 margin across the four spread pairs
+([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
 
 The spread record is **referenced from T-12's gap text, not cited as an envelope**. Probed
 with the pinned grader (klt 0.9.0, a scratch copy of the manifest, nothing committed): citing
@@ -579,8 +584,14 @@ each bind **off-diagonal**, at `kr` 0.8 / `kc` 1.2, so the two diagonal corners 
 have mis-stated their worst case — which is why all four were run. **T-16 is the one tight
 row**: `t16_dr_cf_long` is 471.3 ps against the 470 ps lower edge, a 1.3 ps margin where the
 nominal channel leaves 10.9 ps, so the +20 % C corner consumes 9.5 ps of it. It passes; no
-bound, spec row or model value was changed, and the acceptability of a 1.3 ps margin is a
-`spec/` question tracked in #251. The nominal record is untouched.
+bound, spec row or model value was changed. That 1.3 ps is the historical passing margin: its
+acceptability was ruled on 2026-11-18 ([the closed
+#251](https://github.com/2AMLogic/sg13g2-aib/issues/251#issuecomment-6991500973)) — recover the
+margin in the design, with the 470-530 ps window and the declared +20 % channel-C corner
+(DR-0005) unchanged. The sizing study the ruling asked for found it: finalist `S07` leaves a
+**19.92 ps** worst-case T-16 margin across the four spread pairs
+([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
+The nominal record is untouched.
 
 Two mechanics of this run are worth carrying forward. The request lowers `options.timeout_s`
 to 400 s (the nominal request keeps 2400 s, which its records were run with) **so the fleet

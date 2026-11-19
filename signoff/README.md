@@ -160,7 +160,7 @@ and graded where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-1
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
 plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,
 T-14, T-19). **Re-derive it from the spec table** when a row changes — see `sim/README.md`
-("Item 5 / analog: the declared row set") for the 8 gaps and their issues.
+("Item 5 / analog: the declared row set") for the 6 gaps and their issues.
 
 ### Two citation rules this item depends on
 
@@ -271,12 +271,13 @@ a backend) and #5494 (one `--top` per run cannot express a link testbench, which
 The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
 naming it leads a reader to the reports, where `no_evidence` would have hidden that the
 extraction exists. `spec_rows."7.analog"` declares all 19 rows as gaps with the reason — the
-13 rows `5.analog` grades plus its 6 carried-forward gaps, with the same trackers (#333, #192,
-#194, #195, #196, #176); T-12 carries none — the channel model is a declared input rather than
-a graded row, so it is a standing declared gap (the ±20 % R/C spread campaign the closed #193
-asked for ran pre-layout and is complete). Today's grader does not consume `spec_rows` for
-item 7 (only items 5 and 6), so that block is a declaration in the manifest rather than
-something the record rolls up; it is kept so the gap list is machine-readable in one place.
+13 rows `5.analog` grades plus its 6 carried-forward gaps, with the trackers the manifest
+declares: T-05 (#333), T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 is a standing
+declared gap with no tracker open against it (the channel-R/C spread campaign that closed
+#193 and the T-05 campaign the closed #192 recorded are complete). Today's grader does not
+consume `spec_rows` for item 7 (only items 5 and 6), so that block is a declaration in the
+manifest rather than something the record rolls up; it is kept so the gap list is
+machine-readable in one place.
 
 ## Item 7 / digital evidence
 
