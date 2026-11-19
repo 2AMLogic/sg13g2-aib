@@ -451,6 +451,19 @@ class InventoryKltPinTests(unittest.TestCase):
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("0 inventory klt pin", p.stderr)
 
+    def test_renamed_suffix_leaves_zero_inventories_fails_loudly(self):
+        # The zero-population shape a filename-suffix rename produces: no
+        # *.inventory.json left at all, so "inventories present, none
+        # carrying" never applies. Gating the guard on inventories existing
+        # would exit 0 here.
+        def bad(r):
+            for f in sorted((r / "signoff/attest").glob("*.inventory.json")):
+                f.rename(f.with_name(f.name.replace(".inventory.json", ".inv.json")))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 inventory klt pin", p.stderr)
+        self.assertIn("filename suffix", p.stderr)
+
 
 class AppendOnlyTests(unittest.TestCase):
     REC = "sim/s/records/20260101T000000Z/record.json"

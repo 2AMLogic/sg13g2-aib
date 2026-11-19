@@ -29,9 +29,10 @@ on the tool, not patched here.)
 
 Inventories without `pins.tools.klt` (item 1, item 10) are skipped: they
 declare no klt pin to compare. A schema change that leaves no inventory
-carrying the pin must not turn this guard off silently, so -- as in
-check_attested_paths.py -- a run whose population is empty fails and names
-the likely cause.
+carrying the pin -- including one that leaves no `*.inventory.json` file
+at all, as a renamed filename suffix does -- must not turn this guard off
+silently, so -- as in check_attested_paths.py -- a run whose population
+is empty fails and names the likely cause.
 """
 import json
 import sys
@@ -99,12 +100,13 @@ def check(root: Path) -> list:
         did, inv_errs = check_inventory(root, inv_path)
         carried += did
         errs += inv_errs
-    if inventories and carried == 0:
+    if carried == 0:
         errs.append(
             f"{root}: checked 0 inventory klt pin(s) across {inventories} "
-            "inventory(ies) -- none carries pins.tools.klt. A renamed inventory"
-            " field or attest directory makes this guard vacuous; the attest"
-            " inventories that pin tools must keep declaring it"
+            "inventory(ies) -- none carries pins.tools.klt. A renamed"
+            " inventory field, attest directory or inventory filename suffix"
+            " makes this guard vacuous; the attest inventories that pin tools"
+            " must keep declaring it"
         )
     return errs
 
