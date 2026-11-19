@@ -170,17 +170,19 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Five of the six are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-05 is a standing gap**: DR-0023 decides its added load and delay are *measured*,
-over the full grid, and reported into the rows that carry the numbers rather than graded against
-a bound of their own, so it does not close through verification work. T-02 and T-04 are no longer
+Four of the six are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-05 and T-12 are standing gaps**. T-05: DR-0023 decides its added load and delay
+are *measured*, over the full grid, and reported into the rows that carry the numbers rather than
+graded against a bound of their own, so it does not close through verification work. T-12: the
+channel model is a declared input, not a block measurable (below); its ±20 % sensitivity campaign
+is complete and no tracker is open against it. T-02 and T-04 are no longer
 declared: DR-0026 removes their `SIM` leg (no bound exists in the specification), so the "plain
 `SIM` leg" rule yields this 19-row set mechanically.
 
 | row | why no envelope covers it | issue |
 |---|---|---|
 | T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #333 |
-| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for now exists) — see below | #193 |
+| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for is complete — see below). **Standing gap**, no tracker open | none |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
 | T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
