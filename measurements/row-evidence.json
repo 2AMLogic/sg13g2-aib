@@ -432,7 +432,19 @@
         "note": "The LAYOUT (klt stats) figure the spec row's evidence column and DR-0013 call for once the cell exists; it supersedes the ANALYSIS estimate the row is labelled with. Layout-measured, pre-extraction, I/O cell only (pad, ESD, driver or receiver). Exactly at the 5500 um2 limit, no margin."
       }
     ],
-    "T-24": [
+    "T-25": [
+   {
+    "record": "sim/esd-transient/records/20261119T085126Z/rows.json",
+    "field": "rows.T-25.verdict",
+    "op": "==",
+    "value": "pass",
+    "corner": "nominal corner mos_tt/1.20 V/27 C (T-25's grid column is n/a)",
+    "scope": "BOTH",
+    "basis": "simulated, per-row verdict of the 0.5 A ESD discharge transient (DR-0029)",
+    "note": "Simulated, not measured; no CDM level is claimed from a transient. The pad-side clamp carries the pulse (peak |V(PAD)| 6.39/5.19 V positive, 1.72-1.77 V negative), but the pre-stated receiver-isolation bound fails: peak |V(PADI)| 6.36 V powered / 5.16 V unpowered against 3.5 V -- XDp2 is an antenna diode that cannot conduct on a positive pulse. T-25 is not relaxed; the measurement is returned to the operator (DR-0029 fail branch)."
+   }
+  ],
+  "T-24": [
       {
         "record": "sim/dc-static/records/20261112T001207Z/report.json",
         "field": "measurements[name=cap_0.t24_cpin_ff].worst_case.margin",

@@ -64,15 +64,23 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
 - `aib_tx_data` (#142): the predriver NOR pull-up `XMnr1p`/`XMnr2p` is 8u/ng=4 (was 4u/ng=2).
   The fall edge charged the 22u `XMn` gate through two series PMOS and ran about 41 ps slower
   than the rise; balanced, the data-to-clock offset (T-16) closes at 45/45 corners.
-- `aib_pad_esd`: `XDp1` is 4.5u x 4.5u (was 10u x 10u) because the wider driver and the
-  primary diode do not both fit T-24. **T-25 (ESD level) is not evaluated**: no ESD-transient
-  simulation exists. DR-0017 states the trade and what would reverse it.
+- `aib_pad_esd`: `XDp1` is the PDK pad diode `diodevdd_2kv` (`sg13g2_esd.lib`, shipped
+  `DEV_A=35`; was the 4.5u x 4.5u `dpantenna`, adopted by DR-0029 / issue #196 operator
+  ruling q210). **T-24 is held at the fallback column** (108.9 fF worst against the 100 fF
+  target, DR-0018's 45-corner run): the ruling's stated cost of having a primary diode
+  that can carry the 0.5 A T-25 discharge. The T-25 transient itself ran in
+  `sim/esd-transient/` (DR-0029): the pad-side clamp carries the pulse, but the
+  receiver-node isolation bound fails on the positive pulse (`XDp2` is an antenna diode
+  that cannot conduct); the measurement is with the operator. `XResd` is `w=2u l=1u`
+  (#251, unchanged by the adoption — the `l=2u` in `design/aib_pad_esd_2kv.spice`
+  predates the #251 shortening and is not the adopted value). Layout is stale (#140).
 - `aib_pad_esd` (#251): `XResd` is `w=2u l=1u` (was `l=2u`). The channel-bench T-16 margin at the
   declared kr = kc = 1.2 corner was 1.331 ps; with this change the worst margin over PVT-FULL x the four
   (kr, kc) spread pairs is 19.92 ps. T-08 (min margin bound 42.86 ohm) and T-24 (worst 96.42 fF) are unchanged
-  in the dc-static runs. **T-25 is still not evaluated** and `XResd` is the receiver-isolation element, so the
-  halved resistance is an unmeasured ESD cost. `design/aib_pad_esd_2kv.spice` keeps `l=2u` until #196 decides
-  the diode. Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. Layout is stale (#140).
+  in the dc-static runs. The halved resistance was an unmeasured ESD cost at the time; DR-0029's transient
+  measures the isolation now (`sim/esd-transient/`). `design/aib_pad_esd_2kv.spice` keeps `l=2u` as
+  committed DR-0018 evidence (predating this shortening; the adopted value is documented in DR-0029).
+  Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. Layout is stale (#140).
 
 Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;
