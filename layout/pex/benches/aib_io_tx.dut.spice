@@ -3,7 +3,7 @@
 * `klt pex` (T1 item 7, analog). Pin list and order are those of
 * layout/lvs/aib_io_tx.ref.spice, the LVS-`match` reference for this cell.
 * Built from the item 1 netlists, whose text is inlined verbatim below:
-*   design/aib_pad_esd.spice sha256:4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936
+*   design/aib_pad_esd.spice sha256:3cb704eb07544c97702c141626fe54285850dfc17a7ca20932c3bc24c6609489
 *   design/aib_tx_data.spice sha256:667c53139825da4804873cab2f2038c4576063c466dfb9ce16c1a9a527bbf545
 .subckt aib_io_tx DIN OE PAD PD PUN VDDIO VSS
 Xesd PAD PADI VDDIO VSS aib_pad_esd
@@ -12,7 +12,7 @@ Xtx DIN OE PUN PD PAD VDDIO VSS aib_tx_data
 ** sch_path: design/aib_pad_esd.sch
 .subckt aib_pad_esd PAD PADI VDDIO VSS
 *.PININFO PAD:B PADI:B VDDIO:B VSS:B
-XDp1 PAD VDDIO dpantenna l=4.5u w=4.5u
+XDp1 VDDIO PAD VSS diodevdd_2kv m=1
 XMn1 PAD VSS VSS VSS sg13_lv_nmos w=20u l=0.13u ng=10 m=1
 XMclamp VDDIO VSS VSS VSS sg13_lv_nmos w=40u l=0.35u ng=20 m=1
 XResd PAD PADI VSS rppd w=2u l=1u m=1 b=0

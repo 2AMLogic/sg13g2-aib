@@ -1,0 +1,774 @@
+{
+  "schema_version": 3,
+  "netlist": {
+    "path": "sim/esd-transient/tb_esd_transient.cir",
+    "scope": "repo"
+  },
+  "status": "fail",
+  "corner_count": 1,
+  "passed": 0,
+  "failed": 1,
+  "errored": 0,
+  "inconclusive": 0,
+  "diagnostic_counts": {
+    "by_code": {},
+    "by_severity": {},
+    "corners_with_diagnostics": 0
+  },
+  "metrics": {
+    "sim__corner__count": 1,
+    "sim__corner__passed_count": 0,
+    "sim__corner__failed_count": 1,
+    "sim__corner__errored_count": 0,
+    "sim__corner__inconclusive_count": 0
+  },
+  "environment": {
+    "engine": "ngspice",
+    "engine_version": "47",
+    "ngspice_binary": "/home/ubuntu/.local/bin/ngspice",
+    "engine_build": {
+      "version_banner": "******\n** ngspice-47 : Circuit level simulation program\n** Compiled with KLU Direct Linear Solver\n** The U. C. Berkeley CAD Group\n** Copyright 1985-1994, Regents of the University of California.\n** Copyright 2001-2026, The ngspice team.\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\n** Creation Date: Fri Nov 13 23:19:32 UTC 2026\n******",
+      "binary_sha256": "39ca1adb826660324c3626f72bd946ec40704f0f3fc8e243c623f76e24b3eee2",
+      "probe": "ok",
+      "reason": null
+    },
+    "models_lib": {
+      "path": null,
+      "scope": "absent"
+    },
+    "models_lib_sha256": null,
+    "models_lib_sha256_scope": "local",
+    "netlist_sha256": "12022c388bc472d8af29a9d4abe95bdd15986a022076bf7b0fb99c42f930b1cc",
+    "netlist_closure": [
+      {
+        "path": "sim/esd-transient/tb_esd_transient.cir",
+        "scope": "repo",
+        "sha256": "12022c388bc472d8af29a9d4abe95bdd15986a022076bf7b0fb99c42f930b1cc"
+      },
+      {
+        "path": "design/aib_pad_esd.spice",
+        "scope": "repo",
+        "sha256": "3cb704eb07544c97702c141626fe54285850dfc17a7ca20932c3bc24c6609489"
+      }
+    ],
+    "netlist_identity": "sha256:b58ef430042a7e686b2a2a3cff2ced3b36f6a8609b38ff665922d8b69b5efd66",
+    "osdi_preload": [
+      {
+        "name": "psp103.osdi",
+        "path": null,
+        "scope": "external",
+        "sha256": "2e4299c4683997e26469410dc1ab36b02ced924b1ac0972d6c4eae360e1fc796"
+      },
+      {
+        "name": "psp103_nqs.osdi",
+        "path": null,
+        "scope": "external",
+        "sha256": "839b164483205601c09032951f6c41d3580f15e506dc40a7202950d3afbdfc7d"
+      },
+      {
+        "name": "r3_cmc.osdi",
+        "path": null,
+        "scope": "external",
+        "sha256": "4fead17bc2e9cbfe3df6f106e9dbd6f2cdcd48c002af9c56c2ca0b0712fce350"
+      },
+      {
+        "name": "mosvar.osdi",
+        "path": null,
+        "scope": "external",
+        "sha256": "25e64a374ab523dbfeb7ffed75dcb8b086ee10f06120a9074bd68b92d7b0fb41"
+      }
+    ],
+    "corner_section_libs": [
+      {
+        "name": "cornerMOSlv.lib",
+        "path": null,
+        "scope": "external",
+        "sha256": "03d505847c880d233b341be115a1e5460edf4d8e9b3e8a7df791a52fa4455d67"
+      },
+      {
+        "name": "cornerRES.lib",
+        "path": null,
+        "scope": "external",
+        "sha256": "2c18502104146804444a567abfe7d00520752bf75426809f9d79f40198fe9c1e"
+      },
+      {
+        "name": "cornerDIO.lib",
+        "path": null,
+        "scope": "external",
+        "sha256": "28e747e8f7437a3f539c5cc36f50c9d17c57c03ed463a4c9ee8f0a93a823fe0b"
+      }
+    ],
+    "engine_host": "local",
+    "backend": {
+      "resolved": "local",
+      "source": "flag",
+      "requested": "local"
+    }
+  },
+  "coverage": {
+    "corners_simulated": 1,
+    "measurements_declared": 23,
+    "measurements_with_limits": 16,
+    "unrecognized_limit_keys": [],
+    "schema_version": 1,
+    "known": true,
+    "checked": [
+      "limit:[0,\"tt/novdd/27C\",\"pwr.t25_ipadi_neg_pk_a\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"pwr.t25_ipadi_pos_pk_a\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"pwr.t25_vadi_neg_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"pwr.t25_vadi_pos_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"pwr.t25_vpad_neg_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"pwr.t25_vpad_pos_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"t25_pwr_neg_relief\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"t25_pwr_pos_relief\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"t25_unpwr_neg_relief\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"t25_unpwr_pos_relief\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"unpwr.t25_ipadi_neg_pk_a\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"unpwr.t25_ipadi_pos_pk_a\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"unpwr.t25_vadi_neg_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"unpwr.t25_vadi_pos_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"unpwr.t25_vpad_neg_pk_v\",\"max\"]",
+      "limit:[0,\"tt/novdd/27C\",\"unpwr.t25_vpad_pos_pk_v\",\"max\"]",
+      "measurement:[0,\"tt/novdd/27C\",\"mc_dio_fwd.mc_idiode_500ma_v\"]/observation",
+      "measurement:[0,\"tt/novdd/27C\",\"mc_dio_fwd_novdd.mc_idiode_novdd_500ma_v\"]/observation",
+      "measurement:[0,\"tt/novdd/27C\",\"mc_xmn1_neg.mc_ixmn1_neg_500ma_v\"]/observation",
+      "measurement:[0,\"tt/novdd/27C\",\"pwr.pad_late_neg_v\"]/observation",
+      "measurement:[0,\"tt/novdd/27C\",\"pwr.pad_late_pos_v\"]/observation",
+      "measurement:[0,\"tt/novdd/27C\",\"unpwr.pad_late_neg_v\"]/observation",
+      "measurement:[0,\"tt/novdd/27C\",\"unpwr.pad_late_pos_v\"]/observation"
+    ],
+    "skipped": [],
+    "inapplicable": [
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"mc_dio_fwd.mc_idiode_500ma_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"mc_dio_fwd_novdd.mc_idiode_novdd_500ma_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"mc_xmn1_neg.mc_ixmn1_neg_500ma_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"pwr.pad_late_neg_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"pwr.pad_late_pos_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"unpwr.pad_late_neg_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/novdd/27C\",\"unpwr.pad_late_pos_v\"]/limits",
+        "reason": "characterization_without_limits"
+      }
+    ],
+    "unknown": [],
+    "nothing_checked": false,
+    "nothing_checked_reasons": []
+  },
+  "provenance": {
+    "klt_version": "0.9.0",
+    "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
+    "klt_reinstall_spec": "klayout-tools==0.9.0",
+    "klayout_version": "0.30.13",
+    "pdk": {
+      "name": "ihp-sg13g2",
+      "source": "PDK_ROOT environment variable",
+      "version": "fetched:0.3.0"
+    },
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:12022c388bc472d8af29a9d4abe95bdd15986a022076bf7b0fb99c42f930b1cc",
+      "role": "netlist"
+    }
+  },
+  "measurements": [
+    {
+      "name": "pwr.t25_vpad_pos_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 7.0
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 6.385028,
+        "margin": 0.6149719999999999
+      },
+      "step": "pwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "pwr.t25_vpad_neg_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 3.0
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 1.771669,
+        "margin": 1.228331
+      },
+      "step": "pwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "pwr.t25_vadi_pos_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 3.5
+      },
+      "status": "fail",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 6.358982,
+        "margin": -2.858982
+      },
+      "step": "pwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "pwr.t25_vadi_neg_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 3.5
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 1.771669,
+        "margin": 1.728331
+      },
+      "step": "pwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "pwr.t25_ipadi_pos_pk_a",
+      "unit": "A",
+      "limits": {
+        "max": 0.05
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.03688489,
+        "margin": 0.013115110000000006
+      },
+      "step": "pwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "pwr.t25_ipadi_neg_pk_a",
+      "unit": "A",
+      "limits": {
+        "max": 0.05
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.01041407,
+        "margin": 0.039585930000000005
+      },
+      "step": "pwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "pwr.pad_late_pos_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 1.896228,
+        "margin": null
+      },
+      "step": "pwr"
+    },
+    {
+      "name": "pwr.pad_late_neg_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.2949345,
+        "margin": null
+      },
+      "step": "pwr"
+    },
+    {
+      "name": "unpwr.t25_vpad_pos_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 7.0
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 5.185871,
+        "margin": 1.8141290000000003
+      },
+      "step": "unpwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "unpwr.t25_vpad_neg_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 3.0
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 1.722157,
+        "margin": 1.277843
+      },
+      "step": "unpwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "unpwr.t25_vadi_pos_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 3.5
+      },
+      "status": "fail",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 5.16056,
+        "margin": -1.6605600000000003
+      },
+      "step": "unpwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "unpwr.t25_vadi_neg_pk_v",
+      "unit": "V",
+      "limits": {
+        "max": 3.5
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 1.009445,
+        "margin": 2.490555
+      },
+      "step": "unpwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "unpwr.t25_ipadi_pos_pk_a",
+      "unit": "A",
+      "limits": {
+        "max": 0.05
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.02997823,
+        "margin": 0.02002177
+      },
+      "step": "unpwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "unpwr.t25_ipadi_neg_pk_a",
+      "unit": "A",
+      "limits": {
+        "max": 0.05
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.01041379,
+        "margin": 0.039586210000000004
+      },
+      "step": "unpwr",
+      "spec_row": "T-25"
+    },
+    {
+      "name": "unpwr.pad_late_pos_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.6970487,
+        "margin": null
+      },
+      "step": "unpwr"
+    },
+    {
+      "name": "unpwr.pad_late_neg_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.3013638,
+        "margin": null
+      },
+      "step": "unpwr"
+    },
+    {
+      "name": "mc_dio_fwd.mc_idiode_500ma_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 6.39,
+        "margin": null
+      },
+      "step": "mc_dio_fwd"
+    },
+    {
+      "name": "mc_dio_fwd_novdd.mc_idiode_novdd_500ma_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 5.19,
+        "margin": null
+      },
+      "step": "mc_dio_fwd_novdd"
+    },
+    {
+      "name": "mc_xmn1_neg.mc_ixmn1_neg_500ma_v",
+      "unit": "V",
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": -1.73,
+        "margin": null
+      },
+      "step": "mc_xmn1_neg"
+    },
+    {
+      "name": "t25_pwr_pos_relief",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.2969803,
+        "margin": 0.10301970000000005
+      },
+      "derived_from": [
+        "pwr.pad_late_pos_v",
+        "pwr.t25_vpad_pos_pk_v"
+      ],
+      "spec_row": "T-25"
+    },
+    {
+      "name": "t25_pwr_neg_relief",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.1664727,
+        "margin": 0.23352730000000002
+      },
+      "derived_from": [
+        "pwr.pad_late_neg_v",
+        "pwr.t25_vpad_neg_pk_v"
+      ],
+      "spec_row": "T-25"
+    },
+    {
+      "name": "t25_unpwr_pos_relief",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.134413,
+        "margin": 0.265587
+      },
+      "derived_from": [
+        "unpwr.pad_late_pos_v",
+        "unpwr.t25_vpad_pos_pk_v"
+      ],
+      "spec_row": "T-25"
+    },
+    {
+      "name": "t25_unpwr_neg_relief",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      },
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/novdd/27C",
+        "value": 0.174992,
+        "margin": 0.225008
+      },
+      "derived_from": [
+        "unpwr.pad_late_neg_v",
+        "unpwr.t25_vpad_neg_pk_v"
+      ],
+      "spec_row": "T-25"
+    }
+  ],
+  "corners": [
+    {
+      "corner_id": "tt/novdd/27C",
+      "process": "tt",
+      "supply_v": {},
+      "temperature_c": 27,
+      "status": "fail",
+      "runtime_s": 1.674,
+      "engine_exit_code": 0,
+      "engine_killed_by_signal": null,
+      "measurements": [
+        {
+          "name": "pwr.t25_vpad_pos_pk_v",
+          "value": 6.385028,
+          "unit": "V",
+          "status": "pass",
+          "margin": 0.6149719999999999,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.t25_vpad_neg_pk_v",
+          "value": 1.771669,
+          "unit": "V",
+          "status": "pass",
+          "margin": 1.228331,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.t25_vadi_pos_pk_v",
+          "value": 6.358982,
+          "unit": "V",
+          "status": "fail",
+          "margin": -2.858982,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.t25_vadi_neg_pk_v",
+          "value": 1.771669,
+          "unit": "V",
+          "status": "pass",
+          "margin": 1.728331,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.t25_ipadi_pos_pk_a",
+          "value": 0.03688489,
+          "unit": "A",
+          "status": "pass",
+          "margin": 0.013115110000000006,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.t25_ipadi_neg_pk_a",
+          "value": 0.01041407,
+          "unit": "A",
+          "status": "pass",
+          "margin": 0.039585930000000005,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.pad_late_pos_v",
+          "value": 1.896228,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "pwr"
+        },
+        {
+          "name": "pwr.pad_late_neg_v",
+          "value": 0.2949345,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "pwr"
+        },
+        {
+          "name": "unpwr.t25_vpad_pos_pk_v",
+          "value": 5.185871,
+          "unit": "V",
+          "status": "pass",
+          "margin": 1.8141290000000003,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.t25_vpad_neg_pk_v",
+          "value": 1.722157,
+          "unit": "V",
+          "status": "pass",
+          "margin": 1.277843,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.t25_vadi_pos_pk_v",
+          "value": 5.16056,
+          "unit": "V",
+          "status": "fail",
+          "margin": -1.6605600000000003,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.t25_vadi_neg_pk_v",
+          "value": 1.009445,
+          "unit": "V",
+          "status": "pass",
+          "margin": 2.490555,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.t25_ipadi_pos_pk_a",
+          "value": 0.02997823,
+          "unit": "A",
+          "status": "pass",
+          "margin": 0.02002177,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.t25_ipadi_neg_pk_a",
+          "value": 0.01041379,
+          "unit": "A",
+          "status": "pass",
+          "margin": 0.039586210000000004,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.pad_late_pos_v",
+          "value": 0.6970487,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "unpwr"
+        },
+        {
+          "name": "unpwr.pad_late_neg_v",
+          "value": 0.3013638,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "unpwr"
+        },
+        {
+          "name": "mc_dio_fwd.mc_idiode_500ma_v",
+          "value": 6.39,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "mc_dio_fwd"
+        },
+        {
+          "name": "mc_dio_fwd_novdd.mc_idiode_novdd_500ma_v",
+          "value": 5.19,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "mc_dio_fwd_novdd"
+        },
+        {
+          "name": "mc_xmn1_neg.mc_ixmn1_neg_500ma_v",
+          "value": -1.73,
+          "unit": "V",
+          "status": "pass",
+          "margin": null,
+          "step": "mc_xmn1_neg"
+        },
+        {
+          "name": "t25_pwr_pos_relief",
+          "value": 0.2969803,
+          "unit": "ratio",
+          "status": "pass",
+          "margin": 0.10301970000000005,
+          "derived_from": [
+            "pwr.pad_late_pos_v",
+            "pwr.t25_vpad_pos_pk_v"
+          ]
+        },
+        {
+          "name": "t25_pwr_neg_relief",
+          "value": 0.1664727,
+          "unit": "ratio",
+          "status": "pass",
+          "margin": 0.23352730000000002,
+          "derived_from": [
+            "pwr.pad_late_neg_v",
+            "pwr.t25_vpad_neg_pk_v"
+          ]
+        },
+        {
+          "name": "t25_unpwr_pos_relief",
+          "value": 0.134413,
+          "unit": "ratio",
+          "status": "pass",
+          "margin": 0.265587,
+          "derived_from": [
+            "unpwr.pad_late_pos_v",
+            "unpwr.t25_vpad_pos_pk_v"
+          ]
+        },
+        {
+          "name": "t25_unpwr_neg_relief",
+          "value": 0.174992,
+          "unit": "ratio",
+          "status": "pass",
+          "margin": 0.225008,
+          "derived_from": [
+            "unpwr.pad_late_neg_v",
+            "unpwr.t25_vpad_neg_pk_v"
+          ]
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": null,
+        "raw": null,
+        "waveform": null,
+        "deck": null
+      },
+      "monte_carlo": null,
+      "steps": [
+        {
+          "name": "pwr",
+          "kind": "tran",
+          "status": "ok"
+        },
+        {
+          "name": "unpwr",
+          "kind": "tran",
+          "status": "ok"
+        },
+        {
+          "name": "mc_dio_fwd",
+          "kind": "dc",
+          "status": "ok"
+        },
+        {
+          "name": "mc_dio_fwd_novdd",
+          "kind": "dc",
+          "status": "ok"
+        },
+        {
+          "name": "mc_xmn1_neg",
+          "kind": "dc",
+          "status": "ok"
+        }
+      ]
+    }
+  ]
+}

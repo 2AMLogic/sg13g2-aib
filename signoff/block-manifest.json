@@ -12,7 +12,7 @@
     },
     "1.analog": {
       "file": "signoff/attest/item1-analog.json",
-      "content_hash": "sha256:2a56d8e75f04b3af2659743c014849826a1ba9bacfbbafb4a35c4d512e4f078f"
+      "content_hash": "sha256:c12cff025cb9686c2a6b116a5da106bc1b324713f689338dd592318e0af3ad4a"
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
@@ -63,6 +63,12 @@
         "file": "sim/clock-path/records/20261113T095936Z/report.json",
         "rows": [
           "T-17"
+        ]
+      },
+      {
+        "file": "sim/esd-transient/records/20261119T085126Z/report.json",
+        "rows": [
+          "T-25"
         ]
       }
     ],
@@ -144,11 +150,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:40e48b3e825b0d6071c3290a49071d4ca2550438d1a20dbdb5da8cce79d233dd"
+      "content_hash": "sha256:b98a95c95449b61cef9f1b117cefeedac38c1ca834c280d93690e7509faf5431"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:40e48b3e825b0d6071c3290a49071d4ca2550438d1a20dbdb5da8cce79d233dd"
+      "content_hash": "sha256:b98a95c95449b61cef9f1b117cefeedac38c1ca834c280d93690e7509faf5431"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -234,8 +240,7 @@
         "id": "T-24"
       },
       {
-        "id": "T-25",
-        "gap": "0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
+        "id": "T-25"
       },
       {
         "id": "T-26"
@@ -329,7 +334,7 @@
       },
       {
         "id": "T-25",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: 0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
+        "gap": "carried forward from 5.analog, not re-measured post-layout: the 0.5 A transient ran on the schematic netlist and failed its receiver-isolation bound (DR-0029, sim/esd-transient/records/20261119T085126Z, returned to the operator); no post-layout T-25 exists. Grid is n/a for this row. Tracked in #196"
       },
       {
         "id": "T-26",

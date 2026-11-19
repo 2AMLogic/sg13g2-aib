@@ -1,0 +1,48 @@
+* T-25 SIM leg (issue #196, DR-0029): the 0.5 A ESD discharge transient on the committed
+* aib_pad_esd netlist (XDp1 = diodevdd_2kv). Circuit body only (klt sim owns the .control
+* block). Both pulse polarities fire in one transient window per supply state -- Ipos
+* injects into PAD at t = 1 ns, Ineg draws out of PAD at t = 51 ns -- and the request's two
+* tran steps alter Vddio between powered (1.2 V) and unpowered (0 V, the discharge case);
+* the measurement windows never overlap a pulse from the other polarity.
+*
+* The DUT is instantiated twice, and the difference is the measurement:
+*   Xpad  -- PADI floating (padi_f), the real receiver-side configuration; all pad and
+*            PADI voltages are read here.
+*   Xpadi -- PADI tied to Vmeas_padi, so i(vmeas_padi) is exactly the XResd +
+*            secondary-stage branch current. The ammeter pins PADI at 0 V, a stronger
+*            stress on the secondary stage than the floating node, so the reported
+*            protected-branch current is an upper bound on the real one.
+* No sense copy of XMn1 is instantiated: a mirrored device on a pad node would be a
+* second, parallel discharge path and would change the very transient it claims to
+* measure, and the PSP103 OSDI build exposes no device-current vector anyway. XMn1's
+* conduction is evidenced by the mc_xmn1_neg sweep (the same junction, DC, at the same
+* size) against the transient's own pad-voltage trough and recovery.
+*
+* The three mc_ steps characterise the conduction models the transient credits, at the
+* sizes the committed netlist uses, with the same PDK library cards (no design copy):
+*   mc_dio_fwd       diodevdd_2kv anode swept, cathode on the powered 1.2 V rail
+*   mc_dio_fwd_novdd diodevdd_2kv anode swept, cathode on the unpowered 0 V rail
+*   mc_xmn1_neg      XMn1-sized grounded-gate NMOS drain-body junction, pad swept down
+*                    (the direction a negative pulse forward-biases it; a positive pulse
+*                    reverse-biases it, so XMn1 carries no positive-pulse current)
+* PSP103 represents the forward drain-body junction conduction of XMn1/XMclamp and does
+* not represent the gate-grounded snapback path; sg13g2_esd.lib states bv/ibv, so the pad
+* diode model carries a reverse-breakdown representation (DR-0029, "Model check").
+.options savecurrents
+Vddio vddio 0 dc 1.2
+Vmeas_padi padi_m 0 dc 0
+.include ../../design/aib_pad_esd.spice
+Xpad pad_t padi_f vddio 0 aib_pad_esd
+Xpadi pad_ti padi_m vddio 0 aib_pad_esd
+* identical CDM-class triangular pulses, 0.5 A peak (T-25 / AIB 1.2 Table 19): 200 ps
+* rise, 400 ps fall, ~400 ps at half amplitude; one event per polarity per 80 ns period.
+Ipos 0 pad_t dc 0 pulse 0 0.5 1n 200p 400p 1p 80n
+Ineg pad_t 0 dc 0 pulse 0 0.5 51n 200p 400p 1p 80n
+Ipos2 0 pad_ti dc 0 pulse 0 0.5 1n 200p 400p 1p 80n
+Ineg2 pad_ti 0 dc 0 pulse 0 0.5 51n 200p 400p 1p 80n
+* --- model-check DUTs (separate nodes; inert during the tran steps) ---
+Vmc1 pad_mc1 0 dc 0
+Xmc1 pad_mc1 0 0 0 sg13_lv_nmos w=20u l=0.13u ng=10 m=1
+Vmc2 pad_mc2 0 dc 0
+Xmc2 vddio_mc2 pad_mc2 0 diodevdd_2kv
+Vmc2r vddio_mc2 0 dc 1.2

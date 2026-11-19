@@ -101,6 +101,14 @@ def device(path, model, nodes, p):
         a, c = nodes[:2]
         w, l = val(p["w"]), val(p["l"])
         return f"D{name} {a} {c} {model} A={w * l * 1e12:.6g}P P={um(2 * (w + l))}"
+    if model == "diodevdd_2kv":
+        # The PDK pad-diode subcircuit (libs.tech/ngspice/models/sg13g2_esd.lib, v0.3.0):
+        # the pad diode (anode PAD, cathode VDD) plus its substrate diode (VSS to VDD).
+        # The geometric area/perimeter are the subckt's own shipped constants
+        # (DEV_A=35 DEV_P=58.08, sub_A=224.9559 sub_P=81.12), not design sizes.
+        a, c, sub = nodes  # VDD, PAD, VSS at the call site's pin order
+        return (f"D{name} {c} {a} diodevdd_mod A=35P P=58.08U\n"
+                f"D{name}_dsub {sub} {a} dsub_2kv_mod A=224.956P P=81.12U")
     raise SystemExit(f"unsupported device model {model!r} at {path}")
 
 

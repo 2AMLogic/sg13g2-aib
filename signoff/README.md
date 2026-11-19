@@ -6,10 +6,12 @@ record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
 rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable`, `6.analog` `unmet` / `check_failed` (see "Item 6")
-and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
+and `5.analog` `unmet` / `check_failed` (see "Item 5 / analog evidence" — the T-25 transient
+record fails its DR-0029 bound and the measurement is with the operator);
 `7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
 runs extracted the cells and graded nothing, which is not the same as a spec row failing);
-`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — three recorded rows
+`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — three Monte
+Carlo rows and the T-25 transient record
 fail, so the aggregate's envelope is `status: fail`; that is the report following the records,
 not a spec target being missed by the report);
 every other row reads
@@ -135,16 +137,20 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 
 ## Item 5 / analog evidence
 
-`5.analog` cites three `klt sim` reports as a list, each naming the `rows` it covers, and
-`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 13 covered and
-5 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
-`uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
-but declared gaps remain.
+`5.analog` cites four `klt sim` reports as a list, each naming the `rows` it covers, and
+`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 14 covered and
+4 declared gaps. The item reads **`unmet` / `check_failed`** with `failed_rows: ["T-25"]`
+and `uncovered_rows: []`: the T-25 record (`sim/esd-transient/records/20261119T085126Z/`,
+DR-0029's 0.5 A ESD discharge transient) is cited and covered, and it **fails its
+pre-stated receiver-isolation bound** — peak `|V(PADI)|` 6.36 V powered / 5.16 V
+unpowered against 3.5 V, because `XDp2` is an antenna diode that cannot conduct on a
+positive pulse. The measurement is returned to the operator (issue #196, DR-0029 fail
+branch); T-25 is not relaxed. Every other cited envelope passes.
 
-Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
-done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
-tracked in #194, #195, #196 and #176. **T-12 is the remaining standing gap** — closing the pending
-four still leaves it declared, so the item keeps reading **`unmet` / `partial_coverage`**.
+Three of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. Those three are T-20, T-21 and T-29,
+tracked in #194, #195 and #176. **T-12 is the remaining standing gap** — closing the pending
+three still leaves it declared, so the item keeps reading **`unmet`**.
 T-12: the channel model is a declared
 input (DR-0005), not a block measurable; the ±20 % R/C sensitivity campaign its grid column asks
 for is complete (`sim/channel-eye/records/20261113T223804Z-ch-spread/`), and no tracker is open
@@ -356,9 +362,11 @@ carry extra entries the manifest does not cite; the check is one-directional.
 
 **Item 8 currently reads `unmet` / `check_failed`, and that is the honest state.**
 T-10, T-15 and T-16 each have a committed `klt yield` record whose verdict is
-`fail`, so the envelope is `status: fail` and the aggregate says so. No spec
-target, limit or comparator was changed, and no record under `sim/*/records/` was
-touched, to produce it. The `met` reading it replaced was an artefact of those
+`fail`, and T-25's committed `klt sim` transient record fails its DR-0029
+receiver-isolation bound (`sim/esd-transient/records/20261119T085126Z/`, returned
+to the operator), so the envelope is `status: fail` and the aggregate says so. No
+spec target, limit or comparator was changed, and no record under `sim/*/records/`
+was touched, to produce it. The `met` reading it replaced was an artefact of those
 records never being read.
 
 ## Item 9 attestation
