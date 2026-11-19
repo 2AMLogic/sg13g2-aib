@@ -450,7 +450,13 @@ makes the CI `--check` exit 3 (`drifted`).
   compares them to the grader's own version, so a pin left behind by a grader
   bump attests a version the evidence was not produced with; the comparison is
   inventory-vs-envelope only, never against `signoff/KLT_VERSION`, which is the
-  pin for the next attestation, not a retroactive truth about landed evidence;
+  pin for the next attestation, not a retroactive truth about landed evidence.
+  The same script compares an inventory's `pins.tools.ngspice` against the
+  `tools.ngspice` of the newest `sim/pdk-smoke/records/*/record.json` (#368) —
+  only the newest, because committed records are append-only evidence and an
+  older record under another simulator is legitimate history; a drifted newest
+  record is fixed by re-running the smoke under the pinned ngspice, or by
+  bumping the pin and re-attesting, never by editing a committed record;
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 
