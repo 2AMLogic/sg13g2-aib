@@ -4,6 +4,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-19
 
+- **PR #337**: evidence(sim): study the PDK sg13g2_io pad cells against T-24 and T-08
 - **PR #371**: check_inventory_klt_pin: compare each ngspice pin to the newest smoke record
 - **PR #370**: docs(spec): drop T-05's SIM leg and leave the analog row set (DR-0028)
 - **PR #369**: signoff: enforce each inventory's klt pin against its envelope's grader version
