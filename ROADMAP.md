@@ -22,11 +22,13 @@ hygiene, power delivery) read `met` in both partitions, as do `5.digital` and
 `6.analog`, `7.analog`, `8.analog` and `8.digital` (detail in
 `signoff/README.md`):
 
-- **Item 5 / analog.** Thirteen rows are cited and pass over PVT-FULL (45
-  corners): T-01, T-06 to T-09, T-11, T-15 to T-18, T-24, T-26, T-28. Eight
-  rows are declared gaps: T-02, T-04, T-05 and T-12 by design (DR-0022,
-  DR-0023; how the manifest should account for them is #216), and T-20,
-  T-21, T-25, T-29 as open work (#194, #195, #196, #176).
+- **Item 5 / analog.** Of 19 declared rows, thirteen are cited and pass over
+  PVT-FULL (45 corners): T-01, T-06 to T-09, T-11, T-15 to T-18, T-24, T-26,
+  T-28. The six declared gaps keep the item `unmet` / `partial_coverage`:
+  T-05 and T-12 by design (DR-0023; how to account for T-05's ungraded SIM
+  leg is #333), and T-20, T-21, T-25, T-29 as open work (#194, #195, #196,
+  #176). DR-0026 removed T-02 and T-04 from the gap set. Settling #333 alone
+  would leave the other five gaps standing.
 - **Item 6 / analog.** T-19 passes; T-10, T-15 and T-16 are recorded and fail
   their sigma gates (`sim/mc/README.md`); T-13 and T-14 have no campaign on
   `main` (#136).
@@ -108,8 +110,10 @@ Waiting on a maintainer decision:
   it needs a ruling, not another read.
 - **Spec questions**: T-21 placement-error allocation (#9); the T-21 SIM
   half, which this repo cannot close without designing a DLL (#195); the
-  T-24/T-25 pad-diode trade that gates the ESD transient (#196); how item 5
-  accounts for rows with no gradable leg (#216).
+  T-24/T-25 pad-diode trade that gates the ESD transient (#196); how to
+  account for T-05's ungraded SIM leg, a standing gap by DR-0023 (#333);
+  T-12, a channel-model definition no measurement can cite as evidence of
+  itself (#193).
 - **Proposed removals** awaiting a decision: #213, #220, #241, #245, #261,
   #285. New `loom:hermit` proposals land between stamps; the live set is the
   tracker's open `loom:operator` queue, not this list.
@@ -117,8 +121,9 @@ Waiting on a maintainer decision:
 Waiting on an upstream tool fix: klayout-tools#5491, for item 7 / analog
 (#226).
 
-Item 5 / analog cannot read `met` until #216 is ruled. Items 6 and 8 cannot
-read `met` while T-10, T-15 and T-16 fail; the spec is not relaxed for that.
+Item 5 / analog stays `unmet` while its six declared gaps stand; the spec
+questions above hold four of them. Items 6 and 8 cannot read `met` while
+T-10, T-15 and T-16 fail; the spec is not relaxed for that.
 
 ## Not planned
 
