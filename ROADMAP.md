@@ -78,6 +78,11 @@ check's base commit and README treatment (#255, PR #258).
   when `measurements/row-evidence.json` cites an RTL and a layout record for
   N = 20 and the row no longer reads `not-yet-measured`. No issue yet.
 - **Pin the AIB 1.2 §3.3.1 shift pattern against the RTL** (#27), after #29.
+- **Recover T-16 margin in the design** (#251): the operator ruled option
+  `design` on 2026-11-18 against the 1.3 ps recorded at the declared
+  +20 % channel-C corner — recover the margin in the design, not by
+  narrowing the corner; the 470-530 ps bound and the +20 % channel-C
+  corner are unchanged.
 
 ## Later
 
@@ -103,11 +108,6 @@ Waiting on a maintainer decision:
   referred to the RX pin), #249 (remap placement). Most of Next queues here.
 - **#107** rewrites the T-05 shift redundancy and conflicts with `main`; a
   triage note on #29 says a later merged change may have superseded it.
-- **#251** — T-16 margin at the +20 % channel-C corner (1.3 ps recorded,
-  `loom:very-important`): accept and record it, spend design effort to
-  recover margin, or narrow what the channel model's ±20 % C column claims.
-  The figures are re-verified on `main` and the decision filed 2026-11-14;
-  it needs a ruling, not another read.
 - **Spec questions**: T-21 placement-error allocation (#9); the T-21 SIM
   half, which this repo cannot close without designing a DLL (#195); the
   T-24/T-25 pad-diode trade that gates the ESD transient (#196); how to
