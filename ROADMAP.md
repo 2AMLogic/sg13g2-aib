@@ -113,7 +113,7 @@ Waiting on a maintainer decision:
   T-24/T-25 pad-diode trade that gates the ESD transient (#196); how to
   account for T-05's ungraded SIM leg, a standing gap by DR-0023 (#333);
   T-12, a channel-model definition no measurement can cite as evidence of
-  itself (#193).
+  itself.
 - **Proposed removals** awaiting a decision: #213, #220, #241, #245, #261,
   #285. New `loom:hermit` proposals land between stamps; the live set is the
   tracker's open `loom:operator` queue, not this list.
