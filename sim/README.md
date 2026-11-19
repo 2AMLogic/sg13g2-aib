@@ -4,10 +4,11 @@ Simulation toolchain pin and the PDK/OSDI smoke. No design value lives here.
 
 ## PDK pin
 
-`sim/pdk.json` names the IHP-Open-PDK release (`v0.3.0`), its tarball SHA-256,
-and the OSDI toolchain (OpenVAF-Reloaded `v24.0.1mob`). Every record under
-`sim/` traces to it. Records are append-only: a new run is a new directory,
-and an earlier record is never edited.
+`sim/pdk.json` names the IHP-Open-PDK release (`v0.3.0`) and its tarball
+SHA-256; the OSDI toolchain pins live only in
+`sim/harness/common/build-osdi.sh` (read them with `--print-pins`). Every
+record under `sim/` traces to those pins. Records are append-only: a new run
+is a new directory, and an earlier record is never edited.
 
 ## PVT-FULL corner bundle
 
