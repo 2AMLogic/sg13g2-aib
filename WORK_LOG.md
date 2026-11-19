@@ -4,6 +4,9 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-18
 
+- **PR #342**: fix(clock-path): scope clk-pair parser to top-level instances and positional model
+- **PR #339**: fix(pdk): name run_smoke.sh as a consumer in the osdi_toolchain _comment
+- **Issue #340** (closed): check_clk_pair.py's netlist parser reads .subckt bodies as top-level instances and mis-parses models with trailing parameters
 - **PR #338**: spec: grade T-04's clk/clkb arrangement on the clock-path netlist, not RTL
 - **PR #335**: docs(verification): drop unenforced pass counts from klt snippet
 - **PR #332**: feat(design): shorten aib_pad_esd XResd to 1u for T-16 margin
