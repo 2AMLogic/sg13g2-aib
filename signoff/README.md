@@ -141,10 +141,15 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 `uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
 but declared gaps remain.
 
-Five of those gaps are **pending** — a measurement not yet made, which closes when the work is
-done; progress toward T1 is tracked in #3, not here. **T-05 is a standing gap** (DR-0023: its
-added load and delay are measured and reported into T-20 and T-13, not graded against a bound of
-its own), so closing the pending gap issues does not by itself make this item read `met`. T-02
+Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
+tracked in #194, #195, #196 and #176. **T-05 and T-12 are standing gaps** — closing the pending
+four still leaves both declared, so the item keeps reading **`unmet` / `partial_coverage`**.
+T-05: DR-0023 decides its added load and delay are measured, over the full grid, and reported
+into T-20 and T-13, not graded against a bound of its own. T-12: the channel model is a declared
+input (DR-0005), not a block measurable; the ±20 % R/C sensitivity campaign its grid column asks
+for is complete (`sim/channel-eye/records/20261113T223804Z-ch-spread/`), and no tracker is open
+against it. T-02
 and T-04 are **not** in the declared set: DR-0026 removes their `SIM` leg (the specification
 states no bound for either), so the "plain `SIM` leg" derivation no longer produces them. That
 removal is authorised by the record, not a silent deletion of a row; the two rows are verified
