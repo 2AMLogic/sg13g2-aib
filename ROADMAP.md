@@ -58,8 +58,12 @@ rows (#269, PR #293), the `.gitignore` cleanup (#260, PR #262), the item 7
 analog extraction re-bound to the post-#248 reordered stream (#253,
 PR #272), the `gen_redundancy_mux.py` strict-flag conversion and the
 PWL-helper consolidation it carried (#256, #257; PR #264), the I/O-column
-slot order with both spares at one end (#248, PR #254), and the append-only
-check's base commit and README treatment (#255, PR #258).
+slot order with both spares at one end (#248, PR #254), and the T-16
+margin recovery in `aib_pad_esd` under the ruled option `design` (#251,
+PR #332): `XResd` is `w=2u l=1u` (was `l=2u`); the channel-bench T-16
+margin at the declared +20 % channel-C (kr = kc = 1.2) corner was
+1.331 ps, and the worst over PVT-FULL × the four (kr, kc) spread pairs
+is 19.92 ps. The 470-530 ps bound and the corner are unchanged.
 
 ## Next
 
@@ -103,11 +107,6 @@ Waiting on a maintainer decision:
   referred to the RX pin), #249 (remap placement). Most of Next queues here.
 - **#107** rewrites the T-05 shift redundancy and conflicts with `main`; a
   triage note on #29 says a later merged change may have superseded it.
-- **#251** — T-16 margin at the +20 % channel-C corner (1.3 ps recorded,
-  `loom:very-important`): accept and record it, spend design effort to
-  recover margin, or narrow what the channel model's ±20 % C column claims.
-  The figures are re-verified on `main` and the decision filed 2026-11-14;
-  it needs a ruling, not another read.
 - **Spec questions**: T-21 placement-error allocation (#9); the T-21 SIM
   half, which this repo cannot close without designing a DLL (#195); the
   T-24/T-25 pad-diode trade that gates the ESD transient (#196); how to
