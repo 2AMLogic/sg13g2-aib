@@ -4,6 +4,12 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-19
 
+- **PR #371**: check_inventory_klt_pin: compare each ngspice pin to the newest smoke record
+- **PR #370**: docs(spec): drop T-05's SIM leg and leave the analog row set (DR-0028)
+- **PR #369**: signoff: enforce each inventory's klt pin against its envelope's grader version
+- **Issue #368** (closed): Item 9 analog: committed smoke record 20261119T000247Z ran ngspice-47 while the inventory pins ngspice-46
+- **Issue #333** (closed): Remove T-05’s standalone SIM leg from analog signoff and preserve its timing evidence
+- **Issue #324** (closed): item9-digital inventory pins klt 0.8.0 while its envelope is produced by 0.9.0 (unchecked pin drift)
 - **PR #364**: docs: signoff README item 5 gap paragraph counts four pending, two standing gaps
 - **PR #363**: docs: restate the ruled #251 T-16 margin question in sim/README.md
 - **PR #358**: docs: align signoff/README gap count and tracker list with the manifest; record the ruled #251 decision in ROADMAP
