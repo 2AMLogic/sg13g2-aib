@@ -139,7 +139,7 @@ record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
 The three families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
 cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
 `SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
-`partial_coverage`: every cited envelope passes, no covered row is uncovered, and six rows
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and five rows
 are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
 
 **Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
@@ -170,18 +170,17 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Four of the six are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-05 and T-12 are standing gaps**. T-05: DR-0023 decides its added load and delay
-are *measured*, over the full grid, and reported into the rows that carry the numbers rather than
-graded against a bound of their own, so it does not close through verification work. T-12: the
-channel model is a declared input, not a block measurable (below); its ±20 % sensitivity campaign
-is complete and no tracker is open against it. T-02 and T-04 are no longer
-declared: DR-0026 removes their `SIM` leg (no bound exists in the specification), so the "plain
-`SIM` leg" rule yields this 19-row set mechanically.
+Four of the five are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-12 is the remaining standing gap**: the channel model is a declared input, not a
+block measurable (below); its ±20 % sensitivity campaign is complete and no tracker is open
+against it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
+legs and DR-0028 removes T-05's (no bound exists in the specification for any of the three),
+so the "plain `SIM` leg" rule yields this 18-row set mechanically. T-05's measured load and
+delay stay reported evidence — the common term feeds T-20 and the select-dependent term feeds
+T-13 (DR-0023, DR-0028).
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #333 |
 | T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for is complete — see below). **Standing gap**, no tracker open | none |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
@@ -687,11 +686,11 @@ would pass unchecked.
 
 `sim/redundancy-mux/` is the PVT-FULL redundancy-mux family of the T1 item 5 (analog)
 campaign (#42, #192): what the T-05 shift-redundancy remap adds to one TX lane in load and
-delay. Row: T-05 (`SIM` leg). **Nothing here is graded** — `spec/target-spec.md` T-05 states
-no bound for this leg and DR-0023 invents none, so no measurement carries `limits` and T-05
-stays a declared gap whose string names this record (the form DR-0022 established for T-02
-and T-04). The two delay terms are reported *into* the rows that carry numbers: the common
-term into T-20, the select-dependent term into T-13.
+delay. Measured row: none since DR-0028 — T-05's `SIM` leg is removed and the row left the
+declared set. **Nothing here is graded** — T-05 states no bound for that leg and DR-0023
+invents none, so no measurement carries `limits`. The two delay terms are reported *into* the
+rows that carry numbers: the common term into T-20, the select-dependent term into T-13
+(DR-0023, DR-0028).
 
 **There is no transistor-level remap in this repo** — `tx_remap` / `rx_remap` are RTL only
 and the committed netlist predates them — so DR-0023 declares the arrangement that is

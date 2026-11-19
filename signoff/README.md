@@ -136,25 +136,26 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 ## Item 5 / analog evidence
 
 `5.analog` cites three `klt sim` reports as a list, each naming the `rows` it covers, and
-`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 19 rows, 13 covered and
-6 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
+`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 13 covered and
+5 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
 `uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
 but declared gaps remain.
 
 Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
 done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
-tracked in #194, #195, #196 and #176. **T-05 and T-12 are standing gaps** — closing the pending
-four still leaves both declared, so the item keeps reading **`unmet` / `partial_coverage`**.
-T-05: DR-0023 decides its added load and delay are measured, over the full grid, and reported
-into T-20 and T-13, not graded against a bound of its own. T-12: the channel model is a declared
+tracked in #194, #195, #196 and #176. **T-12 is the remaining standing gap** — closing the pending
+four still leaves it declared, so the item keeps reading **`unmet` / `partial_coverage`**.
+T-12: the channel model is a declared
 input (DR-0005), not a block measurable; the ±20 % R/C sensitivity campaign its grid column asks
 for is complete (`sim/channel-eye/records/20261113T223804Z-ch-spread/`), and no tracker is open
-against it. T-02
-and T-04 are **not** in the declared set: DR-0026 removes their `SIM` leg (the specification
-states no bound for either), so the "plain `SIM` leg" derivation no longer produces them. That
-removal is authorised by the record, not a silent deletion of a row; the two rows are verified
-(T-02 by `RTL`; T-04's clk/clkb arrangement by the clock-path netlist structure check, DR-0027)
-and graded where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-18).
+against it. T-02, T-04 and T-05 are **not** in the declared set: DR-0026 removes the
+T-02/T-04 `SIM` legs and DR-0028 removes T-05's (the specification states no bound for any
+of the three), so the "plain `SIM` leg" derivation no longer produces them. That removal is
+authorised by the records, not a silent deletion of a row; the rows are verified
+(T-02 by `RTL`; T-04's clk/clkb arrangement by the clock-path netlist structure check, DR-0027;
+T-05's mux function by `RTL`, all 40 single-fault positions) and their consequences are graded
+where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-18; T-05's measured load
+and delay are reported inputs to T-20 and T-13, DR-0023).
 
 | envelope | rows | result |
 |---|---|---|
@@ -165,7 +166,7 @@ and graded where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-1
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
 plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,
 T-14, T-19). **Re-derive it from the spec table** when a row changes — see `sim/README.md`
-("Item 5 / analog: the declared row set") for the 6 gaps and their issues.
+("Item 5 / analog: the declared row set") for the 5 gaps and their issues.
 
 ### Two citation rules this item depends on
 
@@ -275,9 +276,9 @@ a backend) and #5494 (one `--top` per run cannot express a link testbench, which
 
 The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
 naming it leads a reader to the reports, where `no_evidence` would have hidden that the
-extraction exists. `spec_rows."7.analog"` declares all 19 rows as gaps with the reason — the
-13 rows `5.analog` grades plus its 6 carried-forward gaps, with the trackers the manifest
-declares: T-05 (#333), T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 is a standing
+extraction exists. `spec_rows."7.analog"` declares all 18 rows as gaps with the reason — the
+13 rows `5.analog` grades plus its 5 carried-forward gaps, with the trackers the manifest
+declares: T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 is a standing
 declared gap with no tracker open against it (the channel-R/C spread campaign that closed
 #193 and the T-05 campaign the closed #192 recorded are complete). Today's grader does not
 consume `spec_rows` for item 7 (only items 5 and 6), so that block is a declaration in the
