@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-19
 
+- **PR #365**: docs: date DR-0017/DR-0018 staleness prose and retire #140 as the live layout tracker
+- **Issue #362** (closed): design/README.md and DR-0017 cite closed #140 as the live tracker for a layout regeneration that e47bb80 made stale again
 - **PR #337**: evidence(sim): study the PDK sg13g2_io pad cells against T-24 and T-08
 - **PR #371**: check_inventory_klt_pin: compare each ngspice pin to the newest smoke record
 - **PR #370**: docs(spec): drop T-05's SIM leg and leave the analog row set (DR-0028)
