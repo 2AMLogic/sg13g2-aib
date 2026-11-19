@@ -4,6 +4,12 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-19
 
+- **PR #364**: docs: signoff README item 5 gap paragraph counts four pending, two standing gaps
+- **PR #363**: docs: restate the ruled #251 T-16 margin question in sim/README.md
+- **PR #358**: docs: align signoff/README gap count and tracker list with the manifest; record the ruled #251 decision in ROADMAP
+- **Issue #360** (closed): signoff/README.md:144 still says five of the six analog gaps are pending and T-05 is the only standing gap (the manifest says two are standing)
+- **Issue #359** (closed): Residual pending-form #251 mentions in sim/README.md after the operator ruling
+- **Issue #352** (closed): Residual post-DR-0026 gap-count and closed-tracker citations in signoff/README.md (and ROADMAP.md's #251 bullet)
 - **PR #356**: docs: retire T-12's #193 tracker in the three narrative READMEs
 - **PR #355**: chore: drop the drifted generated finalist sizing request (request_t16sz_fin_S07.json)
 - **PR #353**: signoff: describe T-12's closed trackers (#193, #251) in past tense in both gap strings
