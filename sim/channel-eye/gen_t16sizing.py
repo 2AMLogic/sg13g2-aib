@@ -13,8 +13,9 @@ Requests (all `request("ch")` measurements, limits and stimulus, so they cannot 
   request_t16sz_dpa.json / request_t16sz_2kv.json   screen: kr = kc = 1.2, mos_ss + mos_fs,
         1.08 V, -40/125 C, every candidate of the family (the binding region of
         records 20261111T231422Z-t16attr and 20261113T223804Z-ch-spread).
-  request_t16sz_fin_<id>.json  not generated here; the finalist's PVT-FULL x 4 spread run
-        is made by `gen_t16sizing.py --finalist ID` (see run_t16sizing.sh).
+  request_t16sz_fin_<id>.json  written on demand by `gen_t16sizing.py --finalist ID` (the
+        finalist's PVT-FULL x 4 spread run; see run_t16sizing.sh), which regenerates
+        it before every run, so it is disposable output, not committed.
 """
 import json
 import sys
