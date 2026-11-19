@@ -138,6 +138,15 @@ if [ "$want_evidence" = 1 ]; then
   run "Check every cited evidence record binds the shipped stream" \
     python3 -I scripts/ci/check_evidence_pins.py
 
+  # `klt signoff --attest` records an inventory's tool pins verbatim and its
+  # own version as provenance, and never compares the two (#324): a pin left
+  # behind by a grader bump attests a version the evidence was not produced
+  # with. Each inventory that pins klt is checked against the envelope built
+  # from it -- never against signoff/KLT_VERSION, which is the pin for the
+  # *next* attestation, not a retroactive truth about landed evidence.
+  run "Check each inventory's klt pin matches its envelope's grader version" \
+    python3 -I scripts/ci/check_inventory_klt_pin.py
+
   # The #260 defect at class level: a tracked evidence file that an ignore
   # rule still matches is a record a plain `git add` silently drops (its
   # committed siblings were only tracked because someone force-added them).

@@ -444,6 +444,13 @@ makes the CI `--check` exit 3 (`drifted`).
   declares a `provenance.input.content_hash` binds the shipped stream it names —
   the gap a manifest pin cannot see (#273). Uncited records are out of the
   population by design;
+- `scripts/ci/check_inventory_klt_pin.py`: every attest inventory that declares
+  `pins.tools.klt` pins the same version its paired envelope records as
+  `provenance.klt_version` (#324). `--attest` copies pins verbatim and never
+  compares them to the grader's own version, so a pin left behind by a grader
+  bump attests a version the evidence was not produced with; the comparison is
+  inventory-vs-envelope only, never against `signoff/KLT_VERSION`, which is the
+  pin for the next attestation, not a retroactive truth about landed evidence;
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 

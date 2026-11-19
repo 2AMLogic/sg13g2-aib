@@ -1,0 +1,48 @@
+* PDK/OSDI smoke -- SMOKE ONLY: W/L, supplies and sweep ranges below are
+* arbitrary, chosen only to exercise convergence of the four MOS devices.
+* They are not design intent and carry no spec value.
+* Corner mos_tt, 27 C, single run. $PDK_ROOT and $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi are substituted
+* by run_smoke.sh.
+.lib "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib" mos_tt
+.lib "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/models/cornerMOShv.lib" mos_tt
+.temp 27
+
+Vdl vdl 0 dc 1.2
+Vdh vdh 0 dc 3.3
+
+* LV NMOS: source/bulk 0, drain at vdl
+Vgnl gnl 0 dc 0.6
+XNL dnl gnl 0 0 sg13_lv_nmos w=1u l=0.13u ng=1 m=1
+Vdnl vdl dnl dc 0
+* LV PMOS: source/bulk at vdl, drain to 0 via sense source
+Vgpl gpl 0 dc 0.6
+XPL dpl gpl vdl vdl sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+Vdpl dpl 0 dc 0
+* HV NMOS
+Vgnh gnh 0 dc 1.65
+XNH dnh gnh 0 0 sg13_hv_nmos w=1u l=0.45u ng=1 m=1
+Vdnh vdh dnh dc 0
+* HV PMOS
+Vgph gph 0 dc 1.65
+XPH dph gph vdh vdh sg13_hv_pmos w=2u l=0.45u ng=1 m=1
+Vdph dph 0 dc 0
+
+.control
+pre_osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi
+pre_osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi
+pre_osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi
+pre_osdi $PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi
+set filetype=ascii
+op
+print i(Vdnl) i(Vdpl) i(Vdnh) i(Vdph)
+dc Vgnl 0 1.2 0.05
+wrdata idvgs_lv_nmos.dat i(Vdnl)
+dc Vgpl 0 1.2 0.05
+wrdata idvgs_lv_pmos.dat i(Vdpl)
+dc Vgnh 0 3.3 0.1
+wrdata idvgs_hv_nmos.dat i(Vdnh)
+dc Vgph 0 3.3 0.1
+wrdata idvgs_hv_pmos.dat i(Vdph)
+echo SMOKE_DONE
+.endc
+.end
