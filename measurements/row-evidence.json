@@ -33,7 +33,7 @@
         "corner": "n/a (function)",
         "scope": "TC",
         "basis": "RTL simulation, every single-fault position (41 cases)",
-        "note": "RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured."
+        "note": "RTL leg only. The analog leg is not graded: the remap's added load and delay are measured over PVT-FULL in sim/redundancy-mux/records/20261113T160050Z/ and reported into T-20 (common term) and T-13 (select-dependent term), with no bound of their own (DR-0023, DR-0028)."
       },
       {
         "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",

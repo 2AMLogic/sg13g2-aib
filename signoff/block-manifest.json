@@ -117,7 +117,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:a5b7a17644be072b456a0e040dbd0550c2ae4900ef99c39c52f9757890f48e2a"
+          "content_hash": "sha256:fb17a5292cd228e06173facb0dd773cda4405c451db259e3883e54874309d753"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
@@ -144,11 +144,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:703daedd8d4c994b524d548e671d9d901006952e1a50cf3b7b436c97f2b8a5e0"
+      "content_hash": "sha256:40e48b3e825b0d6071c3290a49071d4ca2550438d1a20dbdb5da8cce79d233dd"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:703daedd8d4c994b524d548e671d9d901006952e1a50cf3b7b436c97f2b8a5e0"
+      "content_hash": "sha256:40e48b3e825b0d6071c3290a49071d4ca2550438d1a20dbdb5da8cce79d233dd"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -190,10 +190,6 @@
     "5.analog": [
       {
         "id": "T-01"
-      },
-      {
-        "id": "T-05",
-        "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #333"
       },
       {
         "id": "T-06"
@@ -278,10 +274,6 @@
       {
         "id": "T-01",
         "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
-      },
-      {
-        "id": "T-05",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #333"
       },
       {
         "id": "T-06",
