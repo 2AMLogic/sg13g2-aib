@@ -143,8 +143,11 @@ if [ "$want_evidence" = 1 ]; then
   # behind by a grader bump attests a version the evidence was not produced
   # with. Each inventory that pins klt is checked against the envelope built
   # from it -- never against signoff/KLT_VERSION, which is the pin for the
-  # *next* attestation, not a retroactive truth about landed evidence.
-  run "Check each inventory's klt pin matches its envelope's grader version" \
+  # *next* attestation, not a retroactive truth about landed evidence. The
+  # same script compares an inventory's ngspice pin against the newest
+  # pdk-smoke record (#368): only the newest, because committed records are
+  # append-only and an older record under another simulator is history.
+  run "Check each inventory's tool pins match the evidence that used them" \
     python3 -I scripts/ci/check_inventory_klt_pin.py
 
   # The #260 defect at class level: a tracked evidence file that an ignore

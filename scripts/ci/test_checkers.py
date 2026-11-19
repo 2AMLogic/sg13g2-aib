@@ -348,18 +348,28 @@ class InventoryKltPinTests(unittest.TestCase):
     """The inventory-pin/envelope-version guard: a good tree passes, drift bites.
 
     The fixture mirrors the item 9 pair shape the guard exists for: the
-    carrying inventory pins klt "0.9.0", its paired envelope records the same
-    version as provenance, and two skip-class inventories keep the hostility
-    honest -- one valid inventory with no pins block (item 10's shape) and one
-    carrying no klt pin next to an envelope that does not exist (item 1's
-    shape), so ever pairing a non-carrying inventory would fail the good tree.
+    carrying inventory pins klt "0.9.0" and ngspice "ngspice-46", its paired
+    envelope records the same klt version as provenance, and two skip-class
+    inventories keep the hostility honest -- one valid inventory with no pins
+    block (item 10's shape) and one carrying no klt pin next to an envelope
+    that does not exist (item 1's shape), so ever pairing a non-carrying
+    inventory would fail the good tree. The ngspice pin is compared against
+    the newest pdk-smoke record instead, so the fixture seeds one under
+    `sim/pdk-smoke/records/` by default.
     """
 
     INV = "signoff/attest/item9-analog.inventory.json"
     ENV = "signoff/attest/item9-analog.json"
+    NEWEST_STAMP = "20261119T042213Z"
 
-    def scenario(self, pin="0.9.0", version="0.9.0", mutate=None):
-        """The item 9 analog pair plus the two skip-class inventories."""
+    def scenario(self, pin="0.9.0", version="0.9.0", ngspice_pin="ngspice-46",
+                 records=None, mutate=None):
+        """The item 9 analog pair plus the two skip-class inventories.
+
+        `records` maps pdk-smoke stamp directory names to the tools.ngspice
+        each record carries (a None value omits the field); None seeds the
+        one landed newest record, {} seeds none.
+        """
         with tempfile.TemporaryDirectory() as t:
             root = Path(t)
             att = root / "signoff/attest"
@@ -367,7 +377,8 @@ class InventoryKltPinTests(unittest.TestCase):
             inv = {
                 "schema_version": 1, "kind": "t1-attestation-inventory", "t1_item": 9,
                 "testbenches": ["sim/bench.sh"], "cold_start": {"argv": ["sim/bench.sh"]},
-                "pins": {"pdk": {"name": "IHP-Open-PDK"}, "tools": {"klt": pin}},
+                "pins": {"pdk": {"name": "IHP-Open-PDK"},
+                         "tools": {"klt": pin, "ngspice": ngspice_pin}},
             }
             (att / "item9-analog.inventory.json").write_text(json.dumps(inv))
             env = {
@@ -381,6 +392,14 @@ class InventoryKltPinTests(unittest.TestCase):
             (att / "item1-digital.inventory.json").write_text(
                 json.dumps({"schema_version": 1, "kind": "t1-attestation-inventory",
                             "t1_item": 1, "pins": {"tools": {"iverilog": "13.0"}}}))
+            if records is None:
+                records = {self.NEWEST_STAMP: "ngspice-46"}
+            for stamp, ngspice in records.items():
+                rec_dir = root / "sim/pdk-smoke/records" / stamp
+                rec_dir.mkdir(parents=True)
+                tools = {"ngspice": ngspice} if ngspice is not None else {}
+                (rec_dir / "record.json").write_text(json.dumps(
+                    {"record": "pdk-smoke", "utc_stamp": stamp, "tools": tools}))
             if mutate:
                 mutate(root)
             return run(KLT_PIN, "--root", root)
@@ -463,6 +482,61 @@ class InventoryKltPinTests(unittest.TestCase):
         self.assertNotEqual(p.returncode, 0)
         self.assertIn("0 inventory klt pin", p.stderr)
         self.assertIn("filename suffix", p.stderr)
+
+    def test_ngspice_pin_vs_newest_record_drift_fails_and_names_both_fixes(self):
+        # The filed drift (#368): the newest smoke record ran ngspice-47
+        # while the inventory pinned ngspice-46.
+        p = self.scenario(records={"20261017T215144Z": "ngspice-46",
+                                   "20261119T042213Z": "ngspice-47"})
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+        self.assertIn(self.NEWEST_STAMP, p.stderr)
+        self.assertIn("ngspice-46", p.stderr)
+        self.assertIn("ngspice-47", p.stderr)
+        self.assertIn("append-only", p.stderr)
+        self.assertIn("re-run", p.stderr)
+        self.assertIn("re-attest", p.stderr)
+
+    def test_older_record_drift_is_not_checked(self):
+        # Append-only history may legitimately differ; only the newest
+        # record is compared.
+        p = self.scenario(records={"20261017T215144Z": "ngspice-47",
+                                   "20261119T042213Z": "ngspice-46"})
+        self.assertEqual(p.returncode, 0)
+
+    def test_same_day_stamp_ordering_picks_the_later_record(self):
+        # Stamp directories sort lexicographically and their stamps are UTC,
+        # so a later time-of-day stamp on the same date is the newest. The
+        # older same-day record drifted; the guard must compare the newer
+        # one and pass.
+        p = self.scenario(records={"20261119T000247Z": "ngspice-47",
+                                   "20261119T042213Z": "ngspice-46"})
+        self.assertEqual(p.returncode, 0)
+
+    def test_record_without_tools_ngspice_fails(self):
+        # A record that drops the field must not read as a silent match.
+        p = self.scenario(records={self.NEWEST_STAMP: None})
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("tools.ngspice", p.stderr)
+
+    def test_no_records_fails_loudly(self):
+        # Zero population must fail, not pass vacuously: a renamed records
+        # path must not turn the ngspice guard off silently.
+        p = self.scenario(records={})
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("no pdk-smoke record", p.stderr)
+
+    def test_zero_ngspice_population_fails_loudly(self):
+        # A schema rename stripping every pins.tools.ngspice must not turn
+        # the guard into a silent pass (the klt vacuous-guard precedent).
+        def bad(r):
+            p = r / self.INV
+            inv = json.loads(p.read_text())
+            del inv["pins"]["tools"]["ngspice"]
+            p.write_text(json.dumps(inv))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 inventory ngspice pin", p.stderr)
 
 
 class AppendOnlyTests(unittest.TestCase):
