@@ -63,7 +63,8 @@ The series resistor and wider devices change the driver's output edge and the pi
 by the dynamic rows. T-09 (overshoot/undershoot, #53) and the clock path (#54) must be run
 on these netlists; their earlier results, if any, do not carry over.
 
-**Layout, LVS and signoff evidence are stale (tracked in #140).** This record changes the
+**At this record's own netlists, layout, LVS and signoff evidence were stale (tracked in #140;
+that regeneration is complete, PR #148).** This record changes the
 analog netlists but not the committed layout. At this head `layout/gen_io_column.py` fails its
 own `check_against_netlists()` (Mp 28 fingers with D=PAD, Mn 14 fingers, Dp1 10.0 um, no
 `Rsp`/`Rsn`), the `layout/lvs/*.ref.spice` fail `gen_reference.py --check`, and the analog DRC
@@ -72,4 +73,6 @@ Those two citations are removed from `signoff/block-manifest.json` so the items 
 for this design, and the record is regenerated (`t1_met_count` 18 to 16). T-22 (pitch, a
 `LAYOUT` row) and the `LAYOUT` half of T-25 are not evaluated for the wider driver: 54 + 22
 fingers come to about 43 um of the ~54 um routable width before the two 10 um `rppd` legs are
-placed, which is not verified. Regeneration is issue #140.
+placed, which is not verified. That regeneration was issue #140, completed by PR #148
+(merged 2026-11-10). (The committed layout has since drifted again in one size: `XResd` is
+`l=1u` since PR #332, 2026-11-18; `design/README.md` carries the current state.)
