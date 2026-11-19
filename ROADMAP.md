@@ -58,8 +58,12 @@ rows (#269, PR #293), the `.gitignore` cleanup (#260, PR #262), the item 7
 analog extraction re-bound to the post-#248 reordered stream (#253,
 PR #272), the `gen_redundancy_mux.py` strict-flag conversion and the
 PWL-helper consolidation it carried (#256, #257; PR #264), the I/O-column
-slot order with both spares at one end (#248, PR #254), and the append-only
-check's base commit and README treatment (#255, PR #258).
+slot order with both spares at one end (#248, PR #254), and the T-16
+margin recovery in `aib_pad_esd` under the ruled option `design` (#251,
+PR #332): `XResd` is `w=2u l=1u` (was `l=2u`); the channel-bench T-16
+margin at the declared +20 % channel-C (kr = kc = 1.2) corner was
+1.331 ps, and the worst over PVT-FULL × the four (kr, kc) spread pairs
+is 19.92 ps. The 470-530 ps bound and the corner are unchanged.
 
 ## Next
 
@@ -78,11 +82,6 @@ check's base commit and README treatment (#255, PR #258).
   when `measurements/row-evidence.json` cites an RTL and a layout record for
   N = 20 and the row no longer reads `not-yet-measured`. No issue yet.
 - **Pin the AIB 1.2 §3.3.1 shift pattern against the RTL** (#27), after #29.
-- **Recover T-16 margin in the design** (#251): the operator ruled option
-  `design` on 2026-11-18 against the 1.3 ps recorded at the declared
-  +20 % channel-C corner — recover the margin in the design, not by
-  narrowing the corner; the 470-530 ps bound and the +20 % channel-C
-  corner are unchanged.
 
 ## Later
 
