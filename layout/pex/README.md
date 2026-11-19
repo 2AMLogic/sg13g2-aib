@@ -40,9 +40,16 @@ spec row's post-layout value.** Nothing in `spec/` is relaxed and no cell is cha
 | T-01, T-09, T-15, T-16, T-18, T-26 | `channel-eye` | **not measured** | defect 2, and no bench yet (see "One extracted top per run") |
 | T-17 | `clock-path` | **not measured** | same |
 
-Item 5's own declared gaps (`T-02`, `T-04`, `T-05`, `T-12`, `T-20`, `T-21`, `T-25`, `T-29`)
-are carried forward unchanged, with the same trackers: #216, #192, #193, #194, #195, #196,
-#176. Nothing here measures them and nothing here closes them.
+Item 5's five declared gaps (`T-12`, `T-20`, `T-21`, `T-25`, `T-29`) are carried
+forward unchanged, with the same trackers: T-20 (#194), T-21 (#195),
+T-25 (#196), T-29 (#176). T-12 has none: it is a standing declared gap — the channel model
+is a declared input, and the ±20 % R/C spread campaign the closed #193 asked for ran
+pre-layout (`sim/channel-eye/records/20261113T223804Z-ch-spread/`) and is complete.
+`T-02`, `T-04` and `T-05` left the declared set: DR-0026 ruled the first two
+carry no `SIM` leg and DR-0028 removes T-05's (the T-05 measurement campaign the
+closed #192 recorded is complete; its numbers feed T-20 and T-13 as reported inputs).
+Nothing here measures them and nothing here closes them. Item 7 declares all 18 of its rows
+as gaps: the 13 rows item 5 grades plus these five carried forward.
 
 ## The two defects
 

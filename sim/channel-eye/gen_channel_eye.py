@@ -6,7 +6,7 @@ Stdlib only. Usage (from anywhere):
   python3 -I sim/channel-eye/gen_channel_eye.py --check  # exit 1 if they are stale
 
 Generated: prbs7_stim.inc, request_ch_1g.json, request_ch_spread_1g.json,
-request_tc_1g.json, request_ctl_ch_tt.json.
+request_tc_1g.json.
 
 Timing: UI 1000 ps (1 Gb/s DDR, 500 MHz forwarded clock). The stimulus is the cyclic
 PRBS-7 sequence (x^7 + x^6 + 1) with the last WARM bits prepended, so the waveform is
@@ -240,21 +240,11 @@ def spread_request():
     return r
 
 
-def control_request():
-    """Bench positive control: CH netlist with the output-PMOS-fixed TX copy, one corner (tt, 1.20 V, 27 C)."""
-    r = request("ch")
-    r["netlist"] = "tb_ctl_ch.cir"
-    r["corners"] = {"process": [c for c in r["corners"]["process"] if c["name"] == "mos_tt"],
-                    "supply_v": {s: [1.2] for s in SUPPLIES}, "temperature_c": [27]}
-    return r
-
-
 def outputs():
     o = {"prbs7_stim.inc": stim_include()}
     for k in ("ch", "tc"):
         o[f"request_{k}_1g.json"] = json.dumps(request(k), indent=2) + "\n"
     o["request_ch_spread_1g.json"] = json.dumps(spread_request(), indent=2) + "\n"
-    o["request_ctl_ch_tt.json"] = json.dumps(control_request(), indent=2) + "\n"
     return o
 
 

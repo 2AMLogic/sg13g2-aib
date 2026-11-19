@@ -136,20 +136,26 @@ re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`,
 ## Item 5 / analog evidence
 
 `5.analog` cites three `klt sim` reports as a list, each naming the `rows` it covers, and
-`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 21 rows, 13 covered and
-8 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
+`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 13 covered and
+5 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
 `uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
 but declared gaps remain.
 
-Six of those gaps are **pending** — a measurement not yet made, which closes when the work is
-done; progress toward T1 is tracked in #3, not here. **T-02 and T-04 are standing gaps**:
-DR-0022 decided that T-02's `SIM` leg is a pointer to where the timing is graded (T-16, T-19,
-T-20) and that T-04's is report-only by design, because the specification states no clk/clkb
-crossing requirement. Neither closes through verification work — only a future revision of the
-specification, or a consumer stating a requirement, would give T-04 a bound (DR-0022,
-"Consequences"). So **closing the pending gap issues does not by itself make this item read
-`met`**, and whether it can while two standing gaps are declared is an open accounting
-question, tracked in #216. Do not settle it by deleting a row from the declared set.
+Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
+tracked in #194, #195, #196 and #176. **T-12 is the remaining standing gap** — closing the pending
+four still leaves it declared, so the item keeps reading **`unmet` / `partial_coverage`**.
+T-12: the channel model is a declared
+input (DR-0005), not a block measurable; the ±20 % R/C sensitivity campaign its grid column asks
+for is complete (`sim/channel-eye/records/20261113T223804Z-ch-spread/`), and no tracker is open
+against it. T-02, T-04 and T-05 are **not** in the declared set: DR-0026 removes the
+T-02/T-04 `SIM` legs and DR-0028 removes T-05's (the specification states no bound for any
+of the three), so the "plain `SIM` leg" derivation no longer produces them. That removal is
+authorised by the records, not a silent deletion of a row; the rows are verified
+(T-02 by `RTL`; T-04's clk/clkb arrangement by the clock-path netlist structure check, DR-0027;
+T-05's mux function by `RTL`, all 40 single-fault positions) and their consequences are graded
+where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-18; T-05's measured load
+and delay are reported inputs to T-20 and T-13, DR-0023).
 
 | envelope | rows | result |
 |---|---|---|
@@ -160,7 +166,7 @@ question, tracked in #216. Do not settle it by deleting a row from the declared 
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
 plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,
 T-14, T-19). **Re-derive it from the spec table** when a row changes — see `sim/README.md`
-("Item 5 / analog: the declared row set") for the 8 gaps and their issues.
+("Item 5 / analog: the declared row set") for the 5 gaps and their issues.
 
 ### Two citation rules this item depends on
 
@@ -270,11 +276,14 @@ a backend) and #5494 (one `--top` per run cannot express a link testbench, which
 
 The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
 naming it leads a reader to the reports, where `no_evidence` would have hidden that the
-extraction exists. `spec_rows."7.analog"` declares all 21 rows as gaps with the reason — the
-13 rows `5.analog` grades plus its 8 carried-forward gaps, with the same trackers (#216, #192,
-#193, #194, #195, #196, #176). Today's grader does not consume `spec_rows` for item 7 (only
-items 5 and 6), so that block is a declaration in the manifest rather than something the record
-rolls up; it is kept so the gap list is machine-readable in one place.
+extraction exists. `spec_rows."7.analog"` declares all 18 rows as gaps with the reason — the
+13 rows `5.analog` grades plus its 5 carried-forward gaps, with the trackers the manifest
+declares: T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 is a standing
+declared gap with no tracker open against it (the channel-R/C spread campaign that closed
+#193 and the T-05 campaign the closed #192 recorded are complete). Today's grader does not
+consume `spec_rows` for item 7 (only items 5 and 6), so that block is a declaration in the
+manifest rather than something the record rolls up; it is kept so the gap list is
+machine-readable in one place.
 
 ## Item 7 / digital evidence
 
@@ -435,6 +444,19 @@ makes the CI `--check` exit 3 (`drifted`).
   declares a `provenance.input.content_hash` binds the shipped stream it names —
   the gap a manifest pin cannot see (#273). Uncited records are out of the
   population by design;
+- `scripts/ci/check_inventory_klt_pin.py`: every attest inventory that declares
+  `pins.tools.klt` pins the same version its paired envelope records as
+  `provenance.klt_version` (#324). `--attest` copies pins verbatim and never
+  compares them to the grader's own version, so a pin left behind by a grader
+  bump attests a version the evidence was not produced with; the comparison is
+  inventory-vs-envelope only, never against `signoff/KLT_VERSION`, which is the
+  pin for the next attestation, not a retroactive truth about landed evidence.
+  The same script compares an inventory's `pins.tools.ngspice` against the
+  `tools.ngspice` of the newest `sim/pdk-smoke/records/*/record.json` (#368) —
+  only the newest, because committed records are append-only evidence and an
+  older record under another simulator is legitimate history; a drifted newest
+  record is fixed by re-running the smoke under the pinned ngspice, or by
+  bumping the pin and re-attesting, never by editing a committed record;
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 
@@ -465,7 +487,7 @@ envelope was regenerated and the manifest re-cited with the new input-set digest
 rebuilt with `klt signoff --attest 2` (see issue 120), which populates `klayout_version`. The
 `signoff/attest/` envelopes not named here were not regenerated; they still record the klt that
 produced them — except `item9-digital.json`, which issue #217 regenerated under 0.9.0 when
-`verification/run_tb.py` changed, so it now records `klt_version: 0.9.0`. A `--check` of a
+the local cocotb runner (since removed, #245) changed, so it now records `klt_version: 0.9.0`. A `--check` of a
 0.8.0-produced envelope under the 0.9.0 pin passes (`item9-analog.json` still does), so
 `klt_version` is recorded provenance here, not something the re-attest compares.
 

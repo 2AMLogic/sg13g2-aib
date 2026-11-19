@@ -27,6 +27,7 @@ PNR_PINS = HERE / "check_pnr_pins.py"
 EV_PINS = HERE / "check_evidence_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
 ATTESTED = HERE / "check_attested_paths.py"
+KLT_PIN = HERE / "check_inventory_klt_pin.py"
 IGN = HERE / "check_record_not_ignored.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
@@ -341,6 +342,201 @@ class AttestedPathsTests(unittest.TestCase):
         self.assertIn("sha256-normalized", p.stderr)
         self.assertNotIn("klt signoff --attest", p.stderr)
         self.assertNotIn("re-attest", p.stderr)
+
+
+class InventoryKltPinTests(unittest.TestCase):
+    """The inventory-pin/envelope-version guard: a good tree passes, drift bites.
+
+    The fixture mirrors the item 9 pair shape the guard exists for: the
+    carrying inventory pins klt "0.9.0" and ngspice "ngspice-46", its paired
+    envelope records the same klt version as provenance, and two skip-class
+    inventories keep the hostility honest -- one valid inventory with no pins
+    block (item 10's shape) and one carrying no klt pin next to an envelope
+    that does not exist (item 1's shape), so ever pairing a non-carrying
+    inventory would fail the good tree. The ngspice pin is compared against
+    the newest pdk-smoke record instead, so the fixture seeds one under
+    `sim/pdk-smoke/records/` by default.
+    """
+
+    INV = "signoff/attest/item9-analog.inventory.json"
+    ENV = "signoff/attest/item9-analog.json"
+    NEWEST_STAMP = "20261119T042213Z"
+
+    def scenario(self, pin="0.9.0", version="0.9.0", ngspice_pin="ngspice-46",
+                 records=None, mutate=None):
+        """The item 9 analog pair plus the two skip-class inventories.
+
+        `records` maps pdk-smoke stamp directory names to the tools.ngspice
+        each record carries (a None value omits the field); None seeds the
+        one landed newest record, {} seeds none.
+        """
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            att = root / "signoff/attest"
+            att.mkdir(parents=True)
+            inv = {
+                "schema_version": 1, "kind": "t1-attestation-inventory", "t1_item": 9,
+                "testbenches": ["sim/bench.sh"], "cold_start": {"argv": ["sim/bench.sh"]},
+                "pins": {"pdk": {"name": "IHP-Open-PDK"},
+                         "tools": {"klt": pin, "ngspice": ngspice_pin}},
+            }
+            (att / "item9-analog.inventory.json").write_text(json.dumps(inv))
+            env = {
+                "schema_version": 1, "kind": "generic", "status": "pass", "t1_item": 9,
+                "provenance": {"klt_version": version, "klayout_version": None},
+            }
+            (att / "item9-analog.json").write_text(json.dumps(env))
+            (att / "item10.inventory.json").write_text(
+                json.dumps({"schema_version": 1, "kind": "t1-attestation-inventory",
+                            "t1_item": 10}))
+            (att / "item1-digital.inventory.json").write_text(
+                json.dumps({"schema_version": 1, "kind": "t1-attestation-inventory",
+                            "t1_item": 1, "pins": {"tools": {"iverilog": "13.0"}}}))
+            if records is None:
+                records = {self.NEWEST_STAMP: "ngspice-46"}
+            for stamp, ngspice in records.items():
+                rec_dir = root / "sim/pdk-smoke/records" / stamp
+                rec_dir.mkdir(parents=True)
+                tools = {"ngspice": ngspice} if ngspice is not None else {}
+                (rec_dir / "record.json").write_text(json.dumps(
+                    {"record": "pdk-smoke", "utc_stamp": stamp, "tools": tools}))
+            if mutate:
+                mutate(root)
+            return run(KLT_PIN, "--root", root)
+
+    def test_good_tree_passes(self):
+        self.assertEqual(self.scenario().returncode, 0)
+
+    def test_pin_below_provenance_fails_and_names_the_repair(self):
+        # The filed drift: inventory pinned 0.8.0, envelope produced by 0.9.0.
+        p = self.scenario(pin="0.8.0")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertIn("0.8.0", p.stderr)
+        self.assertIn("0.9.0", p.stderr)
+        self.assertIn("klt signoff --attest 9", p.stderr)
+        self.assertIn("KLT_VERSION", p.stderr)
+
+    def test_pin_ahead_of_provenance_fails(self):
+        # The mirror drift: pin bumped without the re-attest.
+        p = self.scenario(version="0.8.0")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+
+    def test_missing_paired_envelope_fails(self):
+        def bad(r):
+            (r / self.ENV).unlink()
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertIn("missing", p.stderr)
+
+    def test_null_klt_version_fails_without_reattest_advice(self):
+        # A grader that stops recording provenance.klt_version is a
+        # toolchain/checker gap, not tree drift: name it, carry no repair.
+        def bad(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            env["provenance"]["klt_version"] = None
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertNotIn("re-attest", p.stderr)
+
+    def test_unparseable_carrying_inventory_fails(self):
+        def bad(r):
+            (r / self.INV).write_text("{ not even json")
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+
+    def test_non_carrying_inventories_are_skipped(self):
+        # item 1's shape: pins without klt, and no envelope to pair. The good
+        # tree already proves the skip; this asserts it survives a missing
+        # envelope for exactly that shape.
+        self.assertEqual(self.scenario().returncode, 0)
+
+    def test_zero_population_fails_loudly(self):
+        # A schema rename that strips every pins.tools.klt must not turn the
+        # guard into a silent pass.
+        def bad(r):
+            p = r / self.INV
+            inv = json.loads(p.read_text())
+            del inv["pins"]["tools"]["klt"]
+            p.write_text(json.dumps(inv))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 inventory klt pin", p.stderr)
+
+    def test_renamed_suffix_leaves_zero_inventories_fails_loudly(self):
+        # The zero-population shape a filename-suffix rename produces: no
+        # *.inventory.json left at all, so "inventories present, none
+        # carrying" never applies. Gating the guard on inventories existing
+        # would exit 0 here.
+        def bad(r):
+            for f in sorted((r / "signoff/attest").glob("*.inventory.json")):
+                f.rename(f.with_name(f.name.replace(".inventory.json", ".inv.json")))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 inventory klt pin", p.stderr)
+        self.assertIn("filename suffix", p.stderr)
+
+    def test_ngspice_pin_vs_newest_record_drift_fails_and_names_both_fixes(self):
+        # The filed drift (#368): the newest smoke record ran ngspice-47
+        # while the inventory pinned ngspice-46.
+        p = self.scenario(records={"20261017T215144Z": "ngspice-46",
+                                   "20261119T042213Z": "ngspice-47"})
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+        self.assertIn(self.NEWEST_STAMP, p.stderr)
+        self.assertIn("ngspice-46", p.stderr)
+        self.assertIn("ngspice-47", p.stderr)
+        self.assertIn("append-only", p.stderr)
+        self.assertIn("re-run", p.stderr)
+        self.assertIn("re-attest", p.stderr)
+
+    def test_older_record_drift_is_not_checked(self):
+        # Append-only history may legitimately differ; only the newest
+        # record is compared.
+        p = self.scenario(records={"20261017T215144Z": "ngspice-47",
+                                   "20261119T042213Z": "ngspice-46"})
+        self.assertEqual(p.returncode, 0)
+
+    def test_same_day_stamp_ordering_picks_the_later_record(self):
+        # Stamp directories sort lexicographically and their stamps are UTC,
+        # so a later time-of-day stamp on the same date is the newest. The
+        # older same-day record drifted; the guard must compare the newer
+        # one and pass.
+        p = self.scenario(records={"20261119T000247Z": "ngspice-47",
+                                   "20261119T042213Z": "ngspice-46"})
+        self.assertEqual(p.returncode, 0)
+
+    def test_record_without_tools_ngspice_fails(self):
+        # A record that drops the field must not read as a silent match.
+        p = self.scenario(records={self.NEWEST_STAMP: None})
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("tools.ngspice", p.stderr)
+
+    def test_no_records_fails_loudly(self):
+        # Zero population must fail, not pass vacuously: a renamed records
+        # path must not turn the ngspice guard off silently.
+        p = self.scenario(records={})
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("no pdk-smoke record", p.stderr)
+
+    def test_zero_ngspice_population_fails_loudly(self):
+        # A schema rename stripping every pins.tools.ngspice must not turn
+        # the guard into a silent pass (the klt vacuous-guard precedent).
+        def bad(r):
+            p = r / self.INV
+            inv = json.loads(p.read_text())
+            del inv["pins"]["tools"]["ngspice"]
+            p.write_text(json.dumps(inv))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 inventory ngspice pin", p.stderr)
 
 
 class AppendOnlyTests(unittest.TestCase):
@@ -1650,6 +1846,10 @@ COVERED = {
         "scripts/ci/test_checkers.py",
         "--check runs in test_every_check_capable_generator_is_fresh",
     ),
+    "sim/channel-eye/gen_t16sizing.py": (
+        "scripts/ci/test_checkers.py",
+        "--check runs in test_every_check_capable_generator_is_fresh",
+    ),
     "sim/clock-path/gen_clock_path.py": (
         "scripts/ci/test_checkers.py",
         "--check runs in test_every_check_capable_generator_is_fresh",
@@ -1671,9 +1871,9 @@ COVERED = {
 # candidate -> why it is not a check this list can run at all.
 EXEMPT = {
     "verification/test_datapath.py":
-        "cocotb bench module, imported by verification/run_tb.py; not a standalone suite",
+        "cocotb bench module, imported by the klt functional-verification requests; not a standalone suite",
     "verification/test_shift_redundancy.py":
-        "cocotb bench module, imported by verification/run_tb.py; not a standalone suite",
+        "cocotb bench module, imported by the klt functional-verification requests; not a standalone suite",
     "layout/check_io_column.py":
         "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
     "layout/gen_io_column.py": "generator with no check mode",
@@ -1830,13 +2030,6 @@ class CheckListCompletenessTests(unittest.TestCase):
     def test_the_lvs_reference_check_is_listed(self):
         # Step 1 of #236; also the guard on the derived neg/ controls (#202).
         self.assertIn("layout/lvs/gen_reference.py", strip_sh_comments(self.text))
-
-    def test_run_tb_self_test_is_listed_not_exempt(self):
-        # Its two cocotb neighbours are exempt, but it is a standalone suite:
-        # a blanket "exclude verification/test_*.py" would be wrong.
-        self.assertIn("verification/test_run_tb.py", strip_sh_comments(self.text))
-        self.assertNotIn("verification/test_run_tb.py", EXEMPT)
-        self.assertNotIn("verification/test_run_tb.py", COVERED)
 
     def test_the_cocotb_bench_modules_are_exempt_with_reasons(self):
         for mod in ("verification/test_datapath.py", "verification/test_shift_redundancy.py"):
@@ -2383,6 +2576,59 @@ class NoPrivateCopyOfAPinHelperTests(unittest.TestCase):
                                            ok={"sim/gone/gen_gone.py:sha": "r"})
         self.assertTrue(any("no longer tracked" in e for e in errors), errors)
         self.assertFalse(any("outside this guard's scope" in e for e in errors), errors)
+
+
+class ClkPairStructureTests(unittest.TestCase):
+    """sim/clock-path/check_clk_pair.py (DR-0027): passes on the committed netlists and fails
+    when the clkb leg is broken at the TX cell, the channel or the RX cell."""
+
+    SCRIPT = REPO / "sim/clock-path/check_clk_pair.py"
+    FILES = ("design/aib_tx_clk.spice", "design/aib_rx_clk.spice", "sim/clock-path/tb_clock_path.cir")
+
+    def check(self, rel=None, old=None, new=None, edits=()):
+        edits = list(edits) + ([(rel, old, new)] if rel else [])
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for f in self.FILES:
+                (root / f).parent.mkdir(parents=True, exist_ok=True)
+                text = (REPO / f).read_text()
+                for r, o, n in edits:
+                    if f == r:
+                        self.assertIn(o, text)
+                        text = text.replace(o, n)
+                (root / f).write_text(text)
+            return run(self.SCRIPT, "--root", root).returncode
+
+    def test_committed_netlists_pass(self):
+        self.assertEqual(self.check(), 0)
+
+    def test_clkb_cut_in_the_channel_fails(self):
+        self.assertEqual(self.check(self.FILES[2], "Xlcb  txpcb rxpcb 0 link", "Xlcb  txpcb nc 0 link"), 1)
+
+    def test_clkb_pad_shorted_to_clk_in_the_tx_cell_fails(self):
+        self.assertEqual(self.check(self.FILES[0], "Xclkb CLKB_D OE PUN PD CLKB_PAD", "Xclkb CLKB_D OE PUN PD CLK_PAD"), 1)
+
+    def test_rx_clkb_output_unconverted_fails(self):
+        self.assertEqual(self.check(self.FILES[1], "Xclkb CLKB_PAD CLKB_O", "Xclkb CLKB_PAD CLK_O"), 1)
+
+    TB = FILES[2]
+
+    def test_subckt_local_nets_do_not_bridge_a_cut_clkb_leg(self):
+        # The testbench's `link` subckt has formal ports txp/rxp. Name the clkb leg's channel
+        # nets the same and cut that leg: a parser that returns the subckt-local Xch would
+        # add a txp-rxp edge and bridge the cut, a false pass.
+        self.assertEqual(self.check(edits=[
+            (self.TB, "txpcb", "txp"), (self.TB, "rxpcb", "rxp"),
+            (self.TB, "Xlcb  txp rxp 0 link", "Xlcb  txp nc 0 link")]), 1)
+
+    def test_trailing_param_on_a_cell_instance_keeps_it_recognised(self):
+        # The model is the last positional token, so a key=value tail changes nothing.
+        self.assertEqual(self.check(self.TB, "vdd_rx 0 aib_rx_clk", "vdd_rx 0 aib_rx_clk m=1"), 0)
+
+    def test_trailing_param_on_a_cell_instance_still_fails_a_shorted_pair(self):
+        self.assertEqual(self.check(edits=[
+            (self.TB, "vdd_rx 0 aib_rx_clk", "vdd_rx 0 aib_rx_clk m=1"),
+            (self.TB, "Xlcb  txpcb rxpcb 0 link", "Xlcb  txpcb rxpc 0 link")]), 1)
 
 
 if __name__ == "__main__":

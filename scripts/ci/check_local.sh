@@ -5,8 +5,8 @@
 #
 #   scripts/ci/check_local.sh            # both parts (what `npm run check:ci` runs)
 #   scripts/ci/check_local.sh rtl        # cocotb + Icarus benches and the two
-#                                        # negative controls (needs iverilog and
-#                                        # an importable cocotb)
+#                                        # negative controls, through the pinned
+#                                        # klt (needs iverilog; uvx or KLT=klt)
 #   scripts/ci/check_local.sh evidence   # the python3 -I checkers (stdlib only)
 #
 # Deliberately NOT here, and CI-only: the three `klt signoff` steps (manifest
@@ -53,18 +53,6 @@ run() {
   [ "$rc" = 0 ] || fail "$label exited $rc, expected 0"
 }
 
-# run_neg <label> <argv...> — must exit exactly 1: the suite ran and a test
-# failed. A build or import error (exit 2) also exits non-zero while proving
-# nothing, so it must not satisfy a negative control.
-run_neg() {
-  label="$1"; shift
-  group_begin "$label"
-  rc=0
-  "$@" || rc=$?
-  group_end
-  [ "$rc" = 1 ] || fail "$label exited $rc, expected exactly 1"
-}
-
 # run_rc <label> <want> <argv...> — must exit exactly <want>. For a refusal
 # path, where the point of the check is the specific code and not just failure.
 run_rc() {
@@ -100,6 +88,8 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I sim/mc/gen_per_corner.py --check
   run "Check the dc-static requests against the generator" \
     python3 -I sim/dc-static/gen_dc_static.py --check
+  run "Check T-04's clk/clkb arrangement is wired through the clock-path netlists (DR-0027)" \
+    python3 -I sim/clock-path/check_clk_pair.py
 
   # The two sim bench self-tests. Each covers its post-processor -- the code
   # that turns a recorded report into a pass/fail -- and asserts its generated
@@ -148,6 +138,18 @@ if [ "$want_evidence" = 1 ]; then
   run "Check every cited evidence record binds the shipped stream" \
     python3 -I scripts/ci/check_evidence_pins.py
 
+  # `klt signoff --attest` records an inventory's tool pins verbatim and its
+  # own version as provenance, and never compares the two (#324): a pin left
+  # behind by a grader bump attests a version the evidence was not produced
+  # with. Each inventory that pins klt is checked against the envelope built
+  # from it -- never against signoff/KLT_VERSION, which is the pin for the
+  # *next* attestation, not a retroactive truth about landed evidence. The
+  # same script compares an inventory's ngspice pin against the newest
+  # pdk-smoke record (#368): only the newest, because committed records are
+  # append-only and an older record under another simulator is history.
+  run "Check each inventory's tool pins match the evidence that used them" \
+    python3 -I scripts/ci/check_inventory_klt_pin.py
+
   # The #260 defect at class level: a tracked evidence file that an ignore
   # rule still matches is a record a plain `git add` silently drops (its
   # committed siblings were only tracked because someone force-added them).
@@ -180,41 +182,66 @@ fi
 
 if [ "$want_rtl" = 1 ]; then
   # Each bench is defined once, by the klt functional-verification request the
-  # item 5 digital envelopes cite; run_tb.py reads it. So a green rtl job runs
-  # the same bench definition as the committed evidence.
+  # item 5 digital envelopes cite, and is run by the same pinned klt that graded
+  # that evidence (signoff/KLT_VERSION). CI installs it with the
+  # functional-verification extra and sets KLT=klt; locally the default fetches
+  # the pin with uvx. A klt that cannot be fetched fails loudly, never skips.
   #
-  # Plain python3, not -I: -I hides a user-site cocotb.
-  #
-  # The loader first: it is what keeps the two negative controls below honest.
-  # A request that does not load must exit 2, never the 1 a control requires.
-  run "Self-test the request loader's exit-2 contract" \
-    python3 verification/test_run_tb.py
+  # PDK_ROOT is unset: these five requests are PDK-free, and a set PDK_ROOT is
+  # not something the check should depend on.
+  KLT="${KLT:-uvx --from klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION) klt}"
+  fv_out="$(mktemp -d)"
+  trap 'rm -rf "$fv_out"' EXIT
 
-  run "Run the shift-redundancy bench (expect 41/41)" \
-    python3 verification/run_tb.py verification/klt/shift_redundancy.json
-  run_neg "Negative control must exit exactly 1" \
-    python3 verification/run_tb.py verification/klt/neg_shift_edge.json
+  # fv <request-stem> — one klt functional-verification run. klt exits 0 when
+  # every test passed, 3 when the suite ran and a test failed, and 1 when the
+  # bench did not build; the three callers below depend on that split.
+  fv() {
+    # $KLT is deliberately unquoted: it is a command line, not one word.
+    # shellcheck disable=SC2086
+    env -u PDK_ROOT $KLT functional-verification "verification/klt/$1.json" \
+      -o "$fv_out/$1" --format json > "$fv_out/$1.stdout"
+  }
 
+  # run_neg_fv <label> <stem> — must exit exactly 3: the suite ran and a test
+  # failed. A build error exits 1 and proves nothing, so it must not satisfy a
+  # negative control.
+  run_neg_fv() {
+    run_rc "$1" 3 fv "$2"
+  }
+
+  # fv_counted <request-stem> <want> — fv, then the suite must have run exactly
+  # <want> tests and passed all of them. Exit 0 from klt alone does not say the
+  # bench still has its tests: a bench shrunk to fewer (non-zero) tests still
+  # exits 0. A report with missing keys or non-JSON stdout fails, never passes.
+  # The count lives here, once, and the run label below is built from it.
+  fv_counted() {
+    fv "$1" || return $?
+    python3 -I - "$1" "$2" "$fv_out/$1.stdout" <<'PY'
+import json, sys
+stem, want, path = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+try:
+    with open(path) as f:
+        r = json.load(f)
+    got = {k: r[k] for k in ("test_count", "passed_count", "failed_count")}
+except (OSError, ValueError, KeyError, TypeError) as e:
+    sys.exit(f"{stem}: no usable test counts in klt report ({e!r})")
+if got["test_count"] != want or got["passed_count"] != want or got["failed_count"] != 0:
+    sys.exit(f"{stem}: expected {want}/{want} passed, 0 failed; klt reported "
+             f"test_count={got['test_count']} passed_count={got['passed_count']} "
+             f"failed_count={got['failed_count']}")
+PY
+  }
+
+  want_shift=41
+  run "Run the shift-redundancy bench (expect $want_shift/$want_shift)" \
+    fv_counted shift_redundancy "$want_shift"
+  run_neg_fv "Negative control must exit exactly 3" neg_shift_edge
+
+  want_dp=8
   for req in datapath_n20 datapath_n8; do
-    run "Run the datapath bench from $req.json (expect 8/8)" \
-      python3 verification/run_tb.py "verification/klt/$req.json"
+    run "Run the datapath bench from $req.json (expect $want_dp/$want_dp)" \
+      fv_counted "$req" "$want_dp"
   done
-  run_neg "Latency negative control must exit exactly 1" \
-    python3 verification/run_tb.py verification/klt/neg_extra_stage.json
-
-  # The two post-route requests need the PDK and the pinned klt, so this runner
-  # must refuse them (exit 2 = did not run) rather than run a half-configured
-  # bench. They are the only requests under verification/klt/ it cannot run.
-  for req in post_route neg_post_route_timing; do
-    run_rc "Refuse the post-route request $req.json" 2 \
-      python3 verification/run_tb.py "verification/klt/$req.json"
-  done
-
-  # A request that is valid JSON but the wrong shape must also exit 2. The
-  # fixture is a mis-authored neg_shift_edge.json -- `testbench` as a string
-  # rather than an object. Were that to exit 1, run_neg above would pass with
-  # the bench never built, which is the one thing a negative control must not
-  # do. verification/test_run_tb.py covers the rest of the class.
-  run_rc "Refuse a wrong-shaped request" 2 \
-    python3 verification/run_tb.py verification/testdata/wrong_shape_request.json
+  run_neg_fv "Latency negative control must exit exactly 3" neg_extra_stage
 fi

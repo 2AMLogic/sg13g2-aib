@@ -22,11 +22,14 @@ hygiene, power delivery) read `met` in both partitions, as do `5.digital` and
 `6.analog`, `7.analog`, `8.analog` and `8.digital` (detail in
 `signoff/README.md`):
 
-- **Item 5 / analog.** Thirteen rows are cited and pass over PVT-FULL (45
-  corners): T-01, T-06 to T-09, T-11, T-15 to T-18, T-24, T-26, T-28. Eight
-  rows are declared gaps: T-02, T-04, T-05 and T-12 by design (DR-0022,
-  DR-0023; how the manifest should account for them is #216), and T-20,
-  T-21, T-25, T-29 as open work (#194, #195, #196, #176).
+- **Item 5 / analog.** Of 18 declared rows, thirteen are cited and pass over
+  PVT-FULL (45 corners): T-01, T-06 to T-09, T-11, T-15 to T-18, T-24, T-26,
+  T-28. The five declared gaps keep the item `unmet` / `partial_coverage`:
+  T-12 by design (a declared input no measurement can cite as evidence of
+  itself), and T-20, T-21, T-25, T-29 as open work (#194, #195, #196,
+  #176). DR-0026 removed T-02 and T-04, and DR-0028 removes T-05: the
+  operator ruled on 2026-11-18 that the ungraded SIM leg leaves the row set,
+  its measured load and delay staying reported inputs to T-20 and T-13.
 - **Item 6 / analog.** T-19 passes; T-10, T-15 and T-16 are recorded and fail
   their sigma gates (`sim/mc/README.md`); T-13 and T-14 have no campaign on
   `main` (#136).
@@ -56,8 +59,12 @@ rows (#269, PR #293), the `.gitignore` cleanup (#260, PR #262), the item 7
 analog extraction re-bound to the post-#248 reordered stream (#253,
 PR #272), the `gen_redundancy_mux.py` strict-flag conversion and the
 PWL-helper consolidation it carried (#256, #257; PR #264), the I/O-column
-slot order with both spares at one end (#248, PR #254), and the append-only
-check's base commit and README treatment (#255, PR #258).
+slot order with both spares at one end (#248, PR #254), and the T-16
+margin recovery in `aib_pad_esd` under the ruled option `design` (#251,
+PR #332): `XResd` is `w=2u l=1u` (was `l=2u`); the channel-bench T-16
+margin at the declared +20 % channel-C (kr = kc = 1.2) corner was
+1.331 ps, and the worst over PVT-FULL × the four (kr, kc) spread pairs
+is 19.92 ps. The 470-530 ps bound and the corner are unchanged.
 
 ## Next
 
@@ -101,15 +108,10 @@ Waiting on a maintainer decision:
   referred to the RX pin), #249 (remap placement). Most of Next queues here.
 - **#107** rewrites the T-05 shift redundancy and conflicts with `main`; a
   triage note on #29 says a later merged change may have superseded it.
-- **#251** — T-16 margin at the +20 % channel-C corner (1.3 ps recorded,
-  `loom:very-important`): accept and record it, spend design effort to
-  recover margin, or narrow what the channel model's ±20 % C column claims.
-  The figures are re-verified on `main` and the decision filed 2026-11-14;
-  it needs a ruling, not another read.
 - **Spec questions**: T-21 placement-error allocation (#9); the T-21 SIM
   half, which this repo cannot close without designing a DLL (#195); the
-  T-24/T-25 pad-diode trade that gates the ESD transient (#196); how item 5
-  accounts for rows with no gradable leg (#216).
+  T-24/T-25 pad-diode trade that gates the ESD transient (#196); T-12, a
+  channel-model definition no measurement can cite as evidence of itself.
 - **Proposed removals** awaiting a decision: #213, #220, #241, #245, #261,
   #285. New `loom:hermit` proposals land between stamps; the live set is the
   tracker's open `loom:operator` queue, not this list.
@@ -117,8 +119,9 @@ Waiting on a maintainer decision:
 Waiting on an upstream tool fix: klayout-tools#5491, for item 7 / analog
 (#226).
 
-Item 5 / analog cannot read `met` until #216 is ruled. Items 6 and 8 cannot
-read `met` while T-10, T-15 and T-16 fail; the spec is not relaxed for that.
+Item 5 / analog stays `unmet` while its five declared gaps stand; the spec
+questions above hold three of them. Items 6 and 8 cannot read `met` while
+T-10, T-15 and T-16 fail; the spec is not relaxed for that.
 
 ## Not planned
 

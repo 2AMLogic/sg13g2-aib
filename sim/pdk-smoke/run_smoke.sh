@@ -22,6 +22,16 @@ for m in psp103 psp103_nqs r3_cmc mosvar; do
   [[ -f "${OSDI_DIR}/${m}.osdi" ]] || { echo "run_smoke.sh: ${m}.osdi missing; run build-osdi.sh" >&2; exit 3; }
 done
 
+# Toolchain pins come from the vendored build script, which owns them. Read
+# them before any simulation so a missing key fails here, not after the run.
+pins="$("${SIM_DIR}/harness/common/build-osdi.sh" --print-pins)" \
+  || { echo "run_smoke.sh: build-osdi.sh --print-pins failed" >&2; exit 3; }
+python3 -I - "${pins}" <<'PY' || { echo "run_smoke.sh: --print-pins output lacks openvaf_tag / openvaf_sha256_linux_x86_64" >&2; exit 3; }
+import json, sys
+p = json.loads(sys.argv[1])
+assert p["openvaf_tag"] and p["openvaf_sha256_linux_x86_64"]
+PY
+
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 rec="${HERE}/records/${stamp}"
 [[ ! -e "${rec}" ]] || { echo "run_smoke.sh: ${rec} exists; records are append-only" >&2; exit 3; }
@@ -39,10 +49,11 @@ ngspice_version="$(ngspice --version 2>&1 | grep -o 'ngspice-[0-9.]*' | head -1)
 ( cd "${work}" && ngspice -b tb.cir > ngspice.log 2>&1 ) || rc=$?
 cp "${work}/ngspice.log" "${rec}/ngspice.log"
 
-python3 -I - "${SIM_DIR}/pdk.json" "${work}" "${rec}/record.json" "${stamp}" "${rc}" "${ngspice_version:-unknown}" <<'PY'
+python3 -I - "${SIM_DIR}/pdk.json" "${work}" "${rec}/record.json" "${stamp}" "${rc}" "${ngspice_version:-unknown}" "${pins}" <<'PY'
 import json, math, re, sys, os
-pin_path, work, out, stamp, rc, ngspice_version = sys.argv[1:7]
+pin_path, work, out, stamp, rc, ngspice_version, pins_json = sys.argv[1:8]
 pin = json.load(open(pin_path))
+tool_pins = json.loads(pins_json)
 log = open(os.path.join(work, "ngspice.log")).read()
 ops = {k: float(v) for k, v in re.findall(r"^i\((v\w+)\) = (\S+)", log, re.M)}
 dev = {  # device -> (data file, op source)
@@ -78,8 +89,8 @@ rec = {
     "corner": "mos_tt", "temp_c": 27,
     "tools": {
         "ngspice": ngspice_version,
-        "openvaf_reloaded_tag": pin["osdi_toolchain"]["compiler_tag"],
-        "openvaf_r_asset_sha256_linux_x86_64": pin["osdi_toolchain"]["compiler_asset_sha256"]["openvaf-r-v24.0.1mob-linux-x86_64.tar.gz"],
+        "openvaf_reloaded_tag": tool_pins["openvaf_tag"],
+        "openvaf_r_asset_sha256_linux_x86_64": tool_pins["openvaf_sha256_linux_x86_64"],
     },
     "ngspice_exit_code": int(rc),
     "devices": devices,

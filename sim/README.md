@@ -4,10 +4,11 @@ Simulation toolchain pin and the PDK/OSDI smoke. No design value lives here.
 
 ## PDK pin
 
-`sim/pdk.json` names the IHP-Open-PDK release (`v0.3.0`), its tarball SHA-256,
-and the OSDI toolchain (OpenVAF-Reloaded `v24.0.1mob`). Every record under
-`sim/` traces to it. Records are append-only: a new run is a new directory,
-and an earlier record is never edited.
+`sim/pdk.json` names the IHP-Open-PDK release (`v0.3.0`) and its tarball
+SHA-256; the OSDI toolchain pins live only in
+`sim/harness/common/build-osdi.sh` (read them with `--print-pins`). Every
+record under `sim/` traces to those pins. Records are append-only: a new run
+is a new directory, and an earlier record is never edited.
 
 ## PVT-FULL corner bundle
 
@@ -38,7 +39,7 @@ run with.
 
 The PDK ships the PSP103 and `r3_cmc` Verilog-A sources, not `.osdi` binaries.
 `sim/harness/common/build-osdi.sh` is vendored byte-for-byte from
-`2AMLogic/sg13g2-bandgap` at `52535387e6ccf0a89f6490901a9abb2b78144176`
+`2AMLogic/sg13g2-bandgap` at `3d33554f84721ffd7cb1d7aafbc41f51e5aaee5e`
 (`sim/tools/build-osdi.sh`; pinned in `reuse.lock.json`). It sources
 `sim/harness/env.sh`. No `.osdi` is committed; `sim/build/` is gitignored.
 
@@ -138,7 +139,7 @@ record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
 The three families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
 cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
 `SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
-`partial_coverage`: every cited envelope passes, no covered row is uncovered, and eight rows
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and five rows
 are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
 
 **Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
@@ -169,20 +170,18 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Five of the eight are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-02, T-04 and T-05 are standing gaps**: DR-0022 decided the `SIM` legs of the
-first two have no gradable bound by design (#191, closed as completed), and DR-0023 decides
-the same for T-05 — its added load and delay are *measured*, over the full grid, and reported
-into the rows that carry the numbers rather than graded against a bound of their own. A
-standing gap does not close through verification work. Whether item 5 / analog can ever read
-`met` with three standing gaps declared is **not settled here** — it is tracked in #216.
+Four of the five are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-12 is the remaining standing gap**: the channel model is a declared input, not a
+block measurable (below); its ±20 % sensitivity campaign is complete and no tracker is open
+against it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
+legs and DR-0028 removes T-05's (no bound exists in the specification for any of the three),
+so the "plain `SIM` leg" rule yields this 18-row set mechanically. T-05's measured load and
+delay stay reported evidence — the common term feeds T-20 and the select-dependent term feeds
+T-13 (DR-0023, DR-0028).
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-02 | `SIM` leg is a **pointer**, not a bound of its own (DR-0022): format by `RTL`, timing graded at T-16/T-19/T-20; the 45-corner clock-path `t02_*` measurements are reported inputs to those rows. **Standing gap** | #216 |
-| T-04 | `SIM` leg is **report-only by design** (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements are reported evidence, not a graded claim; the arrangement is verified by `RTL`. **Standing gap** | #216 |
-| T-05 | `SIM` leg has **no bound of its own** (DR-0023): the mux function is verified by `RTL`, and the remap's added load and delay are measured over PVT-FULL in `redundancy-mux/` and reported into T-20 (common term) and T-13 (select-dependent term). **Standing gap** | #216 |
-| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for now exists) — see below | #193 |
+| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for is complete — see below). **Standing gap**, no tracker open | none |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
 | T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
@@ -204,8 +203,13 @@ per-row, per-spread-corner table; the headline is that the spread is a shunt-**C
 (`kr` moves T-18 by at most 2.8 mV, `kc` by 83.6 mV), that T-15, T-18 and T-26 each bind at
 an **off-diagonal** corner (`kr` 0.8 / `kc` 1.2), and that **T-16's margin narrows to 1.3 ps**
 against its 470 ps edge, from 10.9 ps at the nominal channel. T-16 still passes; no bound was
-relaxed, and whether a 1.3 ps worst-case margin is acceptable is a `spec/` question tracked in
-#251.
+relaxed. That 1.3 ps is the historical passing margin: its acceptability was ruled on
+2026-11-18 ([the closed
+#251](https://github.com/2AMLogic/sg13g2-aib/issues/251#issuecomment-6991500973)) — recover the
+margin in the design, with the 470-530 ps window and the declared +20 % channel-C corner
+(DR-0005) unchanged. The sizing study the ruling asked for found it: finalist `S07` leaves a
+**19.92 ps** worst-case T-16 margin across the four spread pairs
+([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
 
 The spread record is **referenced from T-12's gap text, not cited as an envelope**. Probed
 with the pinned grader (klt 0.9.0, a scratch copy of the manifest, nothing committed): citing
@@ -288,7 +292,8 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    works. With DIN high the pad stays at ~0 V. Every row therefore fails at every corner
    until the cell is fixed (#35's files; not edited here). `control/aib_tx_data_ctl.spice`
    is a diagnostic copy with that one device changed to `w=2u ng=14` (same 28 um total) and
-   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**.
+   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**. (The control copy, its bench and its request were
+   later removed; recoverable from commit `103f15e`.)
 2. *Even with that copy the four-lane transient does not complete.* At the first clock
    edge the solve aborts (`Timestep too small ... trouble with node "vdd_crx#branch"`,
    ~0.83 ns). Single-lane isolation runs of 3 ns: TX -> channel -> RX without the pad ESD
@@ -578,8 +583,14 @@ each bind **off-diagonal**, at `kr` 0.8 / `kc` 1.2, so the two diagonal corners 
 have mis-stated their worst case — which is why all four were run. **T-16 is the one tight
 row**: `t16_dr_cf_long` is 471.3 ps against the 470 ps lower edge, a 1.3 ps margin where the
 nominal channel leaves 10.9 ps, so the +20 % C corner consumes 9.5 ps of it. It passes; no
-bound, spec row or model value was changed, and the acceptability of a 1.3 ps margin is a
-`spec/` question tracked in #251. The nominal record is untouched.
+bound, spec row or model value was changed. That 1.3 ps is the historical passing margin: its
+acceptability was ruled on 2026-11-18 ([the closed
+#251](https://github.com/2AMLogic/sg13g2-aib/issues/251#issuecomment-6991500973)) — recover the
+margin in the design, with the 470-530 ps window and the declared +20 % channel-C corner
+(DR-0005) unchanged. The sizing study the ruling asked for found it: finalist `S07` leaves a
+**19.92 ps** worst-case T-16 margin across the four spread pairs
+([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
+The nominal record is untouched.
 
 Two mechanics of this run are worth carrying forward. The request lowers `options.timeout_s`
 to 400 s (the nominal request keeps 2400 s, which its records were run with) **so the fleet
@@ -675,11 +686,11 @@ would pass unchecked.
 
 `sim/redundancy-mux/` is the PVT-FULL redundancy-mux family of the T1 item 5 (analog)
 campaign (#42, #192): what the T-05 shift-redundancy remap adds to one TX lane in load and
-delay. Row: T-05 (`SIM` leg). **Nothing here is graded** — `spec/target-spec.md` T-05 states
-no bound for this leg and DR-0023 invents none, so no measurement carries `limits` and T-05
-stays a declared gap whose string names this record (the form DR-0022 established for T-02
-and T-04). The two delay terms are reported *into* the rows that carry numbers: the common
-term into T-20, the select-dependent term into T-13.
+delay. Measured row: none since DR-0028 — T-05's `SIM` leg is removed and the row left the
+declared set. **Nothing here is graded** — T-05 states no bound for that leg and DR-0023
+invents none, so no measurement carries `limits`. The two delay terms are reported *into* the
+rows that carry numbers: the common term into T-20, the select-dependent term into T-13
+(DR-0023, DR-0028).
 
 **There is no transistor-level remap in this repo** — `tx_remap` / `rx_remap` are RTL only
 and the committed netlist predates them — so DR-0023 declares the arrangement that is

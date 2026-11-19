@@ -4,14 +4,28 @@
     "pdk": "ihp-sg13g2",
     "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
   },
-  "netlist": "tb_ctl_ch.cir",
+  "netlist": "tb_t16sz_2kv.cir",
   "backend": "batch",
   "corners": {
     "process": [
       {
-        "name": "mos_tt",
+        "name": "mos_ss",
         "sections": [
-          "mos_tt",
+          "mos_ss",
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ss"
+          }
+        ]
+      },
+      {
+        "name": "mos_fs",
+        "sections": [
+          "mos_fs",
           {
             "lib": "libs.tech/ngspice/models/cornerRES.lib",
             "section": "res_typ"
@@ -25,27 +39,60 @@
     ],
     "supply_v": {
       "vdd_atx": [
-        1.2
+        1.08
       ],
       "vdd_arx": [
-        1.2
+        1.08
       ],
       "vdd_btx": [
-        1.2
+        1.08
       ],
       "vdd_brx": [
-        1.2
+        1.08
       ],
       "vdd_ctx": [
-        1.2
+        1.08
       ],
       "vdd_crx": [
-        1.2
+        1.08
       ]
     },
     "temperature_c": [
-      27
-    ]
+      -40,
+      125
+    ],
+    "params": {
+      "ch_kr": [
+        1.2,
+        1.2,
+        1.2,
+        1.2
+      ],
+      "ch_kc": [
+        1.2,
+        1.2,
+        1.2,
+        1.2
+      ],
+      "sz_dp": [
+        4.5e-06,
+        4.5e-06,
+        4.5e-06,
+        4.5e-06
+      ],
+      "sz_ng": [
+        10,
+        5,
+        10,
+        5
+      ],
+      "sz_rl": [
+        2e-06,
+        2e-06,
+        1e-06,
+        1e-06
+      ]
+    }
   },
   "analysis": {
     "kind": "tran",
@@ -616,6 +663,9 @@
       "name": "t16_df_cf_short"
     }
   ],
+  "batch": {
+    "runner_version_check": "warn"
+  },
   "options": {
     "osdi_preload": [
       "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
@@ -623,6 +673,6 @@
       "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
       "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
     ],
-    "timeout_s": 2400
+    "timeout_s": 400
   }
 }

@@ -39,13 +39,13 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:fd747b37546c9099f8081e2837588cdabbe8525ab1544b4084b374aa1f2f0258",
+        "content_hash": "sha256:2a56d8e75f04b3af2659743c014849826a1ba9bacfbbafb4a35c4d512e4f078f",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
           "t1_item": 1,
           "path": null,
-          "content_hash": "sha256:fd747b37546c9099f8081e2837588cdabbe8525ab1544b4084b374aa1f2f0258",
+          "content_hash": "sha256:2a56d8e75f04b3af2659743c014849826a1ba9bacfbbafb4a35c4d512e4f078f",
           "input_verified": true,
           "members": [
             {
@@ -53,7 +53,7 @@
                 "path": "design/aib_pad_esd.sch",
                 "scope": "repo"
               },
-              "content_hash": "sha256:6c7bcdbb1e86aeab9204f6710a7d0ef8612377ec2aa417ced440d1bb337cc9b1",
+              "content_hash": "sha256:68828bb92a08d6c81d0759d456646e9a9af930e5e0a50f8e3deea7bd0f96444c",
               "status": "verified"
             },
             {
@@ -61,7 +61,7 @@
                 "path": "design/aib_pad_esd.spice",
                 "scope": "repo"
               },
-              "content_hash": "sha256:78e223623f816e37dcb6735de42bb35d93675dd5a8c023ab0a56b1d864d3c83e",
+              "content_hash": "sha256:4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936",
               "status": "verified"
             },
             {
@@ -552,20 +552,8 @@
         "uncovered_rows": [],
         "declared_gaps": [
           {
-            "id": "T-02",
-            "gap": "SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
-          },
-          {
-            "id": "T-04",
-            "gap": "SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
-          },
-          {
-            "id": "T-05",
-            "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ and reported into the rows that carry the numbers -- the common added delay into T-20 and the select-dependent delay between the mux's two inputs into T-13. Neither row is graded here and neither bound changes. A standing gap, not pending work. Tracked in #216"
-          },
-          {
             "id": "T-12",
-            "gap": "channel-model definition, not a block measurable, so not cited as covered: the declared model is the input to T-01/T-09/T-15/T-16/T-18/T-26, and citing an input definition as evidence of itself would be circular. The +/-20 % channel R/C sensitivity its grid column asks for HAS now been run -- sim/channel-eye/records/20261113T223804Z-ch-spread/ is PVT-FULL at each of the four (kr, kc) pairs in {0.8, 1.2}, 180/180 corners, and all six dependent rows pass at all four spread corners (T-16's margin narrows to 1.3 ps against its 470 ps edge, from 10.9 ps nominal; reported, not relaxed, and tracked in #251). That record is referenced here rather than cited as an envelope because coverage is derived from the spec_row tags a report carries and no measurement carries T-12: probed with the pinned klt 0.9.0, citing it with rows [T-12] grades item 5 invalid_evidence while T-12 is a declared gap, and partial_coverage with uncovered_rows [T-12] once it is not. The six dependent rows keep their nominal citation. Tracked in #193"
+            "gap": "channel-model definition, not a block measurable, so not cited as covered: the declared model (DR-0005) is the input to T-01/T-09/T-15/T-16/T-18/T-26, and citing an input definition as evidence of itself would be circular. The +/-20 % channel R/C sensitivity its grid column asks for was completed by the spread campaign that closed #193 -- sim/channel-eye/records/20261113T223804Z-ch-spread/ is PVT-FULL at each of the four (kr, kc) pairs in {0.8, 1.2}, 180/180 corners, and all six dependent rows pass at all four spread corners (T-16's margin there narrows to 1.3 ps against its 470 ps edge, from 10.9 ps nominal; reported, not relaxed). That 1.3 ps reading was closed out by a design change, not a bound change: the #251 sizing study's driver-resistor resize grades a 19.92 ps worst-case T-16 margin at the declared spread (sim/channel-eye/records/20261118T220000Z-t16-sizing/). That record is referenced here rather than cited as an envelope because coverage is derived from the spec_row tags a report carries and no measurement carries T-12: probed with the pinned klt 0.9.0, citing it with rows [T-12] grades item 5 invalid_evidence while T-12 is a declared gap, and partial_coverage with uncovered_rows [T-12] once it is not. The six dependent rows keep their nominal citation. A standing gap, not pending work: the model is a declared input, and no tracker is open against it."
           },
           {
             "id": "T-20",
@@ -794,7 +782,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:98c43fe746701fb91de922263295f4676bcbeaff1aebcf005fb8d504f43f1c22",
+          "content_hash": "sha256:fb17a5292cd228e06173facb0dd773cda4405c451db259e3883e54874309d753",
           "status": "ratified",
           "row_count": 5
         },
@@ -941,7 +929,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155",
+        "content_hash": "sha256:3766a60bd41e0c417f6ab956c6ccc3456967c62313f937f73849e06b08dc6227",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -950,7 +938,7 @@
             "path": "signoff/attest/item9-analog.inventory.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155",
+          "content_hash": "sha256:3766a60bd41e0c417f6ab956c6ccc3456967c62313f937f73849e06b08dc6227",
           "input_verified": true,
           "summary": "T1 item 9 (Testbenches shipped): 5/5 attestation checks passed (klt signoff --attest)",
           "source": "signoff/attest/item9-analog.inventory.json",
@@ -979,7 +967,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:dabbf6b774ee7f7ef783598a3e09aaa3e469451511b16b7fd3f440d0220e7452",
+        "content_hash": "sha256:53e1ce98bf7222844f5a8737478b85fb3f0aaf575a672705219a149c272c252e",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -988,7 +976,7 @@
             "path": "signoff/attest/item9-digital.inventory.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:dabbf6b774ee7f7ef783598a3e09aaa3e469451511b16b7fd3f440d0220e7452",
+          "content_hash": "sha256:53e1ce98bf7222844f5a8737478b85fb3f0aaf575a672705219a149c272c252e",
           "input_verified": true,
           "summary": "T1 item 9 (Testbenches shipped): 8/8 attestation checks passed (klt signoff --attest)",
           "source": "signoff/attest/item9-digital.inventory.json",

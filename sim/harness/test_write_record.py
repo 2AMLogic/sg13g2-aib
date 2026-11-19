@@ -272,12 +272,6 @@ class EntryPointTests(unittest.TestCase):
         self.assertEqual(cfg["record_suffix"], "-tc")
         self.assert_matches_committed(cfg, *self.committed("channel-eye", family="tc"))
 
-    def test_channel_eye_control_is_not_design_evidence(self):
-        cfg = self.dry_run(SIM / "channel-eye/run_channel_eye.sh", "control")
-        self.assertEqual(cfg["record_suffix"], "-control")
-        self.assertTrue(cfg["fields_head"]["claim_scope"].startswith("none:"),
-                        "the bench positive control must claim nothing")
-
     def test_clock_path(self):
         cfg = self.dry_run(SIM / "clock-path/run_clock_path.sh")
         self.assertEqual(cfg["record"], "clock-path")
