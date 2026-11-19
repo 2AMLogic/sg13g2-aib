@@ -67,7 +67,8 @@ VOH at 1 mA is 2.86-3.58 V, VOL <= 0.088 V.
 **Mode a (iovdd = VDDIO) does not drive.** With `iovdd` at the AIB level the thick-oxide output
 devices are barely on: the 16 mA cell's pull-up is 177-1941 ohm and VOH at 1 mA is -0.82..1.14 V
 (negative: the load wins). The PDK cell can only signal at its own 3.0-3.6 V `iovdd`. The pin
-capacitance in mode a is about 11-16 % higher (16 mA: 181.2-196.8 fF at the AIB biases) and is not
+capacitance in mode a is higher (16 mA vs mode p at the same pad bias: +6.6-8.5 % at pad 0,
++9.6-13.1 % at VDDIO/2, +14.5-23.8 % at VDDIO; 181.2-196.8 fF at the AIB biases) and is not
 a result for a working pin.
 
 **Receiver level check** (`IOPadIn`, pad forced to 0 and VDDIO, DC only): the core-side output
@@ -88,7 +89,7 @@ a threshold, hysteresis (T-10, T-11) or timing result.
    ESD document in `libs.doc` either. The protection is visible in the netlist: two pad diodes
    to the I/O rails (`DCNDiode`, `DCPDiode`, 2 x 1.26 x 27.78 um `dantenna` / `dpantenna` each),
    the clamp devices that are also the driver (`Clamp_N8N8D` / `Clamp_P8N8D` at 16 mA) and the RC
-   power clamp in `IOPadVdd`. The `dpantenna` model card is the one DR-0017 found to be
+   power clamp in `sg13g2_IOPadIOVdd`. The `dpantenna` model card is the one DR-0017 found to be
    "designed for the reverse direction" with `rs = 1.728e5` per unit area; by hand, 70 um^2 gives
    about 2.5 kohm, so the *model* would not carry 0.5 A through that diode either. That is a
    statement about the model, not about the silicon. Do not read the `2kv`/`4kv` names of the
@@ -115,10 +116,14 @@ a threshold, hysteresis (T-10, T-11) or timing result.
   "Timestep too small ... trouble with node vdd#branch" (at about 3 ns) with
   `method=gear reltol=5e-3 gmin=1e-10`, and does not finish in 70 s with four other option sets
   tried. The unconverging bench is not committed; there is no T-16 number here, not even a
-  failing one. Comparison point for whoever re-runs it: #251's margin is 10.873 ps nominal and
-  1.331 ps at kr/kc 1.2, the +20 % C corner costing 9.5 ps. As arithmetic only (not a
-  simulation): the 16 mA cell loads each end of the channel with about 160-195 fF in place of the
-  baseline's ~96 fF, and 120 fF of extra channel C (the +20 % corner) costs 9.5 ps.
+  failing one. Comparison point for whoever re-runs it: #251's margin — 10.873 ps nominal,
+  1.331 ps at kr/kc 1.2 — is the **historical** (pre-`e47bb80`) figure; that commit shortened
+  `aib_pad_esd` `XResd` to 1 um and recovered the worst case to **19.92 ps** at the declared
+  spread, with the spread now moving T-16 by under 1 ps
+  (`sim/channel-eye/records/20261118T220000Z-t16-sizing`, in this tree). The "+20 % C corner
+  costing 9.5 ps" sensitivity is historical with it: the current design does not have that
+  sensitivity. What still stands is arithmetic only (not a simulation): the 16 mA cell loads
+  each end of the channel with about 160-195 fF in place of the baseline's ~96 fF.
 - No `MEAS`; no ESD rules in the DRC deck (`2AMLogic/klayout-tools#3854`); no layout of an 80 um
   cell array; no bond pad (the PDK `bondpad` is an empty placeholder), so these are the cell's
   capacitance, not the pin's in a package.
