@@ -4,6 +4,14 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-19
 
+- **PR #356**: docs: retire T-12's #193 tracker in the three narrative READMEs
+- **PR #355**: chore: drop the drifted generated finalist sizing request (request_t16sz_fin_S07.json)
+- **PR #353**: signoff: describe T-12's closed trackers (#193, #251) in past tense in both gap strings
+- **PR #349**: docs: align item-5 gap prose with the manifest after DR-0026
+- **Issue #354** (closed): T-12's tracker is still #193 in three narrative docs after PR #353 corrects the manifest (the #350/#352 scope seam)
+- **Issue #351** (closed): Remove sim/channel-eye/request_t16sz_fin_S07.json: unguarded generated request that has drifted from its generator
+- **Issue #350** (closed): T-12's declared-gap tracker in block-manifest.json is a closed issue (#193), and its named follow-up #251 is closed too
+- **Issue #347** (closed): Live #216 T-05 tracker citations remain outside the signoff/ sim/ spec/ grep scope (layout/pex/README.md, ROADMAP.md)
 - **PR #343**: signoff: repoint T-05 standing-gap tracker to #333
 - **PR #345**: refactor(sim): read OpenVAF pins from build-osdi.sh --print-pins, drop restated copy
 - **Issue #261** (closed): Stop restating the OSDI pins in sim/pdk.json: one of the two copies is wrong about who reads it
