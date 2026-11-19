@@ -1854,6 +1854,10 @@ COVERED = {
         "scripts/ci/test_checkers.py",
         "--check runs in test_every_check_capable_generator_is_fresh",
     ),
+    "sim/io-cell-study/gen_io_cell.py": (
+        "scripts/ci/test_checkers.py",
+        "--check runs in test_every_check_capable_generator_is_fresh",
+    ),
     "sim/redundancy-mux/gen_redundancy_mux.py": (
         "scripts/ci/test_checkers.py",
         "--check runs in test_every_check_capable_generator_is_fresh",

@@ -1,0 +1,55 @@
+* PDK sg13g2_io pad cells as the AIB pin (issue #196, operator ruling q107): pin capacitance
+* (T-24), driver output resistance (T-08) and a receiver level check.
+* Circuit body only (klt sim owns the .control block). The cells under test are the PDK's own
+* `sg13g2_io` netlists, included by literal $PDK_ROOT path, never copied.
+*
+* Supplies. Vddio is the corner-swept core / signalling supply (the cell's `vdd`). The cell's
+* `iovdd` is Biovdd = Vddio x Vkiov, tracking Vddio, and a step selects the mode by altering
+* Vkiov:
+*   Vkiov = 2.75  the PDK's characterised point (Liberty 1.2 V core / 3.3 V iovdd; 1.08 -> 2.97 V,
+*                 1.32 -> 3.63 V). Pad swing is 0..iovdd, not 0..VDDIO.
+*   Vkiov = 1.0   iovdd = VDDIO, the AIB 1.2 V signalling level. NOT a point the PDK
+*                 characterises (its Liberty corners are 3.0-3.6 V iovdd).
+*
+* Pad bias for the capacitance steps is Bpin = Vpf x Vddio + Vpg x iovdd, so a step names a
+* fraction of either rail. Each cap DUT has its own series ac source (Vac_x) onto the shared
+* bias node; the request sets the ac stimulus for exactly one per step. Cap is read as in
+* sim/dc-static/tb_pin.cir: the series-source current at 500 MHz. The DUTs are tristated
+* (c2p_en = 0, c2p = 0) so the driver is off, as T-24's "pin with the driver tristated".
+Vddio vddio 0 dc 1.2
+Vkiov kiov 0 dc 2.75
+Biovdd iovdd 0 V=v(vddio)*v(kiov)
+* The PDK subcircuits tie the poly-resistor bulk to a node named sub!; it is local to each
+* subcircuit unless declared global, and left floating it makes the matrix singular.
+.global sub!
+Vsub sub! 0 dc 0
+.include $PDK_ROOT/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi
+Vpf pf 0 dc 0
+Vpg pg 0 dc 0
+Bpin pb 0 V=v(pf)*v(vddio)+v(pg)*v(iovdd)
+* --- capacitance DUTs (tristated) ---
+Vaca pad_a pb dc 0 ac 0
+Xa 0 vddio 0 iovdd p2c_a 0 0 pad_a sg13g2_IOPadInOut4mA
+Vacb pad_b pb dc 0 ac 0
+Xb 0 vddio 0 iovdd p2c_b 0 0 pad_b sg13g2_IOPadInOut16mA
+Vacc pad_c pb dc 0 ac 0
+Xc 0 vddio 0 iovdd p2c_c 0 0 pad_c sg13g2_IOPadInOut30mA
+Vacd pad_d pb dc 0 ac 0
+Xd 0 vddio 0 iovdd p2c_d pad_d sg13g2_IOPadIn
+* --- driver DUTs (enabled): h drives high into Ih, l drives low out of Il (as tb_drive.cir) ---
+Xh4 0 vddio 0 iovdd p2c_h4 vddio vddio pad_h4 sg13g2_IOPadInOut4mA
+Ih4 pad_h4 0 dc 0
+Xl4 0 vddio 0 iovdd p2c_l4 0 vddio pad_l4 sg13g2_IOPadInOut4mA
+Il4 iovdd pad_l4 dc 0
+Xh16 0 vddio 0 iovdd p2c_h16 vddio vddio pad_h16 sg13g2_IOPadInOut16mA
+Ih16 pad_h16 0 dc 0
+Xl16 0 vddio 0 iovdd p2c_l16 0 vddio pad_l16 sg13g2_IOPadInOut16mA
+Il16 iovdd pad_l16 dc 0
+Xh30 0 vddio 0 iovdd p2c_h30 vddio vddio pad_h30 sg13g2_IOPadInOut30mA
+Ih30 pad_h30 0 dc 0
+Xl30 0 vddio 0 iovdd p2c_l30 0 vddio pad_l30 sg13g2_IOPadInOut30mA
+Il30 iovdd pad_l30 dc 0
+* --- receiver level check: IOPadIn with the pad forced to a fraction Vrf of VDDIO ---
+Vrf rf 0 dc 0
+Brx pad_r 0 V=v(rf)*v(vddio)
+Xr 0 vddio 0 iovdd p2c_r pad_r sg13g2_IOPadIn
