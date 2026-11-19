@@ -38,7 +38,7 @@ run with.
 
 The PDK ships the PSP103 and `r3_cmc` Verilog-A sources, not `.osdi` binaries.
 `sim/harness/common/build-osdi.sh` is vendored byte-for-byte from
-`2AMLogic/sg13g2-bandgap` at `52535387e6ccf0a89f6490901a9abb2b78144176`
+`2AMLogic/sg13g2-bandgap` at `3d33554f84721ffd7cb1d7aafbc41f51e5aaee5e`
 (`sim/tools/build-osdi.sh`; pinned in `reuse.lock.json`). It sources
 `sim/harness/env.sh`. No `.osdi` is committed; `sim/build/` is gitignored.
 
