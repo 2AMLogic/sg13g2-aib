@@ -27,6 +27,7 @@ PNR_PINS = HERE / "check_pnr_pins.py"
 EV_PINS = HERE / "check_evidence_pins.py"
 CORNERS = HERE / "check_corner_bundles.py"
 ATTESTED = HERE / "check_attested_paths.py"
+KLT_PIN = HERE / "check_inventory_klt_pin.py"
 IGN = HERE / "check_record_not_ignored.py"
 REPO = HERE.parent.parent
 DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
@@ -341,6 +342,114 @@ class AttestedPathsTests(unittest.TestCase):
         self.assertIn("sha256-normalized", p.stderr)
         self.assertNotIn("klt signoff --attest", p.stderr)
         self.assertNotIn("re-attest", p.stderr)
+
+
+class InventoryKltPinTests(unittest.TestCase):
+    """The inventory-pin/envelope-version guard: a good tree passes, drift bites.
+
+    The fixture mirrors the item 9 pair shape the guard exists for: the
+    carrying inventory pins klt "0.9.0", its paired envelope records the same
+    version as provenance, and two skip-class inventories keep the hostility
+    honest -- one valid inventory with no pins block (item 10's shape) and one
+    carrying no klt pin next to an envelope that does not exist (item 1's
+    shape), so ever pairing a non-carrying inventory would fail the good tree.
+    """
+
+    INV = "signoff/attest/item9-analog.inventory.json"
+    ENV = "signoff/attest/item9-analog.json"
+
+    def scenario(self, pin="0.9.0", version="0.9.0", mutate=None):
+        """The item 9 analog pair plus the two skip-class inventories."""
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            att = root / "signoff/attest"
+            att.mkdir(parents=True)
+            inv = {
+                "schema_version": 1, "kind": "t1-attestation-inventory", "t1_item": 9,
+                "testbenches": ["sim/bench.sh"], "cold_start": {"argv": ["sim/bench.sh"]},
+                "pins": {"pdk": {"name": "IHP-Open-PDK"}, "tools": {"klt": pin}},
+            }
+            (att / "item9-analog.inventory.json").write_text(json.dumps(inv))
+            env = {
+                "schema_version": 1, "kind": "generic", "status": "pass", "t1_item": 9,
+                "provenance": {"klt_version": version, "klayout_version": None},
+            }
+            (att / "item9-analog.json").write_text(json.dumps(env))
+            (att / "item10.inventory.json").write_text(
+                json.dumps({"schema_version": 1, "kind": "t1-attestation-inventory",
+                            "t1_item": 10}))
+            (att / "item1-digital.inventory.json").write_text(
+                json.dumps({"schema_version": 1, "kind": "t1-attestation-inventory",
+                            "t1_item": 1, "pins": {"tools": {"iverilog": "13.0"}}}))
+            if mutate:
+                mutate(root)
+            return run(KLT_PIN, "--root", root)
+
+    def test_good_tree_passes(self):
+        self.assertEqual(self.scenario().returncode, 0)
+
+    def test_pin_below_provenance_fails_and_names_the_repair(self):
+        # The filed drift: inventory pinned 0.8.0, envelope produced by 0.9.0.
+        p = self.scenario(pin="0.8.0")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertIn("0.8.0", p.stderr)
+        self.assertIn("0.9.0", p.stderr)
+        self.assertIn("klt signoff --attest 9", p.stderr)
+        self.assertIn("KLT_VERSION", p.stderr)
+
+    def test_pin_ahead_of_provenance_fails(self):
+        # The mirror drift: pin bumped without the re-attest.
+        p = self.scenario(version="0.8.0")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+
+    def test_missing_paired_envelope_fails(self):
+        def bad(r):
+            (r / self.ENV).unlink()
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertIn("missing", p.stderr)
+
+    def test_null_klt_version_fails_without_reattest_advice(self):
+        # A grader that stops recording provenance.klt_version is a
+        # toolchain/checker gap, not tree drift: name it, carry no repair.
+        def bad(r):
+            env_path = r / self.ENV
+            env = json.loads(env_path.read_text())
+            env["provenance"]["klt_version"] = None
+            env_path.write_text(json.dumps(env))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.ENV, p.stderr)
+        self.assertNotIn("re-attest", p.stderr)
+
+    def test_unparseable_carrying_inventory_fails(self):
+        def bad(r):
+            (r / self.INV).write_text("{ not even json")
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn(self.INV, p.stderr)
+
+    def test_non_carrying_inventories_are_skipped(self):
+        # item 1's shape: pins without klt, and no envelope to pair. The good
+        # tree already proves the skip; this asserts it survives a missing
+        # envelope for exactly that shape.
+        self.assertEqual(self.scenario().returncode, 0)
+
+    def test_zero_population_fails_loudly(self):
+        # A schema rename that strips every pins.tools.klt must not turn the
+        # guard into a silent pass.
+        def bad(r):
+            p = r / self.INV
+            inv = json.loads(p.read_text())
+            del inv["pins"]["tools"]["klt"]
+            p.write_text(json.dumps(inv))
+        p = self.scenario(mutate=bad)
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("0 inventory klt pin", p.stderr)
 
 
 class AppendOnlyTests(unittest.TestCase):
