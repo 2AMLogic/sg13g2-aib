@@ -186,10 +186,10 @@ manifest; nothing in the checkout was written.
 
 ### The declared row set is load-bearing, not decorative
 
-The grader does **not** infer the row set. Verified against 0.9.0:
+The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
 
 - Omitting a gap entry — or omitting `spec_rows."5.analog"` entirely — makes item 5 / analog
-  read **`met`** on the 13 covered rows, with the 8 real gaps silently absent and
+  read **`met`** on the 13 covered rows, with the 5 real gaps silently absent and
   `uncovered_rows` empty. Nothing flags the omission. This is why the full set is committed
   and must be re-derived from the spec table rather than edited by hand.
 - The `rows` list on a citation is checked **only where the envelope's measurements carry
@@ -201,7 +201,10 @@ The grader does **not** infer the row set. Verified against 0.9.0:
   dc-static report's measurements carry no `spec_row` field, and under it the grader accepts
   whatever `rows` says**: the same two probes moved to the dc-static citation both return
   `uncovered_rows: []` with `row_sources` `asserted`. So a row can be listed under an untagged
-  envelope that does not measure it and nothing fails.
+  envelope that does not measure it and nothing fails. These probes ran against that day's
+  manifest, before DR-0026 and DR-0028 removed T-02, T-04 and T-05 from the declared set;
+  the reports' `spec_row` tags, including the clock-path's `T-02, T-04, T-17`, predate the
+  removals and are unchanged, so the demonstrated checks still apply.
 - `detail.row_sources` is what tells the two apart: `derived` where the grader matched the row
   against the envelope's own measurement names, `asserted` where it did not. **An `asserted`
   entry means "the grader did not check this row — verify it by hand", not "checked and
