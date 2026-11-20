@@ -146,8 +146,8 @@ done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, 
 tracked in #194, #195, #196 and #176; closing them is what lets the item read `met`.
 **T-12 is covered, not a gap** ([DR-0029](../spec/decisions/0029-t12-conformance-leg.md),
 proposed; #384): the channel model is a declared input (DR-0005), so the row is cited from
-the conformance record `sim/channel-model/records/20261120T220946Z/report.json`, which grades
-that the committed netlist implements the declared table (675/675 corners, three ratios each).
+the conformance record `sim/channel-model/records/20261120T230233Z/report.json`, which grades
+that the committed netlist implements the declared table (675/675 corners; the R, C and L ratios, each graded on the swept instances and on the subcircuit-default instances).
 It does not validate the table against silicon (T-12 is CH only). The ±20 % spread campaign
 (`sim/channel-eye/records/20261113T223804Z-ch-spread/`) stays supporting evidence for the six
 dependent rows; coverage is derived from `spec_row` tags and it carries no T-12 tag. T-02, T-04 and T-05 are **not** in the declared set: DR-0026 removes the
@@ -164,7 +164,7 @@ and delay are reported inputs to T-20 and T-13, DR-0023).
 | `sim/dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass |
 | `sim/channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated) |
 | `sim/clock-path/records/20261113T095936Z/report.json` | T-17 | 45/45 corners pass (CH) |
-| `sim/channel-model/records/20261120T220946Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
+| `sim/channel-model/records/20261120T230233Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
 
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
 plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,

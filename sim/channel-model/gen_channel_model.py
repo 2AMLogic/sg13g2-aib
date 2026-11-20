@@ -44,9 +44,9 @@ feeds current through the series resistance behind it: C_seg * R^2 * sum of
 squares, about 3 % of L at 3 mm, 12 % at 5 mm / kr 1.2). That correction is a
 property of the declared ladder, identical on both sides of the ratio, so it
 cancels; it only dilutes the L sensitivity by the same few percent.
-test_channel_model.py's exact ideal-ladder solver bounds the residual asymmetry at
-every parameter corner, offline, and seeds each defect class to show the ratio
-leaves the band.
+test_channel_model.py's nodal solver of the netlist text bounds the residual
+asymmetry at every parameter corner, offline, and seeds each defect class as an
+edit of that text to show the ratio leaves the band.
 
 The expected values are read from spec/channel-model.md here, never restated by
 hand: the generator parses the declared table, writes the constants into the

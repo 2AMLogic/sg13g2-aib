@@ -107,7 +107,7 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_corner_bundles.py
   run "Check the T-12 channel-model conformance bench against the generator" \
     python3 -I sim/channel-model/gen_channel_model.py --check
-  run "Self-test the T-12 channel-model bench (exact ladder solver, seeded defects)" \
+  run "Self-test the T-12 channel-model bench (netlist-text solver, seeded netlist edits)" \
     python3 -I sim/channel-model/test_channel_model.py
   run "Check the item 7 pex benches against the generator" \
     python3 -I layout/pex/gen_pex_benches.py --check

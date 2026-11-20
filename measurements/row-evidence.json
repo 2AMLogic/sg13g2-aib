@@ -230,7 +230,7 @@
     ],
     "T-12": [
       {
-        "record": "sim/channel-model/records/20261120T220946Z/rows.json",
+        "record": "sim/channel-model/records/20261120T230233Z/rows.json",
         "field": "rows.T-12.verdict",
         "op": "==",
         "value": "pass",
@@ -240,13 +240,13 @@
         "note": "Simulated, not measured. Verifies the netlist against the declared table at CH-3MM-RC, CH-1MM and CH-5MM and the four +-20 % (kr, kc) pairs, at a +-1 % numerical-agreement tolerance (not a spec bound). It does not validate the table against silicon."
       },
       {
-        "record": "sim/channel-model/records/20261120T220946Z/rows.json",
+        "record": "sim/channel-model/records/20261120T230233Z/rows.json",
         "field": "rows.T-12.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners x 15 (length, kr, kc) rows",
         "scope": "CH",
-        "basis": "simulated, failing T-12 ratio measurements of 2025",
+        "basis": "simulated, failing T-12 ratio measurements of 4050",
         "note": "Simulated, not measured; see the verdict entry."
       }
     ],

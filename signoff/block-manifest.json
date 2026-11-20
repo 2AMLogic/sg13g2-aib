@@ -66,7 +66,7 @@
         ]
       },
       {
-        "file": "sim/channel-model/records/20261120T220946Z/report.json",
+        "file": "sim/channel-model/records/20261120T230233Z/report.json",
         "rows": [
           "T-12"
         ]
@@ -150,11 +150,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:0b8fa485a7565b8ad29b33b3c5ad5b324b3509cd27974420497657e9fcb285b4"
+      "content_hash": "sha256:30d5cc60bd33d7e6a5775b42f128b4e6726bcd44e00331112eb1881c9d30c47d"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:0b8fa485a7565b8ad29b33b3c5ad5b324b3509cd27974420497657e9fcb285b4"
+      "content_hash": "sha256:30d5cc60bd33d7e6a5775b42f128b4e6726bcd44e00331112eb1881c9d30c47d"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -302,7 +302,7 @@
       },
       {
         "id": "T-12",
-        "gap": "not re-measured post-layout: the channel-model conformance record that covers T-12 in 5.analog (sim/channel-model/records/20261120T220946Z/, DR-0029) grades the committed netlist spec/channel/channel_rc.cir against the declared table, an input definition that layout does not change, and no extracted T-12 measurement exists, so item 7 keeps the row declared. The +/-20 % channel R/C sensitivity run was completed pre-layout by the spread campaign that closed #193 (sim/channel-eye/records/20261113T223804Z-ch-spread/, 180/180 corners); the 1.3 ps T-16 margin that run exposed was later lifted to 19.92 ps by the #251 driver-resistor resize, likewise pre-layout. Not pending work: no tracker is needed against it."
+        "gap": "not re-measured post-layout: the channel-model conformance record that covers T-12 in 5.analog (sim/channel-model/records/20261120T230233Z/, DR-0029) grades the committed netlist spec/channel/channel_rc.cir against the declared table, an input definition that layout does not change, and no extracted T-12 measurement exists, so item 7 keeps the row declared. The +/-20 % channel R/C sensitivity run was completed pre-layout by the spread campaign that closed #193 (sim/channel-eye/records/20261113T223804Z-ch-spread/, 180/180 corners); the 1.3 ps T-16 margin that run exposed was later lifted to 19.92 ps by the #251 driver-resistor resize, likewise pre-layout. Not pending work: no tracker is needed against it."
       },
       {
         "id": "T-15",
