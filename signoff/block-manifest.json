@@ -16,15 +16,15 @@
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9"
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
     },
     "2.digital": {
       "file": "signoff/attest/item2-digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
     "3.analog": {
-      "file": "layout/records/20261113T231304Z/drc_analog.json",
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9"
+      "file": "layout/records/20261120T202314Z/drc_analog.json",
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
     },
     "3.digital": {
       "file": "layout/records/20261027T063033Z/drc_digital.json",
@@ -127,16 +127,16 @@
     },
     "7.analog": [
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_tx.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json"
       },
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_rx.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json"
       },
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_tx_clk.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json"
       },
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_rx_clk.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json"
       }
     ],
     "7.digital": {
@@ -382,7 +382,7 @@
   "claims": {
     "3": {
       "analog": {
-        "report": "layout/records/20261113T231304Z/drc_analog.json",
+        "report": "layout/records/20261120T202314Z/drc_analog.json",
         "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
         "status": "clean",
         "violation_count": 0,

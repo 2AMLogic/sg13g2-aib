@@ -107,7 +107,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
       "role": "layout"
     },
     "spec": {
@@ -118,7 +118,7 @@
         "name": "rppd",
         "body_layer": "5/0",
         "on": "gate",
-        "body_area_um2": 1008.0,
+        "body_area_um2": 912.0,
         "source": "deck",
         "superseded_by": null
       }

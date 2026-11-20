@@ -78,6 +78,14 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_evidence_format.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
     python3 -I scripts/ci/check_design_sources.py
+  # The generator runs the same comparison on the geometry path, but a
+  # regeneration is the only thing that reaches it, so a netlist edit alone
+  # (#332 shortened XResd to l=1u) left the committed device table -- and with
+  # it the stream -- stale with nothing red. The --check entry point is
+  # stdlib-only (no klayout, no PDK), so the evidence job can run it on every
+  # push and the table cannot drift from design/*.spice again.
+  run "Check the I/O column device table against the committed design netlists" \
+    python3 -I layout/gen_io_column.py --check
   run "Check every attested path matches its envelope's content_hash" \
     python3 -I scripts/ci/check_attested_paths.py
   run "Check the item 6 digital not_applicable documents are fresh against the spec" \

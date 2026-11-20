@@ -75,4 +75,6 @@ for this design, and the record is regenerated (`t1_met_count` 18 to 16). T-22 (
 fingers come to about 43 um of the ~54 um routable width before the two 10 um `rppd` legs are
 placed, which is not verified. That regeneration was issue #140, completed by PR #148
 (merged 2026-11-10). (The committed layout has since drifted again in one size: `XResd` is
-`l=1u` since PR #332, 2026-11-18; `design/README.md` carries the current state.)
+`l=1u` since PR #332, 2026-11-18. That drift is closed: #387 redrew `Resd` at the netlist
+size and regenerated the stream-bound evidence; `design/README.md` carries the current
+state.)
