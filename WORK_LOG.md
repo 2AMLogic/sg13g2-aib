@@ -2,6 +2,10 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-20
+
+- **Issue #379** (closed): Guide docs tick still stages README.md without re-attesting item 10: #284's guard diagnoses the round trip but does not prevent it
+
 ### 2026-11-19
 
 - **PR #365**: docs: date DR-0017/DR-0018 staleness prose and retire #140 as the live layout tracker
