@@ -6,7 +6,7 @@ Direction lives in the hand-written roadmap: [`ROADMAP.md`](ROADMAP.md).
 The body below is a snapshot of GitHub label state as of the last merged docs-maintenance PR — it may lag live labels until the next one merges. The `_Generated:` stamp at the top of the generated region dates the snapshot; `git log -1 -- WORK_PLAN.md` finds the merge that wrote it.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-20T06:51:36Z (snapshot; compare against live labels)_
+_Generated: 2026-11-20T12:53:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -33,7 +33,7 @@ _None._
 
 Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
-- **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction
+_None._
 
 ## In Progress
 
@@ -74,7 +74,7 @@ Issues carrying `loom:curated`.
 - **#185**: channel_eye_post's binding-corner label always reads `mixed` instead of the supply voltage *(curated)* *(held)*
 - **#195**: T-21 SIM half of the forwarded-clock alignment contract is still a gap after #175 *(curated)* *(held)*
 - **#196**: T-25 SIM leg: the 0.5 A ESD transient is blocked on the T-24/T-25 device trade (DR-0017, DR-0018) *(curated)* *(held)*
-- **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction *(curated)*
+- **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction *(curated)* *(held)*
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
 - **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(curated)* *(held)*
 
@@ -94,7 +94,7 @@ _None._
 | Operator merge-risk holds | 4 |
 | Very important | 0 |
 | Important | 2 |
-| Ready (`loom:issue`, net of holds/building/merge-pending) | 1 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
 | In Progress (`loom:building`) | 5 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 4 |
