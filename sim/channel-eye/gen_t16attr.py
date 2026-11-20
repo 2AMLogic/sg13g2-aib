@@ -11,7 +11,6 @@ pairs, the absolute 50 % crossing time of every probe stage (t16attr_probes.inc)
 """
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -26,20 +25,10 @@ LINKS = {"ch": "tb_t16attr_ch.cir", "id": "tb_t16attr_id.cir"}
 
 
 def edges():
-    """{bench name: dict(pol, i, cpol)}: data edge i of polarity pol, clock edge at (i + 0.5) UI."""
-    b = g.stream()
-    trs = [t for t in g.transitions(b) if t[1] and t[0] >= 1]
-    out = {}
-    _, cards = g.skew_pairs()
-    for nm, card in cards:
-        m = re.search(r"v\(dsa\) VAL=0 (RISE|FALL)=(\d+) TARG v\(csig\) VAL=0 (RISE|FALL)=(\d+)", card)
-        pol, n, cpol = m.group(1), int(m.group(2)), m.group(3)
-        seq = [t[0] for t in trs if t[1] == pol.lower()]
-        # the n-th transition of this polarity counted from the stream start (rises_before / falls_before)
-        i = seq[n - 1]
-        assert cpol == ("RISE" if i % 2 == 0 else "FALL"), nm
-        out[nm] = {"pol": pol, "i": i, "cpol": cpol}
-    return out
+    """{bench name: selection}: data edge `i` of polarity `pol`, clock edge at (i + 0.5) UI
+    of polarity `cpol` -- the shared T-16 selection itself, not a re-parse of its card (#388)."""
+    _, t16 = g.skew_pairs()
+    return {e["name"]: e for e in t16}
 
 
 def stage_cards(nm, e):
