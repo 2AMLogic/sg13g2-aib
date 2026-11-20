@@ -101,7 +101,13 @@ def stim_include():
 
 
 def skew_pairs():
-    """Measurement edge selections: (name, trig-expr args) for T-15 and T-16."""
+    """Measurement edge selections: (name, card) for T-15; edge dicts for T-16.
+
+    A T-16 dict carries what the selection loop computes -- name, bit index `i`, data
+    polarity `pol` with crossing count `n`, clock polarity `cpol` with crossing count
+    `cn` -- plus the measurement `card` rendered from those fields, so gen_t16attr.py
+    consumes the selection itself instead of re-parsing the card (#388).
+    """
     b = stream()
     tr = [t for t in transitions(b) if 15 <= t[0] <= 130]
     rises_before = lambda i: sum(1 for t in transitions(b) if t[1] == "rise" and t[0] <= i)
@@ -121,11 +127,13 @@ def skew_pairs():
             for ctx, long_ in (("long", True), ("short", False)):
                 c = [t for t in pick(pol, long_) if t[0] % 2 == par]
                 i = c[0][0]
-                n = rises_before(i) if pol == "rise" else falls_before(i)
                 cpol = "RISE" if i % 2 == 0 else "FALL"
-                cn = i // 2 + 1 if i % 2 == 0 else (i + 1) // 2
-                nm = f"t16_d{pol[0]}_c{cpol[0].lower()}_{ctx}"
-                t16.append((nm, f".meas tran {nm} TRIG v(dsa) VAL=0 {pol.upper()}={n} TARG v(csig) VAL=0 {cpol}={cn}"))
+                e = {"name": f"t16_d{pol[0]}_c{cpol[0].lower()}_{ctx}", "pol": pol.upper(), "i": i,
+                     "n": rises_before(i) if pol == "rise" else falls_before(i),
+                     "cpol": cpol, "cn": i // 2 + 1 if i % 2 == 0 else (i + 1) // 2}
+                e["card"] = (f".meas tran {e['name']} TRIG v(dsa) VAL=0 {e['pol']}={e['n']} "
+                             f"TARG v(csig) VAL=0 {e['cpol']}={e['cn']}")
+                t16.append(e)
     return t15, t16
 
 
@@ -193,8 +201,8 @@ def measurements(kind):
         t15, t16 = skew_pairs()
         for nm, card in t15:
             m.append(meas(nm, unit="s", spec_row="T-15", spice=card, limits={"min": -0.06e-9, "max": 0.06e-9}))
-        for nm, card in t16:
-            m.append(meas(nm, unit="s", spec_row="T-16", spice=card,
+        for e in t16:
+            m.append(meas(e["name"], unit="s", spec_row="T-16", spice=e["card"],
                           limits={"min": 0.5e-9 - 0.03e-9, "max": 0.5e-9 + 0.03e-9}))
     return m
 
