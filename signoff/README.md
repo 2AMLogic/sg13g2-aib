@@ -358,8 +358,10 @@ while already being cited for item 5 and item 6 (issue #230). The map may still
 carry extra entries the manifest does not cite; the check is one-directional.
 
 **Item 8 currently reads `unmet` / `check_failed`, and that is the honest state.**
-T-10, T-15 and T-16 each have a committed `klt yield` record whose verdict is
-`fail`, so the envelope is `status: fail` and the aggregate says so. No spec
+T-10 has a committed `klt yield` record whose verdict is `fail`, so the envelope is
+`status: fail` and the aggregate says so -- one failing row of 30; T-15 and T-16 pass on
+the 2026-11-20 re-run of #385, whose records supersede (and leave untouched) the
+2026-11-10 failing ones. No spec
 target, limit or comparator was changed, and no record under `sim/*/records/` was
 touched, to produce it. The `met` reading it replaced was an artefact of those
 records never being read.
