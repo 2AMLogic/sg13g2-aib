@@ -163,6 +163,16 @@
             "min": 0.99,
             "max": 1.01
           }
+        },
+        {
+          "name": "t12_r_ratio_default",
+          "spec_row": "T-12",
+          "unit": "ratio",
+          "expr": "v(txc)/v(yc0)",
+          "limits": {
+            "min": 0.99,
+            "max": 1.01
+          }
         }
       ]
     },
@@ -178,21 +188,21 @@
           "name": "t12_c_ratio",
           "spec_row": "T-12",
           "unit": "ratio",
-          "expr": "vecmax(imag(-v(txb)))/vecmax(imag(-v(yb0)))",
+          "expr": "vecmax(imag(-v(yb0)))/vecmax(imag(-v(txb)))",
           "limits": {
             "min": 0.99,
             "max": 1.01
           }
         },
         {
-          "name": "w_open_lo",
-          "unit": "1/F",
-          "expr": "vecmax(-2*pi*1e6*imag(v(txb)))"
-        },
-        {
-          "name": "w_open_ref_lo",
-          "unit": "1/F",
-          "expr": "vecmax(-2*pi*1e6*imag(v(yb0)))"
+          "name": "t12_c_ratio_default",
+          "spec_row": "T-12",
+          "unit": "ratio",
+          "expr": "vecmax(imag(-v(yd0)))/vecmax(imag(-v(txd)))",
+          "limits": {
+            "min": 0.99,
+            "max": 1.01
+          }
         }
       ]
     },
@@ -205,30 +215,29 @@
       "alter": {},
       "measurements": [
         {
-          "name": "w_open_hi",
-          "unit": "1/F",
-          "expr": "vecmax(-2*pi*1e7*imag(v(txb)))"
+          "name": "t12_l_ratio",
+          "spec_row": "T-12",
+          "unit": "ratio",
+          "expr": "vecmax(imag(v(txa)))/vecmax(imag(v(ya0)))",
+          "limits": {
+            "min": 0.99,
+            "max": 1.01
+          }
         },
         {
-          "name": "w_open_ref_hi",
-          "unit": "1/F",
-          "expr": "vecmax(-2*pi*1e7*imag(v(yb0)))"
+          "name": "t12_l_ratio_default",
+          "spec_row": "T-12",
+          "unit": "ratio",
+          "expr": "vecmax(imag(v(txc)))/vecmax(imag(v(yc0)))",
+          "limits": {
+            "min": 0.99,
+            "max": 1.01
+          }
         }
       ]
     }
   ],
-  "measurements": [
-    {
-      "name": "t12_l_ratio",
-      "spec_row": "T-12",
-      "unit": "ratio",
-      "expr": "(c_lo.w_open_lo-l_hi.w_open_hi)/(c_lo.w_open_ref_lo-l_hi.w_open_ref_hi)",
-      "limits": {
-        "min": 0.99,
-        "max": 1.01
-      }
-    }
-  ],
+  "measurements": [],
   "options": {
     "osdi_preload": [
       "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",

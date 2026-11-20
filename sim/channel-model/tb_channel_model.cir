@@ -13,6 +13,7 @@
 .param ch_len=3 ch_kr=1 ch_kc=1
 * the declared per-mm values and far-end load, as parsed from spec/channel-model.md
 .param tb_r_mm=5.5 tb_c_mm=0.20p tb_l_mm=0.5n tb_cfar=0.1p
+.param tb_len0=3
 * DUT, far end shorted: at DC the caps are open, so v(txa) at 1 A is the series R
 Xs txa rxa 0 chan_rlc len_mm={ch_len} kr={ch_kr} kc={ch_kc}
 Vsh rxa 0 0
@@ -21,6 +22,14 @@ Iza 0 txa dc 1 ac 1
 Xo txb rxb 0 chan_rlc len_mm={ch_len} kr={ch_kr} kc={ch_kc}
 Rleak txb 0 1e12
 Izb 0 txb dc 0 ac 1
+* DUT with the subcircuit's own defaults (no len_mm/kr/kc): what consumers such as
+* sim/channel-eye instantiate, so a changed default cannot hide behind the sweep
+Xsd txc rxc 0 chan_rlc
+Vshd rxc 0 0
+Izc 0 txc dc 1 ac 1
+Xod txd rxd 0 chan_rlc
+Rleakd txd 0 1e12
+Izd 0 txd dc 0 ac 1
 * reference, far end shorted
 Cya0 ya0 0 {ch_kc*tb_c_mm*ch_len/10/2}
 Rya1 ya0 qya1 {ch_kr*tb_r_mm*ch_len/10}
@@ -90,6 +99,74 @@ Cyb10 yb10 0 {ch_kc*tb_c_mm*ch_len/10/2}
 Cybfar yb10 0 {tb_cfar}
 Rybleak yb0 0 1e12
 Iryb 0 yb0 dc 0 ac 1
+* fixed nominal references (declared length 3 mm, kr = kc = 1) for the default instances
+Cyc0 yc0 0 {tb_c_mm*tb_len0/10/2}
+Ryc1 yc0 qyc1 {tb_r_mm*tb_len0/10}
+Lyc1 qyc1 yc1 {tb_l_mm*tb_len0/10}
+Cyc1 yc1 0 {tb_c_mm*tb_len0/10}
+Ryc2 yc1 qyc2 {tb_r_mm*tb_len0/10}
+Lyc2 qyc2 yc2 {tb_l_mm*tb_len0/10}
+Cyc2 yc2 0 {tb_c_mm*tb_len0/10}
+Ryc3 yc2 qyc3 {tb_r_mm*tb_len0/10}
+Lyc3 qyc3 yc3 {tb_l_mm*tb_len0/10}
+Cyc3 yc3 0 {tb_c_mm*tb_len0/10}
+Ryc4 yc3 qyc4 {tb_r_mm*tb_len0/10}
+Lyc4 qyc4 yc4 {tb_l_mm*tb_len0/10}
+Cyc4 yc4 0 {tb_c_mm*tb_len0/10}
+Ryc5 yc4 qyc5 {tb_r_mm*tb_len0/10}
+Lyc5 qyc5 yc5 {tb_l_mm*tb_len0/10}
+Cyc5 yc5 0 {tb_c_mm*tb_len0/10}
+Ryc6 yc5 qyc6 {tb_r_mm*tb_len0/10}
+Lyc6 qyc6 yc6 {tb_l_mm*tb_len0/10}
+Cyc6 yc6 0 {tb_c_mm*tb_len0/10}
+Ryc7 yc6 qyc7 {tb_r_mm*tb_len0/10}
+Lyc7 qyc7 yc7 {tb_l_mm*tb_len0/10}
+Cyc7 yc7 0 {tb_c_mm*tb_len0/10}
+Ryc8 yc7 qyc8 {tb_r_mm*tb_len0/10}
+Lyc8 qyc8 yc8 {tb_l_mm*tb_len0/10}
+Cyc8 yc8 0 {tb_c_mm*tb_len0/10}
+Ryc9 yc8 qyc9 {tb_r_mm*tb_len0/10}
+Lyc9 qyc9 yc9 {tb_l_mm*tb_len0/10}
+Cyc9 yc9 0 {tb_c_mm*tb_len0/10}
+Ryc10 yc9 qyc10 {tb_r_mm*tb_len0/10}
+Lyc10 qyc10 yc10 {tb_l_mm*tb_len0/10}
+Cyc10 yc10 0 {tb_c_mm*tb_len0/10/2}
+Vycsh yc10 0 0
+Iryc 0 yc0 dc 1 ac 1
+Cyd0 yd0 0 {tb_c_mm*tb_len0/10/2}
+Ryd1 yd0 qyd1 {tb_r_mm*tb_len0/10}
+Lyd1 qyd1 yd1 {tb_l_mm*tb_len0/10}
+Cyd1 yd1 0 {tb_c_mm*tb_len0/10}
+Ryd2 yd1 qyd2 {tb_r_mm*tb_len0/10}
+Lyd2 qyd2 yd2 {tb_l_mm*tb_len0/10}
+Cyd2 yd2 0 {tb_c_mm*tb_len0/10}
+Ryd3 yd2 qyd3 {tb_r_mm*tb_len0/10}
+Lyd3 qyd3 yd3 {tb_l_mm*tb_len0/10}
+Cyd3 yd3 0 {tb_c_mm*tb_len0/10}
+Ryd4 yd3 qyd4 {tb_r_mm*tb_len0/10}
+Lyd4 qyd4 yd4 {tb_l_mm*tb_len0/10}
+Cyd4 yd4 0 {tb_c_mm*tb_len0/10}
+Ryd5 yd4 qyd5 {tb_r_mm*tb_len0/10}
+Lyd5 qyd5 yd5 {tb_l_mm*tb_len0/10}
+Cyd5 yd5 0 {tb_c_mm*tb_len0/10}
+Ryd6 yd5 qyd6 {tb_r_mm*tb_len0/10}
+Lyd6 qyd6 yd6 {tb_l_mm*tb_len0/10}
+Cyd6 yd6 0 {tb_c_mm*tb_len0/10}
+Ryd7 yd6 qyd7 {tb_r_mm*tb_len0/10}
+Lyd7 qyd7 yd7 {tb_l_mm*tb_len0/10}
+Cyd7 yd7 0 {tb_c_mm*tb_len0/10}
+Ryd8 yd7 qyd8 {tb_r_mm*tb_len0/10}
+Lyd8 qyd8 yd8 {tb_l_mm*tb_len0/10}
+Cyd8 yd8 0 {tb_c_mm*tb_len0/10}
+Ryd9 yd8 qyd9 {tb_r_mm*tb_len0/10}
+Lyd9 qyd9 yd9 {tb_l_mm*tb_len0/10}
+Cyd9 yd9 0 {tb_c_mm*tb_len0/10}
+Ryd10 yd9 qyd10 {tb_r_mm*tb_len0/10}
+Lyd10 qyd10 yd10 {tb_l_mm*tb_len0/10}
+Cyd10 yd10 0 {tb_c_mm*tb_len0/10/2}
+Cydfar yd10 0 {tb_cfar}
+Rydleak yd0 0 1e12
+Iryd 0 yd0 dc 0 ac 1
 * the PVT-FULL supply axis rides this dummy rail: the ladder is linear and
 * supply-free, so the source exists only that corners.supply_v has a name to alter
 Vpvt vpvt 0 dc 1.2

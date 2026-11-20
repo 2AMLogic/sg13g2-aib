@@ -25,39 +25,52 @@ DR-0001 ratification).
 | `gen_channel_model.py` | generator (stdlib); parses the declared table, writes the bench and request; `--check` for staleness |
 | `tb_channel_model.cir`, `request_channel_model.json` | generated; do not edit |
 | `run_channel_model.sh` | submits the request to the batch fleet (`--wait-for-capacity 600`) via `sim/harness/batch_record.sh` |
-| `test_channel_model.py` | offline self-test: exact ideal-ladder solver, seeded defects, post-processor wiring |
+| `test_channel_model.py` | offline self-test: nodal solver of the netlist text, seeded netlist edits, post-processor wiring |
 | `records/<UTC>/` | append-only run records |
 
 ## Method
 
 Expected values are parsed from `spec/channel-model.md` by the generator, never restated.
-The bench instantiates `chan_rlc` twice (far end shorted, far end open) next to two
-reference ladders built from the parsed table, and grades DUT/reference **ratios**:
+The bench instantiates `chan_rlc` four times: a far-end-shorted and a far-end-open copy
+with `len_mm`, `kr` and `kc` passed from the sweep, and the same pair with **no** parameters
+(the subcircuit's own defaults, what consumers such as `sim/channel-eye` instantiate). Next
+to them sit reference ladders built from the parsed table (swept, and fixed at the declared
+3 mm nominal for the default pair). It grades DUT/reference **ratios**, each twice (`_default`
+suffix for the default pair):
 
 - `t12_r_ratio`: DC operating point, far end shorted, 1 A drive; the reference's R arms sum
   to `kr · r_mm · len_mm`.
-- `t12_c_ratio`: open-end impedance at 1 MHz; the reference's shunt C sums to
-  `kc · c_mm · len_mm + cfar`.
-- `t12_l_ratio`: the ω² coefficient of `W = −ω·Im Z_open` between 1 MHz and 10 MHz.
+- `t12_c_ratio`: open-end impedance at 1 MHz. The reactance is `−1/(ωC)`, so the ratio of DUT
+  capacitance to the declared value is the **reference** reactance over the DUT's. The
+  reference's shunt C sums to `kc · c_mm · len_mm + cfar`.
+- `t12_l_ratio`: `Im Z` of the far-end-shorted network at 10 MHz. All ten series inductors
+  carry the same loop current, so each weighs equally and a defect in any single section moves
+  the total (an open-end read weights each inductor by the current behind it and cannot see an
+  error near the receiver).
 
-Why differential: the probe-frequency observables of the declared ladder differ from the
-lumped constants (R-coupled terms, about 3 % of L at 3 mm on the shorted read and 62 % on the
-open two-frequency read). Those corrections are properties of the declared ladder and appear
-identically on both sides, so they cancel in the ratio. The generator docstring has the
-derivation.
+Why differential: the shorted read carries an inductance bias from the ladder's own R-C
+structure (about 3 % of L at 3 mm, 12 % at 5 mm with kr 1.2). It is a property of the declared
+ladder and appears identically on both sides, so it cancels in the ratio. The generator
+docstring has the derivation. The generator reads the target, fallback and stretch columns of
+the table and refuses a table where they differ, since the bench supports one value per
+quantity.
 
 ## Tolerance
 
 **±1 %** on each ratio. This is a numerical-agreement tolerance, a property of the check and
 **not a spec bound**; no Target, Fallback or Stretch value changes. It is wide enough to
-absorb probe-frequency residue (the offline solver bounds it below 2e-3) and narrow enough that
+absorb solver noise (the offline solve of the committed netlist stays within 1e-5) and narrow enough that
 any of the seeded defects below leaves the band by 10 % or more.
 
 ## Negative control
 
-`test_channel_model.py` runs the same extraction on an exact ideal-ladder solver and seeds four
-defect classes into the DUT only: a wrong `r_mm` default, a dropped `kr` scaling, a dropped
-far-end load, a wrong `l_mm`. Each must leave the ±1 % band.
+`test_channel_model.py` solves **the netlist text** (`channel_rc.cir` parsed: defaults,
+`.param`s, every R/L/C, zero-volt sources) with a nodal solver, runs the same extraction as
+the request, and seeds defects by editing that text: wrong `r_mm`/`c_mm`/`l_mm`/`cfar`
+defaults, `kr` or `kc` dropped from a section expression, the `Cfar` device removed, one
+series inductor +20 % (at either end of the ladder), and a changed DUT default of `kr` or
+`len_mm` (only the default-instance pair sees those). Each must leave the ±1 % band; the C
+tolerance edges are exercised in both directions at ±1 %.
 
 ## Boundary
 
