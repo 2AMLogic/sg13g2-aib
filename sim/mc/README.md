@@ -99,12 +99,14 @@ report carries all 1800 draws.
 
 **Results (2026-11-20 re-run, #385): both pass the 7-sigma gate** on the current cells (`main`
 at `7a7c5b9`, after the TX predriver NOR widening of `89d803b` / #164 and the `aib_pad_esd`
-`XResd` `l=1u` shortening of `e47bb80` / #332 -- the two resizes that moved exactly this
-quantity). Pooled over the grid, T-15 has mean -1.8 ps and sigma 5.4 ps (sigma-to-spec 10.8,
+`XResd` `l=1u` shortening of `e47bb80` / #332, the two resizes aimed at this quantity). Pooled over the grid, T-15 has mean -1.8 ps and sigma 5.4 ps (sigma-to-spec 10.8,
 lower confidence bound 10.3 against 7; no draw outside +-60 ps, worst -20.7 ps); T-16 has mean
 -0.7 ps and sigma 3.4 ps (sigma-to-spec 8.6, lower bound 8.3 against 7; no draw outside +-30 ps,
-worst -15.1 ps). The 2026-11-10 means (+31.9 / +16.6 ps) were mostly the systematic rise/fall
-asymmetry those two changes removed. The distributions are still skewed and the normality test
+worst -15.1 ps). The 2026-11-10 means (+31.9 / +16.6 ps) moved to the means above, but the two runs
+also differ in other inputs: the SS and FF diode sections changed from `dio_tt` to `dio_ss` and
+`dio_ff` in all four requests, and the ngspice engine moved from 46 to 47. The comparison shows
+the current cells pass under the current setup; it does not isolate how much of the improvement
+came from the resizes. The distributions are still skewed and the normality test
 still rejects, so the empirical tail is the quantity to read: it is empty. `klt yield` pools
 the 45 corners as for T-10; the per-corner reading is in [per_corner.md](per_corner.md): T-15's
 margin-ranked worst draw sits at `sf/1.080V/-40C`, T-16's at `ss/1.080V/27C` -- the low-supply
