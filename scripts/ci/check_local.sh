@@ -105,6 +105,10 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I sim/mc/capture_window/test_t19.py
   run "Check every committed sim/ and layout/ request against the one PVT-FULL corner table" \
     python3 -I scripts/ci/check_corner_bundles.py
+  run "Check the T-12 channel-model conformance bench against the generator" \
+    python3 -I sim/channel-model/gen_channel_model.py --check
+  run "Self-test the T-12 channel-model bench (exact ladder solver, seeded defects)" \
+    python3 -I sim/channel-model/test_channel_model.py
   run "Check the item 7 pex benches against the generator" \
     python3 -I layout/pex/gen_pex_benches.py --check
   run "Self-test the item 7 pex benches (pin lists, one .include, row split)" \

@@ -136,10 +136,10 @@ record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
 
 ## Item 5 / analog: the declared row set
 
-The three families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
+The four families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
 cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
 `SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
-`partial_coverage`: every cited envelope passes, no covered row is uncovered, and five rows
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and four rows
 are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
 
 **Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
@@ -149,8 +149,9 @@ are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the 
 | dc-static | `dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 |
 | channel-eye (CH) | `channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
 | clock-path | `clock-path/records/20261113T095936Z/report.json` | T-17 |
+| channel-model (CH) | `channel-model/records/20261120T220946Z/report.json` | T-12 |
 
-The channel-eye and clock-path records' measurements carry `spec_row` tags, so the grader
+The channel-eye, clock-path and channel-model records' measurements carry `spec_row` tags, so the grader
 derives their coverage from the envelope and catches a wrong `rows` entry. **The dc-static
 report has no `spec_row` tags**, so its six rows are `asserted` in `detail.row_sources` —
 taken on this manifest's word, with nothing in the grader checking them. They were checked by
@@ -170,10 +171,9 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Four of the five are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-12 is the remaining standing gap**: the channel model is a declared input, not a
-block measurable (below); its ±20 % sensitivity campaign is complete and no tracker is open
-against it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
+All four are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-12 is not a gap** (DR-0029, proposed): the channel-model conformance family
+`sim/channel-model/` (below) covers it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
 legs and DR-0028 removes T-05's (no bound exists in the specification for any of the three),
 so the "plain `SIM` leg" rule yields this 18-row set mechanically. T-05's measured load and
 delay stay reported evidence — the common term feeds T-20 and the select-dependent term feeds
@@ -181,7 +181,6 @@ T-13 (DR-0023, DR-0028).
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for is complete — see below). **Standing gap**, no tracker open | none |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
 | T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
@@ -189,11 +188,13 @@ T-13 (DR-0023, DR-0028).
 
 `SIM-MC` rows (T-10, T-13, T-14, T-19) belong to item 6, not here.
 
-### T-12 is an input definition; its ±20 % sensitivity run now exists
+### T-12: the conformance family and the ±20 % sensitivity run
 
 `spec/channel/channel_rc.cir` opens "A declared model, not a measured one." The CH-3MM-RC
 parameter set is the **input** to T-01/T-09/T-15/T-16/T-18/T-26, so citing it as a covered row
-would be circular, and it is not cited. T-12 therefore stays a declared gap.
+would be circular, so the model is not cited as evidence of itself. What *is* measurable is that
+the committed netlist implements the declared table, which nothing checked until
+`sim/channel-model/` (#384, below). T-12 is cited from that record under DR-0029 (proposed).
 
 What its grid column also asked for — "PVT-FULL, plus channel R/C ±20 % (DR-0005)" — **has
 now been run** (#193): `channel-eye/records/20261113T223804Z-ch-spread/` is PVT-FULL at each
@@ -211,7 +212,7 @@ margin in the design, with the 470-530 ps window and the declared +20 % channel-
 **19.92 ps** worst-case T-16 margin across the four spread pairs
 ([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
 
-The spread record is **referenced from T-12's gap text, not cited as an envelope**. Probed
+The spread record is **supporting evidence for the six dependent rows, not cited for T-12**. Probed
 with the pinned grader (klt 0.9.0, a scratch copy of the manifest, nothing committed): citing
 it with `rows: ["T-12"]` grades item 5 `unmet` / `invalid_evidence` ("a member names a row
 that is undeclared or a declared gap") while T-12 is a declared gap, and `unmet` /
