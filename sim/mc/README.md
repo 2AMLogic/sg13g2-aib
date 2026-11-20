@@ -36,7 +36,7 @@ klt yield samples.json --format json > yield.json
 throwaway `uvx` environment.
 
 Each committed `report.json.gz` holds one entry per corner and draw. `gen_per_corner.py` reads
-the three failing records and regenerates [`per_corner.md`](per_corner.md) -- per corner, the
+the T-10 failing record and the two T-15/T-16 re-run records and regenerates [`per_corner.md`](per_corner.md) -- per corner, the
 draw count, mean, sample sigma (n-1, as `klt`), margin-ranked worst draw and draws outside the
 row's limits, with the pooled totals cross-checked against the record (`--check` in CI;
 `klt yield` itself pools the corners and cannot answer this).
