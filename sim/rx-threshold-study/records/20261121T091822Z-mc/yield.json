@@ -1,0 +1,200 @@
+{
+  "samples": "samples.json",
+  "limits": null,
+  "source": {
+    "kind": "sample-set",
+    "netlist": null,
+    "monte_carlo": null,
+    "provenance": {
+      "seed": 4410,
+      "draws_per_population": 120
+    },
+    "sample_count": 5400
+  },
+  "schema_version": 1,
+  "confidence": 0.95,
+  "target_ci_halfwidth": 0.01,
+  "min_samples": 2,
+  "status": "pass",
+  "measurement_count": 1,
+  "measurements": [
+    {
+      "name": "t10_offset_mv",
+      "unit": "mV",
+      "n": 5400,
+      "errored": 0,
+      "failed_unmeasurable": 0,
+      "censored": 0,
+      "inconclusive": 0,
+      "limits": {
+        "min": -60.0,
+        "max": 60.0,
+        "target_sigma": 3.0
+      },
+      "source_corners": [
+        "tt/1.080V/-40C",
+        "tt/1.080V/27C",
+        "tt/1.080V/125C",
+        "tt/1.200V/-40C",
+        "tt/1.200V/27C",
+        "tt/1.200V/125C",
+        "tt/1.320V/-40C",
+        "tt/1.320V/27C",
+        "tt/1.320V/125C",
+        "ss/1.080V/-40C",
+        "ss/1.080V/27C",
+        "ss/1.080V/125C",
+        "ss/1.200V/-40C",
+        "ss/1.200V/27C",
+        "ss/1.200V/125C",
+        "ss/1.320V/-40C",
+        "ss/1.320V/27C",
+        "ss/1.320V/125C",
+        "ff/1.080V/-40C",
+        "ff/1.080V/27C",
+        "ff/1.080V/125C",
+        "ff/1.200V/-40C",
+        "ff/1.200V/27C",
+        "ff/1.200V/125C",
+        "ff/1.320V/-40C",
+        "ff/1.320V/27C",
+        "ff/1.320V/125C",
+        "sf/1.080V/-40C",
+        "sf/1.080V/27C",
+        "sf/1.080V/125C",
+        "sf/1.200V/-40C",
+        "sf/1.200V/27C",
+        "sf/1.200V/125C",
+        "sf/1.320V/-40C",
+        "sf/1.320V/27C",
+        "sf/1.320V/125C",
+        "fs/1.080V/-40C",
+        "fs/1.080V/27C",
+        "fs/1.080V/125C",
+        "fs/1.200V/-40C",
+        "fs/1.200V/27C",
+        "fs/1.200V/125C",
+        "fs/1.320V/-40C",
+        "fs/1.320V/27C",
+        "fs/1.320V/125C"
+      ],
+      "distribution": {
+        "model": "normal",
+        "mean": 2.741416081481482,
+        "stddev": 9.599779881646251,
+        "min": -34.1354,
+        "max": 42.2976,
+        "median": 2.817504,
+        "skewness": 0.018956760619032884,
+        "excess_kurtosis": 0.013143897227323453,
+        "normality": {
+          "test": "anderson-darling",
+          "statistic": 0.319154195147865,
+          "critical_value": 0.787,
+          "significance": 0.05,
+          "verdict": "consistent"
+        }
+      },
+      "yield": {
+        "empirical": {
+          "method": "clopper-pearson",
+          "estimate": 1.0,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.9993171074524867,
+            "high": 1.0
+          },
+          "n": 5400
+        },
+        "normal": {
+          "method": "normal-delta",
+          "estimate": 0.9999999987419705,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.9999999978495796,
+            "high": 0.9999999996343615
+          },
+          "n": 5400
+        },
+        "variance_reduced": null
+      },
+      "capability": {
+        "cp": 2.0833811031686102,
+        "cpk": 1.9881908621672595,
+        "cpk_confidence_interval": {
+          "low": 1.9496510994069725,
+          "high": 2.0267306249275463
+        },
+        "sigma_to_spec": 5.964572586501778,
+        "sigma_to_spec_confidence_interval": {
+          "low": 5.848953298220917,
+          "high": 6.0801918747826385
+        },
+        "limiting_side": "upper"
+      },
+      "sample_size": {
+        "n": 5400,
+        "observed_ci_halfwidth": 0.0003414462737566515,
+        "target_ci_halfwidth": 0.01,
+        "required_n": 183,
+        "required_n_for_target": null,
+        "verdict": "sufficient",
+        "method": "clopper-pearson-zero-failures",
+        "variance_reduced": null
+      },
+      "negative_control": {
+        "description": "input-side NMOS 4x narrower (the tb_mc_ctl.cir seeded degradation)",
+        "n": 900,
+        "errored": 0,
+        "failed_unmeasurable": 0,
+        "censored": 0,
+        "yield": {
+          "empirical": {
+            "method": "clopper-pearson",
+            "estimate": 0.0,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.0,
+              "high": 0.004090366517570498
+            },
+            "n": 900
+          },
+          "normal": {
+            "method": "normal-delta",
+            "estimate": 0.0006736093424169325,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.00029537248722799126,
+              "high": 0.0010518461976058739
+            },
+            "n": 900
+          },
+          "variance_reduced": null
+        },
+        "nominal_empirical_estimate": 1.0,
+        "degradation_detected": true,
+        "verdict": "detected"
+      },
+      "analytic_cross_check": null,
+      "sampling": {
+        "strategy": "plain_random",
+        "replicates": null,
+        "effective_sample_size": null
+      },
+      "sigma_target": {
+        "k": 3.0,
+        "sigma_to_spec": 5.964572586501778,
+        "lower_bound": 5.848953298220917,
+        "gate": "lower_bound",
+        "met": true
+      },
+      "status": "pass",
+      "warnings": [
+        "measurement 't10_offset_mv': no sample fell outside the limits, so the empirical yield is bounded only from below -- \"at least 99.9317% at 95% confidence, N = 5400\" is the honest statement, not \"100% yield\"",
+        "measurement 't10_offset_mv': samples were pooled across 45 originating corners; each corner is its own population, so the pooled estimate is a worst-case envelope rather than a distribution anyone sampled"
+      ],
+      "spec_row": "T-10"
+    }
+  ],
+  "warnings": []
+}

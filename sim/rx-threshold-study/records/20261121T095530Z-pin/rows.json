@@ -1,0 +1,27 @@
+{
+  "label": "rx-threshold",
+  "corners": 45,
+  "kind": "simulated",
+  "rows": {
+    "T-24": {
+      "verdict": "pass",
+      "measurements": [
+        "cap_0_b.t24_cpin_0_b_ff",
+        "cap_0_c.t24_cpin_0_c_ff",
+        "cap_10_b.t24_cpin_10_b_ff",
+        "cap_10_c.t24_cpin_10_c_ff",
+        "cap_5_b.t24_cpin_5_b_ff",
+        "cap_5_c.t24_cpin_5_c_ff"
+      ],
+      "pass": 270,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "fs/mixed/125C",
+        "measurement": "cap_5_b.t24_cpin_5_b_ff",
+        "value": 96.41782,
+        "why": "smallest margin"
+      }
+    }
+  }
+}
