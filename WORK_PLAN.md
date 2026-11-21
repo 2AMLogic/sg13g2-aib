@@ -6,15 +6,16 @@ Direction lives in the hand-written roadmap: [`ROADMAP.md`](ROADMAP.md).
 The body below is a snapshot of GitHub label state as of the last merged docs-maintenance PR — it may lag live labels until the next one merges. The `_Generated:` stamp at the top of the generated region dates the snapshot; `git log -1 -- WORK_PLAN.md` finds the merge that wrote it.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-20T21:10:49Z (snapshot; compare against live labels)_
+_Generated: 2026-11-21T08:40:20Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
-Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
+Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`).
 
 - **#168**: feat(sim): record T-13/T-14 TX skew Monte Carlo and ratify skew definition (DR-0019)
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
 - **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
+- **#390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
 
 ## Very Important
 
@@ -28,14 +29,12 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error *(held)*
 - **#194**: T-20 SIM leg: no end-to-end sampling-margin confirmation exists, and two of its inputs are open *(held)*
-- **#384**: T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met
 
 ## Ready
 
 Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
-- **#384**: T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met
-- **#386**: T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage
+_None._
 
 ## In Progress
 
@@ -47,15 +46,14 @@ Issues currently being built (`loom:building`).
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target
 - **#385**: T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes
+- **#386**: T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage
 - **#387**: layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign
-- **#388**: Share the T-16 edge selection and remove the SPICE card parser from gen_t16attr
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
-- **#391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -65,7 +63,8 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record — closes #176
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021 — closes #177
 - **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register — closes #232
-- **#389**: refactor: share the T-16 edge selection and drop the card re-parse in gen_t16attr — closes #388
+- **#390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI — closes #387
+- **#391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate — closes #385
 
 ## Proposed
 
@@ -84,15 +83,16 @@ Issues carrying `loom:curated`.
 - **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction *(curated)* *(held)*
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
 - **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(curated)* *(held)*
-- **#384**: T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met *(curated)*
 - **#385**: T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes *(curated)*
 - **#386**: T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage *(curated)*
 - **#387**: layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign *(curated)*
+- **#396**: sim/channel-model README overstates the seeded-defect detection margin (measured: 2 %, not >=10 %) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#280**: Move the shared klt sim row summariser out of sim/channel-eye: four families post-process through another family's directory *(hermit)* *(held)*
 - **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(hermit)* *(held)*
+- **#395**: Use the generator freshness run to establish CI coverage and drop five manual entries *(hermit)* *(held)*
 
 ## Epics
 
@@ -102,14 +102,14 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 4 |
+| Operator merge-risk holds | 5 |
 | Very important | 1 |
-| Important | 3 |
-| Ready (`loom:issue`, net of holds/building/merge-pending) | 2 |
+| Important | 2 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
 | In Progress (`loom:building`) | 8 |
-| PRs awaiting review | 2 |
-| Approved PRs awaiting merge | 5 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 6 |
 | Curated | 17 |
-| Architect / Hermit proposals | 2 |
+| Architect / Hermit proposals | 3 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
