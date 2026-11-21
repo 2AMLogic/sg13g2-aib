@@ -218,7 +218,7 @@
           "name": "t12_l_ratio",
           "spec_row": "T-12",
           "unit": "ratio",
-          "expr": "vecmax(imag(v(txa)))/vecmax(imag(v(ya0)))",
+          "expr": "(vecmax(imag(v(txa)))+(vecmax(imag(v(yl0)))-vecmax(imag(v(ya0))))*(vecmax(real(v(txa)))/vecmax(real(v(ya0))))*(vecmax(real(v(txa)))/vecmax(real(v(ya0))))*(vecmax(imag(-v(yb0)))/vecmax(imag(-v(txb)))))/vecmax(imag(v(yl0)))",
           "limits": {
             "min": 0.99,
             "max": 1.01
@@ -228,7 +228,7 @@
           "name": "t12_l_ratio_default",
           "spec_row": "T-12",
           "unit": "ratio",
-          "expr": "vecmax(imag(v(txc)))/vecmax(imag(v(yc0)))",
+          "expr": "(vecmax(imag(v(txc)))+(vecmax(imag(v(yn0)))-vecmax(imag(v(yc0))))*(vecmax(real(v(txc)))/vecmax(real(v(yc0))))*(vecmax(real(v(txc)))/vecmax(real(v(yc0))))*(vecmax(imag(-v(yd0)))/vecmax(imag(-v(txd)))))/vecmax(imag(v(yn0)))",
           "limits": {
             "min": 0.99,
             "max": 1.01

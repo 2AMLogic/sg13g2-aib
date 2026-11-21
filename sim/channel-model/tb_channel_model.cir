@@ -167,6 +167,12 @@ Cyd10 yd10 0 {tb_c_mm*tb_len0/10/2}
 Cydfar yd10 0 {tb_cfar}
 Rydleak yd0 0 1e12
 Iryd 0 yd0 dc 0 ac 1
+* bare inductors of the declared total L, driven like the ladders: Im Z at the L probe
+* is omega * L_declared, the quantity the ladder's bias is measured against
+Lyl yl0 0 {tb_l_mm*ch_len}
+Iryl 0 yl0 dc 0 ac 1
+Lyn yn0 0 {tb_l_mm*tb_len0}
+Iryn 0 yn0 dc 0 ac 1
 * the PVT-FULL supply axis rides this dummy rail: the ladder is linear and
 * supply-free, so the source exists only that corners.supply_v has a name to alter
 Vpvt vpvt 0 dc 1.2

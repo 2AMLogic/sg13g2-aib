@@ -23,12 +23,18 @@ not a spec bound; README "Tolerance"):
                 reactance is -1/(omega C), so the capacitance ratio DUT/reference
                 is the REFERENCE reactance over the DUT's. The reference's shunt C
                 sums to kc * c_mm * len_mm + cfar.
-  t12_l_ratio   total series inductance, from the imaginary part of the
-                far-end-shorted impedance at 10 MHz (the same 1 A drive and short as
-                the R read): every series inductor carries the one loop current
-                (the shunt-cap current taken off upstream is ~1e-4 of it), so each
-                of the ten sections weighs the same in Im Z, and a defect in any
-                single one of them moves the total. DUT over reference Im Z.
+  t12_l_ratio   total series inductance. The far-end-shorted Im Z at 10 MHz is
+                omega * (total L - b), where b is the ladder's own R-C bias (below).
+                The bias is additive and scales as R^2 * C, so a bare DUT/reference
+                division of Im Z would also pass an R/C error as an L error (and
+                the other way round). The graded expression therefore ADDS BACK the
+                bias before dividing by the declared total: the reference's bias is
+                read off the bench (a bare inductor of the declared total L gives
+                omega * L_declared; its difference from the reference ladder's Im Z
+                is omega * b_ref) and is rescaled to the DUT's measured R and C
+                (Re Z ratio, squared, times the open-end C ratio). What remains is
+                the DUT's total series L over the declared one, with a cross term
+                only in the second order of the (separately graded) R and C errors.
 
 Each ratio is also graded on a second pair of DUT instances that omit len_mm, kr
 and kc (suffix _default) against a fixed nominal reference, so the subcircuit's own
@@ -41,12 +47,14 @@ the netlist is graded against the declaration, never against itself -- but the
 probe-frequency observables are NOT the lumped constants. The shorted-far-end read
 (R + jwL) carries a frequency-INDEPENDENT inductance bias (each interior shunt cap
 feeds current through the series resistance behind it: C_seg * R^2 * sum of
-squares, about 3 % of L at 3 mm, 12 % at 5 mm / kr 1.2). That correction is a
-property of the declared ladder, identical on both sides of the ratio, so it
-cancels; it only dilutes the L sensitivity by the same few percent.
-test_channel_model.py's nodal solver of the netlist text bounds the residual
-asymmetry at every parameter corner, offline, and seeds each defect class as an
-edit of that text to show the ratio leaves the band.
+squares, about 3 % of L at 3 mm, 12 % at 5 mm / kr 1.2). A plain DUT/reference
+division leaves that bias in the ratio and dilutes then amplifies the L error by
+1/(1 - b/L) (an L +0.9 % edit read 1.0109 at 5 mm), so the L expression adds the
+bias back, rescaled to the DUT's own R and C (t12_l_ratio above).
+test_channel_model.py's nodal solver of the netlist text runs the same
+expression at every parameter corner, offline, pins both tolerance boundaries
+for L, R and C varied independently, and seeds each defect class as an edit of
+that text to show the ratio leaves the band.
 
 The expected values are read from spec/channel-model.md here, never restated by
 hand: the generator parses the declared table, writes the constants into the
@@ -105,20 +113,52 @@ def _cell(row, i):
     return row.split("|")[i].strip()
 
 
-def _number_with_suffix(cell):
-    """("0.20 pF/mm") -> (0.20e-12, "0.20p", "p"): SI value, ngspice literal, suffix."""
-    m = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*(meg|[fpnumk])?[^\d]", cell + " ")
-    if not m:
-        raise SystemExit(f"gen_channel_model: unparsable table cell {cell!r}")
-    num, suf = m.group(1), m.group(2) or ""
-    return float(num) * SI.get(suf, 1.0), num + suf, suf
+_NUM_RE = r"[0-9]+(?:\.[0-9]+)?"
+
+# The whole declaration of each cell is parsed, not a numeric prefix: a cell with a
+# unit or syntax the bench does not model ("1 cm", "0.20 nF/mm", "R and C each
+# ×0.6 and ×1.4") is rejected rather than read as its leading digits. Target-column
+# unit pattern per row; the fallback and stretch columns repeat the number bare or
+# with that same unit.
+_VALUE_UNIT = {"r_mm": r"Ω/mm", "c_mm": r"([fpn])F/mm", "l_mm": r"([pnu])H/mm",
+               "cfar": r"([fpn])F"}
+_SPREAD_RE = re.compile(r"R and C each ×(%s) and ×(%s)" % (_NUM_RE, _NUM_RE))
 
 
-def _number(cell):
-    m = re.match(r"([0-9]+(?:\.[0-9]+)?)", cell)
+def _length(cell, what):
+    m = re.fullmatch(r"(%s) mm" % _NUM_RE, cell)
     if not m:
-        raise SystemExit(f"gen_channel_model: no number in table cell {cell!r}")
+        raise SystemExit(f"gen_channel_model: {what} cell {cell!r} is not "
+                         "'<number> mm'; the bench models lengths in mm only")
     return float(m.group(1))
+
+
+def _value(key, row):
+    """(SI value, ngspice literal) of a per-mm/far-end row; all three columns checked."""
+    unit_re = _VALUE_UNIT[key]
+    m = re.fullmatch(r"(%s) ?(%s)" % (_NUM_RE, unit_re), _cell(row, 2))
+    if not m:
+        raise SystemExit(f"gen_channel_model: {key} target cell {_cell(row, 2)!r} is not "
+                         f"'<number> <unit>' with unit {unit_re!r}; unsupported unit or "
+                         "syntax -- extend the generator before declaring it")
+    num = m.group(1)
+    suf = (m.group(3) if len(m.groups()) >= 3 else None) or ""
+    unit_txt = _cell(row, 2)[len(num):].strip()
+    value = float(num) * SI.get(suf, 1.0)
+    for col, name in ((3, "fallback"), (4, "stretch")):
+        cell = _cell(row, col)
+        mc = re.fullmatch(r"(%s)(?: ?%s)?" % (_NUM_RE, re.escape(unit_txt)), cell)
+        if not mc:
+            raise SystemExit(f"gen_channel_model: {key} {name} cell {cell!r} is not the "
+                             f"bare number or the number with the target unit {unit_txt!r}")
+        other = float(mc.group(1)) * SI.get(suf, 1.0)
+        if abs(other - value) > 1e-9 * abs(value):
+            raise SystemExit(
+                f"gen_channel_model: {key} differs in the {name} column "
+                f"({cell!r} vs the target {_cell(row, 2)!r}); the bench supports one "
+                "value per quantity -- extend the generator before declaring "
+                "per-model values")
+    return value, num + suf
 
 
 def table():
@@ -136,23 +176,23 @@ def table():
             if not first.startswith(prefix):
                 continue
             if key == "lengths":
-                rows[key] = [_number(_cell(line, i)) for i in (2, 3, 4)]
+                rows[key] = [_length(_cell(line, i), name) for i, name in
+                             ((2, "target length"), (3, "fallback length"),
+                              (4, "stretch length"))]
             elif key == "spread":
-                m = re.search(r"×\s*([0-9.]+)\s+and\s+×\s*([0-9.]+)", _cell(line, 2))
+                m = _SPREAD_RE.fullmatch(_cell(line, 2))
                 if not m:
-                    raise SystemExit("gen_channel_model: no ±20 % spread pair found")
+                    raise SystemExit(
+                        f"gen_channel_model: spread target cell {_cell(line, 2)!r} is not "
+                        "'R and C each ×<a> and ×<b>'")
+                for col, name in ((3, "fallback"), (4, "stretch")):
+                    if _cell(line, col) != "same":
+                        raise SystemExit(
+                            f"gen_channel_model: spread {name} cell {_cell(line, col)!r} "
+                            "is not 'same'; the bench supports one spread pair")
                 rows[key] = [float(m.group(1)), float(m.group(2))]
             else:
-                value, literal, suf = _number_with_suffix(_cell(line, 2))
-                for col, name in ((3, "fallback"), (4, "stretch")):
-                    other = _number(_cell(line, col)) * SI.get(suf, 1.0)
-                    if abs(other - value) > 1e-9 * abs(value):
-                        raise SystemExit(
-                            f"gen_channel_model: {key} differs in the {name} column "
-                            f"({_cell(line, col)!r} vs the target {_cell(line, 2)!r}); "
-                            "the bench supports one value per quantity -- extend the "
-                            "generator before declaring per-model values")
-                rows[key], rows[key + "_lit"] = value, literal
+                rows[key], rows[key + "_lit"] = _value(key, line)
     missing = [k for _, k in ROW_OF if k not in rows]
     if missing:
         raise SystemExit(f"gen_channel_model: {SPEC_MD} is missing rows {missing}")
@@ -209,6 +249,8 @@ def bench_netlist():
     nom = dict(len_x="tb_len0", kr_x="", kc_x="")
     nom_short = _ref_ladder("yc", shorted=True, **nom)
     nom_open = _ref_ladder("yd", shorted=False, **nom)
+    l_total = "{tb_l_mm*ch_len}"
+    l_total_nom = "{tb_l_mm*tb_len0}"
     return f"""* {TB_NAME} -- GENERATED by gen_channel_model.py; do not edit.
 * T-12 conformance bench: spec/channel/channel_rc.cir (the DUT, two bare chan_rlc
 * instances) against reference ladders built from the declared table values
@@ -252,6 +294,12 @@ Iryb 0 yb0 dc 0 ac 1
 Iryc 0 yc0 dc 1 ac 1
 {nom_open}
 Iryd 0 yd0 dc 0 ac 1
+* bare inductors of the declared total L, driven like the ladders: Im Z at the L probe
+* is omega * L_declared, the quantity the ladder's bias is measured against
+Lyl yl0 0 {l_total}
+Iryl 0 yl0 dc 0 ac 1
+Lyn yn0 0 {l_total_nom}
+Iryn 0 yn0 dc 0 ac 1
 * the PVT-FULL supply axis rides this dummy rail: the ladder is linear and
 * supply-free, so the source exists only that corners.supply_v has a name to alter
 Vpvt vpvt 0 dc 1.2
@@ -263,6 +311,25 @@ Vpvt vpvt 0 dc 1.2
 def graded(name, expr):
     return {"name": name, "spec_row": "T-12", "unit": "ratio", "expr": expr,
             "limits": {"min": 1 - TOL, "max": 1 + TOL}}
+
+
+def l_ratio_expr(dut_short, dut_open, ref_short, ref_open, ref_l):
+    """Total-L ratio with the ladder's R-C bias added back (docstring, t12_l_ratio).
+
+    X(n) = vecmax(imag(v(n))), Rr = Re Z_dut / Re Z_ref (shorted end), Cr = reference
+    over DUT open-end reactance (the C ratio). With XL = omega * L_declared:
+        (X(dut) + (XL - X(ref)) * Rr^2 * Cr) / XL
+    """
+    def x(n):
+        return f"vecmax(imag(v({n})))"
+
+    def re(n):
+        return f"vecmax(real(v({n})))"
+
+    rr = f"({re(dut_short)}/{re(ref_short)})"
+    cr = f"(vecmax(imag(-v({ref_open})))/vecmax(imag(-v({dut_open}))))"
+    return (f"({x(dut_short)}+({x(ref_l)}-{x(ref_short)})*{rr}*{rr}*{cr})"
+            f"/{x(ref_l)}")
 
 
 def steps():
@@ -280,15 +347,15 @@ def steps():
                     "vecmax(imag(-v(yb0)))/vecmax(imag(-v(txb)))"),
              graded("t12_c_ratio_default",
                     "vecmax(imag(-v(yd0)))/vecmax(imag(-v(txd)))")]},
-        # the shorted-end Im Z is omega * (total L - the ladder's own R-C bias); each
-        # series inductor carries the same current, so the sum of all ten is graded
+        # the shorted-end Im Z is omega * (total L - the ladder's own R-C bias b); the
+        # expression adds b back (see l_ratio_expr) so only total L is graded
         {"name": "l_hi",
          "analysis": {"kind": "ac", "args": f"lin 1 {F_HI_ARG} {F_HI_ARG}"},
          "alter": {},
          "measurements": [
-             graded("t12_l_ratio", "vecmax(imag(v(txa)))/vecmax(imag(v(ya0)))"),
+             graded("t12_l_ratio", l_ratio_expr("txa", "txb", "ya0", "yb0", "yl0")),
              graded("t12_l_ratio_default",
-                    "vecmax(imag(v(txc)))/vecmax(imag(v(yc0)))")]},
+                    l_ratio_expr("txc", "txd", "yc0", "yd0", "yn0"))]},
     ]
 
 

@@ -43,17 +43,27 @@ suffix for the default pair):
 - `t12_c_ratio`: open-end impedance at 1 MHz. The reactance is `−1/(ωC)`, so the ratio of DUT
   capacitance to the declared value is the **reference** reactance over the DUT's. The
   reference's shunt C sums to `kc · c_mm · len_mm + cfar`.
-- `t12_l_ratio`: `Im Z` of the far-end-shorted network at 10 MHz. All ten series inductors
-  carry the same loop current, so each weighs equally and a defect in any single section moves
-  the total (an open-end read weights each inductor by the current behind it and cannot see an
-  error near the receiver).
+- `t12_l_ratio`: total series L. `Im Z` of the far-end-shorted network at 10 MHz is
+  `ω · (L − b)`, where `b` is the ladder's own R-C bias (about 3 % of L at 3 mm, 12 % at 5 mm
+  with kr 1.2; it scales as `R² · C`). All ten series inductors carry the same loop current,
+  so each weighs equally and a defect in any single section moves the total (an open-end read
+  weights each inductor by the current behind it and cannot see an error near the receiver).
+  A bare DUT/reference division of that read keeps `b` in the ratio: it amplified an L error by
+  `1/(1 − b/L)` (+0.9 % read 1.0109 at 5 mm) and let R and C edits that each pass their own
+  checks move the L verdict. The graded expression therefore adds the bias back:
+  `(X(dut) + (XL − X(ref)) · Rr² · Cr) / XL`, with `X` the shorted-end `Im Z`, `XL = ω · L_declared`
+  read from a bare inductor of the declared total (`Lyl`, `Lyn` in the bench), `Rr` the
+  shorted-end `Re Z` ratio and `Cr` the reference-over-DUT open-end reactance. What is left is
+  the DUT's total series L over the declared one; the bias term follows the DUT's own R and C,
+  so its remaining cross term is second order in R and C errors that are graded separately.
 
-Why differential: the shorted read carries an inductance bias from the ladder's own R-C
-structure (about 3 % of L at 3 mm, 12 % at 5 mm with kr 1.2). It is a property of the declared
-ladder and appears identically on both sides, so it cancels in the ratio. The generator
-docstring has the derivation. The generator reads the target, fallback and stretch columns of
-the table and refuses a table where they differ, since the bench supports one value per
-quantity.
+Why differential: the references are built from the declared table, so the netlist is graded
+against the declaration and never against itself, and the probe-frequency corrections of the
+declared ladder cancel between the two sides. The generator docstring has the derivation. The
+generator parses the whole declaration of every cell of the three model columns (target,
+fallback, stretch; length, per-mm values, far-end load, spread) and refuses a table where they
+differ or where a cell uses a unit or syntax the bench does not model, since the bench
+supports one value per quantity.
 
 ## Tolerance
 
@@ -66,11 +76,14 @@ any of the seeded defects below leaves the band by 10 % or more.
 
 `test_channel_model.py` solves **the netlist text** (`channel_rc.cir` parsed: defaults,
 `.param`s, every R/L/C, zero-volt sources) with a nodal solver, runs the same extraction as
-the request, and seeds defects by editing that text: wrong `r_mm`/`c_mm`/`l_mm`/`cfar`
+the request, and seeds defects by editing that text. The solver refuses what it cannot model
+(a voltage source that is not zero-volt, a device other than R/L/C, any expression beyond
+`+ - * /`, numbers and names; no `eval`) rather than passing it silently. Seeds: wrong `r_mm`/`c_mm`/`l_mm`/`cfar`
 defaults, `kr` or `kc` dropped from a section expression, the `Cfar` device removed, one
 series inductor +20 % (at either end of the ladder), and a changed DUT default of `kr` or
 `len_mm` (only the default-instance pair sees those). Each must leave the ±1 % band; the C
-tolerance edges are exercised in both directions at ±1 %.
+tolerance edges are exercised in both directions at ±1 % for C and for series L, and L is also
+paired with R and C scaled independently (±0.9 %) to show its verdict follows total L alone.
 
 ## Boundary
 

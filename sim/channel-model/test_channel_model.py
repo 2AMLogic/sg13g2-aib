@@ -28,7 +28,9 @@ declared VALUES, their scaling and the far-end load, not on the section count,
 whose low-frequency signature vanishes by design (channel_rc.cir: the ladder is
 "valid far above the signal bandwidth").
 """
+import ast
 import json
+import operator
 import re
 import subprocess
 import sys
@@ -81,11 +83,40 @@ _ENG = {"f": 1e-15, "p": 1e-12, "n": 1e-9, "u": 1e-6, "m": 1e-3, "k": 1e3, "meg"
 _NUM = re.compile(r"(?<![A-Za-z_0-9.])([0-9]+(?:\.[0-9]+)?(?:e[-+]?[0-9]+)?)(meg|[fpnumk])?(?![A-Za-z_0-9.])")
 
 
+_BINOPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
+           ast.Div: operator.truediv}
+_UNOPS = {ast.UAdd: operator.pos, ast.USub: operator.neg}
+
+
 def _expr(text, env):
-    """Evaluate a .param/element expression: engineering suffixes, + - * /, names."""
+    """Evaluate a .param/element expression: engineering suffixes, + - * /, names.
+
+    Only that arithmetic is accepted (numbers, parameter names, binary + - * /,
+    unary + -, parentheses): the netlist text is walked as a syntax tree, never
+    handed to eval(), and anything else (calls, attributes, powers, strings) raises.
+    """
     py = _NUM.sub(lambda m: repr(float(m.group(1)) * _ENG.get(m.group(2) or "", 1.0)),
                   text.strip().strip("{}"))
-    return eval(py, {"__builtins__": {}}, dict(env))
+
+    def walk(node):
+        if isinstance(node, ast.Expression):
+            return walk(node.body)
+        if isinstance(node, ast.Constant) and type(node.value) in (int, float):
+            return node.value
+        if isinstance(node, ast.Name):
+            if node.id not in env:
+                raise AssertionError(f"undefined parameter {node.id!r} in {text!r}")
+            return env[node.id]
+        if isinstance(node, ast.BinOp) and type(node.op) in _BINOPS:
+            return _BINOPS[type(node.op)](walk(node.left), walk(node.right))
+        if isinstance(node, ast.UnaryOp) and type(node.op) in _UNOPS:
+            return _UNOPS[type(node.op)](walk(node.operand))
+        raise AssertionError(f"unsupported expression syntax in {text!r}")
+
+    try:
+        return walk(ast.parse(py, mode="eval"))
+    except SyntaxError as exc:
+        raise AssertionError(f"unparsable expression {text!r}: {exc}") from None
 
 
 def netlist_z(text, shorted, omega, overrides=None):
@@ -125,13 +156,20 @@ def netlist_z(text, shorted, omega, overrides=None):
         if not line or line.startswith("*"):
             continue
         tok = line.split()
-        if tok[0].lower() == ".param":
+        head = tok[0]
+        if head.lower() == ".param":
             for assign in re.findall(r"(\w+)=(\{[^}]*\}|\S+)", line):
                 env[assign[0]] = _expr(assign[1], env)
-        elif tok[0][0] in "Vv":
+        elif head[0] in "Vv":
+            # a zero-volt source is a wire (a current probe); any other value is an
+            # active source this passive solver would silently treat as a short
+            if len(tok) != 4 or _expr(tok[3], env) != 0:
+                raise AssertionError(f"voltage source is not zero-volt: {line!r}")
             union(tok[1], tok[2])
-        elif tok[0][0] in "RLCrlc":
-            elems.append((tok[0][0].upper(), tok[1], tok[2], _expr(tok[3], env)))
+        elif head[0] in "RLCrlc" and len(tok) == 4:
+            elems.append((head[0].upper(), tok[1], tok[2], _expr(tok[3], env)))
+        else:
+            raise AssertionError(f"statement the offline solver cannot model: {line!r}")
     if shorted:
         union(pins[1], "0")
     elems_y = []
@@ -215,16 +253,31 @@ def netlist_dut(text=SPEC_CIR.read_text(), defaults=False):
     return z
 
 
+def l_ratio(dut, ref, len_mm, kr, kc):
+    """The graded total-L ratio, as gen.l_ratio_expr writes it, from impedances.
+
+    dut(shorted, omega) and ref(open_end, omega) give Z at the tx pin. Mirrors
+    (X(dut) + (XL - X(ref)) * Rr^2 * Cr) / XL with X = Im Z of the shorted far end
+    at the 10 MHz probe, XL = omega * declared total L, Rr the shorted-end Re Z
+    ratio and Cr the reference-over-DUT open-end reactance.
+    """
+    xl = W_HI * gen.TABLE["l_mm"] * len_mm
+    x_ref = ref(False, W_HI).imag
+    rr = dut(True, W_HI).real / ref(False, W_HI).real
+    cr = ref(True, W_HI).imag / dut(False, W_HI).imag
+    return (dut(True, W_HI).imag + (xl - x_ref) * rr * rr * cr) / xl
+
+
 def extract(dut, defaults=False):
     """The three DUT/reference ratios the request grades, per parameter row.
 
     Mirrors the request's expressions: R from the shorted far end at DC, C as the
     REFERENCE open-end reactance over the DUT's at 1 MHz (reactance is -1/(wC)),
-    L from Im Z of the shorted far end at 10 MHz, DUT over reference. `dut(shorted,
-    omega, len_mm, kr, kc)` gives the DUT impedance; the reference is always the
-    declared ladder (gen.TABLE, ten sections). With `defaults`, the DUT ignores the
-    row and is graded against the fixed nominal reference, as the bench's
-    default-instance pair is.
+    L from `l_ratio` (shorted-end Im Z at 10 MHz with the ladder's R-C bias added
+    back). `dut(shorted, omega, len_mm, kr, kc)` gives the DUT impedance; the
+    reference is always the declared ladder (gen.TABLE, ten sections). With
+    `defaults`, the DUT ignores the row and is graded against the fixed nominal
+    reference, as the bench's default-instance pair is.
     """
     ratios = {}
     for len_mm, kr, kc in ([(gen.TABLE["lengths"][0], 1, 1)] if defaults
@@ -233,7 +286,7 @@ def extract(dut, defaults=False):
         ratios[(len_mm, kr, kc)] = (
             dut(True, W_DC, len_mm, kr, kc).real / ref(False, W_DC).real,
             ref(True, W_LO).imag / dut(False, W_LO, len_mm, kr, kc).imag,
-            dut(True, W_HI, len_mm, kr, kc).imag / ref(False, W_HI).imag,
+            l_ratio(lambda sh, w: dut(sh, w, len_mm, kr, kc), ref, len_mm, kr, kc),
         )
     return ratios
 
@@ -308,7 +361,13 @@ class RequestTests(unittest.TestCase):
         self.assertEqual(by["t12_c_ratio_default"],
                          "vecmax(imag(-v(yd0)))/vecmax(imag(-v(txd)))")
         self.assertEqual(by["t12_l_ratio"],
-                         "vecmax(imag(v(txa)))/vecmax(imag(v(ya0)))")
+                         gen.l_ratio_expr("txa", "txb", "ya0", "yb0", "yl0"))
+        self.assertEqual(by["t12_l_ratio_default"],
+                         gen.l_ratio_expr("txc", "txd", "yc0", "yd0", "yn0"))
+        # the L expression: bias added back, bare-inductor total, R and C ratios
+        for piece in ("imag(v(yl0))", "real(v(txa))", "real(v(ya0))",
+                      "imag(-v(yb0))", "imag(-v(txb))"):
+            self.assertIn(piece, by["t12_l_ratio"])
         self.assertEqual(by["t12_r_ratio_default"], "v(txc)/v(yc0)")
 
     def test_the_grid_is_pvt_full_times_fifteen_parameter_rows(self):
@@ -345,6 +404,9 @@ class RequestTests(unittest.TestCase):
         self.assertIn("tb_l_mm=0.5n", tb)
         self.assertIn("tb_cfar=0.1p", tb)
         self.assertIn("tb_len0=3", tb)
+        # the bare inductors the L expression measures the ladder's bias against
+        self.assertIn("Lyl yl0 0 {tb_l_mm*ch_len}", tb)
+        self.assertIn("Lyn yn0 0 {tb_l_mm*tb_len0}", tb)
         # swept references carry the DUT's scaling; nominal ones are fixed
         self.assertEqual(len(re.findall(r"\{ch_kr\*tb_r_mm\*ch_len/10\}", tb)), 20)
         self.assertEqual(len(re.findall(r"\{ch_kc\*tb_c_mm\*ch_len/10\}", tb)), 18)
@@ -462,6 +524,84 @@ class BenchConformanceTests(unittest.TestCase):
             # direction: more capacitance reads as a ratio above one
             self.assertEqual(all(x > 1 for x in ratios_c), factor > 1, f"C x{factor}")
 
+    @staticmethod
+    def scaled(l=1.0, r=1.0, c=1.0):
+        """channel_rc.cir with the series L, series R, or shunt C (incl. Cfar) scaled."""
+        text = SPEC_CIR.read_text()
+        for find, factor, fmt in (
+                ("{l_mm*len_mm/10}", l, "{%r*l_mm*len_mm/10}"),
+                ("{kr*r_mm*len_mm/10}", r, "{%r*kr*r_mm*len_mm/10}"),
+                ("{kc*c_mm*len_mm/10}", c, "{%r*kc*c_mm*len_mm/10}"),
+                ("Cfar n10 gnd {cfar}", c, "Cfar n10 gnd {%r*cfar}")):
+            assert text.count(find) == 1, find
+            text = text.replace(find, fmt % factor if "%r" in fmt else find)
+        return text
+
+    def ratios(self, text, index):
+        return [v[index] for v in extract(netlist_dut(text)).values()]
+
+    def test_l_tolerance_boundaries_in_both_directions(self):
+        """Total series L at +-0.9 % reads inside and at +-1.01 % outside, at every row.
+
+        The earlier Im Z ratio carried the ladder's R-C bias and amplified an L
+        error by 1/(1 - b/L): +0.9 % read 1.0109 at 5 mm. With the bias added back
+        the ratio tracks the series-L scale factor itself, so both boundaries hold
+        at all 15 rows in both directions.
+        """
+        for factor, inside in ((1.009, True), (0.991, True),
+                               (1.0101, False), (0.9899, False)):
+            lr = self.ratios(self.scaled(l=factor), 2)
+            self.assertEqual(all(LO <= x <= HI for x in lr), inside, f"L x{factor}")
+            self.assertEqual(any(LO <= x <= HI for x in lr), inside, f"L x{factor}")
+
+    def test_l_grade_is_independent_of_r_and_c_variation(self):
+        """R and C moved inside their own +-1 % must not move total L across its band.
+
+        The fault the plain ratio had: the bias is additive, so R and C edits that
+        each pass their own checks shifted the L read (L x1.01001 with R and C
+        x1.009 passed). Each case below pairs an L scale with R and C scales and
+        must give the verdict of the L scale alone.
+        """
+        cases = [  # (l, r, c, L inside the band?)
+            (1.0, 1.009, 1.009, True), (1.0, 0.991, 0.991, True),
+            (1.0, 1.009, 0.991, True), (1.0, 0.991, 1.009, True),
+            (1.009, 1.009, 1.009, True), (1.009, 0.991, 0.991, True),
+            (0.991, 1.009, 1.009, True), (0.991, 0.991, 0.991, True),
+            (1.0105, 1.009, 1.009, False), (1.0105, 0.991, 0.991, False),
+            (1.0105, 1.009, 0.991, False), (0.9895, 1.009, 1.009, False),
+            (0.9895, 0.991, 0.991, False), (0.9895, 0.991, 1.009, False)]
+        for l, r, c, inside in cases:
+            with self.subTest(l=l, r=r, c=c):
+                lr = self.ratios(self.scaled(l=l, r=r, c=c), 2)
+                self.assertEqual(all(LO <= x <= HI for x in lr), inside)
+                if not inside:
+                    self.assertTrue(all(not LO <= x <= HI for x in lr))
+                # R and C alone are graded by their own ratios, still in band
+                self.assertTrue(all(LO <= x <= HI for x in self.ratios(
+                    self.scaled(l=l, r=r, c=c), 0)) or not (0.991 <= r <= 1.009))
+
+    def test_the_default_pair_sees_a_changed_total_l_default(self):
+        text = SPEC_CIR.read_text()
+        mut = text.replace("l_mm=0.5n", "l_mm=0.506n")             # +1.2 % total L
+        self.assertTrue(self.band_left(mut, defaults=True))
+
+    def test_the_offline_solver_rejects_what_it_cannot_model(self):
+        """A non-zero source, a stray device or a non-arithmetic expression raises."""
+        text = SPEC_CIR.read_text()
+        for label, find, repl in (
+                ("Vrx0 not zero-volt", "Vrx0 n10 rx 0", "Vrx0 n10 rx 1"),
+                ("Vtx0 not zero-volt", "Vtx0 tx n0 0", "Vtx0 tx n0 1"),
+                ("Vtx0 dc spec", "Vtx0 tx n0 0", "Vtx0 tx n0 dc 0"),
+                ("a diode", "Cfar n10 gnd {cfar}", "Dfar n10 gnd dmod"),
+                ("a current source", "Cfar n10 gnd {cfar}", "Ifar n10 gnd 1u"),
+                ("a power operator", "C0  n0  gnd {seg_c/2}", "C0  n0  gnd {seg_c**2}"),
+                ("a function call", "C0  n0  gnd {seg_c/2}", "C0  n0  gnd {abs(seg_c)}"),
+                ("a dunder name", "C0  n0  gnd {seg_c/2}",
+                 "C0  n0  gnd {__import__('os')}")):
+            with self.subTest(label), self.assertRaises(AssertionError):
+                self.assertEqual(text.count(find), 1, find)
+                netlist_z(text.replace(find, repl), True, W_HI, {})
+
     def test_a_same_total_section_count_change_is_below_the_band(self):
         """The bench's stated boundary: 10 -> 9 sections, totals identical.
 
@@ -505,6 +645,44 @@ class FallbackColumnTests(unittest.TestCase):
         self.assertIn(crow, gen.SPEC_MD.read_text())
         with self.assertRaises(SystemExit):
             self.run_table(lambda t: t.replace(crow, "| 0.20 | 0.30 |"))
+
+
+    def test_unsupported_units_and_syntax_in_any_cell_are_rejected(self):
+        """The whole declaration of every cell is parsed, not a numeric prefix."""
+        spec = gen.SPEC_MD.read_text()
+        edits = [
+            ("fallback C/mm unit", "| 0.20 | 0.20 |", "| 0.20 nF/mm | 0.20 |"),
+            ("stretch C/mm unit", "| 0.20 | 0.20 |", "| 0.20 | 0.20 nF/mm |"),
+            ("target C/mm unit", "| 0.20 pF/mm |", "| 0.20 pF/cm |"),
+            ("target C/mm no unit", "| 0.20 pF/mm |", "| 0.20 |"),
+            ("fallback length unit", "| 3 mm | 1 mm | 5 mm |", "| 3 mm | 1 cm | 5 mm |"),
+            ("target length unit", "| 3 mm | 1 mm | 5 mm |", "| 3 m | 1 mm | 5 mm |"),
+            ("stretch length bare", "| 3 mm | 1 mm | 5 mm |", "| 3 mm | 1 mm | 5 |"),
+            ("fallback spread", "| R and C each ×0.8 and ×1.2 | same | same |",
+             "| R and C each ×0.8 and ×1.2 | R and C each ×0.6 and ×1.4 | same |"),
+            ("stretch spread", "| R and C each ×0.8 and ×1.2 | same | same |",
+             "| R and C each ×0.8 and ×1.2 | same | ×0.5 and ×2 |"),
+            ("target spread", "| R and C each ×0.8 and ×1.2 |",
+             "| R only ×0.8 and ×1.2 |"),
+            ("R/mm unit", "| 5.5 Ω/mm |", "| 5.5 kΩ/mm |"),
+            ("R/mm fallback unit", "| 5.5 Ω/mm | 5.5 | 5.5 |",
+             "| 5.5 Ω/mm | 5.5 kΩ/mm | 5.5 |"),
+            ("L/mm unit", "| 0.5 nH/mm |", "| 0.5 nH/cm |"),
+            ("far-end unit", "| 0.1 pF |", "| 0.1 pF/mm |"),
+            ("far-end fallback", "| 0.1 pF | 0.1 | 0.1 |", "| 0.1 pF | 0.1 fF | 0.1 |"),
+        ]
+        for label, find, repl in edits:
+            with self.subTest(label):
+                self.assertEqual(spec.count(find), 1, f"anchor {find!r}")
+                with self.assertRaises(SystemExit):
+                    self.run_table(lambda t, f=find, r=repl: t.replace(f, r))
+
+    def test_the_declared_units_in_every_column_parse(self):
+        spec = gen.SPEC_MD.read_text()
+        alt = spec.replace("| 0.20 | 0.20 |", "| 0.20 pF/mm | 0.20 pF/mm |") \
+                  .replace("| 5.5 Ω/mm | 5.5 | 5.5 |", "| 5.5 Ω/mm | 5.5 Ω/mm | 5.5 |")
+        t = self.run_table(lambda _: alt)
+        self.assertEqual((t["c_mm"], t["r_mm"]), (0.20e-12, 5.5))
 
 
 class PostWiringTests(unittest.TestCase):
