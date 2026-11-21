@@ -73,23 +73,24 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
   in the dc-static runs. **T-25 is still not evaluated** and `XResd` is the receiver-isolation element, so the
   halved resistance is an unmeasured ESD cost. `design/aib_pad_esd_2kv.spice` keeps `l=2u` until #196 decides
   the diode. Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. The committed
-  layout still draws `Resd` 2 um x 2 um (`ESD_RES` in `layout/gen_io_column.py:129`) — the
-  geometry of the completed DR-0017 regeneration (#140, PR #148; DRC
-  `layout/records/20261110T082915Z`, LVS `layout/lvs/README.md` "Issue #140") — so this
-  `l=1u` netlist size is the one change it does not cover. That LVS is a connectivity match
+  layout draws `Resd` at this netlist size since the #387 regeneration (2 um wide, 1 um long;
+  DRC `layout/records/20261120T202314Z`). The LVS is a connectivity match
   on the layout and records `device.geometry_not_compared` for `rppd`, so it cannot
-  distinguish the two resistor lengths; the drawn size rests on the generator table.
+  distinguish the two resistor lengths; the drawn size rests on the generator table, which
+  the CI evidence job now compares against this netlist on every push
+  (`python3 -I layout/gen_io_column.py --check`).
 
 Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;
 the Monte Carlo testbench decides. Layout, LVS and the I/O-cell
-assembly are separate issues. The DR-0017 regeneration they owed is complete (#140, PR #148):
-its DRC (`layout/records/20261110T082915Z`) and LVS (`layout/lvs/README.md` "Issue #140") evidence
-covers the netlists as of that regeneration, with `Resd` drawn 2 um x 2 um (`ESD_RES`,
-`layout/gen_io_column.py:129`); the LVS is a connectivity match that does not compare `rppd`
-geometry, so the drawn size is attested by the generator table, not by the LVS.
-The later `XResd l=1u` change above is not in the committed layout yet. The forwarded-clock
-alignment (DLL) is out of scope.
+assembly are separate issues. The DR-0017 regeneration they owed is complete (#140, PR #148),
+and the `XResd l=1u` resize is in the committed layout too (#387): `Resd` is drawn at the
+netlist size and the stream, DRC (`layout/records/20261120T202314Z`), LVS
+(`layout/lvs/README.md` "Issue #387") and extraction records all bind it. The LVS is a
+connectivity match that does not compare `rppd`
+geometry, so the drawn size is attested by the generator table -- now itself checked
+against the netlists in CI -- not by the LVS.
+The forwarded-clock alignment (DLL) is out of scope.
 
 ## Regenerate and check
 

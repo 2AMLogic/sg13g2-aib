@@ -13,6 +13,12 @@ design/ (device type, W, L, ng and the net each terminal sits on); the device
 table below repeats those numbers and `check_against_netlists()` fails the run
 if design/*.spice and this table disagree.
 
+`--check` runs that comparison alone and exits: it needs no klayout and no PDK
+(plain `python3 -I layout/gen_io_column.py --check`), which is how the CI
+evidence job runs it, so the table cannot drift from the netlists between
+regenerations. The geometry path runs the same comparison first and then
+imports klayout.
+
 Cells written: aib_io_tx, aib_io_rx (unit cells, 55 x 100 um), aib_io_tx_clk,
 aib_io_rx_clk (clk | clkb pairs), aib_io_column_tx, aib_io_column_rx and the
 top cell aib_io_column.
@@ -28,8 +34,6 @@ import math
 import os
 import re
 import sys
-
-import klayout.db as db
 
 DBU = 0.001
 
@@ -126,7 +130,7 @@ ESD_DIODES = [
 ESD_MN1 = ("Mn1", "nmos", 2.0, 0.13, 10, dict(D="PAD", G="VSS", S="VSS"))
 ESD_MN2 = ("Mn2", "nmos", 1.0, 0.13, 1, dict(D="PADI", G="VSS", S="VSS"))
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
-ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
+ESD_RES = ("Resd", 2.0, 1.0, "PAD", "PADI")
 # Table w is the drawn finger width for every device. The netlists carry the
 # total width (w_finger * ng; the IHP model derives a finger as w/ng), and the
 # check compares w * ng against that total for every device.
@@ -772,9 +776,17 @@ def build_column(layout, name, unit, pair, role):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--output", default="layout/aib_io_column.gds")
+    ap.add_argument("--check", action="store_true",
+                    help="verify the device table against design/*.spice and exit 0; "
+                         "stdlib-only (klayout is imported only on the geometry path), "
+                         "no layout is allocated and nothing is written")
     args = ap.parse_args()
     here = os.path.dirname(os.path.abspath(__file__))
     check_against_netlists(os.path.join(here, "..", "design"))
+    if args.check:
+        return
+    global db
+    import klayout.db as db
     layout = db.Layout()
     layout.dbu = DBU
     tx = build_unit(layout, "aib_io_tx", True)
