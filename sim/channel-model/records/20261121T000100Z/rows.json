@@ -1,0 +1,404 @@
+{
+  "label": "channel-model",
+  "corners": 675,
+  "kind": "simulated",
+  "rows": {
+    "T-12": {
+      "verdict": "pass",
+      "measurements": [
+        "c_lo.t12_c_ratio",
+        "c_lo.t12_c_ratio_default",
+        "l_hi.t12_l_ratio",
+        "l_hi.t12_l_ratio_default",
+        "r_dc.t12_r_ratio",
+        "r_dc.t12_r_ratio_default"
+      ],
+      "pass": 4050,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=3",
+        "measurement": "r_dc.t12_r_ratio",
+        "value": 1.0,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "param_groups": {
+    "ch_kc=0.8,ch_kr=0.8,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8,ch_len=1",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=0.8,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=0.8,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2,ch_len=1",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1,ch_kr=1,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=1",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1,ch_kr=1,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1,ch_kr=1,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=1",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2,ch_len=1",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "measurements": [
+            "c_lo.t12_c_ratio",
+            "c_lo.t12_c_ratio_default",
+            "l_hi.t12_l_ratio",
+            "l_hi.t12_l_ratio_default",
+            "r_dc.t12_r_ratio",
+            "r_dc.t12_r_ratio_default"
+          ],
+          "pass": 270,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    }
+  }
+}

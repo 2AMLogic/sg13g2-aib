@@ -25,7 +25,7 @@ scaling or a dropped far-end load would move all six rows with no check noticing
 
 1. **T-12's `SIM` leg is the conformance check** in `sim/channel-model/` (#384): the netlist
    against the table, at the three declared lengths and five (kr, kc) points, over PVT-FULL.
-   Record: `sim/channel-model/records/20261120T230233Z/` (675 units, 4050 graded
+   Record: `sim/channel-model/records/20261121T000100Z/` (675 units, 4050 graded
    measurements, all pass, `klt` exit 0): the R, C and L ratios on the swept instances and
    again on instances that use the subcircuit's own defaults. It supersedes
    `records/20261120T220946Z/` (2025 graded measurements), kept as provenance: review of that

@@ -149,7 +149,7 @@ are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the 
 | dc-static | `dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 |
 | channel-eye (CH) | `channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
 | clock-path | `clock-path/records/20261113T095936Z/report.json` | T-17 |
-| channel-model (CH) | `channel-model/records/20261120T230233Z/report.json` | T-12 |
+| channel-model (CH) | `channel-model/records/20261121T000100Z/report.json` | T-12 |
 
 The channel-eye, clock-path and channel-model records' measurements carry `spec_row` tags, so the grader
 derives their coverage from the envelope and catches a wrong `rows` entry. **The dc-static
