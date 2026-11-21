@@ -7,8 +7,8 @@ value read `not-yet-measured`; that is a gap, not a pass. Read the header of the
 report before reading item 8 `met` as anything more than "the aggregate exists
 and no recorded row fails".
 
-Item 8 does not read `met` today. T-10, T-15 and T-16 each have a committed
-`klt yield` record whose verdict is `fail`, so the envelope is `status: fail` and
+Item 8 does not read `met` today. T-10 has a committed
+`klt yield` record whose verdict is `fail` (T-15 and T-16 pass on their 2026-11-20 re-run), so the envelope is `status: fail` and
 `8.analog` / `8.digital` read `unmet` / `check_failed`. That is the report
 following the records; no spec target, limit or comparator was changed and no
 record was touched to produce it.

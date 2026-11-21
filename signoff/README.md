@@ -9,8 +9,8 @@ and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1
 and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
 `7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
 runs extracted the cells and graded nothing, which is not the same as a spec row failing);
-`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — three recorded rows
-fail, so the aggregate's envelope is `status: fail`; that is the report following the records,
+`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — one recorded row
+fails (T-10), so the aggregate's envelope is `status: fail`; that is the report following the records,
 not a spec target being missed by the report);
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
@@ -362,8 +362,10 @@ while already being cited for item 5 and item 6 (issue #230). The map may still
 carry extra entries the manifest does not cite; the check is one-directional.
 
 **Item 8 currently reads `unmet` / `check_failed`, and that is the honest state.**
-T-10, T-15 and T-16 each have a committed `klt yield` record whose verdict is
-`fail`, so the envelope is `status: fail` and the aggregate says so. No spec
+T-10 has a committed `klt yield` record whose verdict is `fail`, so the envelope is
+`status: fail` and the aggregate says so -- one failing row of 30; T-15 and T-16 pass on
+the 2026-11-20 re-run of #385, whose records supersede (and leave untouched) the
+2026-11-10 failing ones. No spec
 target, limit or comparator was changed, and no record under `sim/*/records/` was
 touched, to produce it. The `met` reading it replaced was an artefact of those
 records never being read.

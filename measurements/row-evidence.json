@@ -259,7 +259,7 @@
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-15 (lane-to-lane skew at the RX input over the modeled channel)",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the passing re-run of #385 (sim/mc/records/20261120T202400Z-t15/). A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
       },
       {
         "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
@@ -269,37 +269,47 @@
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-15 corner-measurements of 180",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the passing re-run of #385 (sim/mc/records/20261120T202400Z-t15/). A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
       },
       {
-        "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "record": "sim/mc/records/20261120T202400Z-t15/yield.json",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "note": "Simulated, not measured; pre-layout. T-15 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -1.8 ps, sigma 5.4 ps, sigma-to-spec 10.8 with lower confidence bound 10.3 against 7; no draw outside +-60 ps, worst draw -20.7 ps against the -60 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -20.7 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
         "field": "status",
         "op": "==",
         "value": "pass",
-        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
-        "scope": "CH",
-        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t15_skew_ps over all limits",
-        "note": "T-15 FAILS the 7-sigma gate as recorded: mean 31.9 ps, sigma 11.4 ps, sigma-to-spec 2.47 against 7, worst draw 62.6 ps against the +60 ps limit (0.4 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t15_skew_ps over all limits"
       },
       {
-        "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "record": "sim/mc/records/20261120T202400Z-t15/yield.json",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "note": "Simulated, not measured; pre-layout. T-15 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -1.8 ps, sigma 5.4 ps, sigma-to-spec 10.8 with lower confidence bound 10.3 against 7; no draw outside +-60 ps, worst draw -20.7 ps against the -60 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -20.7 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
         "field": "measurements[name=t15_skew_ps].capability.sigma_to_spec",
         "op": ">=",
         "value_field": "measurements[name=t15_skew_ps].limits.target_sigma",
-        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
-        "scope": "CH",
-        "basis": "simulated pre-layout, klt yield sigma-to-spec for lane-to-lane skew at the RX input, ps",
-        "note": "T-15 FAILS the 7-sigma gate as recorded: mean 31.9 ps, sigma 11.4 ps, sigma-to-spec 2.47 against 7, worst draw 62.6 ps against the +60 ps limit (0.4 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+        "basis": "simulated pre-layout, klt yield sigma-to-spec for lane-to-lane skew at the RX input, ps"
       },
       {
-        "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
+        "record": "sim/mc/records/20261120T202400Z-t15/yield.json",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "note": "Simulated, not measured; pre-layout. T-15 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -1.8 ps, sigma 5.4 ps, sigma-to-spec 10.8 with lower confidence bound 10.3 against 7; no draw outside +-60 ps, worst draw -20.7 ps against the -60 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -20.7 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
         "field": "measurements[name=t15_skew_ps].distribution.max",
         "op": "<=",
         "value_field": "measurements[name=t15_skew_ps].limits.max",
+        "basis": "simulated pre-layout, worst draw of lane-to-lane skew at the RX input, ps"
+      },
+      {
+        "record": "sim/mc/records/20261120T202400Z-t15/yield.json",
         "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
         "scope": "CH",
-        "basis": "simulated pre-layout, worst draw of lane-to-lane skew at the RX input, ps",
-        "note": "T-15 FAILS the 7-sigma gate as recorded: mean 31.9 ps, sigma 11.4 ps, sigma-to-spec 2.47 against 7, worst draw 62.6 ps against the +60 ps limit (0.4 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+        "note": "Simulated, not measured; pre-layout. T-15 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -1.8 ps, sigma 5.4 ps, sigma-to-spec 10.8 with lower confidence bound 10.3 against 7; no draw outside +-60 ps, worst draw -20.7 ps against the -60 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -20.7 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
+        "field": "measurements[name=t15_skew_ps].distribution.min",
+        "op": ">=",
+        "value_field": "measurements[name=t15_skew_ps].limits.min",
+        "basis": "simulated pre-layout, worst draw of lane-to-lane skew at the RX input, ps"
       }
     ],
     "T-16": [
@@ -311,7 +321,7 @@
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-16 (data-to-clock skew at the RX input over the modeled channel)",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the passing re-run of #385 (sim/mc/records/20261120T202400Z-t16/). A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
       },
       {
         "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
@@ -321,37 +331,47 @@
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-16 corner-measurements of 360",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the passing re-run of #385 (sim/mc/records/20261120T202400Z-t16/). A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
       },
       {
-        "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "record": "sim/mc/records/20261120T202400Z-t16/yield.json",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "note": "Simulated, not measured; pre-layout. T-16 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -0.7 ps, sigma 3.4 ps, sigma-to-spec 8.6 with lower confidence bound 8.3 against 7; no draw outside +-30 ps, worst draw -15.1 ps against the -30 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -15.1 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
         "field": "status",
         "op": "==",
         "value": "pass",
-        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
-        "scope": "CH",
-        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t16_dev_from_half_ui_ps over all limits",
-        "note": "T-16 FAILS the 7-sigma gate as recorded: mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7, worst draw 37.1 ps against the +30 ps limit (3.6 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+        "basis": "simulated pre-layout Monte Carlo, klt yield verdict for t16_dev_from_half_ui_ps over all limits"
       },
       {
-        "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "record": "sim/mc/records/20261120T202400Z-t16/yield.json",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "note": "Simulated, not measured; pre-layout. T-16 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -0.7 ps, sigma 3.4 ps, sigma-to-spec 8.6 with lower confidence bound 8.3 against 7; no draw outside +-30 ps, worst draw -15.1 ps against the -30 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -15.1 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
         "field": "measurements[name=t16_dev_from_half_ui_ps].capability.sigma_to_spec",
         "op": ">=",
         "value_field": "measurements[name=t16_dev_from_half_ui_ps].limits.target_sigma",
-        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
-        "scope": "CH",
-        "basis": "simulated pre-layout, klt yield sigma-to-spec for data-to-clock deviation from half a UI at the RX input, ps",
-        "note": "T-16 FAILS the 7-sigma gate as recorded: mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7, worst draw 37.1 ps against the +30 ps limit (3.6 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+        "basis": "simulated pre-layout, klt yield sigma-to-spec for data-to-clock deviation from half a UI at the RX input, ps"
       },
       {
-        "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
+        "record": "sim/mc/records/20261120T202400Z-t16/yield.json",
+        "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
+        "scope": "CH",
+        "note": "Simulated, not measured; pre-layout. T-16 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -0.7 ps, sigma 3.4 ps, sigma-to-spec 8.6 with lower confidence bound 8.3 against 7; no draw outside +-30 ps, worst draw -15.1 ps against the -30 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -15.1 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
         "field": "measurements[name=t16_dev_from_half_ui_ps].distribution.max",
         "op": "<=",
         "value_field": "measurements[name=t16_dev_from_half_ui_ps].limits.max",
+        "basis": "simulated pre-layout, worst draw of data-to-clock deviation from half a UI at the RX input, ps"
+      },
+      {
+        "record": "sim/mc/records/20261120T202400Z-t16/yield.json",
         "corner": "PVT-FULL, 45 corners, mismatch Monte Carlo (pooled grid)",
         "scope": "CH",
-        "basis": "simulated pre-layout, worst draw of data-to-clock deviation from half a UI at the RX input, ps",
-        "note": "T-16 FAILS the 7-sigma gate as recorded: mean 16.6 ps, sigma 6.6 ps, sigma-to-spec 2.03 against 7, worst draw 37.1 ps against the +30 ps limit (3.6 % of draws outside). Most of the mean is systematic corner/edge asymmetry, not mismatch. Simulated, not measured; pre-layout. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the normal-model sigma-to-spec is indicative and the empirical yield and worst draw are the tail used. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise. Recorded, not tuned; no limit is relaxed."
+        "note": "Simulated, not measured; pre-layout. T-16 passes the 7-sigma gate on the current cells (re-run of #385 on main at 7a7c5b9): mean -0.7 ps, sigma 3.4 ps, sigma-to-spec 8.6 with lower confidence bound 8.3 against 7; no draw outside +-30 ps, worst draw -15.1 ps against the -30 ps limit. Supersedes the failing 2026-11-10 record, which predates the TX predriver NOR widening (89d803b, #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, #332); the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. CH only: the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here. The distribution is not normal (Anderson-Darling rejected), so the empirical tail is the quantity read; it is empty out to -15.1 ps. The +-bound / target_sigma 7 convention is sim/mc/README.md's ratification assumption; #136 has not answered otherwise and DR-0019 (#168, unratified) is not depended on. Recorded, not tuned; no limit is relaxed.",
+        "field": "measurements[name=t16_dev_from_half_ui_ps].distribution.min",
+        "op": ">=",
+        "value_field": "measurements[name=t16_dev_from_half_ui_ps].limits.min",
+        "basis": "simulated pre-layout, worst draw of data-to-clock deviation from half a UI at the RX input, ps"
       }
     ],
     "T-17": [

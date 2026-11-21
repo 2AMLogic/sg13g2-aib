@@ -7,12 +7,12 @@ DR-0013). Simulated, pre-layout; post-layout re-runs follow #37.
 |---|---|---|
 | T-10 receiver threshold | **recorded, fails** | `records/20261108T035315Z-t10/` |
 | T-13, T-14 TX skew | not done | #136 |
-| T-15 RX data-to-data skew (CH) | **recorded, fails** | `records/20261110T113631Z-t15/` |
-| T-16 RX data-to-clock skew (CH) | **recorded, fails** | `records/20261110T113631Z-t16/` |
+| T-15 RX data-to-data skew (CH) | **recorded, passes** | `records/20261120T202400Z-t15/` (re-run of #385; supersedes `20261110T113631Z-t15/`) |
+| T-16 RX data-to-clock skew (CH) | **recorded, passes** | `records/20261120T202400Z-t16/` (re-run of #385; supersedes `20261110T113631Z-t16/`) |
 | T-19 capture window | **recorded, passes** | `records/20261112T082047Z-t19/` |
 
 The manifest declares all six under `spec_rows."6.analog"`; the two open rows (T-13, T-14) are declared
-`gap`s, so item 6 / analog stays `unmet` (reason `check_failed`: T-10, T-15 and T-16 fail their limits; T-19 is cited and passes).
+`gap`s, so item 6 / analog stays `unmet` (reason `check_failed`: T-10 fails its limits; T-15, T-16 and T-19 are cited and pass).
 
 ## Method
 
@@ -36,7 +36,7 @@ klt yield samples.json --format json > yield.json
 throwaway `uvx` environment.
 
 Each committed `report.json.gz` holds one entry per corner and draw. `gen_per_corner.py` reads
-the three failing records and regenerates [`per_corner.md`](per_corner.md) -- per corner, the
+the T-10 failing record and the two T-15/T-16 re-run records and regenerates [`per_corner.md`](per_corner.md) -- per corner, the
 draw count, mean, sample sigma (n-1, as `klt`), margin-ranked worst draw and draws outside the
 row's limits, with the pooled totals cross-checked against the record (`--check` in CI;
 `klt yield` itself pools the corners and cannot answer this).
@@ -91,18 +91,30 @@ N from the `klt yield` sample-size verdict of a 20-draw pilot (confidence 0.95, 
 (1800) were run (verdict sufficient, observed half-width 0.0088). Negative control: an extra 500 fF
 at the degraded lane's receiver input (`edge_lane_deg.inc`, not design evidence), 900 samples each,
 detected for both rows. Both rows ran on the batch fleet (`--backend batch --wait-for-capacity 600`).
+The 2026-11-20 re-run (#385) kept these counts and seeds; its zero-failure verdict
+(`clopper-pearson-zero-failures`) asks 183 on both rows, far below what is recorded, and both
+controls are detected again. One of the T-16 nominal shards was lost to an S3 upload failure on
+first submit (300 units, `lost_shard`) and was recovered with `klt sim --resume`; the collected
+report carries all 1800 draws.
 
-**Results: both fail the 7-sigma gate.** Pooled over the grid, T-15 has mean +31.9 ps and sigma 11.4 ps
-(sigma-to-spec 2.47 against 7; 0.4 % of draws outside +-60 ps, worst 62.6 ps); T-16 has mean +16.6 ps
-and sigma 6.6 ps (sigma-to-spec 2.03 against 7; 3.6 % outside +-30 ps, worst 37.1 ps). The mean is
-mostly systematic (rise/fall asymmetry across the channel and receiver, not mismatch), the
-distributions are skewed and the normality test rejects, so the empirical tail is the quantity to
-read. `klt yield` pools the 45 corners as for T-10; the per-corner reading is in
-[per_corner.md](per_corner.md): T-15 has out-of-limit draws at **2 of 45 corners** (both `ss` at
-1.080 V), binding `ss/1.080V/-40C`; T-16 at **6 of 45 corners** (`ss` and `fs`, every temperature,
-all at 1.080 V), binding `ss/1.080V/27C` -- every failing corner sits at the 1.080 V supply.
-The limits are not relaxed. These are CH
-results only; the L2 loopback does not observe RX-input skew, so no TC value is recorded here.
+**Results (2026-11-20 re-run, #385): both pass the 7-sigma gate** on the current cells (`main`
+at `7a7c5b9`, after the TX predriver NOR widening of `89d803b` / #164 and the `aib_pad_esd`
+`XResd` `l=1u` shortening of `e47bb80` / #332, the two resizes aimed at this quantity). Pooled over the grid, T-15 has mean -1.8 ps and sigma 5.4 ps (sigma-to-spec 10.8,
+lower confidence bound 10.3 against 7; no draw outside +-60 ps, worst -20.7 ps); T-16 has mean
+-0.7 ps and sigma 3.4 ps (sigma-to-spec 8.6, lower bound 8.3 against 7; no draw outside +-30 ps,
+worst -15.1 ps). The 2026-11-10 means (+31.9 / +16.6 ps) moved to the means above, but the two runs
+also differ in other inputs: the SS and FF diode sections changed from `dio_tt` to `dio_ss` and
+`dio_ff` in all four requests, and the ngspice engine moved from 46 to 47. The comparison shows
+the current cells pass under the current setup; it does not isolate how much of the improvement
+came from the resizes. The distributions are still skewed and the normality test
+still rejects, so the empirical tail is the quantity to read: it is empty. `klt yield` pools
+the 45 corners as for T-10; the per-corner reading is in [per_corner.md](per_corner.md): T-15's
+margin-ranked worst draw sits at `sf/1.080V/-40C`, T-16's at `ss/1.080V/27C` -- the low-supply
+corners bind on both rows, and no corner holds an out-of-limit draw. The 2026-11-10 records
+stay untouched (append-only); the re-run supersedes them. The limits are not relaxed. These
+are CH results only; the L2 loopback does not observe RX-input skew, so no TC value is recorded
+here. PR #374's pad-diode change was open at run time and is not covered; if it merges, one
+more re-run is a follow-up, not a reason to hold this one.
 
 ## T-19 (receiver capture window, BOTH)
 

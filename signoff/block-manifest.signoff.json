@@ -717,20 +717,20 @@
           "reason": "check_failed"
         },
         {
-          "citation": "sim/mc/records/20261110T113631Z-t15/yield.json",
+          "citation": "sim/mc/records/20261120T202400Z-t15/yield.json",
           "rows": [
             "T-15"
           ],
-          "status": "unmet",
-          "reason": "check_failed"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/mc/records/20261110T113631Z-t16/yield.json",
+          "citation": "sim/mc/records/20261120T202400Z-t16/yield.json",
           "rows": [
             "T-16"
           ],
-          "status": "unmet",
-          "reason": "check_failed"
+          "status": "met",
+          "reason": null
         },
         {
           "citation": "sim/mc/records/20261112T082047Z-t19/yield.json",
@@ -743,14 +743,10 @@
       ],
       "detail": {
         "failed_citations": [
-          "sim/mc/records/20261108T035315Z-t10/yield.json",
-          "sim/mc/records/20261110T113631Z-t15/yield.json",
-          "sim/mc/records/20261110T113631Z-t16/yield.json"
+          "sim/mc/records/20261108T035315Z-t10/yield.json"
         ],
         "failed_rows": [
-          "T-10",
-          "T-15",
-          "T-16"
+          "T-10"
         ],
         "uncovered_rows": [],
         "declared_gaps": [
@@ -765,6 +761,8 @@
         ],
         "unratified_rows": [],
         "row_sources": {
+          "T-15": "asserted",
+          "T-16": "asserted",
           "T-19": "asserted"
         }
       }
