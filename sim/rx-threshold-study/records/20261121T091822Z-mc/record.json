@@ -1,0 +1,44 @@
+{
+  "record": "rx-threshold-study-mc",
+  "utc_stamp": "20261121T091822Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-10",
+  "claim_scope": "BOTH, for the study cell only (receiver input stage; no channel model). This is study evidence for issue #386's candidate confirmation, not design evidence: the T-10 manifest row stays on the committed cell's failing record until an adoption lands.",
+  "study": "issue #386 receiver-threshold sizing study; the candidate is the supply-referenced input stage (NMOS pair + PMOS mirror load against a matched rppd VDDIO/2 divider) selected by records/20261121T084734Z-screen/ and inlined in tb_mc.cir as aib_rx_data. design/aib_rx_data.spice is unchanged.",
+  "requests": {
+    "nominal": "request_mc.json",
+    "negative_control": "request_mc_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 120,
+    "seed": 4410,
+    "samples": 5400,
+    "negative_control_seed": 4411,
+    "negative_control_samples": 900
+  },
+  "bench_deviations": "The nominal bench is the committed T-10 request shape (sim/mc/request_t10.json: same 45-corner PVT-FULL mismatch grid, same DC sweep 0.3-0.7, same limits and target_sigma, seeds 4410/4411, control degradation = input-side NMOS 4x narrower). One deviation: the control bench widens its DC sweep to 0.15-0.95, because the degraded candidate crosses at fr 0.66-0.75 over the grid (outside the committed 0.3-0.7 window, measured at tt/1.200V/27C and sf/1.080V/-40C during the study's local probes); the nominal bench keeps the committed window.",
+  "result": {
+    "status": "pass",
+    "mean_mv": 2.741416081481482,
+    "sigma_mv": 9.599779881646251,
+    "sigma_to_spec": 6.25,
+    "sample_size_verdict": "sufficient",
+    "outside_limits": 0,
+    "corners_with_out_of_limit_draws": 0,
+    "worst_draw_mv": 42.2976,
+    "negative_control": "detected",
+    "negative_control_degradation_detected": true
+  },
+  "note": "T-10 PASSES for the study's supply-referenced candidate: pooled over the 45-corner grid the offset is +2.7 mV mean, 9.6 mV sigma (sigma-to-spec 6.25 against the 3 target); 0 of 5400 draws outside +-60 mV; the binding corner mean is +10.8 mV (ff/1.320V/125C, per_corner.md). Measured mismatch sigma (8.5-10.8 mV per corner) is about twice the screen's 1/sqrt(area) estimate from the inverter record -- the mirror load's mismatch adds -- but the candidate's mean span across corners is 12.7 mV against the inverter's 84.9 mV, which is what closes the row. Study evidence only: the spec row stays on the committed cell's failing record until the adoption issue lands."
+}
