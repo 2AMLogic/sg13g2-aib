@@ -27,10 +27,12 @@ scaling or a dropped far-end load would move all six rows with no check noticing
    against the table, at the three declared lengths and five (kr, kc) points, over PVT-FULL.
    Record: `sim/channel-model/records/20261121T000100Z/` (675 units, 4050 graded
    measurements, all pass, `klt` exit 0): the R, C and L ratios on the swept instances and
-   again on instances that use the subcircuit's own defaults. It supersedes
-   `records/20261120T220946Z/` (2025 graded measurements), kept as provenance: review of that
-   run found the L read blind to a single-section error, the C ratio inverted, and the
-   defaults masked by the sweep, so the measurements were corrected and the grid re-run.
+   again on instances that use the subcircuit's own defaults. It supersedes two records, both
+   kept as provenance: `records/20261120T220946Z/` (2025 graded measurements; review found the L
+   read blind to a single-section error, the C ratio inverted, and the defaults masked by the
+   sweep) and `records/20261120T230233Z/` (4050; review found its L ratio still carried the
+   ladder's R-C bias, so an L error was amplified at 5 mm and R/C edits moved the L verdict).
+   The L ratio now adds that bias back, so the grid was re-run.
 2. **Tolerance.** ±1 % on each DUT/reference ratio. It is a numerical-agreement tolerance
    and a property of the check, not a spec bound.
 3. **Manifest.** `signoff/block-manifest.json` cites the record under `evidence."5.analog"` with
