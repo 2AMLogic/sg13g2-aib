@@ -65,8 +65,16 @@ run_rc() {
 }
 
 if [ "$want_evidence" = 1 ]; then
-  run "Self-test the checkers" \
-    python3 -I scripts/ci/test_checkers.py
+  # The four suites scripts/ci/test_checkers.py aggregates, run one per group so
+  # a red job names the suite; the aggregator is `npm test` and the item 10 audit.
+  run "Self-test the evidence and record-integrity checkers" \
+    python3 -I scripts/ci/test_evidence_checkers.py
+  run "Self-test the signoff, attestation and pin checkers" \
+    python3 -I scripts/ci/test_signoff_pins.py
+  run "Self-test the sim and generator infrastructure" \
+    python3 -I scripts/ci/test_sim_infra.py
+  run "Self-test the CI check list and shared-helper guards" \
+    python3 -I scripts/ci/test_ci_guards.py
 
   # The shared sim record harness, against a stubbed `klt sim`: no PDK and no
   # batch fleet, so it belongs in the PDK-free list like every checker above.
@@ -106,7 +114,7 @@ if [ "$want_evidence" = 1 ]; then
   # channel-eye outputs and test_t19.py both T-19 netlists, the same
   # comparison those --check modes make. The one sim generator not reached
   # that way, sim/clock-path/gen_clock_path.py --check, runs inside
-  # test_checkers.py above (with gen_channel_eye, gen_mc and gen_dc_static).
+  # test_ci_guards.py above (with gen_channel_eye, gen_mc and gen_dc_static).
   run "Self-test the channel-eye bench and its pass/fail post-processor" \
     python3 -I sim/channel-eye/test_channel_eye.py
   run "Self-test the T-19 capture-window bench and its aperture post-processor" \
