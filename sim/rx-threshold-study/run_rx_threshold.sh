@@ -7,6 +7,7 @@
 #   sim/rx-threshold-study/run_rx_threshold.sh clk        # clock path twice, t02 opposite-edge pairs
 #   sim/rx-threshold-study/run_rx_threshold.sh t16-base   # T-16 nominal channel, as-drawn receiver
 #   sim/rx-threshold-study/run_rx_threshold.sh t16-cand   # T-16 nominal channel, selected candidate
+#   sim/rx-threshold-study/run_rx_threshold.sh t16-mixed  # T-16 nominal channel, candidate in data lanes, as-drawn clock lanes
 #   sim/rx-threshold-study/run_rx_threshold.sh mc         # T-10 Monte Carlo pair for SELECTED
 #
 # The screen/hyst/pin/clk/t16 legs go through the shared sim/harness/batch_record.sh

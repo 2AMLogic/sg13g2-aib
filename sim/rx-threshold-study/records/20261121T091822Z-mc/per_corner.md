@@ -6,15 +6,13 @@ read from this record's `report.json.gz`; the same columns and conventions as
 `klt` reports), margin-ranked worst draw and the count of draws outside the row's +-60 mV
 limits), with the pooled totals cross-checked against the record's own `yield.json`:
 pooled mean 2.741 mV, pooled sigma (n-1) 9.600 mV, 0 of 5400 draws outside the limits,
-`klt yield` status `pass` at target_sigma 3 (sigma-to-spec 6.25). The negative control
+`klt yield` status `pass` at target_sigma 3 (sigma-to-spec 5.9646). The negative control
 (input-side NMOS 4x narrower, 900 draws, seed 4411) is detected.
 
 **0 of 45 corners hold out-of-limit draws** (against the committed cell's 13); the
 highest corner mean is +10.781 mV (`ff/1.320V/125C`), the lowest -2.388 mV
 (`fs/1.080V/-40C`).
 
-| Corner | Draws | Outside limits | Mean (mV) | Sigma (mV, n-1) | Worst draw (mV) |
-|---|---:|---:|---:|---:|---:|
 | Corner | Draws | Outside limits | Mean (mV) | Sigma (mV, n-1) | Worst draw (mV) |
 |---|---:|---:|---:|---:|---:|
 | fs/1.080V/-40C | 120 | 0 | -2.388 | 9.437 | -27.326 |

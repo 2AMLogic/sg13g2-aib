@@ -87,7 +87,7 @@ limit). One stated deviation: the control's DC sweep widens to 0.15–0.95, beca
 degraded candidate crosses at fr 0.66–0.75 over the grid, outside the committed 0.3–0.7
 window; the nominal bench keeps the committed window.
 
-- `klt yield`: **pass**, sigma-to-spec 6.25 (target 3), sample-size verdict
+- `klt yield`: **pass**, sigma-to-spec 5.9646, 95% CI 5.849–6.080 (target 3), sample-size verdict
   `sufficient` (required 183, observed CI half-width 3.4e-4).
 - Pooled: mean +2.74 mV, σ (n−1) 9.60 mV, worst draw +42.3 mV; **0 of 5400 draws
   outside the limits; 0 of 45 corners hold any out-of-limit draw** (the committed
@@ -105,7 +105,7 @@ window; the nominal bench keeps the committed window.
 | Row | Record | Committed cell | Candidate | Verdict |
 |---|---|---|---|---|
 | T-11 hysteresis | `records/20261121T090435Z-hyst/` | ≤ 1.7 µV | ≤ 1.7 µV | unchanged; both pass (limit 60 mV) |
-| T-24 pin capacitance | `records/20261121T095530Z-pin/` | 79.7–96.4 fF | 76.3–92.4 fF | slightly lower at every bias; both pass (target 100 fF) |
+| T-24 pin capacitance | `records/20261121T095530Z-pin/` | 79.7–96.4 fF | 76.3–92.4 fF | lower at the 0 and VDDIO/2 biases, ~2–3 fF higher at VDDIO; overall range narrower, both pass (target 100 fF) |
 | Clock-path t02 | `records/20261121T104210Z-clk/` | see below | see below | candidate **out of the clock legs**; split configuration measured |
 | T-16 at nominal channel | `records/20261121T104646Z-t16-base/`, `…T100828Z-t16-cand/`, `…T103057Z-t16-mixed/` | all rows pass | all rows pass | T-16 unchanged (+9.8 → +9.5 ps binding) |
 
@@ -113,14 +113,14 @@ window; the nominal bench keeps the committed window.
 variant b is the in-bench committed-cell reference).** With the candidate in
 **both clock legs and the data lane** (variant c), the binding corner
 `mos_ss/1.080V/−40C` reads `t02_cr_df` **+624 ps** and `t02_cf_dr`
-**−124 ps** — the opposite-edge ordering inverts; the committed cell's worst on the
+**−624 ps** (both relative to 500 ps; as signed edge-to-edge intervals, 1124 ps and −124 ps) — the opposite-edge ordering inverts; the committed cell's worst on the
 same bench is −76/+76 ps. The candidate's asymmetric output slew (d1 charges through
 the mirror but discharges through the input pair) multiplies the clock-path duty
 distortion by ~8× at the binding corner. **The candidate cannot be the clock
 receiver.** The adoptable configuration is the split — candidate in the data lane,
 committed inverter in both clock legs (variant d), measured on the same bench:
 `t02_cr_df__d` +87..+590 ps and `t02_cf_dr__d` +15..+156 ps over the grid (worst
-`mos_ss/1.080V/−40C` / `mos_sf/1.080V/−40C`), against variant b's −76/+76 ps; the
+`mos_ss/1.080V/−40C` for `t02_cr_df__d`, `mos_sf/1.080V/125C` for `t02_cf_dr__d`), against variant b's −76/+76 ps; the
 same-edge pairs move to `t02_dr_cr__d` 380..534 ps and `t02_df_cf__d` −139..392 ps
 against b's 500.000±0.005 ps. The data lane's late falling edge is the cost the
 adoption issue carries: the forwarded-clock alignment budget (the SG13G2 DLL canary's

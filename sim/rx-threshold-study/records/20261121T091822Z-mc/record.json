@@ -32,7 +32,11 @@
     "status": "pass",
     "mean_mv": 2.741416081481482,
     "sigma_mv": 9.599779881646251,
-    "sigma_to_spec": 6.25,
+    "sigma_to_spec": 5.964572586501778,
+    "sigma_to_spec_ci": {
+      "low": 5.848953298220917,
+      "high": 6.0801918747826385
+    },
     "sample_size_verdict": "sufficient",
     "outside_limits": 0,
     "corners_with_out_of_limit_draws": 0,
@@ -40,5 +44,5 @@
     "negative_control": "detected",
     "negative_control_degradation_detected": true
   },
-  "note": "T-10 PASSES for the study's supply-referenced candidate: pooled over the 45-corner grid the offset is +2.7 mV mean, 9.6 mV sigma (sigma-to-spec 6.25 against the 3 target); 0 of 5400 draws outside +-60 mV; the binding corner mean is +10.8 mV (ff/1.320V/125C, per_corner.md). Measured mismatch sigma (8.5-10.8 mV per corner) is about twice the screen's 1/sqrt(area) estimate from the inverter record -- the mirror load's mismatch adds -- but the candidate's mean span across corners is 12.7 mV against the inverter's 84.9 mV, which is what closes the row. Study evidence only: the spec row stays on the committed cell's failing record until the adoption issue lands."
+  "note": "T-10 PASSES for the study's supply-referenced candidate: pooled over the 45-corner grid the offset is +2.7 mV mean, 9.6 mV sigma (sigma-to-spec 5.96 against the 3 target); 0 of 5400 draws outside +-60 mV; the binding corner mean is +10.8 mV (ff/1.320V/125C, per_corner.md). Measured mismatch sigma (8.5-10.8 mV per corner) is about twice the screen's 1/sqrt(area) estimate from the inverter record -- the mirror load's mismatch adds -- but the candidate's mean span across corners is 12.7 mV against the inverter's 84.9 mV, which is what closes the row. Study evidence only: the spec row stays on the committed cell's failing record until the adoption issue lands."
 }
