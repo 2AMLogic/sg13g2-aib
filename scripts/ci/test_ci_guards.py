@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Self-tests of the repo-wide CI hygiene and meta-guards: every generator parses
-its flags strictly and is fresh, the one check list is complete, and no private
-copy of a shared builder, pin helper or digest formula has regrown.
+its flags strictly and is fresh, the one check list is complete, the test
+aggregator loads exactly the suites that list runs, and no private copy of a
+shared builder, pin helper or digest formula has regrown.
 
 Stdlib only; PDK-free. Run alone: python3 -I scripts/ci/test_ci_guards.py
 python3 -I drops this directory from sys.path, hence the insert below (the check_record_not_ignored.py idiom).
 """
 import fnmatch
+import importlib.util
 import posixpath
 import re
 import sys
@@ -263,8 +265,8 @@ EXEMPT = {
     "sim/gen_common.py": "the shared write-or-check helper (#227); imported, never run",
     "scripts/ci/test_checkers.py":
         "aggregator entry point: signoff/attest/item10.inventory.json and `npm test` run it by name, "
-        "and it only loads the four sibling suites, each listed outright in check_local.sh "
-        "(test_evidence_checkers.py, test_signoff_pins.py, test_sim_infra.py, test_ci_guards.py)",
+        "and it only loads the sibling suites; AggregatorSuitesMatchCheckListTests (#406) asserts "
+        "that it loads and that its SUITES names exactly the suites check_local.sh runs",
 }
 
 # Generators for which strict flag parsing cannot be asserted in PDK-free CI, with the
@@ -495,6 +497,116 @@ class CheckListCompletenessTests(unittest.TestCase):
                          exempt={"sim/c/gen_c.py": "generator with no check mode"},
                          files={"sim/b/test_b.py": "subprocess.run(['gen_a.py', '--check'])"}),
             [])
+
+
+# ---------------------------------------------------------------------------
+# The aggregator loads exactly the suites the check list runs (#406)
+#
+# Since #401 CI runs each scripts/ci suite through its own check_local.sh line,
+# so no CI job imports scripts/ci/test_checkers.py: only `npm test` and the
+# item 10 audit do. A SUITES entry and a run line could therefore drift apart,
+# or the aggregator itself could stop loading, with CI green and the failure
+# surfacing only at signoff.
+# ---------------------------------------------------------------------------
+
+AGGREGATOR = "scripts/ci/test_checkers.py"
+LISTED_SUITE = re.compile(r"python3 -I scripts/ci/(test_\w+)\.py")
+
+
+def load_suites(path):
+    """Execute the aggregator at `path` as the module `test_checkers`; return its SUITES.
+
+    The module-level run `python3 -I scripts/ci/test_checkers.py` performs before
+    unittest.main: it defines SUITES and load_tests and runs no test -- which is
+    why this guard may load the aggregator even while running under it.
+    """
+    spec = importlib.util.spec_from_file_location("test_checkers", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.SUITES
+
+
+def suite_list_errors(check_list_text, suites):
+    """Return a sorted list of ways SUITES and the check list's suite run lines disagree.
+
+    Pure: both inputs are passed in, so each drift direction can be tested
+    against a fixture without touching the real tree. The check list is read for
+    its `python3 -I scripts/ci/test_*.py` run lines, comments dropped.
+    """
+    listed = LISTED_SUITE.findall(strip_sh_comments(check_list_text))
+    errors = []
+    if "test_checkers" in listed:
+        errors.append(f"{AGGREGATOR} is run by {CHECK_LIST}: that runs every suite it loads "
+                      "twice (#401); drop the run line, and never add the aggregator to its own SUITES")
+    for name in sorted(set(listed) - set(suites) - {"test_checkers"}):
+        errors.append(f"{name}: run by {CHECK_LIST} but absent from SUITES, so `npm test` "
+                      "and the item 10 audit run fewer tests than CI")
+    for name in sorted(set(suites) - set(listed)):
+        errors.append(f"{name}: in SUITES but not run by {CHECK_LIST}, so no CI job runs it")
+    return sorted(errors)
+
+
+class AggregatorSuitesMatchCheckListTests(unittest.TestCase):
+    """#406: `npm test`, the item 10 audit and CI run the same suites."""
+
+    def suites(self, path):
+        try:
+            return load_suites(path)
+        except Exception as e:
+            self.fail(f"{AGGREGATOR} does not load ({e!r}); no CI job runs it, so only "
+                      "`npm test` and the item 10 audit would notice")
+
+    # -- the real tree -------------------------------------------------------
+
+    def test_the_aggregator_loads_exactly_the_suites_the_check_list_runs(self):
+        errors = suite_list_errors((REPO / CHECK_LIST).read_text(), self.suites(REPO / AGGREGATOR))
+        self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    # -- the failure modes, against a fixture pair ---------------------------
+    #
+    # The pair is patched rather than the real tree edited, so a failing
+    # assertion here can never leave the working tree dirty.
+
+    FIX_LIST = ('# not CI: python3 -I scripts/ci/test_checkers.py would run every suite twice\n'
+                'run "a" python3 -I scripts/ci/test_a.py\n'
+                'run "b" python3 -I scripts/ci/test_b.py\n')
+    FIX_SUITES = ("test_a", "test_b")
+
+    def fixture(self, text=None, suites=None):
+        return suite_list_errors(text if text is not None else self.FIX_LIST,
+                                 suites if suites is not None else self.FIX_SUITES)
+
+    def test_an_aggregator_that_does_not_load_fails_the_guard(self):
+        with tempfile.TemporaryDirectory() as t:
+            broken = Path(t) / "test_checkers.py"
+            for text in ('SUITES = ("test_a", "test_b"\n',
+                         'SUITES = ("test_a",)\nimport no_such_suite\n',
+                         'pass\n'):
+                with self.subTest(text=text):
+                    broken.write_text(text)
+                    with self.assertRaises(self.failureException):
+                        self.suites(broken)
+            with self.subTest(text="missing file"):
+                with self.assertRaises(self.failureException):
+                    self.suites(Path(t) / "gone.py")
+
+    def test_a_suite_the_check_list_runs_but_the_aggregator_omits_fails(self):
+        self.assertEqual(self.fixture(suites=("test_a",)), [
+            "test_b: run by scripts/ci/check_local.sh but absent from SUITES, so `npm test` "
+            "and the item 10 audit run fewer tests than CI"])
+
+    def test_a_suite_the_aggregator_loads_but_the_check_list_omits_fails(self):
+        self.assertEqual(self.fixture(suites=("test_a", "test_b", "test_c")), [
+            "test_c: in SUITES but not run by scripts/ci/check_local.sh, so no CI job runs it"])
+
+    def test_the_aggregator_run_by_the_check_list_fails(self):
+        text = self.FIX_LIST + 'run "all" python3 -I scripts/ci/test_checkers.py\n'
+        errors = self.fixture(text=text)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("runs every suite it loads twice", errors[0])
+
+    def test_a_clean_pair_reports_nothing(self):
+        self.assertEqual(self.fixture(), [])
 
 
 # ---------------------------------------------------------------------------
