@@ -37,7 +37,7 @@
           },
           {
             "lib": "libs.tech/ngspice/models/cornerDIO.lib",
-            "section": "dio_tt"
+            "section": "dio_ss"
           }
         ]
       },
@@ -54,7 +54,7 @@
           },
           {
             "lib": "libs.tech/ngspice/models/cornerDIO.lib",
-            "section": "dio_tt"
+            "section": "dio_ff"
           }
         ]
       },
@@ -180,7 +180,6 @@
   },
   "backend": "batch",
   "batch": {
-    "runner_version_check": "warn",
     "capacity_wait_s": 1800
   }
 }

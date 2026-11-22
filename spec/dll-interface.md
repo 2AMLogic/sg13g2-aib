@@ -106,8 +106,9 @@ fallback, 2 GHz stretch (its row 1). This repo's rate points are keyed to its ow
 
 The `da166a6` table above quoted the sibling's **target**-column numbers next to
 this repo's target. That was the wrong column: at 500 MHz the applicable numbers
-are the sibling's fallback column, which is looser on every row. Two verdicts
-above change as a result — D-4 (step) and D-7 (jitter), noted per row below.
+are the sibling's fallback column, which is looser on every row quoted here. Two
+verdicts above change as a result — D-4 (step) and D-7 (jitter), noted per row
+below.
 
 ### The five T-21 numbers
 
@@ -230,6 +231,54 @@ column-corrected G2 (4 phases at 500 MHz, not 8), the unbounded random-mismatch
 term that makes the placement error not derivable, and the fallback-column jitter
 limit. Recorded here as [DR-0020](decisions/0020-dll-recomparison-t21.md).
 **No requirement in this file was relaxed to produce a fit.**
+
+### 2026-11-13 note, read at `main` `8107ae0`: D-9 / G3 moves off *pending #54*
+
+The G3 row above holds D-9 / G3 at **pending #54** because `sim/clock-path/` was
+not in this repo's `main` at that section's pin, `70b7d23`. That row stays as
+written — it was true at its pin. This note is the append
+[DR-0020](decisions/0020-dll-recomparison-t21.md) § Consequences named: "If #54's
+PR #178 merges, the D-9 / G3 row moves from *pending* to whatever T-17's recorded
+result supports. That is a one-line edit against a merged record, not a new
+comparison."
+
+#54's PR #178 merged at `952f026`, so the record
+[`sim/clock-path/records/20261113T095936Z/`](../sim/clock-path/records/20261113T095936Z/)
+is on `main`; it is read here at **`8107ae0`**. On that record **D-9 / G3 is not
+triggered**, and the record's scope travels with that verdict:
+
+- **Simulated**, not silicon: 45 corners (5 MOS × VDDIO 1.08/1.20/1.32 V ×
+  −40/27/125 °C), one `klt sim` request on the batch fleet.
+- **Claim scope CH**: the declared die-to-die channel CH-3MM-RC at nominal
+  `kr = kc = 1`, not the test configuration.
+- **Target rate point only**: an ideal complementary 50 % **500 MHz** forwarded
+  clock (1 Gb/s DDR). No 250 MHz (fallback) or 1 GHz (stretch) run is in the
+  record. Because the stimulus is ideal, the distortion measured is what the TX
+  clock path itself adds.
+- **Result**: `t17_dcd_c` and `t17_dcd_cb` hold T-17's ±3 % bound at 90/90 graded
+  measurements; worst |DCD| **−1.036 %** (margin 1.964 %) at `mos_sf`, 1.08 V,
+  −40 °C — one of the two corners T-17 calls out. `rows.json` records T-17
+  `verdict: pass`, binding `mos_sf/mixed/-40C`, `t17_dcd_c` = −0.0103576.
+
+**What the record does not establish.** It is the *target* rate point, on the
+*modeled* channel, from an *ideal* stimulus, so it says nothing about:
+
+- the **2 Gb/s stretch** point (a 1 GHz forwarded clock), where D-9's stretch
+  column asks ±15 % in to ±3 % out;
+- the **test configuration (TC)** — T-17's scope column in `target-spec.md` is
+  BOTH, and this record is CH-scoped; the bond-pad loopback is not measured here;
+- a **non-ideal upstream duty cycle** — D-9 is written as correcting an input DCD
+  of ±10 % to ±3 %, and this input is an ideal 50 % clock, so the record does not
+  show the path rejecting upstream distortion;
+- whether the netlist under test is pre- or post-layout; the record does not say,
+  and nothing here establishes it either way.
+
+So **G3 is not closed by this note**, and D-9's own "to be decided before layout"
+stays open on those terms. What changes is the word *pending*: at the target rate
+point on the modeled channel, the TX clock path holds T-17 without a corrector,
+so the condition that would trigger D-9 is not met by this evidence. No T-row or
+D-row value changes, and T-21's `SIM` half stays a declared gap. Recorded in
+[DR-0020](decisions/0020-dll-recomparison-t21.md) § Addendum.
 
 ## `consumes:` edge: proposal only
 

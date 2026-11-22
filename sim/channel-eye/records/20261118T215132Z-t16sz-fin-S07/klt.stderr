@@ -1,0 +1,128 @@
+klt sim: notice: splitting 180 units into 23 batch jobs of at most 8 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt: batch job klt-sim-a13299af111f submitting to s3://<bucket>/jobs/klt-sim-a13299af111f
+klt: batch job klt-sim-212d8f39c371 submitting to s3://<bucket>/jobs/klt-sim-212d8f39c371
+klt: batch job klt-sim-69c9872efe38 submitting to s3://<bucket>/jobs/klt-sim-69c9872efe38
+klt: batch job klt-sim-328715a2a850 submitting to s3://<bucket>/jobs/klt-sim-328715a2a850
+klt: batch job klt-sim-cef5ced9b469 submitting to s3://<bucket>/jobs/klt-sim-cef5ced9b469
+klt: batch job klt-sim-303669c3453e submitting to s3://<bucket>/jobs/klt-sim-303669c3453e
+klt: batch job klt-sim-f9d8c0b2fe92 submitting to s3://<bucket>/jobs/klt-sim-f9d8c0b2fe92
+klt: batch job klt-sim-4d6bdbcd3be2 submitting to s3://<bucket>/jobs/klt-sim-4d6bdbcd3be2
+klt: batch job klt-sim-3c424e4265fe submitting to s3://<bucket>/jobs/klt-sim-3c424e4265fe
+klt: batch job klt-sim-d50989436002 submitting to s3://<bucket>/jobs/klt-sim-d50989436002
+klt: batch job klt-sim-d974c68a9713 submitting to s3://<bucket>/jobs/klt-sim-d974c68a9713
+klt: batch job klt-sim-0031563cb447 submitting to s3://<bucket>/jobs/klt-sim-0031563cb447
+klt: batch job klt-sim-8bb3eb15736a submitting to s3://<bucket>/jobs/klt-sim-8bb3eb15736a
+klt: batch job klt-sim-5c1e79e0e5e5 submitting to s3://<bucket>/jobs/klt-sim-5c1e79e0e5e5
+klt: batch job klt-sim-eb4697510bf3 submitting to s3://<bucket>/jobs/klt-sim-eb4697510bf3
+klt: batch job klt-sim-4f3ac2c0c1fe submitting to s3://<bucket>/jobs/klt-sim-4f3ac2c0c1fe
+klt: batch job klt-sim-ca7066dac357 submitting to s3://<bucket>/jobs/klt-sim-ca7066dac357
+klt: batch job klt-sim-36dc90999b85 submitting to s3://<bucket>/jobs/klt-sim-36dc90999b85
+klt: batch job klt-sim-46fee5f5b656 submitting to s3://<bucket>/jobs/klt-sim-46fee5f5b656
+klt: batch job klt-sim-a02e5d7119bb submitting to s3://<bucket>/jobs/klt-sim-a02e5d7119bb
+klt: batch job klt-sim-58fc39997be7 submitting to s3://<bucket>/jobs/klt-sim-58fc39997be7
+klt: batch job klt-sim-3a176c8157d4 submitting to s3://<bucket>/jobs/klt-sim-3a176c8157d4
+klt: batch job klt-sim-675b6bda788e submitting to s3://<bucket>/jobs/klt-sim-675b6bda788e
+klt sim: batch job klt-sim-a13299af111f: submitted
+klt sim: shards 0/23 launched, 1 launching, 22 pending, 0 collected; launch rate unknown, ETA unknown
+klt sim: batch job klt-sim-212d8f39c371: submitted
+klt sim: batch job klt-sim-4d6bdbcd3be2: submitted
+klt sim: batch job klt-sim-8bb3eb15736a: submitted
+klt sim: batch job klt-sim-ca7066dac357: submitted
+klt sim: batch job klt-sim-303669c3453e: submitted
+klt sim: batch job klt-sim-cef5ced9b469: submitted
+klt sim: batch job klt-sim-d50989436002: submitted
+klt sim: batch job klt-sim-eb4697510bf3: submitted
+klt sim: batch job klt-sim-a02e5d7119bb: submitted
+klt sim: batch job klt-sim-36dc90999b85: submitted
+klt sim: batch job klt-sim-328715a2a850: submitted
+klt sim: batch job klt-sim-58fc39997be7: submitted
+klt sim: batch job klt-sim-3a176c8157d4: submitted
+klt sim: batch job klt-sim-3c424e4265fe: submitted
+klt sim: batch job klt-sim-d974c68a9713: submitted
+klt sim: batch job klt-sim-f9d8c0b2fe92: submitted
+klt sim: batch job klt-sim-a13299af111f launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-a13299af111f`
+klt sim: batch job klt-sim-a13299af111f: running
+klt sim: batch job klt-sim-a13299af111f state=running elapsed=7s
+klt sim: batch job klt-sim-212d8f39c371 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-212d8f39c371`
+klt sim: batch job klt-sim-5c1e79e0e5e5: submitted
+klt sim: batch job klt-sim-4f3ac2c0c1fe: submitted
+klt sim: batch job klt-sim-8bb3eb15736a launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-8bb3eb15736a`
+klt sim: batch job klt-sim-ca7066dac357 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-ca7066dac357`
+klt sim: batch job klt-sim-8bb3eb15736a: running
+klt sim: batch job klt-sim-8bb3eb15736a state=running elapsed=6s
+klt sim: batch job klt-sim-69c9872efe38: submitted
+klt sim: batch job klt-sim-4d6bdbcd3be2 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-4d6bdbcd3be2`
+klt sim: batch job klt-sim-eb4697510bf3 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-eb4697510bf3`
+klt sim: batch job klt-sim-58fc39997be7 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-58fc39997be7`
+klt sim: batch job klt-sim-58fc39997be7: running
+klt sim: batch job klt-sim-58fc39997be7 state=running elapsed=7s
+klt sim: batch job klt-sim-675b6bda788e: submitted
+klt sim: batch job klt-sim-cef5ced9b469 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-cef5ced9b469`
+klt sim: batch job klt-sim-cef5ced9b469: running
+klt sim: batch job klt-sim-cef5ced9b469 state=running elapsed=6s
+klt sim: batch job klt-sim-212d8f39c371: done
+klt sim: shards 9/23 launched, 12 launching, 2 pending, 0 collected; launch rate 3.3/min, ETA 4m
+klt sim: batch job klt-sim-d50989436002 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-d50989436002`
+klt sim: batch job klt-sim-303669c3453e launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-303669c3453e`
+klt sim: batch job klt-sim-a13299af111f: done
+klt sim: batch job klt-sim-36dc90999b85 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-36dc90999b85`
+klt sim: batch job klt-sim-36dc90999b85 state=no status.json yet elapsed=5s
+klt sim: batch job klt-sim-328715a2a850 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-328715a2a850`
+klt sim: batch job klt-sim-328715a2a850: running
+klt sim: batch job klt-sim-328715a2a850 state=running elapsed=7s
+klt sim: batch job klt-sim-eb4697510bf3: done
+klt sim: batch job klt-sim-0031563cb447: submitted
+klt sim: batch job klt-sim-3a176c8157d4 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-3a176c8157d4`
+klt sim: batch job klt-sim-8bb3eb15736a: done
+klt sim: batch job klt-sim-3c424e4265fe launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-3c424e4265fe`
+klt sim: batch job klt-sim-f9d8c0b2fe92 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-f9d8c0b2fe92`
+klt sim: batch job klt-sim-cef5ced9b469: done
+klt sim: batch job klt-sim-f9d8c0b2fe92: running
+klt sim: batch job klt-sim-f9d8c0b2fe92 state=running elapsed=7s
+klt sim: batch job klt-sim-303669c3453e: done
+klt sim: batch job klt-sim-ca7066dac357: done
+klt sim: batch job klt-sim-4d6bdbcd3be2: done
+klt sim: batch job klt-sim-3a176c8157d4: done
+klt sim: batch job klt-sim-5c1e79e0e5e5 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-5c1e79e0e5e5`
+klt sim: batch job klt-sim-3c424e4265fe: done
+klt sim: batch job klt-sim-36dc90999b85: done
+klt sim: batch job klt-sim-58fc39997be7: done
+klt sim: batch job klt-sim-4f3ac2c0c1fe launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-4f3ac2c0c1fe`
+klt sim: batch job klt-sim-328715a2a850: done
+klt sim: batch job klt-sim-d50989436002: done
+klt sim: batch job klt-sim-46fee5f5b656: submitted
+klt sim: batch job klt-sim-5c1e79e0e5e5: running
+klt sim: batch job klt-sim-5c1e79e0e5e5 state=running elapsed=27s
+klt sim: batch job klt-sim-f9d8c0b2fe92: done
+klt sim: batch job klt-sim-a02e5d7119bb launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-a02e5d7119bb`
+klt sim: batch job klt-sim-a02e5d7119bb state=no status.json yet elapsed=6s
+klt sim: batch job klt-sim-4f3ac2c0c1fe: running
+klt sim: batch job klt-sim-4f3ac2c0c1fe state=running elapsed=28s
+klt sim: batch job klt-sim-69c9872efe38 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-69c9872efe38`
+klt sim: batch job klt-sim-69c9872efe38 state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-5c1e79e0e5e5: done
+klt sim: batch job klt-sim-d974c68a9713 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-d974c68a9713`
+klt sim: batch job klt-sim-675b6bda788e launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-675b6bda788e`
+klt sim: batch job klt-sim-a02e5d7119bb: done
+klt sim: batch job klt-sim-4f3ac2c0c1fe: done
+klt sim: batch job klt-sim-d974c68a9713 state=no status.json yet elapsed=6s
+klt sim: batch job klt-sim-675b6bda788e: running
+klt sim: batch job klt-sim-675b6bda788e state=running elapsed=5s
+klt sim: batch job klt-sim-69c9872efe38: running
+klt sim: batch job klt-sim-69c9872efe38 state=running elapsed=33s
+klt sim: batch job klt-sim-0031563cb447 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-0031563cb447`
+klt sim: batch job klt-sim-0031563cb447 state=no status.json yet elapsed=1s
+klt sim: shards 23/23 launched, 0 launching, 0 pending, 18 collected; launch rate 3.6/min, ETA 0m
+klt sim: batch job klt-sim-46fee5f5b656 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-46fee5f5b656`
+klt sim: batch job klt-sim-46fee5f5b656 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-d974c68a9713: running
+klt sim: batch job klt-sim-d974c68a9713 state=running elapsed=37s
+klt sim: batch job klt-sim-69c9872efe38: done
+klt sim: batch job klt-sim-0031563cb447: running
+klt sim: batch job klt-sim-0031563cb447 state=running elapsed=31s
+klt sim: batch job klt-sim-46fee5f5b656: running
+klt sim: batch job klt-sim-46fee5f5b656 state=running elapsed=31s
+klt sim: batch job klt-sim-d974c68a9713: done
+klt sim: batch job klt-sim-675b6bda788e: done
+klt sim: batch job klt-sim-0031563cb447: done
+klt sim: batch job klt-sim-46fee5f5b656: done

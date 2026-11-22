@@ -15,11 +15,13 @@ Regenerate, then re-cite both file hashes in signoff/block-manifest.json
 (`"6.digital"`) and regrade (signoff/README.md).
 """
 import argparse
-import hashlib
 import json
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from manifest_pins import sha  # noqa: E402  (the one manifest pin definition, #283)
 
 SPEC = "spec/target-spec.md"
 OUT_SPEC = "signoff/item6/digital-spec.json"
@@ -28,7 +30,7 @@ OUT_STATEMENT = "signoff/item6/digital-statement.json"
 # Digital partition rows (synthesized data path, rtl/aib_datapath.v) and why
 # each is deterministic. T-04 (clk/clkb crossing at the RX over PVT-FULL) and
 # T-28 (weak pull resistance, tristate leakage) are analog-cell rows and are
-# deliberately not listed; no STAT row is listed.
+# deliberately not listed (T-04's arrangement leg: DR-0027); no STAT row is listed.
 DIGITAL = {
     "T-02": ("rtl-format",
              "Exchange format is a property of the RTL: data launched and captured on both "
@@ -58,10 +60,6 @@ DIGITAL = {
 }
 
 
-def sha(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def table_rows(root: Path) -> dict:
     rows = {}
     for line in (root / SPEC).read_text(encoding="utf-8").splitlines():
@@ -84,7 +82,7 @@ def build(root: Path) -> tuple:
     spec = {
         "status": "ratified",
         "derived_from": SPEC,
-        "derived_from_sha256": sha(root / SPEC),
+        "derived_from_sha256": sha((root / SPEC).read_bytes()),
         "partition": "digital",
         "rows": [{"id": rid, "parameter": rows[rid][0].replace("*", "")} for rid in DIGITAL],
     }
@@ -113,7 +111,7 @@ def main() -> int:
         if args.regenerate:
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text(text, encoding="utf-8")
-            print(f"wrote {rel} {sha(p)}")
+            print(f"wrote {rel} {sha(p.read_bytes())}")
         elif not p.exists() or p.read_text(encoding="utf-8") != text:
             print(f"STALE: {rel} (run with --regenerate)", file=sys.stderr)
             bad = 1

@@ -2,8 +2,196 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-21
+
+- **PR #393**: feat(sim,signoff): add the T-12 channel-model conformance bench and cite its record
+- **Issue #384** (closed): T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met
+
+### 2026-11-20
+
+- **PR #389**: refactor: share the T-16 edge selection and drop the card re-parse in gen_t16attr
+- **Issue #388** (closed): Share the T-16 edge selection and remove the SPICE card parser from gen_t16attr
+- **PR #382**: docs: fix stale 8-gap count in signoff/README and date the item-5 grader probes
+- **Issue #380** (closed): signoff/README.md still says "8 real gaps" for item 5 / analog after DR-0026 and DR-0028 cut the row set to 18/5
+- **Issue #379** (closed): Guide docs tick still stages README.md without re-attesting item 10: #284's guard diagnoses the round trip but does not prevent it
+
+### 2026-11-19
+
+- **PR #365**: docs: date DR-0017/DR-0018 staleness prose and retire #140 as the live layout tracker
+- **Issue #362** (closed): design/README.md and DR-0017 cite closed #140 as the live tracker for a layout regeneration that e47bb80 made stale again
+- **PR #337**: evidence(sim): study the PDK sg13g2_io pad cells against T-24 and T-08
+- **PR #371**: check_inventory_klt_pin: compare each ngspice pin to the newest smoke record
+- **PR #370**: docs(spec): drop T-05's SIM leg and leave the analog row set (DR-0028)
+- **PR #369**: signoff: enforce each inventory's klt pin against its envelope's grader version
+- **Issue #368** (closed): Item 9 analog: committed smoke record 20261119T000247Z ran ngspice-47 while the inventory pins ngspice-46
+- **Issue #333** (closed): Remove T-05’s standalone SIM leg from analog signoff and preserve its timing evidence
+- **Issue #324** (closed): item9-digital inventory pins klt 0.8.0 while its envelope is produced by 0.9.0 (unchecked pin drift)
+- **PR #364**: docs: signoff README item 5 gap paragraph counts four pending, two standing gaps
+- **PR #363**: docs: restate the ruled #251 T-16 margin question in sim/README.md
+- **PR #358**: docs: align signoff/README gap count and tracker list with the manifest; record the ruled #251 decision in ROADMAP
+- **Issue #360** (closed): signoff/README.md:144 still says five of the six analog gaps are pending and T-05 is the only standing gap (the manifest says two are standing)
+- **Issue #359** (closed): Residual pending-form #251 mentions in sim/README.md after the operator ruling
+- **Issue #352** (closed): Residual post-DR-0026 gap-count and closed-tracker citations in signoff/README.md (and ROADMAP.md's #251 bullet)
+- **PR #356**: docs: retire T-12's #193 tracker in the three narrative READMEs
+- **PR #355**: chore: drop the drifted generated finalist sizing request (request_t16sz_fin_S07.json)
+- **PR #353**: signoff: describe T-12's closed trackers (#193, #251) in past tense in both gap strings
+- **PR #349**: docs: align item-5 gap prose with the manifest after DR-0026
+- **Issue #354** (closed): T-12's tracker is still #193 in three narrative docs after PR #353 corrects the manifest (the #350/#352 scope seam)
+- **Issue #351** (closed): Remove sim/channel-eye/request_t16sz_fin_S07.json: unguarded generated request that has drifted from its generator
+- **Issue #350** (closed): T-12's declared-gap tracker in block-manifest.json is a closed issue (#193), and its named follow-up #251 is closed too
+- **Issue #347** (closed): Live #216 T-05 tracker citations remain outside the signoff/ sim/ spec/ grep scope (layout/pex/README.md, ROADMAP.md)
+- **PR #343**: signoff: repoint T-05 standing-gap tracker to #333
+- **PR #345**: refactor(sim): read OpenVAF pins from build-osdi.sh --print-pins, drop restated copy
+- **Issue #261** (closed): Stop restating the OSDI pins in sim/pdk.json: one of the two copies is wrong about who reads it
+
+### 2026-11-18
+
+- **PR #342**: fix(clock-path): scope clk-pair parser to top-level instances and positional model
+- **PR #339**: fix(pdk): name run_smoke.sh as a consumer in the osdi_toolchain _comment
+- **Issue #340** (closed): check_clk_pair.py's netlist parser reads .subckt bodies as top-level instances and mis-parses models with trailing parameters
+- **PR #338**: spec: grade T-04's clk/clkb arrangement on the clock-path netlist, not RTL
+- **PR #335**: docs(verification): drop unenforced pass counts from klt snippet
+- **PR #332**: feat(design): shorten aib_pad_esd XResd to 1u for T-16 margin
+- **PR #331**: docs: drop unenforced bench pass counts from README repro snippet
+- **PR #329**: ci(rtl): assert expected test counts for positive klt benches
+- **PR #328**: docs(spec): drop the SIM leg from T-02 and T-04 and leave the analog row set
+- **PR #325**: refactor: run RTL benches through the pinned klt, remove local cocotb runner
+- **PR #323**: fix(sim): drop runner_version_check warn override from request generators
+- **PR #322**: chore: remove superseded Yosys smoke generator, re-attest item 9
+- **PR #321**: docs(spec): add DR-0025 recording sibling results as T-21 SIM evidence
+- **PR #320**: chore(sim): remove unrecorded channel-eye positive-control bench
+- **Issue #334** (closed): Unenforced bench pass counts survive in verification/README.md after #330
+- **Issue #330** (closed): README repro snippet carries a second, unenforced copy of the bench pass counts
+- **Issue #327** (closed): T-04 RTL leg is not graded under item 6 digital partition
+- **Issue #326** (closed): check_local.sh rtl asserts only klt's exit code, not the pass counts its own labels claim
+- **Issue #251** (closed): T-16 margin falls to 1.3 ps at the declared +20 % channel C (passes, but the +-20 % spread eats 9.5 of its 10.9 ps)
+- **Issue #245** (closed): Remove verification/run_tb.py: run the cocotb benches through the pinned klt functional-verification the evidence already uses
+- **Issue #241** (closed): Remove the batch runner_version_check "warn" override from the five request generators
+- **Issue #220** (closed): Remove the channel-eye positive-control bench: its TX copy no longer matches design/aib_tx_data.spice
+- **Issue #216** (closed): Item 5 / analog can never read `met` while T-02 and T-04 are by-design standing gaps
+- **Issue #213** (closed): Remove sim/rtl-synth/run_synth.sh: the Yosys smoke is superseded by klt synthesize (keep its record)
+
+### 2026-11-17
+
+- **PR #316**: ci: cover layout/pex records in the structural evidence check and clean up run_pex.sh aborts
+- **PR #314**: fix(pex): stop run_pex.sh recording a klt usage error as a result
+- **Issue #315** (closed): layout/pex records are append-only frozen but never structurally checked: a partial records/<stamp>/ with no record.json is committable
+
+### 2026-11-15
+
+- **PR #311**: ci: guard the inline sha256-formula duplication class under scripts/ci
+- **PR #309**: ci: catch empty-directory and gitignored writes in the strict-flag refusal test
+- **PR #308**: ci: fail check_attested_paths on zero checked paths and require the declared hash_algorithm
+- **PR #306**: fix: verify evidence per-path pins without gating on the aggregate hash
+- **PR #305**: docs: re-point closed klayout-tools#5493 citations to open gap #5494
+- **PR #303**: ci: extend the manifest_pins guard to the scripts/ci generators
+- **PR #300**: fix: tolerate a request with no measurements; add --allow-empty-rows
+- **PR #298**: docs: state the graded T1 signoff status in the README, checked against the record
+- **PR #296**: ci: derive the strict-flag and freshness test subjects from tracked gen_*.py discovery
+- **PR #288**: ci: fail fast when a hash-bound attested path drifts from its envelope
+- **PR #268**: docs: roadmap as of 2026-11-13
+- **Issue #304** (closed): The inline-sha256-formula duplication class under scripts/ci has no guard
+- **Issue #307** (closed): The strict-flag write assertion cannot see a gitignored or empty-directory write
+- **Issue #301** (closed): check_evidence_pins.py: a multi-source record with no aggregate content_hash skips its per-path pins entirely
+- **Issue #299** (closed): check_attested_paths.py: make its own assumptions loud (zero-paths-checked, declared hash_algorithm)
+- **Issue #292** (closed): The manifest-pin consolidation guard does not cover gen_*.py: a generator can regrow a private sha()
+- **Issue #287** (closed): layout/pex/README.md cites klayout-tools#5493 as an open blocker, but it closed 2026-11-13 (docs-only); the live capability gap is #5494
+- **Issue #284** (closed): Guard against docs PRs that edit README.md without re-attesting T1 item 10
+- **Issue #281** (closed): run_dc_static.sh esd-diode leg cannot write a record: a KeyError today, and #267's empty-rows refusal once that is fixed
+- **Issue #270** (closed): README status and maturity-ladder position contradict the committed signoff record
+- **Issue #266** (closed): Derive the strict-flag test's generator set in test_checkers.py: the hand-kept allowlist cannot contain a failing generator
+- **PR #297**: ci: check every cited evidence record binds the shipped stream
+- **Issue #273** (closed): Pin content_hash on stream-bound signoff evidence so a stale input binding fails a gate
+- **PR #295**: ci: fail when a tracked record file is matched by an ignore rule
+- **Issue #263** (closed): Add a CI check that no tracked evidence file is silently ignored
+- **PR #293**: mc: per-corner reading of the failing T-10, T-15 and T-16 MC records
+- **Issue #269** (closed): Monte Carlo: add a per-corner reading of the failing T-10, T-15 and T-16 records (klt yield pools the 45 corners)
+- **PR #291**: fix: gen_specs.py parses argv strictly before touching the committed ERC specs
+- **Issue #277** (closed): layout/erc/gen_specs.py reads no sys.argv: a mistyped --check silently rewrites both committed ERC specs
+- **PR #290**: fix(sim): remove an aborted record dir and refuse record directories with no record.json
+- **Issue #276** (closed): A batch run aborted after the record dir is created leaves a committable records/ directory with no record.json
+- **PR #289**: refactor: define the manifest pin contract once in scripts/ci/manifest_pins.py
+- **Issue #283** (closed): Define the manifest pin check once: two checkers hand-keep the derived_inputs contract and four define sha()
+- **PR #286**: refactor: drop dead placement/router plumbing from gen_io_column
+- **Issue #274** (closed): Remove the dead placement/router plumbing in layout/gen_io_column.py: the _WIDTH global carries two constants
+- **PR #279**: fix(sim): parse gen_t16attr.py's OUTDIR with argparse so --check exits 2
+- **Issue #271** (closed): gen_t16attr.py takes --check as an output directory instead of a flag
+- **PR #272**: evidence(pex): re-bind item 7.analog extraction to the post-#248 stream
+- **Issue #253** (closed): pex: re-run the item 7.analog extraction on the post-#248 stream (the record binds the pre-#248 hash)
+- **PR #262**: fix(gitignore): un-ignore rtl-synth Yosys logs, drop two dead rules, re-aim stale comments
+- **Issue #260** (closed): Remove four .gitignore rules for paths this repo never had, and point the Yosys-log negation at sim/rtl-synth/records
+
+### 2026-11-14
+
+- **PR #282**: fix(layout): parse attest_item2.py flags strictly so a typo cannot rewrite the envelope
+- **Issue #265** (closed): layout/attest_item2.py: strict flag parsing -- a mistyped --check rewrites the committed signoff attestation
+- **PR #275**: fix(sim): parse channel_eye_post flags strictly and refuse an ungraded summary
+- **Issue #267** (closed): channel_eye_post.py: lenient flag parsing and an unguarded empty rows summary commit a record with no verdicts
+- **Issue #257** (closed): Consolidate duplicated PWL stimulus helpers into sim/gen_common.py
+- **PR #264**: fix(sim): parse gen_redundancy_mux flags strictly and share the PWL builders
+- **Issue #256** (closed): Convert gen_redundancy_mux.py to the shared write-or-check helper: it still regenerates on a mistyped --check
+- **PR #258**: fix(ci): base the append-only check on the default branch, not the pre-push head
+- **Issue #255** (closed): check_sim_append_only.py: a record's README is frozen, contradicting the checker's own docstring (and the push-event BASE makes it worse)
+- **PR #254**: fix(layout): order the I/O-column slots with both spares at one end (DR-0016)
+- **Issue #248** (closed): I/O column: put both spares at one end (DR-0016) and check the slot order - the column already draws 22 cells per direction
+- **PR #252**: feat(sim): add the T-12 ±20 % channel R/C spread run and report it per spread corner
+- **Issue #193** (closed): T-12 gap: no channel record varies kr/kc, so no CH result covers the declared +/-20 % R/C spread
+- **PR #250**: test(ci): list the LVS reference check and assert the check list is complete
+- **Issue #236** (closed): Two more gaps in the one check list: layout/lvs/gen_reference.py --check is unlisted, and nothing asserts the list is complete
+
 ### 2026-11-13
 
+- **Issue #54** (closed): T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02)
+- **PR #243**: refactor(pex): reduce gen_pex_benches main() to the shared write-or-check helper
+- **Issue #239** (closed): Convert the seventh write-or-check copy: layout/pex/gen_pex_benches.py should use the shared helper
+- **PR #237**: feat(verification): refuse a request key run_tb.py does not read
+- **Issue #231** (closed): run_tb.py silently ignores request keys it does not read
+- **Issue #219** (closed): Run the committed sim self-tests in CI: 18 tests and two generator --check modes are in no check list
+- **PR #235**: ci: run the channel-eye and T-19 bench self-tests in the PDK-free list
+- **Issue #228** (closed): Record dc-static runs through the shared batch harness: it is the one item 5 family still recorded by hand, and its four records have four shapes
+- **PR #242**: feat(sim): record dc-static runs through the shared batch harness
+- **Issue #227** (closed): Share one write-or---check helper across the six generators: the loop is copied six times with three behaviours
+- **PR #238**: refactor: share one write-or-check helper across the six generators
+- **Issue #230** (closed): Item 8 report grades from a hand-kept row map that omits 13 rows the manifest already cites, three of them recorded failures: check the map against the manifest
+- **PR #240**: fix(item8): grade every row the manifest cites, flipping item 8 to fail
+- **Issue #192** (closed): T-05 SIM leg: no testbench measures the redundancy mux's added load and delay
+- **PR #233**: feat(sim,spec): measure the T-05 redundancy mux's added load and delay over PVT-FULL
+- **Issue #217** (closed): Define each cocotb bench once: run_tb.py and the klt functional-verification requests hold two copies
+- **PR #222**: refactor(verification): define each cocotb bench once, in its klt request
+- **Issue #218** (closed): T-22/T-23: layout/stats/t22-t23.json says met but nothing reads it, and the item 8 report says not-yet-measured - wire it in or stop grading there
+- **PR #221**: feat(measurements): grade T-22 and T-23 from the layout stats record
+- **Issue #81** (closed): T1 item 7 (post-layout verification, analog): klt pex delta report for the I/O cells on the SIM rows
+- **PR #225**: feat(layout): add klt pex extraction evidence and benches for T1 item 7 (analog)
+- **Issue #184** (closed): Define the PVT-FULL corner bundle once: three copies disagree on the diode section
+- **PR #210**: sim: define the PVT-FULL corner bundle once and check every request against it
+- **Issue #223** (closed): main is red: sim harness test_clock_path fails on the committed clock-path record's report.json
+- **PR #224**: test(sim): exclude a record's decompressed report.json from the bench-file set
+- **Issue #189** (closed): Share one batch-run-and-record script between run_channel_eye.sh and run_clock_path.sh (the copies have drifted)
+- **PR #211**: refactor(sim): share one batch run-and-record harness between the channel-eye and clock-path runners
+- **Issue #42** (closed): T1 item 5 (corner verification, analog): PVT-FULL klt sim envelopes for the I/O-cell SIM rows
+- **PR #199**: evidence(signoff): cite three klt sim envelopes for item 5 / analog and declare the full row set
+- **Issue #212** (closed): DR-0022's correction about where a wrongly cited T-02 lands does not reproduce on the pinned grader
+- **PR #215**: docs(DR-0022): amend the grader-bucket claim for a wrongly cited T-02
+- **Issue #203** (closed): Generate the sim/dc-static requests from one description (request_2kv.json is a hand copy of request.json)
+- **PR #214**: refactor(sim): generate the three dc-static requests from one description
+- **Issue #180** (closed): Draw ESD devices and resistors from the checked device table in gen_io_column.py (drawn values are duplicated literals)
+- **PR #207**: layout: draw the ESD devices and TX resistors from the checked device table
+- **Issue #202** (closed): Generate the three hand-copied negative controls from their sources (LVS rewired references, T-10 control bench)
+- **PR #209**: refactor: generate the three hand-copied negative controls from their sources
+- **Issue #173** (closed): Run CI checks through scripts/ci/check_local.sh: the hand-kept mirror has drifted
+- **PR #208**: ci: run the PDK-free checks through scripts/ci/check_local.sh
+- **Issue #174** (closed): Stop committing the four generated T-16 attribution requests (regenerated by run_t16attr.sh)
+- **PR #206**: chore(sim): untrack the four generated T-16 attribution requests
+- **Issue #191** (closed): T-02 and T-04 SIM legs have no numeric bound, so their PVT-FULL measurements can only be reported
+- **PR #204**: docs(spec): decide the T-02 and T-04 SIM legs as a pointer and a report-only leg
+- **Issue #187** (closed): layout: I/O column layout and LVS references still draw the pre-#164 predriver NOR (ng=2); item 4 analog reads met against a stale reference
+- **PR #200**: layout: draw the predriver pull-ups at ng = 4 and regenerate the analog evidence
+- **Issue #186** (closed): dll-interface.md: move D-9 / G3 off 'pending #54' now that the clock-path record is on main
+- **PR #197**: docs(spec): record D-9 / G3 as not triggered, with the T-17 record's scope
+- **Issue #175** (closed): T-21 SIM: forwarded-clock alignment contract is a declared gap; compare against the SG13G2 DLL canary
+- **PR #179**: docs(spec): re-compare T-21 against the DLL canary at 381d989 and record the gaps as DR-0020
+- **PR #178**: feat(sim): record the 45-corner clock-path PVT-FULL run (T-17 pass, T-04/T-02 reported)
+- **Issue #146** (closed): T-09: re-run the skew/timing row on the DR-0017 driver
 - **Issue #165** (closed): Generate LVS negative-control netlists instead of committing 290 KB near-copies
 
 ### 2026-11-12
@@ -47,18 +235,9 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 ### 2026-11-07
 
 - **PR #128**: Bump Repo Skills 0.25.1 -> 0.25.10
-- **PR #118**: fix(layout): regenerate lane column for re-routed slice, attest item2 r7
-- **Issue #114** (closed): Layout: regenerate lane_column.gds after the routed slice re-route
 
 ### 2026-11-06
 
-- **PR #116**: docs(evidence): record routed-datapath LVS on the re-routed stream, still mismatch (r10, r11)
-- **PR #115**: layout: re-route slice_routed.gds from the re-synthesized netlist
-- **PR #107**: docs(evidence): record routed-datapath LVS with top-level pin anchoring off (r8), still mismatch
-- **PR #106**: docs(spec): analyse r7 routed-datapath LVS mismatch categories
-- **PR #105**: docs(evidence): record klt 0.9.1 routed-datapath LVS (r7), still mismatch after the #4954 fix
-- **Issue #112** (closed): Add a toolless freshness check binding slice_routed.gds to the netlist it was routed from
-- **Issue #109** (closed): Layout: re-route layout/slice_routed.gds from the current synthesized netlist
 - **PR #124**: refactor(lvs): remove superseded --diagnostic generator path
 - **PR #123**: chore(sim): remove four regenerable single-corner request copies
 - **Issue #117** (closed): Remove sim/channel-eye/req_commit_*.json: single-corner copies of request_*_1g.json (~1758 lines)
@@ -66,7 +245,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-05
 
-- **PR #102**: docs(evidence): record flattened routed-datapath LVS (r6) and zero-device cause
 - **PR #121**: refactor(signoff): build item 2 envelopes with klt signoff --attest 2
 - **PR #119**: feat(signoff): pin klt 0.9.0 and grade item 11 digital met
 - **Issue #120** (closed): Replace hand-built item 2 attest scripts with klt signoff --attest 2 (available in pinned 0.9.0)
@@ -79,16 +257,12 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-02
 
-- **PR #94**: fix(layout): write the routed slice GDS at dbu 0.00025 um via output_dbu_um
-- **PR #92**: docs(evidence): fresh drawn-cell LVS matches and refused routed-datapath LVS record
-- **Issue #93** (closed): Layout: write the routed slice GDS at dbu 0.00025 um so klt lvs accepts it
 - **PR #113**: fix(sim): run channel-eye grid as one-unit batch jobs and keep resume dir
 - **PR #110**: fix(design): replace pad-ESD Dn1 dantenna with grounded-gate NMOS Mn1 so the channel-eye transient completes
 - **Issue #94** (closed): channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ### 2026-11-01
 
-- **PR #81**: feat(synth): re-synthesize slice with abc -constr and record r3 STA
 - **PR #108**: feat(rtl): rewrite T-05 shift remap to DR-0016 layout, state 22-cell span
 - **Issue #105** (closed): T-05 after DR-0016: rewrite the RTL to the two-signal shift with both spares at one end, and state the 22-cell span in the clock-tree record
 - **PR #32**: spec: propose two-signal shift with both spares at one end (T-05, DR-0016)
@@ -96,7 +270,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-31
 
-- **PR #83**: Bump Repo Skills 0.24.7 -> 0.25.1
 - **PR #100**: docs: record grounded-gate NMOS scratch probe that clears the channel-eye abort
 - **PR #98**: docs: record stimulus-side bisect of the channel-eye abort (lane-A intrinsic, numerical, not an overshoot)
 - **PR #96**: docs: record cell-level aib_pad_esd bisect of the channel-eye abort
@@ -110,25 +283,11 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-29
 
-- **PR #78**: fix(rtl): ungate CDC FIFO rdata load; re-synthesized STA still fails setup
 - **PR #90**: feat: pin derived item-7 SDFs in the manifest and check they reproduce
 - **Issue #88** (closed): Stop committing the two derived item-7 SDFs (regenerated by run_evidence.py)
 
 ### 2026-10-28
 
-- **PR #74**: docs(spec): declare item 6 analog partition a gap, scope not_applicable to digital
-- **PR #68**: docs(drc): attribute the last unexplained router M4 residual to a filed tool gap
-- **PR #67**: fix(layout): put router metal on the deck grid and redraw TX/RX cells to the deck; lane-column DRC 408,004 -> 8,208
-- **PR #60**: refactor: share merged_liberty and derive PnR archive root from the lambdapdk pin
-- **PR #56**: feat(layout): write drawn streams at dbu 0.00025 um for klt's asap7 deck
-- **PR #53**: docs(evidence): record klt lvs refusals for both partitions; shipped-cell compare matches
-- **PR #50**: feat(layout): assemble the 17-lane bump-pitch column and attest T1 item 2
-- **Issue #71** (closed): T1 item 6 (Monte Carlo, analog partition): resolve not_applicable_wrong_partition for the drawn TX/RX cells
-- **Issue #57** (closed): Layout: lane column fails ASAP7 DRC (8.1M violations, 65 rules); unblock T1 item 3
-- **Issue #55** (closed): Draw wells, contacts and routing in the TX/RX cell generator so klt lvs can extract the committed topology
-- **Issue #54** (closed): Finish lambdapdk consolidation: dedupe merged_liberty and the hardcoded pin path in PnR regen
-- **Issue #52** (closed): Regenerate drawn cells and lane column at dbu 0.00025 um so klt accepts them for the asap7 deck
-- **Issue #18** (closed): T1 item 2 (layout): routed lane-datapath GDS from a committed P&R flow plus drawn TX/RX cell GDS placed in the bump-pitch lane column
 - **PR #86**: feat: generate CI-checked characterization report for T1 item 8
 - **Issue #82** (closed): T1 item 8 (characterization report): per-row aggregated report over all 30 T- rows, both partitions
 - **PR #85**: feat: cite SDF-annotated post-route functional run as 7.digital
@@ -140,24 +299,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-27
 
-- **PR #46**: chore: ignore negative-control functional-verification reports
-- **PR #44**: refactor: share lambdapdk pin, fetch and Liberty merge between synth and STA regen
-- **PR #43**: feat: add committed place-and-route flow and routed GDS for the synthesized slice
-- **PR #42**: docs: analyse pre-route setup failure and propose CDC FIFO read-enable decision
-- **PR #41**: docs(manifest): record analog half of item 5 as a declared gap
-- **PR #37**: feat(evidence): record pre-route STA and functional-verification reports for item 5 digital
-- **PR #36**: feat: add generator and GDS for drawn TX/RX cell footprints
-- **PR #31**: docs: add item-10 hygiene inventory, attestation envelope and README reproduce section
-- **PR #29**: feat(design): attest T1 item 1 with synthesized slice netlist and drawn-cell SPICE
-- **PR #28**: docs(spec): record that no ratified spec row is statistical (T1 item 6)
-- **Issue #47** (closed): Remove duplicate Liberty merge in layout/pnr/regen.py; it still calls names db763e1 moved
-- **Issue #34** (closed): T1 item 2b: drawn TX/RX cell GDS generator within the lane-cell budget
-- **Issue #33** (closed): T1 item 2a: P&R flow and routed GDS of the slice datapath
-- **Issue #26** (closed): T1 item 10 (repo hygiene): hygiene inventory and klt signoff --attest 10 envelope
-- **Issue #25** (closed): T1 item 9 (testbenches shipped): testbench inventory and klt signoff --attest 9 envelope
-- **Issue #22** (closed): T1 item 6 (Monte Carlo): record that no ratified spec row is statistical
-- **Issue #21** (closed): T1 item 5 (corner verification): klt sta at RVT TT/SS/FF plus a klt functional-verification report for the lane datapath
-- **Issue #17** (closed): T1 item 1 (design sources): synthesized ASAP7 gate-level netlist for rtl/slice.v plus TX-driver/RX-front-end schematic netlists
 - **PR #73**: fix(layout): finger widths from netlist totals; clear clamp tap from PADI diode so analog LVS matches
 - **PR #71**: feat(layout): LVS of the data path (match) and the I/O cells (mismatch)
 - **PR #69**: feat(signoff): record per-partition klt drc reports and cite as T1 item 3
@@ -190,10 +331,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-23
 
-- **PR #15**: feat(rtl): add lane serializer/deserializer slice with cocotb loopback testbench
-- **PR #14**: feat(layout): bump map generator, pad-centre checker and self-test
-- **Issue #13** (closed): Commit the bump map and a pad-centre checker with a negative control (spec section 3, decision 0002)
-- **Issue #12** (closed): Lane datapath RTL (4:1 serializer/deserializer to the drawn-cell boundary) with a cold-start cocotb testbench (T1 items 1, 9)
 - **PR #26**: feat: add DDR/SDR serializer, deserializer and L1 loopback RTL with latency bench
 - **PR #25**: feat: add shift-redundancy remap RTL with exhaustive single-fault cocotb bench
 - **Issue #24** (closed): RTL: DDR/SDR serializer, deserializer and L1 loopback with cycle-accounted latency (T-02, T-27, T-29)
@@ -206,12 +343,10 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-21
 
-- **PR #10**: Bump Repo Skills 0.24.3 -> 0.24.7
 - **PR #17**: Bump Repo Skills 0.24.3 -> 0.24.7
 
 ### 2026-10-20
 
-- **PR #5**: ci: add klt signoff manifest, verdict of record and drift gate
 - **PR #7**: ci: add signoff record and evidence-format/append-only checks
 - **Issue #5** (closed): T1 item 10: add a block manifest, a committed signoff record and a PDK-free CI that keeps evidence formats valid
 - **PR #12**: docs(spec): record sibling spec-review comment in DR-0014

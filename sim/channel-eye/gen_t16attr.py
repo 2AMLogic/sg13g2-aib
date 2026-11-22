@@ -9,8 +9,8 @@ connection) and corner in {ss (mos_ss, 1.08 V, 125 C, the binding corner), tt (m
 t16_* cards unchanged (self-check against the CH record) plus, for each of the eight edge
 pairs, the absolute 50 % crossing time of every probe stage (t16attr_probes.inc).
 """
+import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -25,20 +25,10 @@ LINKS = {"ch": "tb_t16attr_ch.cir", "id": "tb_t16attr_id.cir"}
 
 
 def edges():
-    """{bench name: dict(pol, i, cpol)}: data edge i of polarity pol, clock edge at (i + 0.5) UI."""
-    b = g.stream()
-    trs = [t for t in g.transitions(b) if t[1] and t[0] >= 1]
-    out = {}
-    _, cards = g.skew_pairs()
-    for nm, card in cards:
-        m = re.search(r"v\(dsa\) VAL=0 (RISE|FALL)=(\d+) TARG v\(csig\) VAL=0 (RISE|FALL)=(\d+)", card)
-        pol, n, cpol = m.group(1), int(m.group(2)), m.group(3)
-        seq = [t[0] for t in trs if t[1] == pol.lower()]
-        # the n-th transition of this polarity counted from the stream start (rises_before / falls_before)
-        i = seq[n - 1]
-        assert cpol == ("RISE" if i % 2 == 0 else "FALL"), nm
-        out[nm] = {"pol": pol, "i": i, "cpol": cpol}
-    return out
+    """{bench name: selection}: data edge `i` of polarity `pol`, clock edge at (i + 0.5) UI
+    of polarity `cpol` -- the shared T-16 selection itself, not a re-parse of its card (#388)."""
+    _, t16 = g.skew_pairs()
+    return {e["name"]: e for e in t16}
 
 
 def stage_cards(nm, e):
@@ -79,7 +69,19 @@ def request(link, corner):
 
 
 def main(argv):
-    out = Path(argv[0])
+    """Write the four requests into the one positional OUTDIR.
+
+    Parsed with argparse rather than read off `argv[0]`, so an unrecognised argument
+    exits 2 before anything is created instead of becoming a directory name: this
+    script has no `--check` mode (its outputs are gitignored and regenerated per run,
+    .gitignore:24-27), and a hand-typed `--check` answered with exit 0 is the one
+    shape most likely to be read as a check that passed (#271).
+    """
+    ap = argparse.ArgumentParser(
+        description="Write the four T-16 attribution `klt sim` requests into OUTDIR.")
+    ap.add_argument("outdir", metavar="OUTDIR",
+                    help="directory to write request_t16attr_<link>_<corner>.json into")
+    out = Path(ap.parse_args(argv).outdir)
     out.mkdir(parents=True, exist_ok=True)
     for link in LINKS:
         for corner in CORNERS:

@@ -3,13 +3,13 @@
   "consumes": [
     {
       "from": "2AMLogic/sg13g2-bandgap",
-      "commit": "52535387e6ccf0a89f6490901a9abb2b78144176",
+      "commit": "3d33554f84721ffd7cb1d7aafbc41f51e5aaee5e",
       "mode": "vendored",
       "files": [
         {
           "upstream": "sim/tools/build-osdi.sh",
           "local": "sim/harness/common/build-osdi.sh",
-          "sha256": "d022ddc32a02280081d32bb7186ba1920b0b3399b00b0a5ad5eeda717d1396bd"
+          "sha256": "5f9e30473de9b017596da4ed89420a409838d59a9941abc9942a2e60b177bad3"
         }
       ]
     }

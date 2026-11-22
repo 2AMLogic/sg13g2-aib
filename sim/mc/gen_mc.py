@@ -2,33 +2,29 @@
 """Generate the T1 item 6 Monte Carlo `klt sim` requests (nominal + negative control).
 
 Stdlib only. `python3 -I sim/mc/gen_mc.py [--check]` writes (or checks) one
-`request_<row>.json` and `request_<row>_ctl.json` per campaign in sim/mc/.
-The 45-corner PVT-FULL grid (spec/target-spec.md) is built from the PDK's
-`mos_<corner>_mismatch` sections so per-instance mismatch is live.
+`request_<row>.json` and `request_<row>_ctl.json` per campaign in sim/mc/, plus the
+T-10 control bench `tb_t10_ctl.cir` (see `tb_t10_ctl`). The 45-corner PVT-FULL grid comes
+from `sim/pvt_full.py` (the repo's one encoding of spec/target-spec.md), on the PDK's
+`mos_<corner>_mismatch` sections so
+per-instance mismatch is live.
 """
-import argparse
 import json
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE / "capture_window"))
+sys.path.insert(0, str(HERE.parent))
 import gen_t19  # noqa: E402  (T-19 bench constants and measurement cards)
-LIBM = "libs.tech/ngspice/models/cornerMOSlv.lib"
-RES = {"tt": "res_typ", "ss": "res_wcs", "ff": "res_bcs", "sf": "res_typ", "fs": "res_typ"}
-OSDI = [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{m}.osdi"
-        for m in ("psp103", "psp103_nqs", "r3_cmc", "mosvar")]
+import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
+import gen_common  # noqa: E402  (write_or_check and the seeded-defect substitution)
+LIBM = pvt_full.LIB_MOS
 
 
 def corners(supplies=("vddio",)) -> dict:
-    proc = []
-    for c in ("tt", "ss", "ff", "sf", "fs"):
-        proc.append({"name": c, "sections": [
-            {"lib": LIBM, "section": f"mos_{c}_mismatch"},
-            {"lib": "libs.tech/ngspice/models/cornerRES.lib", "section": RES[c]},
-            {"lib": "libs.tech/ngspice/models/cornerDIO.lib", "section": "dio_tt"}]})
-    return {"process": proc, "supply_v": {k: [1.08, 1.2, 1.32] for k in supplies},
-            "temperature_c": [-40, 27, 125]}
+    """The PVT-FULL grid on the PDK's `mos_*_mismatch` sections (per-instance mismatch live)."""
+    return pvt_full.corners(supplies, style="explicit", mismatch=True)
 
 
 # row id -> (netlist, control netlist, analysis step list, MC n, seed)
@@ -47,9 +43,9 @@ def request(row: str, ctl: bool) -> dict:
         "measurements": spec["top"],
         "options": {"stage_model_inputs": True, "fail_on_diagnostic": ["nonconvergence"],
                     "timeout_s": spec.get("timeout_s", 10), "keep_artifacts": False,
-                    "osdi_preload": OSDI},
+                    "osdi_preload": pvt_full.osdi_preload()},
         "backend": "batch",
-        "batch": {"runner_version_check": "warn", "capacity_wait_s": 1800},
+        "batch": {"capacity_wait_s": 1800},
     }
 
 
@@ -62,6 +58,37 @@ ROWS["t10"] = {
     "top": [{"name": "t10_offset_mv", "expr": "(rx_up.vth_frac-0.5)*rx_up.vddio_v*1000", "unit": "mV",
              "limits": {"min": -60, "max": 60, "target_sigma": 3}}],
 }
+
+
+# T-10 negative control bench. tb_t10.cir includes design/aib_rx_data.spice as drawn; the
+# control inlines a copy of that cell instead and narrows its first-stage NMOS, which is the
+# one seeded degradation the control exists to detect. Derived from the design cell rather
+# than hand-copied (#202) so a resize of the receiver cannot leave the control on the old
+# device sizes while still claiming to isolate the narrowing. Byte-identical to the bench
+# the committed record cites (sim/mc/records/20261108T035315Z-t10/tb_t10_ctl.cir).
+T10_CTL_HEADER = """\
+* T-10 negative control: the receiver's first-stage NMOS is made 4x narrower
+* (w=0.25u instead of 1u), a seeded design degradation that must move the
+* threshold out of the +-60 mV bound. A bench copy, not design evidence; the
+* design cell is NOT included here.
+"""
+T10_INCLUDE = ".include ../../design/aib_rx_data.spice"
+T10_NMOS = "XMi1n M1 PAD VSS VSS sg13_lv_nmos w={} l=0.13u ng={} m=1"
+
+
+def tb_t10_ctl() -> str:
+    """tb_t10.cir with the design cell inlined in place of its .include and the receiver's
+    first-stage NMOS narrowed from w=1u ng=2 to w=0.25u ng=1. The other three devices are
+    copied verbatim, so they follow design/aib_rx_data.spice."""
+    what = "tb_t10_ctl.cir"
+    cell = "\n".join(line for line in (ROOT / "design" / "aib_rx_data.spice").read_text().splitlines()
+                     if not line.startswith("*"))     # the design cell's own comments and PININFO
+    cell = gen_common.seed(cell, T10_NMOS.format("1u", 2), T10_NMOS.format("0.25u", 1), what)
+    lines = (HERE / "tb_t10.cir").read_text().splitlines()
+    head = 0
+    while head < len(lines) and lines[head].startswith("*"):
+        head += 1                                     # the nominal header; the control has its own
+    return T10_CTL_HEADER + gen_common.seed("\n".join(lines[head:]), T10_INCLUDE, cell, what) + "\n"
 
 
 EDGE_SUPPLIES = ("vdd_atx", "vdd_arx", "vdd_btx", "vdd_brx", "vdd_ctx", "vdd_crx")
@@ -110,22 +137,19 @@ ROWS["t19"] = {
 }
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--check", action="store_true")
-    args = ap.parse_args()
-    bad = 0
+def outputs() -> dict:
+    """path -> text for every file this script writes."""
+    out = {}
     for row in ROWS:
         for ctl in (False, True):
             p = HERE / ROWS[row].get("dir", ".") / f"request_{row}{'_ctl' if ctl else ''}.json"
-            text = json.dumps(request(row, ctl), indent=2) + "\n"
-            if args.check:
-                if not p.exists() or p.read_text() != text:
-                    print(f"STALE: {p.name}", file=sys.stderr)
-                    bad = 1
-            else:
-                p.write_text(text)
-    return bad
+            out[p] = json.dumps(request(row, ctl), indent=2) + "\n"
+    out[HERE / "tb_t10_ctl.cir"] = tb_t10_ctl()
+    return out
+
+
+def main() -> int:
+    return gen_common.write_or_check(outputs(), description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":

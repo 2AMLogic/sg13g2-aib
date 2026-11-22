@@ -16,17 +16,18 @@ Not covered here: the standard-cell liberty hash in the report
 Run `klt synthesize --check ... [--rerun]` locally for that (signoff/README.md).
 """
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from manifest_pins import MANIFEST, sha  # noqa: E402  (the one manifest pin definition, #283)
 
 DIR = "design/synth"
 REQUEST = f"{DIR}/aib_datapath.synth.json"
 REPORT = f"{DIR}/aib_datapath.report.json"
 INVENTORY = "signoff/attest/item1-digital.inventory.json"
 ENVELOPE = "signoff/attest/item1-digital.attest.json"
-MANIFEST = "signoff/block-manifest.json"
 MANIFEST_KEY = "1.digital"
 RTL = ("rtl/aib_tx_slice.v", "rtl/aib_rx_slice.v", "rtl/aib_datapath.v", "rtl/shift_redundancy.v")
 # The request lists the sources klt synthesizes; shift_redundancy.v is in the
@@ -34,15 +35,11 @@ RTL = ("rtl/aib_tx_slice.v", "rtl/aib_rx_slice.v", "rtl/aib_datapath.v", "rtl/sh
 SYNTH_RTL = RTL[:3]
 
 
-def sha(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def klt_combined(paths) -> str:
     """klt's multi-source input digest: sha256 over the per-file hex digests,
     files sorted by path (klayout_tools._provenance._combined_content_hash)."""
-    digests = [sha(p)[len("sha256:"):] for p in sorted(paths)]
-    return "sha256:" + hashlib.sha256("".join(digests).encode()).hexdigest()
+    digests = [sha(p.read_bytes())[len("sha256:"):] for p in sorted(paths)]
+    return sha("".join(digests).encode())
 
 
 def load(path: Path):
@@ -75,7 +72,7 @@ def build_inventory(root: Path, t05_commit: str) -> dict:
             "shift_redundancy_v_last_commit": t05_commit,
             "note": "rtl/shift_redundancy.v is not instantiated by aib_datapath; the netlist does not depend on it. Re-synthesize after the T-05 decision (#29, PR #32).",
         },
-        "files": [{"path": p, "sha256": sha(root / p)} for p in files],
+        "files": [{"path": p, "sha256": sha((root / p).read_bytes())} for p in files],
     }
 
 
@@ -83,7 +80,7 @@ def regenerate(root: Path, t05_commit: str) -> None:
     inv = build_inventory(root, t05_commit)
     (root / INVENTORY).parent.mkdir(parents=True, exist_ok=True)
     (root / INVENTORY).write_text(json.dumps(inv, indent=2) + "\n")
-    h = sha(root / INVENTORY)
+    h = sha((root / INVENTORY).read_bytes())
     env = {
         "schema_version": 1,
         "kind": "generic",
@@ -115,7 +112,7 @@ def check(root: Path):
         p = root / ent["path"]
         if not p.is_file():
             errs.append(f"{ent['path']}: listed in the inventory but missing")
-        elif sha(p) != ent["sha256"]:
+        elif sha(p.read_bytes()) != ent["sha256"]:
             errs.append(f"{ent['path']}: content differs from the inventory (stale; regenerate)")
     listed = {e["path"] for e in inv.get("files", [])}
     for must in list(RTL) + [REQUEST, REPORT]:
@@ -127,11 +124,11 @@ def check(root: Path):
         if got != want:
             errs.append(f"RTL sources differ from the synthesis report provenance ({got} != {want}); re-synthesize")
         nl = root / netlist_rel(report)
-        if not nl.is_file() or sha(nl)[len("sha256:"):] != report["netlist_sha256"]:
+        if not nl.is_file() or sha(nl.read_bytes())[len("sha256:"):] != report["netlist_sha256"]:
             errs.append("netlist does not match the report netlist_sha256")
         if inv["synthesis"]["netlist"] != netlist_rel(report):
             errs.append("inventory names a different netlist than the report")
-        h = sha(root / INVENTORY)
+        h = sha((root / INVENTORY).read_bytes())
         if env["provenance"]["input"]["content_hash"] != h:
             errs.append("attestation envelope does not pin the current inventory hash")
         pin = man["evidence"][MANIFEST_KEY]["content_hash"]

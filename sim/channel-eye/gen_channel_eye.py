@@ -5,8 +5,8 @@ Stdlib only. Usage (from anywhere):
   python3 -I sim/channel-eye/gen_channel_eye.py          # write the generated files
   python3 -I sim/channel-eye/gen_channel_eye.py --check  # exit 1 if they are stale
 
-Generated: prbs7_stim.inc, request_ch_1g.json, request_tc_1g.json, request_l1_1g.json,
-request_ctl_ch_tt.json.
+Generated: prbs7_stim.inc, request_ch_1g.json, request_ch_spread_1g.json,
+request_tc_1g.json, request_l1_1g.json.
 
 Timing: UI 1000 ps (1 Gb/s DDR, 500 MHz forwarded clock). The stimulus is the cyclic
 PRBS-7 sequence (x^7 + x^6 + 1) with the last WARM bits prepended, so the waveform is
@@ -19,11 +19,15 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
+import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
+import gen_common  # noqa: E402  (write_or_check and the PWL stimulus builders)
 UI_PS = 1000
 TR_PS = 100
 WARM = 14                 # warm-up bits (cyclic prefix), excluded from every window
 PERIOD = 127
 NBITS = WARM + PERIOD     # 141 UI total
+END_PS = NBITS * UI_PS    # stimulus end time, held out to by every PWL card
 T0_NS, T1_NS = WARM * UI_PS // 1000, NBITS * UI_PS // 1000
 N_WIRES = 20              # data wires per forwarded clock (T-03)
 EYE_STEP_PS = 50          # 0.05 UI phase step of the eye-window search
@@ -32,12 +36,6 @@ EYE_H_V = 0.09            # +-90 mV (T-18)
 SUPPLIES = ["vdd_atx", "vdd_arx", "vdd_btx", "vdd_brx", "vdd_ctx", "vdd_crx"]
 RX = {"a": "vdd_arx", "b": "vdd_brx", "c": "vdd_crx", "cb": "vdd_crx"}
 PINS = {"a": "rxa", "b": "rxb", "c": "rxc", "cb": "rxcb"}
-OSDI = ["psp103", "psp103_nqs", "r3_cmc", "mosvar"]
-# MOS corner -> (resistor section, diode section) of the PDK corner libraries
-PROCESS = {"mos_tt": ("res_typ", "dio_tt"), "mos_ss": ("res_wcs", "dio_ss"),
-           "mos_ff": ("res_bcs", "dio_ff"), "mos_sf": ("res_typ", "dio_tt"),
-           "mos_fs": ("res_typ", "dio_tt")}
-MODELS = "libs.tech/ngspice/models/"
 # L1's on-die route emulates CH-3MM-RC's R and C to within +-20 % (test-configuration.md,
 # "L1"); kr_l1 / kc_l1 sweep that emulation band as a third corner axis. This is the
 # route's build tolerance, not the channel-model process spread of DR-0005.
@@ -54,6 +52,23 @@ GRADED = {
     "tc": {"T-09"},
     "l1": {"T-01", "T-09"},
 }
+# T-12: the declared +-20 % channel R/C spread, as the zipped (kr, kc) axis of one request.
+# `corners.params` is zipped by index, not crossed, so the four combinations are spelled out.
+# R and C spread independently and which combination binds differs by row, so all four are
+# run: the two diagonal corners alone cannot bound a row whose worst case is off-diagonal.
+CH_SPREAD = [(0.8, 0.8), (0.8, 1.2), (1.2, 0.8), (1.2, 1.2)]
+# The batch fleet refuses a submit whose per-job unit cap exceeds what its whole-job ceiling
+# allows (`batch_max_units_per_job_invalid`). The rule is the fleet's own, quoted from that
+# refusal: max_units_per_job = floor((max_job_seconds - 120) / options.timeout_s), i.e. a
+# 120 s per-job overhead off a 3600 s ceiling. Neither constant is queryable from the client,
+# so they are pinned here rather than rediscovered by a rejected submit each time (the
+# ceiling is undocumented: 2AMLogic/klayout-tools#4675, still open). The ceiling itself
+# assumes the units of a job run serially while the runner runs them concurrently, which is
+# why a correct job shape has to be bought with a shorter timeout: #5544, also open.
+FLEET_JOB_CEILING_S = 3600
+FLEET_JOB_OVERHEAD_S = 120
+SPREAD_TIMEOUT_S = 400                                  # ~18x the measured ~22 s per corner
+SPREAD_UNITS_PER_JOB = (FLEET_JOB_CEILING_S - FLEET_JOB_OVERHEAD_S) // SPREAD_TIMEOUT_S
 
 
 def prbs7():
@@ -83,21 +98,6 @@ def transitions(bits):
     return out
 
 
-def pwl(points):
-    return " ".join(f"{t * 1e-12:.6g} {v}" for t, v in points)
-
-
-def lane_pwl(levels_at):
-    """levels_at: [(edge_start_ps, level)] with an implied initial level first."""
-    (_, v0), rest = levels_at[0], levels_at[1:]
-    pts, cur = [(0, v0)], v0
-    for t, v in rest:
-        pts += [(t, cur), (t + TR_PS, v)]
-        cur = v
-    pts.append((NBITS * UI_PS, cur))
-    return pts
-
-
 def stim_include():
     b = stream()
     data = [(0, b[0])] + [(i * UI_PS, b[i]) for i in range(1, NBITS) if b[i] != b[i - 1]]
@@ -110,12 +110,20 @@ def stim_include():
         "* Normalised 0..1 levels; tb_body.inc scales them by the TX supply.",
     ]
     for name, node, pts in (("pa", "pa", data), ("pb", "pb", comp), ("pc", "pc", clk), ("pcb", "pcb", clkb)):
-        lines.append(f"V{name} {node} 0 dc 0 pwl({pwl(lane_pwl(pts))})")
+        # pts[0] carries the level at t = 0 (its time is always 0); the rest are edge starts.
+        ramp = gen_common.level_pwl(pts[1:], TR_PS, END_PS, init=pts[0][1])
+        lines.append(f"V{name} {node} 0 dc 0 pwl({gen_common.pwl(ramp)})")
     return "\n".join(lines) + "\n"
 
 
 def skew_pairs():
-    """Measurement edge selections: (name, trig-expr args) for T-15 and T-16."""
+    """Measurement edge selections: (name, card) for T-15; edge dicts for T-16.
+
+    A T-16 dict carries what the selection loop computes -- name, bit index `i`, data
+    polarity `pol` with crossing count `n`, clock polarity `cpol` with crossing count
+    `cn` -- plus the measurement `card` rendered from those fields, so gen_t16attr.py
+    consumes the selection itself instead of re-parsing the card (#388).
+    """
     b = stream()
     tr = [t for t in transitions(b) if 15 <= t[0] <= 130]
     rises_before = lambda i: sum(1 for t in transitions(b) if t[1] == "rise" and t[0] <= i)
@@ -135,11 +143,13 @@ def skew_pairs():
             for ctx, long_ in (("long", True), ("short", False)):
                 c = [t for t in pick(pol, long_) if t[0] % 2 == par]
                 i = c[0][0]
-                n = rises_before(i) if pol == "rise" else falls_before(i)
                 cpol = "RISE" if i % 2 == 0 else "FALL"
-                cn = i // 2 + 1 if i % 2 == 0 else (i + 1) // 2
-                nm = f"t16_d{pol[0]}_c{cpol[0].lower()}_{ctx}"
-                t16.append((nm, f".meas tran {nm} TRIG v(dsa) VAL=0 {pol.upper()}={n} TARG v(csig) VAL=0 {cpol}={cn}"))
+                e = {"name": f"t16_d{pol[0]}_c{cpol[0].lower()}_{ctx}", "pol": pol.upper(), "i": i,
+                     "n": rises_before(i) if pol == "rise" else falls_before(i),
+                     "cpol": cpol, "cn": i // 2 + 1 if i % 2 == 0 else (i + 1) // 2}
+                e["card"] = (f".meas tran {e['name']} TRIG v(dsa) VAL=0 {e['pol']}={e['n']} "
+                             f"TARG v(csig) VAL=0 {e['cpol']}={e['cn']}")
+                t16.append(e)
     return t15, t16
 
 
@@ -208,19 +218,15 @@ def measurements(kind):
         t15, t16 = skew_pairs()
         for nm, card in t15:
             m.append(meas(nm, unit="s", spec_row="T-15", spice=card, **lim("T-15", min=-0.06e-9, max=0.06e-9)))
-        for nm, card in t16:
-            m.append(meas(nm, unit="s", spec_row="T-16", spice=card,
+        for e in t16:
+            m.append(meas(e["name"], unit="s", spec_row="T-16", spice=e["card"],
                           **lim("T-16", min=0.5e-9 - 0.03e-9, max=0.5e-9 + 0.03e-9)))
     return m
 
 
 def corners(kind):
     """The PVT-FULL grid, plus L1's zipped +-20 % R/C axis (3 points, so 135 corners)."""
-    c = {"process": [{"name": c, "sections": [c, {"lib": MODELS + "cornerRES.lib", "section": r},
-                                              {"lib": MODELS + "cornerDIO.lib", "section": d}]}
-                     for c, (r, d) in PROCESS.items()],
-         "supply_v": {s: [1.08, 1.2, 1.32] for s in SUPPLIES},
-         "temperature_c": [-40, 27, 125]}
+    c = pvt_full.corners(SUPPLIES)
     if kind == "l1":
         # zipped by index: R and C move together, so the -20 %, nominal and +20 % points
         # of the route are three corners each, never folded into nominal.
@@ -231,31 +237,46 @@ def corners(kind):
 def request(kind):
     return {
         "engine": "ngspice",
-        "models": {"pdk": "ihp-sg13g2", "lib": MODELS + "cornerMOSlv.lib"},
+        "models": {"pdk": "ihp-sg13g2", "lib": pvt_full.LIB_MOS},
         "netlist": f"tb_{kind}.cir",
         "backend": "batch",
         "corners": corners(kind),
         "analysis": {"kind": "tran", "args": f"2p {T1_NS}n 0 5p"},
         "measurements": measurements(kind),
-        # fleet runner is klt 0.7.0 and rejects the 0.8.0 pinned client without this (see README)
-        "batch": {"runner_version_check": "warn"},
         # measured ~8 s of ngspice per ns of stimulus at mos_tt/1.2 V/27 C: ~1100 s per corner
-        # (superseded: about 22-30 s per full 141 ns corner since the #142 driver; sim/README.md).
-        # ch/tc keep 2400 s, the value their committed records were produced with. L1 declares
-        # 480 s -- still 16x the measured cost -- because the fleet's units-per-job ceiling is
+        # L1 declares 480 s -- still 16x the measured cost (~22-30 s per full 141 ns corner,
+        # sim/README.md) -- because the fleet's units-per-job ceiling is
         # floor((3600 - 120) / timeout_s): at 2400 s that is 1, which would make L1's 135-corner
         # grid 135 one-unit jobs, and submitting one job takes about 45 s. At 480 s it is 7.
-        "options": {"osdi_preload": [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{o}.osdi" for o in OSDI],
+        # ch/tc keep 2400 s, the value their committed records were produced with.
+        "options": {"osdi_preload": pvt_full.osdi_preload(),
                     "timeout_s": 480 if kind == "l1" else 2400},
     }
 
 
-def control_request():
-    """Bench positive control: CH netlist with the output-PMOS-fixed TX copy, one corner (tt, 1.20 V, 27 C)."""
+def spread_request():
+    """CH at the declared +-20 % channel R/C spread (T-12): PVT-FULL x the four (kr, kc) pairs.
+
+    The same `request("ch")` builder, so the measurements, limits, stimulus and analysis
+    cannot drift from the nominal request -- only the netlist and the added parameter axis
+    differ. `tb_ch_spread.cir` lifts the model's `kr`/`kc` to top-level `.param`, which is
+    the only thing `corners.params` can target. 45 PVT corners x 4 parameter rows = 180 units.
+    """
     r = request("ch")
-    r["netlist"] = "tb_ctl_ch.cir"
-    r["corners"] = {"process": [c for c in r["corners"]["process"] if c["name"] == "mos_tt"],
-                    "supply_v": {s: [1.2] for s in SUPPLIES}, "temperature_c": [27]}
+    r["netlist"] = "tb_ch_spread.cir"
+    r["corners"] = dict(r["corners"],
+                        params={"ch_kr": [kr for kr, _ in CH_SPREAD],
+                                "ch_kc": [kc for _, kc in CH_SPREAD]})
+    # Why this request is re-timed: the per-job cap above means the nominal request's
+    # 2400 s allows one unit per job, so this grid would be 180 separate capacity grants.
+    # On a busy fleet those launch at a crawl -- measured 4 of 180 in 17 min, ETA 9 h. The
+    # 2400 s figure predates the Mn1 cell change and is superseded anyway: a full four-lane
+    # corner is about 22 s (sim/README.md, channel-eye "Measured"). SPREAD_TIMEOUT_S keeps
+    # ~18x margin on that while letting one job carry SPREAD_UNITS_PER_JOB corners, which
+    # turns the same 180 units into 23 jobs; that run launched at 3.1/min. Only this request
+    # is re-timed -- the nominal one keeps 2400 s, the value its committed records were run
+    # with.
+    r["options"] = dict(r["options"], timeout_s=SPREAD_TIMEOUT_S)
     return r
 
 
@@ -263,23 +284,13 @@ def outputs():
     o = {"prbs7_stim.inc": stim_include()}
     for k in ("ch", "tc", "l1"):
         o[f"request_{k}_1g.json"] = json.dumps(request(k), indent=2) + "\n"
-    o["request_ctl_ch_tt.json"] = json.dumps(control_request(), indent=2) + "\n"
+    o["request_ch_spread_1g.json"] = json.dumps(spread_request(), indent=2) + "\n"
     return o
 
 
 def main(argv):
-    stale = []
-    for name, text in outputs().items():
-        path = HERE / name
-        if "--check" in argv:
-            if not path.exists() or path.read_text() != text:
-                stale.append(name)
-        else:
-            path.write_text(text)
-    if stale:
-        print("stale generated files: " + ", ".join(stale), file=sys.stderr)
-        return 1
-    return 0
+    return gen_common.write_or_check(outputs(), argv, base=HERE,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":

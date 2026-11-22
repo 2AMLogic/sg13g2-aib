@@ -158,3 +158,36 @@ change a row. It is the size of the gap #72 asks about.
 - If #54's PR #178 merges, the D-9 / G3 row moves from *pending* to whatever
   T-17's recorded result supports. That is a one-line edit against a merged
   record, not a new comparison.
+
+## Addendum 2026-11-13, read at `main` `8107ae0`: D-9 / G3 moves off *pending #54*
+
+§ 4 above and the § Consequences bullet below it stay as written. This addendum
+is the step that bullet authorised — "If #54's PR #178 merges, the D-9 / G3 row
+moves from *pending* to whatever T-17's recorded result supports. That is a
+one-line edit against a merged record, not a new comparison." That is this
+record's own authority for the move; no new decision is taken here and this
+record's **proposed** status is unchanged.
+
+PR #178 merged at `952f026`, putting
+[`sim/clock-path/records/20261113T095936Z/`](../../sim/clock-path/records/20261113T095936Z/)
+on `main`; it is read here at **`8107ae0`**. T-17 passes there — 90/90 graded
+`t17_dcd_c` / `t17_dcd_cb` measurements inside ±3 % over 45 corners, worst |DCD|
+**−1.036 %** (margin 1.964 %) at `mos_sf` / 1.08 V / −40 °C; `rows.json` carries
+`verdict: pass`, binding `mos_sf/mixed/-40C`, `t17_dcd_c` = −0.0103576 — so
+**D-9 / G3 is not triggered** by that record.
+
+The scope travels with the verdict, and it is narrower than D-9. The record is
+**simulated**, **CH**-scoped (CH-3MM-RC at nominal `kr = kc = 1`, not the test
+configuration), and covers the **target rate point only**: an ideal complementary
+50 % 500 MHz forwarded clock (1 Gb/s DDR), with no 250 MHz or 1 GHz run. It
+therefore does not reach the **2 Gb/s stretch** point, the **test configuration**
+(T-17's scope column in `target-spec.md` is BOTH, and this record is CH), or a
+**non-ideal upstream duty cycle** — D-9 is written as correcting ±10 % input DCD
+to ±3 %, and this stimulus is ideal. Whether the netlist under test is pre- or
+post-layout is not stated in the record and is not established here.
+
+**G3 is not closed.** D-9 stays conditional and "to be decided before layout" on
+the terms above; § 4's text and this record's five decisions are unchanged; no
+T-row or D-row value moves; T-21's `SIM` half remains a declared gap. The
+matching note is in [`dll-interface.md`](../dll-interface.md) § "Gaps filed on
+the sibling, and their state".

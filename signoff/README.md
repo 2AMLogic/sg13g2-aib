@@ -3,9 +3,15 @@
 `block-manifest.json` declares the block (`sg13g2-aib`, `mixed-signal`) and the
 evidence it cites. `block-manifest.signoff.json` is the committed verdict of
 record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
-rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `8.analog`, `8.digital`, `11.analog`, `11.digital` and items 9
+rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
-"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable` and `6.analog` `unmet` / `check_failed` (see "Item 6");
+"Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable`, `6.analog` `unmet` / `check_failed` (see "Item 6")
+and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
+`7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
+runs extracted the cells and graded nothing, which is not the same as a spec row failing);
+`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — three recorded rows
+fail, so the aggregate's envelope is `status: fail`; that is the report following the records,
+not a spec target being missed by the report);
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
 against the working directory, so always grade from the repo root.
@@ -77,6 +83,19 @@ re-cite the hash and regenerate the record:
 uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/attest_item2.py analog [--check]
 ```
 
+That sha256 binding is checked, not just declared: the manifest pins a record's
+*declared* input hash, so a stream that moves underneath a cited record re-grades
+byte-identically — the #248 regeneration left four cited pex reports declaring the
+pre-regeneration hash and nothing failed (#273). `scripts/ci/check_evidence_pins.py`
+requires every record cited under `evidence` that declares a
+`provenance.input.content_hash` to name the shipped stream and to declare its sha256.
+The stream is found by a fixed key order (`provenance.input.path`, `file`, `layout`,
+`netlist`, `verilog_path` — the first repo-scoped `{path, scope}` object wins, never
+`provenance.input.role`, which is not reliable), the item 1 analog envelope per
+`paths[]` entry with its aggregate left unrecomputed, and records with no
+`provenance.input` block skipped. The population is citation-driven: uncited records
+under a `records/` directory may declare stale hashes by design.
+
 ## Item 2 (layout, digital)
 
 `layout/attest_item2.py digital` writes `attest/item2-digital.json` through
@@ -114,6 +133,101 @@ two layout differences behind the earlier mismatch, and the commands are in
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
 re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.
 
+## Item 5 / analog evidence
+
+`5.analog` cites four `klt sim` reports as a list, each naming the `rows` it covers, and
+`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 14 covered and
+4 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
+`uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
+but declared gaps remain.
+
+Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
+tracked in #194, #195, #196 and #176; closing them is what lets the item read `met`.
+**T-12 is covered, not a gap** ([DR-0029](../spec/decisions/0029-t12-conformance-leg.md),
+proposed; #384): the channel model is a declared input (DR-0005), so the row is cited from
+the conformance record `sim/channel-model/records/20261121T000100Z/report.json`, which grades
+that the committed netlist implements the declared table (675/675 corners; the R, C and L ratios, each graded on the swept instances and on the subcircuit-default instances).
+It does not validate the table against silicon (T-12 is CH only). The ±20 % spread campaign
+(`sim/channel-eye/records/20261113T223804Z-ch-spread/`) stays supporting evidence for the six
+dependent rows; coverage is derived from `spec_row` tags and it carries no T-12 tag. T-02, T-04 and T-05 are **not** in the declared set: DR-0026 removes the
+T-02/T-04 `SIM` legs and DR-0028 removes T-05's (the specification states no bound for any
+of the three), so the "plain `SIM` leg" derivation no longer produces them. That removal is
+authorised by the records, not a silent deletion of a row; the rows are verified
+(T-02 by `RTL`; T-04's clk/clkb arrangement by the clock-path netlist structure check, DR-0027;
+T-05's mux function by `RTL`, all 40 single-fault positions) and their consequences are graded
+where the numbers live (T-16, T-19, T-20; T-17, T-16, T-06, T-09, T-18; T-05's measured load
+and delay are reported inputs to T-20 and T-13, DR-0023).
+
+| envelope | rows | result |
+|---|---|---|
+| `sim/dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass |
+| `sim/channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated) |
+| `sim/clock-path/records/20261113T095936Z/report.json` | T-17 | 45/45 corners pass (CH) |
+| `sim/channel-model/records/20261121T000100Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
+
+The declared row set is every row in `spec/target-spec.md` whose verification column has a
+plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,
+T-14, T-19). **Re-derive it from the spec table** when a row changes — see `sim/README.md`
+("Item 5 / analog: the declared row set") for the 5 gaps and their issues.
+
+### Two citation rules this item depends on
+
+Both were verified on 2026-11-13 against the pinned grader (0.9.0) with scratch copies of the
+manifest; nothing in the checkout was written.
+
+- **Only the CH channel-eye record is cited, not the TC one.** `sim/channel-eye/records/20261110T083756Z-tc/`
+  carries the same row ids from the test configuration (bond-pad loaded loopback). Citing both
+  would mix a modeled-die-to-die-channel claim with a test-configuration one under one item.
+  `spec/test-configuration.md` keeps the two apart, so item 5 carries the CH claim only. This is
+  a reading of that document, not a grader rule.
+- **A `.json.gz` citation grades `unmet` / `unreadable_evidence`.** The channel-eye and
+  clock-path records hold `report.json.gz`; a decompressed `report.json` was added beside each
+  (byte-identical content, no re-run — the `.gz` is untouched, so the `sim/` append-only check
+  passes) and that is what is cited. Filed upstream as `2AMLogic/klayout-tools#5452`. If a later
+  pin fixes it, the citations can move back to the `.gz` and the copies be dropped.
+
+### The declared row set is load-bearing, not decorative
+
+The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
+
+- Omitting a gap entry — or omitting `spec_rows."5.analog"` entirely — makes item 5 / analog
+  read **`met`** on the 14 covered rows, with the 4 real gaps silently absent and
+  `uncovered_rows` empty. Nothing flags the omission. This is why the full set is committed
+  and must be re-derived from the spec table rather than edited by hand.
+- The `rows` list on a citation is checked **only where the envelope's measurements carry
+  `spec_row` tags** — not on every envelope. The channel-eye and clock-path reports are tagged
+  (`T-01, T-09, T-15, T-16, T-18, T-26` and `T-02, T-04, T-17`), and under them a wrong `rows`
+  entry is caught: listing a report-only row (T-02, whose measurements carry `limits: null`)
+  under the passing clock-path envelope returns `uncovered_rows: ["T-02"]`, not coverage, and
+  so does claiming a row that envelope has no measurements for (probed with T-05). **The
+  dc-static report's measurements carry no `spec_row` field, and under it the grader accepts
+  whatever `rows` says**: the same two probes moved to the dc-static citation both return
+  `uncovered_rows: []` with `row_sources` `asserted`. So a row can be listed under an untagged
+  envelope that does not measure it and nothing fails. These probes ran against that day's
+  manifest, before DR-0026 and DR-0028 removed T-02, T-04 and T-05 from the declared set;
+  the reports' `spec_row` tags, including the clock-path's `T-02, T-04, T-17`, predate the
+  removals and are unchanged, so the demonstrated checks still apply.
+- `detail.row_sources` is what tells the two apart: `derived` where the grader matched the row
+  against the envelope's own measurement names, `asserted` where it did not. **An `asserted`
+  entry means "the grader did not check this row — verify it by hand", not "checked and
+  covered".** Under `5.analog` the six `asserted` rows are exactly the dc-static ones, and they
+  are covered on this manifest's word rather than the grader's check. Each was read against
+  `sim/dc-static/records/20261112T001207Z/report.json` by hand; all have bounded, passing
+  measurements over the envelope's 45/45 corners:
+
+  | row | measurements | bound |
+  | --- | --- | --- |
+  | T-06 | `drv_{nl,ld}.t06_vol_v`, `drv_{nl,ld}.t06_voh_droop_v` | `max` 0.1 V |
+  | T-07 | `lk_{0,5,10}.t07_t28_ipin_a` | `max` 1 uA |
+  | T-08 | `drv_ld.t08_rout_{up,dn}_ohm` | 40-80 ohm |
+  | T-11 | `t11_hyst_mv` | `max` 60 mV |
+  | T-24 | `cap_{0,5,10}.t24_cpin_ff` | `max` 100 fF |
+  | T-28 | `pu_on.t28_rpu_ohm`, `pd_on.t28_rpd_ohm`, `lk_*.t07_t28_ipin_a` | 10-20 kohm |
+
+  Re-check this table by hand whenever a dc-static row's `rows` entry changes: the grader will
+  not do it. The gap is filed upstream as `2AMLogic/klayout-tools#5462`.
+
 ## Item 5 / digital evidence
 
 `attest/item5-digital/` holds the verbatim `klt` envelopes, cited as a list under
@@ -145,6 +259,39 @@ Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate
 ```bash
 PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ```
+
+## Item 7 / analog evidence
+
+`7.analog` reads `unmet` / `check_failed`, citing the four `klt pex --extract-only` reports in
+`layout/pex/records/20261120T202530Z/` (re-run under #387 after the `Resd` resize regenerated
+the stream; the superseded `20261113T130842Z/` and `20261114T025329Z/` bind older hashes and
+are history, not evidence).
+**`check_failed` here does not mean a spec row failed
+post-layout — no spec row was measured post-layout at all.** It means the cited `klt pex` runs
+report `status: "not_checked"`: they extracted the drawn I/O cells (cleanly, with
+`body_bias: "biased"` and the input hash equal to the committed `layout/aib_io_column.gds`) and
+graded nothing, because `klt pex` cannot simulate an sg13g2 extraction. The deck writes the
+pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a
+`.subckt`, so ngspice stops at netlist load. Reproduced in
+`layout/pex/records/20261113T130846Z/` and filed upstream as
+[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491); the full
+account, including the two alternatives that were rejected rather than used, is in
+[`../layout/pex/README.md`](../layout/pex/README.md). Two further gaps found in the same
+bring-up are filed there too: #5492 (a dropped `options.osdi_preload`, worked around by naming
+a backend) and #5494 (one `--top` per run cannot express a link testbench, which is why the
+`channel-eye` and `clock-path` rows have no bench here).
+
+The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
+naming it leads a reader to the reports, where `no_evidence` would have hidden that the
+extraction exists. `spec_rows."7.analog"` declares all 18 rows as gaps with the reason — the
+14 rows `5.analog` grades plus its 4 carried-forward gaps, with the trackers the manifest
+declares: T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 stays
+a declared gap here (DR-0029 keeps it: item 7 has no extracted T-12 measurement; the
+channel-R/C spread campaign that closed #193 and the T-05 campaign the closed #192
+recorded are complete). Today's grader does not
+consume `spec_rows` for item 7 (only items 5 and 6), so that block is a declaration in the
+manifest rather than something the record rolls up; it is kept so the gap list is
+machine-readable in one place.
 
 ## Item 7 / digital evidence
 
@@ -204,6 +351,24 @@ recorded row fails. Rows without a record read `not-yet-measured` in the report;
 the report, envelope and manifest hash agree. Regenerate after any change to a
 cited record or the mapping, then re-cite the hash and regenerate the record.
 
+The generator also refuses to run — writing and under `--check` — when this
+manifest cites per-row evidence the map does not grade. Every `(file, row)` pair
+under `evidence."5.analog"` and `evidence."6.analog"` must have an entry in
+`row-evidence.json` citing a file in that same record directory (a `rows.json` or
+`yield.json` digest beside a `klt sim` envelope counts). So the manifest is the
+single list of which rows have a record and the map only says how each is graded;
+a record cited for signoff can no longer be missing from the aggregate, which is
+how 13 rows — three of them recorded failures — read `not-yet-measured` here
+while already being cited for item 5 and item 6 (issue #230). The map may still
+carry extra entries the manifest does not cite; the check is one-directional.
+
+**Item 8 currently reads `unmet` / `check_failed`, and that is the honest state.**
+T-10, T-15 and T-16 each have a committed `klt yield` record whose verdict is
+`fail`, so the envelope is `status: fail` and the aggregate says so. No spec
+target, limit or comparator was changed, and no record under `sim/*/records/` was
+touched, to produce it. The `met` reading it replaced was an artefact of those
+records never being read.
+
 ## Item 9 attestation
 
 `attest/item9-{analog,digital}.inventory.json` list the testbenches, the
@@ -245,8 +410,14 @@ uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" klt signoff --attest 10 \
   --inventory signoff/attest/item10.inventory.json -o signoff/attest/item10.json
 ```
 
-Then update the two `content_hash` values for item 10 in the manifest and
-regenerate the record.
+A content-only edit of a hashed hygiene member (`README.md`, `LICENSE`, the
+workflow file) needs only the re-attest above and a commit of the resulting
+`attest/item10.json`: the manifest cites the *inventory's* `content_hash`,
+which such an edit does not change, so no manifest edit and no record
+regeneration is needed. `scripts/ci/check_attested_paths.py` fails in seconds
+and names the path if a re-attest is forgotten. Update the manifest's two
+item-10 `content_hash` values and regenerate the record only when the
+*inventory itself* changes.
 
 Re-attest as the last step, after `README.md` and `.github/workflows/ci.yml`
 are final: both are hashed into the envelope, so any later edit to either
@@ -264,15 +435,36 @@ makes the CI `--check` exit 3 (`drifted`).
   measurements`) has a `README.md`;
 - each `sim/**/records/<stamp>/record.json` has `record`, `utc_stamp` and
   `pdk.release_tag`, and contains no absolute path;
-- `sim/` records (files under a `records/` or `corners/` directory) are
-  append-only against the PR base, or the pre-push SHA on a push: added
-  files pass, modified, deleted or renamed ones fail;
+- `sim/` records (files under a `records/` or `corners/` directory, the
+  record's own `README.md` included) are append-only once they are on the
+  default branch, which DR-0020 ratifies: added files pass, modified, deleted
+  or renamed ones fail. Both CI events ask that one question — the base is the
+  PR base on a `pull_request`, and the merge-base with the default branch on a
+  push to any other branch; a push to the default branch itself compares
+  against the pre-push SHA, where a merge-base would be the head (#255);
 - `scripts/ci/check_design_sources.py`: every inventory file re-hashes, the RTL
   sources match the synthesis report's input hash, the netlist matches its
   `netlist_sha256`, and the envelope and manifest pin the current inventory;
   edited RTL or a stale netlist fails. It does not re-hash the standard-cell
   liberty (no PDK on the runner); `klt synthesize --check <report> [--rerun]`
   covers that locally (`design/README.md`);
+- `scripts/ci/check_evidence_pins.py`: every record cited under `evidence` that
+  declares a `provenance.input.content_hash` binds the shipped stream it names —
+  the gap a manifest pin cannot see (#273). Uncited records are out of the
+  population by design;
+- `scripts/ci/check_inventory_klt_pin.py`: every attest inventory that declares
+  `pins.tools.klt` pins the same version its paired envelope records as
+  `provenance.klt_version` (#324). `--attest` copies pins verbatim and never
+  compares them to the grader's own version, so a pin left behind by a grader
+  bump attests a version the evidence was not produced with; the comparison is
+  inventory-vs-envelope only, never against `signoff/KLT_VERSION`, which is the
+  pin for the next attestation, not a retroactive truth about landed evidence.
+  The same script compares an inventory's `pins.tools.ngspice` against the
+  `tools.ngspice` of the newest `sim/pdk-smoke/records/*/record.json` (#368) —
+  only the newest, because committed records are append-only evidence and an
+  older record under another simulator is legitimate history; a drifted newest
+  record is fixed by re-running the smoke under the pinned ngspice, or by
+  bumping the pin and re-attesting, never by editing a committed record;
 - each checker passes a self-test, including a seeded-bad input it must
   reject, before it is trusted (`scripts/ci/test_checkers.py`).
 
@@ -302,7 +494,10 @@ envelope was regenerated and the manifest re-cited with the new input-set digest
 `item2-analog` and `item2-digital` envelopes were rewritten for the new `klt_version`, then
 rebuilt with `klt signoff --attest 2` (see issue 120), which populates `klayout_version`. The
 `signoff/attest/` envelopes not named here were not regenerated; they still record the klt that
-produced them.
+produced them — except `item9-digital.json`, which issue #217 regenerated under 0.9.0 when
+the local cocotb runner (since removed, #245) changed, so it now records `klt_version: 0.9.0`. A `--check` of a
+0.8.0-produced envelope under the 0.9.0 pin passes (`item9-analog.json` still does), so
+`klt_version` is recorded provenance here, not something the re-attest compares.
 
 ## What CI does not check
 

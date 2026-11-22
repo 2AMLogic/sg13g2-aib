@@ -1,0 +1,1 @@
+klt pex: 14 of 14 delta rows errored; first cause (extracted side, stage unknown, ngspice_fatal): Error on line 413 or its substitute:; no analysis started (the run's runtime_s is wall-clock before the failure, not simulation time)

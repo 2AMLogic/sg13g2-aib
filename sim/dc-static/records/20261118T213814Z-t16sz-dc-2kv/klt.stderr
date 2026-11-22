@@ -1,0 +1,25 @@
+klt sim: notice: splitting 180 units into 4 batch jobs of at most 45 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt: batch job klt-sim-80ebed14bd1e submitting to s3://<bucket>/jobs/klt-sim-80ebed14bd1e
+klt: batch job klt-sim-aa6946f77e89 submitting to s3://<bucket>/jobs/klt-sim-aa6946f77e89
+klt: batch job klt-sim-d8f655888990 submitting to s3://<bucket>/jobs/klt-sim-d8f655888990
+klt: batch job klt-sim-7e1906cc733d submitting to s3://<bucket>/jobs/klt-sim-7e1906cc733d
+klt sim: batch job klt-sim-80ebed14bd1e: submitted
+klt sim: shards 0/4 launched, 1 launching, 3 pending, 0 collected; launch rate unknown, ETA unknown
+klt sim: batch job klt-sim-d8f655888990: submitted
+klt sim: batch job klt-sim-aa6946f77e89: submitted
+klt sim: batch job klt-sim-7e1906cc733d: submitted
+klt sim: batch job klt-sim-d8f655888990 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-d8f655888990`
+klt sim: batch job klt-sim-d8f655888990 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-80ebed14bd1e launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-80ebed14bd1e`
+klt sim: batch job klt-sim-7e1906cc733d launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-7e1906cc733d`
+klt sim: shards 4/4 launched, 0 launching, 0 pending, 0 collected; launch rate 18.6/min, ETA 0m
+klt sim: batch job klt-sim-aa6946f77e89 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-aa6946f77e89`
+klt sim: batch job klt-sim-80ebed14bd1e state=no status.json yet elapsed=3s
+klt sim: batch job klt-sim-7e1906cc733d state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-aa6946f77e89 state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-d8f655888990: running
+klt sim: batch job klt-sim-d8f655888990 state=running elapsed=31s
+klt sim: batch job klt-sim-80ebed14bd1e: failed
+klt sim: batch job klt-sim-7e1906cc733d: failed
+klt sim: batch job klt-sim-aa6946f77e89: failed
+klt sim: batch job klt-sim-d8f655888990: failed
