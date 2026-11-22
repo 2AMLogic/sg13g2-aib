@@ -263,8 +263,9 @@ PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ## Item 7 / analog evidence
 
 `7.analog` reads `unmet` / `check_failed`, citing the four `klt pex --extract-only` reports in
-`layout/pex/records/20261114T025329Z/` (re-run under #253 after #248 regenerated the stream;
-the superseded `20261113T130842Z/` binds the pre-#248 hash and is history, not evidence).
+`layout/pex/records/20261120T202530Z/` (re-run under #387 after the `Resd` resize regenerated
+the stream; the superseded `20261113T130842Z/` and `20261114T025329Z/` bind older hashes and
+are history, not evidence).
 **`check_failed` here does not mean a spec row failed
 post-layout — no spec row was measured post-layout at all.** It means the cited `klt pex` runs
 report `status: "not_checked"`: they extracted the drawn I/O cells (cleanly, with

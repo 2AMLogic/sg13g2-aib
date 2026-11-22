@@ -187,6 +187,36 @@ label probes no conductor and names no net. The column's repeated pins stay klt'
 The `*.diag.*` files are untouched history and do not reproduce; they bind a stream older than
 either of the two here.
 
+## Issue #387: Resd resize regeneration (2026-11-20)
+
+PR #332 shortened `XResd` to `w=2u l=1u` in the item 1 netlists; `gen_io_column.py` kept
+drawing `Resd` 2 um x 2 um and nothing re-ran the generator, so the committed stream's
+series resistor was twice the schematic's length (#387). The table is now the netlist size
+and the stream was regenerated; the references did not change (they derive from
+`design/*.spice`, which this issue does not touch, and `gen_reference.py --check` is clean),
+and the five compares plus the negative control were re-run with klt 0.9.0 on the new stream
+(`54b42956…`):
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4320 / 4320 | 389 / 389 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | 138 / 138 | 17 / 17 | 7 / 7 |
+| `aib_io_rx.report.json` | `match` | 42 / 42 | 6 / 6 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | 276 / 276 | 29 / 29 | 9 / 9 |
+| `aib_io_rx_clk.report.json` | `match` | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Verdicts, counts and warning categories are identical to the previous stream (including the
+column's 45 `topology` entries). Two payload differences beyond the hashes are the change
+itself becoming visible: the `rppd` `layout_values` entry for `Resd` moves with the halved
+length, and klt's extraction-order numbering of the column's internal nets (`\$148`, ...)
+shifts by one in places -- the bookkeeping the "Limit of the column compare" note below
+already covers. `--check` exits 0 on all five result reports. The negative control re-runs
+to `status: mismatch`, klt exit 3, 48 mismatches with the same category counts as before
+(one `device.unmatched`, 45 `topology`, one `device.geometry_not_compared`, one
+`device.placeholder_value`).
+
+The `*.diag.*` files are untouched history and do not reproduce.
+
 ## Issue #187: predriver pull-up regeneration (2026-11-13)
 
 PR #164 widened the TX predriver NOR pull-ups (`Mnr1p`, `Mnr2p`) to `w=8u ng=4` in the item 1

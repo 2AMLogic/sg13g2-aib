@@ -1809,7 +1809,11 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
                         "EXEMPT has become what decides whether strictness is asserted, "
                         "which is the coupling #271 split apart")
         self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_FLAG_SUBJECTS)
-        self.assertNotIn("layout/gen_io_column.py", STRICT_FLAG_SUBJECTS)
+        # Since #387 the generator has a --check entry point that runs before
+        # klayout is imported, so its strictness is asserted like every other
+        # subject -- the old witness for "EXEMPT and not a strict subject" is
+        # gone and must not come back.
+        self.assertIn("layout/gen_io_column.py", STRICT_FLAG_SUBJECTS)
 
 
 # ---------------------------------------------------------------------------
@@ -1876,7 +1880,6 @@ EXEMPT = {
         "cocotb bench module, imported by the klt functional-verification requests; not a standalone suite",
     "layout/check_io_column.py":
         "needs the pinned klt environment (imports klayout.db); CI-only, like the klt signoff steps",
-    "layout/gen_io_column.py": "generator with no check mode",
     "layout/erc/gen_specs.py":
         "generator with no check mode: its two ERC specs are committed signoff inputs "
         "regenerated only at a klt re-pin (signoff/README.md:429), so proving them fresh "
@@ -1899,9 +1902,6 @@ EXEMPT = {
 # different question from EXEMPT above, which answers "has no check mode" (#271
 # split the two): gen_t16attr.py is EXEMPT and still a subject.
 STRICTNESS_UNASSERTABLE = {
-    "layout/gen_io_column.py":
-        "imports klayout.db at module import; needs the pinned klt environment, "
-        "like layout/check_io_column.py",
     "sim/gen_common.py":
         "the shared write-or-check helper (#227); imported, never run",
 }
