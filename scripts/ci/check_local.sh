@@ -158,6 +158,18 @@ if [ "$want_evidence" = 1 ]; then
   run "Check every cited evidence record binds the shipped stream" \
     python3 -I scripts/ci/check_evidence_pins.py
 
+  # A `klt sim` report pins the sha256 of every netlist in its include closure
+  # (environment.netlist_closure) and nothing compared those pins to the tree:
+  # #332's XResd edit left cited analog records describing a cell that no
+  # longer exists, with every check green (#405). Same citation walk as
+  # check_evidence_pins.py -- a cited file under sim/, or the report*.json[.gz]
+  # beside it when the cited file carries no closure (item 6 cites yield.json)
+  # -- and any `scope: repo` member whose hash moved fails unless the mismatch
+  # is on the dated allowlist beside the checker. An entry that stops
+  # mismatching fails too, so the list can only shrink.
+  run "Check every cited sim record's netlist closure matches the tree" \
+    python3 -I scripts/ci/check_netlist_closure.py
+
   # `klt signoff --attest` records an inventory's tool pins verbatim and its
   # own version as provenance, and never compares the two (#324): a pin left
   # behind by a grader bump attests a version the evidence was not produced

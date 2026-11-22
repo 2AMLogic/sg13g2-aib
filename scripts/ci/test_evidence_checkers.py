@@ -7,6 +7,7 @@ python3 -I drops this directory from sys.path, hence the insert below (the
 check_record_not_ignored.py idiom).
 """
 import contextlib
+import gzip
 import json
 import shutil
 import sys
@@ -15,12 +16,15 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import manifest_pins  # noqa: E402  (the one manifest pin definition, #283)
 from _checker_test_helpers import GOOD, HERE, REPO, git, make_tree, run  # noqa: E402
 
 FMT = HERE / "check_evidence_format.py"
 APP = HERE / "check_sim_append_only.py"
 IGN = HERE / "check_record_not_ignored.py"
 README_STATUS = HERE / "check_readme_status.py"
+CLOSURE = HERE / "check_netlist_closure.py"
+ALLOWLIST = "scripts/ci/netlist_closure_allowlist.json"
 
 
 class FormatTests(unittest.TestCase):
@@ -513,6 +517,349 @@ class ReadmeStatusTests(unittest.TestCase):
         def edit(r):
             (r / "signoff/block-manifest.signoff.json").unlink()
         self.assertNotEqual(self.check(edit), 0)
+
+
+class NetlistClosureTests(unittest.TestCase):
+    """A cited sim record binds the netlists it was computed with (#405).
+
+    A `klt sim` report records the sha256 of every netlist in its include
+    closure under `environment.netlist_closure`, and nothing compared those
+    pins to the tree: #332's `XResd` edit left cited analog records describing
+    a cell that no longer exists with every check green. The checker walks the
+    manifest citations, so its fixture is one record cited under one row whose
+    closure names a pad cell and a testbench.
+    """
+
+    REC = "sim/s/records/20260101T000000Z"
+    PAD = "design/pad.spice"
+    TB = "sim/s/tb.cir"
+    OLD_PAD = "old pad\n"
+
+    @staticmethod
+    def digest(data: bytes) -> str:
+        return manifest_pins.sha(data).partition(":")[2]
+
+    @classmethod
+    def write(cls, root: Path, name: str, obj) -> None:
+        """Write `obj` as JSON at `name`, gzip-compressed when the name ends .gz."""
+        data = json.dumps(obj).encode()
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_bytes(gzip.compress(data) if name.endswith(".gz") else data)
+
+    def rec(self, *parts) -> str:
+        return "/".join((self.REC, *parts))
+
+    def report(self, closure) -> dict:
+        return {"environment": {"netlist_closure": closure}}
+
+    def entry(self, record, member, recorded) -> dict:
+        return {"record": record, "member": member, "sha256": recorded,
+                "reason": "re-run tracked in #0", "added": "2026-01-01"}
+
+    @contextlib.contextmanager
+    def tree(self, cited, reports, allow=(), evidence=None):
+        """A repo root whose manifest cites `cited` under one evidence row.
+
+        `reports` maps a repo-relative path to the JSON it holds (gzip when
+        the name ends .gz) and `allow` is the allowlist's entries. The pad cell
+        and the testbench exist, each holding its own path, unless a test
+        rewrites them.
+        """
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            for name in (self.PAD, self.TB):
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
+                (root / name).write_text(name + "\n")
+            for name, obj in reports.items():
+                self.write(root, name, obj)
+            rows = evidence if evidence is not None else {"5.analog": [{"file": f} for f in cited]}
+            self.write(root, manifest_pins.MANIFEST, {"evidence": rows})
+            self.write(root, ALLOWLIST, {"description": "fixture", "entries": list(allow)})
+            yield root
+
+    def member(self, root, name, content=None) -> dict:
+        """A `scope: repo` member recording `name` at `content`'s hash (default: as it is)."""
+        data = (root / name).read_bytes() if content is None else content.encode()
+        return {"path": name, "scope": "repo", "sha256": self.digest(data)}
+
+    def stale_record(self, root, name, *members) -> None:
+        """A report declaring the pad cell at OLD_PAD plus `members` as they are."""
+        closure = [self.member(root, self.PAD, self.OLD_PAD)] + [self.member(root, m) for m in members]
+        self.write(root, name, self.report(closure))
+
+    # -- the verdict ---------------------------------------------------------
+
+    def test_clean_tree_passes(self):
+        with self.tree([self.rec("report.json")], {}) as root:
+            self.write(root, self.rec("report.json"),
+                       self.report([self.member(root, self.PAD), self.member(root, self.TB)]))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("cited netlist closures: ok", r.stdout)
+
+    def test_the_repo_conforms(self):
+        # The committed allowlist is exactly the cited-stale set: no unlisted
+        # mismatch, and no entry left behind by a re-run that has landed.
+        r = run(CLOSURE, "--root", REPO)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_one_changed_member_fails_naming_record_member_and_both_hashes(self):
+        recorded = self.digest(self.OLD_PAD.encode())
+        with self.tree([self.rec("report.json")], {}) as root:
+            self.stale_record(root, self.rec("report.json"), self.TB)
+            r = run(CLOSURE, "--root", root)
+            tree_hash = self.digest((root / self.PAD).read_bytes())
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertNotEqual(recorded, tree_hash)
+        for token in (self.rec("report.json"), self.PAD, recorded, tree_hash):
+            self.assertIn(token, r.stderr)
+        self.assertNotIn(self.TB, r.stderr)
+
+    def test_allowlisted_mismatch_passes(self):
+        cited = self.rec("report.json")
+        allow = [self.entry(cited, self.PAD, self.digest(self.OLD_PAD.encode()))]
+        with self.tree([cited], {}, allow=allow) as root:
+            self.stale_record(root, cited, self.TB)
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_stale_allowlist_entry_fails(self):
+        # The member was fixed underneath the record: the entry now hides nothing.
+        cited = self.rec("report.json")
+        recorded = self.digest(self.OLD_PAD.encode())
+        allow = [self.entry(cited, self.PAD, recorded)]
+        with self.tree([cited], {}, allow=allow) as root:
+            self.write(root, cited, self.report([self.member(root, self.PAD)]))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("no longer mismatches", r.stderr)
+        for token in (ALLOWLIST, cited, self.PAD, recorded):
+            self.assertIn(token, r.stderr)
+
+    def test_an_entry_for_a_record_no_longer_cited_is_stale(self):
+        # A re-run is a new record; once the manifest cites it, the old entry goes.
+        superseded = self.rec("yield.json")
+        rerun = self.REC.replace("20260101", "20260102") + "/yield.json"
+        allow = [self.entry(superseded, self.PAD, self.digest(self.OLD_PAD.encode()))]
+        with self.tree([rerun], {rerun: {"samples": 3}}, allow=allow) as root:
+            self.write(root, rerun.replace("yield.json", "report.json.gz"),
+                       self.report([self.member(root, self.PAD)]))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("no longer mismatches", r.stderr)
+        self.assertIn(superseded, r.stderr)
+
+    def test_a_mismatch_at_another_recorded_hash_cannot_hide_behind_an_entry(self):
+        # The entry pins the *recorded* hash: a report re-made in place at a
+        # different hash is a new mismatch, and the old entry is stale as well.
+        cited = self.rec("report.json")
+        allow = [self.entry(cited, self.PAD, self.digest(b"a first edit\n"))]
+        with self.tree([cited], {}, allow=allow) as root:
+            self.stale_record(root, cited)
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn(self.digest(self.OLD_PAD.encode()), r.stderr)
+        self.assertIn("no longer mismatches", r.stderr)
+
+    # -- the population: cited record -> the report that carries the closure -
+
+    def test_yield_json_hops_to_the_sibling_gz_report(self):
+        # Item 6 cites yield.json, which has no environment block; the closure
+        # is in the report.json.gz beside it.
+        cited = self.rec("yield.json")
+        recorded = self.digest(self.OLD_PAD.encode())
+        allow = [self.entry(cited, self.PAD, recorded)]
+        with self.tree([cited], {cited: {"samples": 3}}) as root:
+            self.stale_record(root, self.rec("report.json.gz"))
+            unlisted = run(CLOSURE, "--root", root)
+            self.write(root, ALLOWLIST, {"description": "fixture", "entries": allow})
+            listed = run(CLOSURE, "--root", root)
+        self.assertEqual(unlisted.returncode, 1, unlisted.stdout + unlisted.stderr)
+        for token in (cited, "report.json.gz", self.PAD, recorded):
+            self.assertIn(token, unlisted.stderr)
+        self.assertEqual(listed.returncode, 0, listed.stdout + listed.stderr)
+
+    def test_a_cited_gz_report_is_read_directly(self):
+        cited = self.rec("report.json.gz")
+        with self.tree([cited], {}) as root:
+            self.write(root, cited, self.report([self.member(root, self.PAD)]))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_a_json_and_gz_pair_is_one_mismatch_per_member(self):
+        # Both encodings of the same report sit beside the cited file: each
+        # member is reported once, under the cited record, not once per file.
+        cited = self.rec("yield.json")
+        with self.tree([cited], {cited: {"samples": 3}}) as root:
+            for name in ("report.json", "report.json.gz"):
+                self.stale_record(root, self.rec(name), self.TB)
+            r = run(CLOSURE, "--root", root)
+            allow = [self.entry(cited, self.PAD, self.digest(self.OLD_PAD.encode()))]
+            self.write(root, ALLOWLIST, {"description": "fixture", "entries": allow})
+            listed = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertEqual(sum(self.PAD in line for line in r.stderr.splitlines()), 1, r.stderr)
+        self.assertEqual(listed.returncode, 0, listed.stdout + listed.stderr)
+
+    def test_report_ctl_beside_report_is_examined(self):
+        # The negative control is its own simulation: a member stale only there
+        # is a mismatch of the cited record too.
+        cited = self.rec("yield.json")
+        with self.tree([cited], {cited: {"samples": 3}}) as root:
+            self.write(root, self.rec("report.json.gz"),
+                       self.report([self.member(root, self.PAD), self.member(root, self.TB)]))
+            self.stale_record(root, self.rec("report_ctl.json.gz"), self.TB)
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        for token in (cited, "report_ctl.json.gz", self.PAD):
+            self.assertIn(token, r.stderr)
+
+    def test_the_cited_file_closure_wins_over_the_siblings(self):
+        # A cited report that carries the closure is the record; the files
+        # beside it are not also read.
+        cited = self.rec("report.json")
+        with self.tree([cited], {}) as root:
+            self.write(root, cited, self.report([self.member(root, self.PAD)]))
+            self.stale_record(root, self.rec("report_ctl.json.gz"))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_a_cited_record_with_no_closure_fails(self):
+        cited = self.rec("yield.json")
+        bare = self.rec("report.json")
+        cases = {
+            "no sibling report": ([cited], {cited: {"samples": 3}}),
+            "a report with no environment": ([bare], {bare: {"status": "pass"}}),
+            "a report with no netlist_closure": ([bare], {bare: {"environment": {"engine": "ngspice"}}}),
+            "an empty netlist_closure": ([bare], {bare: {"environment": {"netlist_closure": []}}}),
+        }
+        for label, (cites, reports) in cases.items():
+            with self.subTest(label), self.tree(cites, reports) as root:
+                r = run(CLOSURE, "--root", root)
+                self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+                self.assertIn(cites[0], r.stderr)
+                self.assertIn("netlist_closure", r.stderr)
+
+    def test_a_sibling_report_without_a_closure_fails(self):
+        # One report beside the cited file declares the closure and the other
+        # does not: the second is unverified evidence, not a silent skip.
+        cited = self.rec("yield.json")
+        with self.tree([cited], {cited: {"samples": 3}}) as root:
+            self.write(root, self.rec("report.json.gz"), self.report([self.member(root, self.PAD)]))
+            self.write(root, self.rec("report_ctl.json.gz"), {"environment": {}})
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        for token in (cited, "report_ctl.json.gz"):
+            self.assertIn(token, r.stderr)
+
+    def test_non_sim_citations_are_out_of_population(self):
+        # The attest envelopes, the item 6 documents and the layout records
+        # carry no closure and need none.
+        attest = "signoff/attest/item1-digital.attest.json"
+        statement = "signoff/item6/digital-statement.json"
+        pex = "layout/pex/records/20260101T000000Z/a.extract.report.json"
+        evidence = {"1.digital": {"file": attest, "content_hash": "x"},
+                    "6.digital": {"not_applicable": {"statement": {"file": statement}}},
+                    "7.analog": [{"file": pex}]}
+        reports = {attest: {"kind": "generic"}, statement: {"rows": []}, pex: {"status": "ok"}}
+        with self.tree([attest, statement, pex], reports, evidence=evidence) as root:
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    # -- closure members -----------------------------------------------------
+
+    def test_non_repo_scope_members_are_ignored(self):
+        # The committed shapes: a PDK model behind $PDK_ROOT that klt could not
+        # hash, and an external include with no repo path.
+        cited = self.rec("report.json")
+        with self.tree([cited], {}) as root:
+            closure = [
+                {"target": "$PDK_ROOT/ihp-sg13g2/libs.ref/sg13g2_io/spice/sg13g2_io.spi",
+                 "sha256": None, "unhashed_reason": "env_var"},
+                {"path": None, "scope": "external", "sha256": None},
+                self.member(root, self.PAD),
+            ]
+            self.write(root, cited, self.report(closure))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_a_closure_path_missing_from_the_tree_is_an_error_not_a_crash(self):
+        cited = self.rec("report.json")
+        gone = "design/gone.spice"
+        with self.tree([cited], {}) as root:
+            self.write(root, cited, self.report([{"path": gone, "scope": "repo", "sha256": "0" * 64}]))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertNotIn("Traceback", r.stderr)
+        for token in (cited, gone, "0" * 64):
+            self.assertIn(token, r.stderr)
+
+    def test_a_repo_member_with_no_sha256_fails(self):
+        cited = self.rec("report.json")
+        with self.tree([cited], {}) as root:
+            self.write(root, cited, self.report([{"path": self.PAD, "scope": "repo", "sha256": None}]))
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertNotIn("Traceback", r.stderr)
+        for token in (cited, self.PAD):
+            self.assertIn(token, r.stderr)
+
+    def test_an_unreadable_report_is_an_error_not_a_crash(self):
+        cited_yield, bare = self.rec("yield.json"), self.rec("report.json")
+        cases = {
+            "cited file is not JSON": ([bare], {bare: {}}, bare),
+            "sibling is not gzip": ([cited_yield], {cited_yield: {"samples": 3}}, self.rec("report.json.gz")),
+        }
+        for label, (cites, reports, broken) in cases.items():
+            with self.subTest(label), self.tree(cites, reports) as root:
+                (root / broken).write_bytes(b"{ not what its name claims")
+                r = run(CLOSURE, "--root", root)
+                self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+                self.assertNotIn("Traceback", r.stderr)
+                self.assertIn(broken, r.stderr)
+
+    def test_a_missing_cited_sim_file_fails(self):
+        absent = self.rec("report.json")
+        with self.tree([absent], {}) as root:
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn(absent, r.stderr)
+
+    # -- the allowlist itself ------------------------------------------------
+
+    def test_a_missing_allowlist_fails(self):
+        with self.tree([self.rec("report.json")], {}) as root:
+            self.write(root, self.rec("report.json"), self.report([self.member(root, self.PAD)]))
+            (root / ALLOWLIST).unlink()
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn(ALLOWLIST, r.stderr)
+
+    def test_allowlist_entries_need_every_field_and_a_real_date(self):
+        cited = self.rec("report.json")
+        good = self.entry(cited, self.PAD, self.digest(self.OLD_PAD.encode()))
+        bad = {
+            "no member": {k: v for k, v in good.items() if k != "member"},
+            "no reason": {**good, "reason": " "},
+            "no date": {k: v for k, v in good.items() if k != "added"},
+            "not a day": {**good, "added": "yesterday"},
+            "no such day": {**good, "added": "2026-02-30"},
+        }
+        for label, entry in bad.items():
+            with self.subTest(label), self.tree([cited], {}, allow=[entry]) as root:
+                self.stale_record(root, cited)
+                r = run(CLOSURE, "--root", root)
+                self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+                self.assertIn(f"{ALLOWLIST}: entries[0]", r.stderr)
+
+    def test_duplicate_allowlist_entries_fail(self):
+        cited = self.rec("report.json")
+        entry = self.entry(cited, self.PAD, self.digest(self.OLD_PAD.encode()))
+        with self.tree([cited], {}, allow=[entry, dict(entry)]) as root:
+            self.stale_record(root, cited)
+            r = run(CLOSURE, "--root", root)
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("duplicate", r.stderr)
 
 
 if __name__ == "__main__":

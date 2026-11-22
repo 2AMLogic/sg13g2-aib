@@ -405,6 +405,14 @@ class CheckListCompletenessTests(unittest.TestCase):
         # Step 1 of #236; also the guard on the derived neg/ controls (#202).
         self.assertIn("layout/lvs/gen_reference.py", strip_sh_comments(self.text))
 
+    def test_the_netlist_closure_check_is_listed(self):
+        # #405: the checker inventory entry for the cited-record closure check.
+        # Listed outright, so it must carry no COVERED/EXEMPT entry to keep in step.
+        listed = "scripts/ci/check_netlist_closure.py" in strip_sh_comments(self.text)
+        self.assertTrue(listed, f"{CHECK_LIST} does not run scripts/ci/check_netlist_closure.py")
+        self.assertNotIn("scripts/ci/check_netlist_closure.py", COVERED)
+        self.assertNotIn("scripts/ci/check_netlist_closure.py", EXEMPT)
+
     def test_the_cocotb_bench_modules_are_exempt_with_reasons(self):
         for mod in ("verification/test_datapath.py", "verification/test_shift_redundancy.py"):
             self.assertIn(mod, EXEMPT)

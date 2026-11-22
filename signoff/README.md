@@ -452,6 +452,21 @@ makes the CI `--check` exit 3 (`drifted`).
   declares a `provenance.input.content_hash` binds the shipped stream it names —
   the gap a manifest pin cannot see (#273). Uncited records are out of the
   population by design;
+- `scripts/ci/check_netlist_closure.py`: every record cited under `evidence`
+  from `sim/` binds the netlists it was computed with. A `klt sim` report
+  records the sha256 of every netlist in its include closure under
+  `environment.netlist_closure`; the checker reads the cited file when it
+  carries that closure and otherwise the `report*.json[.gz]` files beside it
+  (item 6 cites `yield.json`, whose closure lives in the sibling reports),
+  and fails when a `scope: repo` member's hash is not the committed file's
+  (#405: #332's `XResd` edit left cited records describing a cell that no
+  longer existed, with every check green). A cited `sim/` record that reaches
+  no closure is an error. A mismatch already owned by a re-run may sit on the
+  dated allowlist beside the checker (`scripts/ci/netlist_closure_allowlist.json`,
+  keyed on record, member and recorded hash); an entry that stops mismatching
+  fails, so the list only shrinks. It binds nothing else: uncited records, the
+  `signoff/attest/` envelopes, `layout/` records and non-`repo` closure
+  members are out of population;
 - `scripts/ci/check_inventory_klt_pin.py`: every attest inventory that declares
   `pins.tools.klt` pins the same version its paired envelope records as
   `provenance.klt_version` (#324). `--attest` copies pins verbatim and never
