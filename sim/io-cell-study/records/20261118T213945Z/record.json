@@ -1,0 +1,688 @@
+{
+  "record": "io-cell-study",
+  "utc_stamp": "20261118T213945Z",
+  "kind": "simulated",
+  "claim_scope": "BOTH, for the cell only: the PDK sg13g2_io pad cell is the pin in the channel and in the test configuration. No bond pad, no PEX, no channel model is used here.",
+  "variant": "PDK sg13g2_IOPadInOut{4,16,30}mA and sg13g2_IOPadIn from libs.ref/sg13g2_io/spice/sg13g2_io.spi, instantiated unmodified. design/ is not touched.",
+  "modes": "p: iovdd = 2.75 x VDDIO (the PDK-characterised 3.3 V point, 2.97-3.63 V over the grid). a: iovdd = VDDIO (AIB 1.2 V signalling level; not a point the PDK characterises).",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {},
+  "report_only_ranges": {
+    "cap_a_a_0.cpad_a_a_0_ff": {
+      "spec_row": null,
+      "min": [
+        120.895,
+        "fs/1.320V/-40C"
+      ],
+      "max": [
+        128.2516,
+        "sf/1.080V/125C"
+      ]
+    },
+    "cap_a_a_10.cpad_a_a_10_ff": {
+      "spec_row": null,
+      "min": [
+        123.973,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        135.3424,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_a_a_5.cpad_a_a_5_ff": {
+      "spec_row": null,
+      "min": [
+        116.0086,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        127.7283,
+        "ff/1.320V/125C"
+      ]
+    },
+    "cap_a_p_0.cpad_a_p_0_ff": {
+      "spec_row": null,
+      "min": [
+        112.2015,
+        "fs/1.320V/-40C"
+      ],
+      "max": [
+        118.5453,
+        "sf/1.080V/125C"
+      ]
+    },
+    "cap_a_p_10.cpad_a_p_10_ff": {
+      "spec_row": null,
+      "min": [
+        106.2339,
+        "sf/1.320V/-40C"
+      ],
+      "max": [
+        112.941,
+        "fs/1.080V/125C"
+      ]
+    },
+    "cap_a_p_5.cpad_a_p_5_ff": {
+      "spec_row": null,
+      "min": [
+        104.1496,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        113.7791,
+        "ff/1.320V/125C"
+      ]
+    },
+    "cap_a_p_g10.cpad_a_p_g10_ff": {
+      "spec_row": null,
+      "min": [
+        123.515,
+        "sf/1.320V/-40C"
+      ],
+      "max": [
+        134.7338,
+        "fs/1.080V/125C"
+      ]
+    },
+    "cap_a_p_g5.cpad_a_p_g5_ff": {
+      "spec_row": null,
+      "min": [
+        107.2652,
+        "sf/1.320V/-40C"
+      ],
+      "max": [
+        114.3766,
+        "fs/1.080V/125C"
+      ]
+    },
+    "cap_b_a_0.cpad_b_a_0_ff": {
+      "spec_row": null,
+      "min": [
+        170.744,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        182.5195,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_b_a_10.cpad_b_a_10_ff": {
+      "spec_row": null,
+      "min": [
+        177.7114,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        196.823,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_b_a_5.cpad_b_a_5_ff": {
+      "spec_row": null,
+      "min": [
+        168.2883,
+        "ff/1.080V/-40C"
+      ],
+      "max": [
+        181.1519,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_b_p_0.cpad_b_p_0_ff": {
+      "spec_row": null,
+      "min": [
+        159.3044,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        169.1498,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_b_p_10.cpad_b_p_10_ff": {
+      "spec_row": null,
+      "min": [
+        152.1348,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        162.7687,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_b_p_5.cpad_b_p_5_ff": {
+      "spec_row": null,
+      "min": [
+        152.2448,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        161.6777,
+        "sf/1.080V/125C"
+      ]
+    },
+    "cap_b_p_g10.cpad_b_p_g10_ff": {
+      "spec_row": null,
+      "min": [
+        176.0516,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        195.3795,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_b_p_g5.cpad_b_p_g5_ff": {
+      "spec_row": null,
+      "min": [
+        153.3968,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        164.8343,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_a_0.cpad_c_a_0_ff": {
+      "spec_row": null,
+      "min": [
+        227.4214,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        244.4222,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_a_10.cpad_c_a_10_ff": {
+      "spec_row": null,
+      "min": [
+        239.1503,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        267.2894,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_a_5.cpad_c_a_5_ff": {
+      "spec_row": null,
+      "min": [
+        226.3459,
+        "ff/1.080V/-40C"
+      ],
+      "max": [
+        244.7678,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_p_0.cpad_c_p_0_ff": {
+      "spec_row": null,
+      "min": [
+        212.9776,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        227.0765,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_p_10.cpad_c_p_10_ff": {
+      "spec_row": null,
+      "min": [
+        204.5811,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        219.7411,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_p_5.cpad_c_p_5_ff": {
+      "spec_row": null,
+      "min": [
+        206.3432,
+        "sf/1.320V/-40C"
+      ],
+      "max": [
+        218.2943,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_p_g10.cpad_c_p_g10_ff": {
+      "spec_row": null,
+      "min": [
+        236.2073,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        264.9752,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_c_p_g5.cpad_c_p_g5_ff": {
+      "spec_row": null,
+      "min": [
+        206.1413,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        222.5085,
+        "ss/1.080V/125C"
+      ]
+    },
+    "cap_d_a_0.cpad_d_a_0_ff": {
+      "spec_row": null,
+      "min": [
+        102.995,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        110.3982,
+        "ff/1.080V/125C"
+      ]
+    },
+    "cap_d_a_10.cpad_d_a_10_ff": {
+      "spec_row": null,
+      "min": [
+        104.9349,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        114.8873,
+        "ff/1.080V/125C"
+      ]
+    },
+    "cap_d_a_5.cpad_d_a_5_ff": {
+      "spec_row": null,
+      "min": [
+        97.66512,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        109.9609,
+        "ff/1.320V/125C"
+      ]
+    },
+    "cap_d_p_0.cpad_d_p_0_ff": {
+      "spec_row": null,
+      "min": [
+        95.75077,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        102.1174,
+        "ff/1.080V/125C"
+      ]
+    },
+    "cap_d_p_10.cpad_d_p_10_ff": {
+      "spec_row": null,
+      "min": [
+        90.27722,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        96.63167,
+        "ff/1.080V/125C"
+      ]
+    },
+    "cap_d_p_5.cpad_d_p_5_ff": {
+      "spec_row": null,
+      "min": [
+        87.91551,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        98.1457,
+        "ff/1.320V/125C"
+      ]
+    },
+    "cap_d_p_g10.cpad_d_p_g10_ff": {
+      "spec_row": null,
+      "min": [
+        104.7738,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        115.4219,
+        "ff/1.080V/125C"
+      ]
+    },
+    "cap_d_p_g5.cpad_d_p_g5_ff": {
+      "spec_row": null,
+      "min": [
+        91.19935,
+        "ss/1.320V/-40C"
+      ],
+      "max": [
+        97.89451,
+        "ff/1.080V/125C"
+      ]
+    },
+    "drv_a.rout_dn_16_a_ohm": {
+      "spec_row": null,
+      "min": [
+        117.1894,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        1771.72,
+        "ss/1.080V/-40C"
+      ]
+    },
+    "drv_a.rout_dn_30_a_ohm": {
+      "spec_row": null,
+      "min": [
+        57.43076,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        1421.569,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_a.rout_dn_4_a_ohm": {
+      "spec_row": null,
+      "min": [
+        1835.625,
+        "ff/1.080V/125C"
+      ],
+      "max": [
+        2242.511,
+        "ss/1.320V/-40C"
+      ]
+    },
+    "drv_a.rout_up_16_a_ohm": {
+      "spec_row": null,
+      "min": [
+        177.0852,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        1941.058,
+        "ss/1.200V/-40C"
+      ]
+    },
+    "drv_a.rout_up_30_a_ohm": {
+      "spec_row": null,
+      "min": [
+        82.12796,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        1764.622,
+        "ss/1.080V/-40C"
+      ]
+    },
+    "drv_a.rout_up_4_a_ohm": {
+      "spec_row": null,
+      "min": [
+        2055.696,
+        "ff/1.080V/125C"
+      ],
+      "max": [
+        2384.816,
+        "ss/1.320V/-40C"
+      ]
+    },
+    "drv_a.voh_16_a_v": {
+      "spec_row": null,
+      "min": [
+        -0.815479,
+        "ss/1.080V/-40C"
+      ],
+      "max": [
+        1.142915,
+        "ff/1.320V/-40C"
+      ]
+    },
+    "drv_a.voh_30_a_v": {
+      "spec_row": null,
+      "min": [
+        -0.684622,
+        "ss/1.080V/-40C"
+      ],
+      "max": [
+        1.237872,
+        "ff/1.320V/-40C"
+      ]
+    },
+    "drv_a.voh_4_a_v": {
+      "spec_row": null,
+      "min": [
+        -1.12011,
+        "ss/1.080V/-40C"
+      ],
+      "max": [
+        -0.900702,
+        "ff/1.320V/125C"
+      ]
+    },
+    "drv_a.vol_16_a_v": {
+      "spec_row": null,
+      "min": [
+        0.1171894,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        1.77172,
+        "ss/1.080V/-40C"
+      ]
+    },
+    "drv_a.vol_30_a_v": {
+      "spec_row": null,
+      "min": [
+        0.05743076,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        1.421569,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_a.vol_4_a_v": {
+      "spec_row": null,
+      "min": [
+        1.835625,
+        "ff/1.080V/125C"
+      ],
+      "max": [
+        2.242511,
+        "ss/1.320V/-40C"
+      ]
+    },
+    "drv_p.rout_dn_16_p_ohm": {
+      "spec_row": null,
+      "min": [
+        36.98811,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        88.32962,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.rout_dn_30_p_ohm": {
+      "spec_row": null,
+      "min": [
+        19.69156,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        46.62786,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.rout_dn_4_p_ohm": {
+      "spec_row": null,
+      "min": [
+        150.6714,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        395.6648,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.rout_up_16_p_ohm": {
+      "spec_row": null,
+      "min": [
+        46.07448,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        106.833,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.rout_up_30_p_ohm": {
+      "spec_row": null,
+      "min": [
+        24.46282,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        56.36715,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.rout_up_4_p_ohm": {
+      "spec_row": null,
+      "min": [
+        190.0292,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        470.6374,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.voh_16_p_v": {
+      "spec_row": null,
+      "min": [
+        2.863167,
+        "ss/1.080V/125C"
+      ],
+      "max": [
+        3.583926,
+        "ff/1.320V/-40C"
+      ]
+    },
+    "drv_p.voh_30_p_v": {
+      "spec_row": null,
+      "min": [
+        2.913633,
+        "ss/1.080V/125C"
+      ],
+      "max": [
+        3.605537,
+        "ff/1.320V/-40C"
+      ]
+    },
+    "drv_p.voh_4_p_v": {
+      "spec_row": null,
+      "min": [
+        2.499363,
+        "ss/1.080V/125C"
+      ],
+      "max": [
+        3.439971,
+        "ff/1.320V/-40C"
+      ]
+    },
+    "drv_p.vol_16_p_v": {
+      "spec_row": null,
+      "min": [
+        0.03698811,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        0.08832962,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.vol_30_p_v": {
+      "spec_row": null,
+      "min": [
+        0.01969156,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        0.04662786,
+        "ss/1.080V/125C"
+      ]
+    },
+    "drv_p.vol_4_p_v": {
+      "spec_row": null,
+      "min": [
+        0.1506714,
+        "ff/1.320V/-40C"
+      ],
+      "max": [
+        0.3956648,
+        "ss/1.080V/125C"
+      ]
+    },
+    "rx_hi_a.p2c_hi_a_frac": {
+      "spec_row": null,
+      "min": [
+        0.999992,
+        "ff/1.080V/125C"
+      ],
+      "max": [
+        1.0,
+        "tt/1.320V/27C"
+      ]
+    },
+    "rx_hi_p.p2c_hi_p_frac": {
+      "spec_row": null,
+      "min": [
+        0.999992,
+        "ff/1.080V/125C"
+      ],
+      "max": [
+        1.0,
+        "tt/1.320V/27C"
+      ]
+    },
+    "rx_lo_a.p2c_lo_a_frac": {
+      "spec_row": null,
+      "min": [
+        1.109147e-09,
+        "ss/1.080V/-40C"
+      ],
+      "max": [
+        1.489579e-05,
+        "ff/1.080V/125C"
+      ]
+    },
+    "rx_lo_p.p2c_lo_p_frac": {
+      "spec_row": null,
+      "min": [
+        1.109147e-09,
+        "ss/1.080V/-40C"
+      ],
+      "max": [
+        1.489579e-05,
+        "ff/1.080V/125C"
+      ]
+    }
+  },
+  "row_source": "no rows: the request carries no limits, so every measurement is report-only (see report_only_ranges).",
+  "t25_note": "T-25 is not evaluated: no ESD level is derived from this record. See the study record for what ESD evidence exists for the PDK cell.",
+  "batch_job_ids": [
+    "klt-sim-3b19c005842a",
+    "klt-sim-ab89ed31f989",
+    "klt-sim-9829445e39e4",
+    "klt-sim-67ce1167a588",
+    "klt-sim-46aebb5d080d"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

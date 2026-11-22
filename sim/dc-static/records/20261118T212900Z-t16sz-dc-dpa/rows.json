@@ -1,0 +1,1395 @@
+{
+  "label": "t16sz-dc-dpa",
+  "corners": 540,
+  "kind": "simulated",
+  "rows": {
+    "T-06": {
+      "verdict": "pass",
+      "measurements": [
+        "drv_ld.t06_voh_droop_v",
+        "drv_ld.t06_vol_v",
+        "drv_nl.t06_voh_droop_v",
+        "drv_nl.t06_vol_v"
+      ],
+      "pass": 2160,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "drv_ld.t06_voh_droop_v",
+        "value": 0.07510153,
+        "why": "smallest margin"
+      }
+    },
+    "T-07": {
+      "verdict": "pass",
+      "measurements": [
+        "lk_0.t07_t28_ipin_a",
+        "lk_10.t07_t28_ipin_a",
+        "lk_5.t07_t28_ipin_a"
+      ],
+      "pass": 1620,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.421664e-07,
+        "why": "smallest margin"
+      }
+    },
+    "T-08": {
+      "verdict": "pass",
+      "measurements": [
+        "drv_ld.t08_rout_dn_ohm",
+        "drv_ld.t08_rout_up_ohm"
+      ],
+      "pass": 1080,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "drv_ld.t08_rout_up_ohm",
+        "value": 42.86275,
+        "why": "smallest margin"
+      }
+    },
+    "T-11": {
+      "verdict": "pass",
+      "measurements": [
+        "t11_hyst_mv"
+      ],
+      "pass": 540,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "t11_hyst_mv",
+        "value": 0.001728,
+        "why": "smallest margin"
+      }
+    },
+    "T-24": {
+      "verdict": "pass",
+      "measurements": [
+        "cap_0.t24_cpin_ff",
+        "cap_10.t24_cpin_ff",
+        "cap_5.t24_cpin_ff"
+      ],
+      "pass": 1620,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "cap_5.t24_cpin_ff",
+        "value": 96.41907,
+        "why": "smallest margin"
+      }
+    },
+    "T-28": {
+      "verdict": "pass",
+      "measurements": [
+        "lk_0.t07_t28_ipin_a",
+        "lk_10.t07_t28_ipin_a",
+        "lk_5.t07_t28_ipin_a",
+        "pd_on.t28_rpd_ohm",
+        "pu_on.t28_rpu_ohm"
+      ],
+      "pass": 2700,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.421664e-07,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "param_groups": {
+    "sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421662e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 87.68796,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=2.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421662e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 91.4481,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510136,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 86.29081,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510136,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 86.29207,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=3e-06,sz_ng=10,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=3e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=3e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=3e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 89.41667,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=3e-06,sz_ng=5,sz_rl=1e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=3e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510136,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=3e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=3e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 84.25939,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=3e-06,sz_ng=5,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421663e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 96.41782,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=1e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 96.41907,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 96.4162,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=10,sz_rl=5e-07",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510126,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 87.70364,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=2,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510136,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 91.26304,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4.5e-06,sz_ng=5,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "sz_dp=4e-06,sz_ng=10,sz_rl=2e-06": {
+      "corners": 45,
+      "rows": {
+        "T-06": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t06_voh_droop_v",
+            "drv_ld.t06_vol_v",
+            "drv_nl.t06_voh_droop_v",
+            "drv_nl.t06_vol_v"
+          ],
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ss/mixed/125C/sz_dp=4e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t06_voh_droop_v",
+            "value": 0.07510153,
+            "why": "smallest margin"
+          }
+        },
+        "T-07": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        },
+        "T-08": {
+          "verdict": "pass",
+          "measurements": [
+            "drv_ld.t08_rout_dn_ohm",
+            "drv_ld.t08_rout_up_ohm"
+          ],
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/-40C/sz_dp=4e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "drv_ld.t08_rout_up_ohm",
+            "value": 42.86275,
+            "why": "smallest margin"
+          }
+        },
+        "T-11": {
+          "verdict": "pass",
+          "measurements": [
+            "t11_hyst_mv"
+          ],
+          "pass": 45,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "t11_hyst_mv",
+            "value": 0.001728,
+            "why": "smallest margin"
+          }
+        },
+        "T-24": {
+          "verdict": "pass",
+          "measurements": [
+            "cap_0.t24_cpin_ff",
+            "cap_10.t24_cpin_ff",
+            "cap_5.t24_cpin_ff"
+          ],
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "fs/mixed/125C/sz_dp=4e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "cap_5.t24_cpin_ff",
+            "value": 93.78223,
+            "why": "smallest margin"
+          }
+        },
+        "T-28": {
+          "verdict": "pass",
+          "measurements": [
+            "lk_0.t07_t28_ipin_a",
+            "lk_10.t07_t28_ipin_a",
+            "lk_5.t07_t28_ipin_a",
+            "pd_on.t28_rpd_ohm",
+            "pu_on.t28_rpu_ohm"
+          ],
+          "pass": 225,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "ff/mixed/125C/sz_dp=4e-06,sz_ng=10,sz_rl=2e-06",
+            "measurement": "lk_0.t07_t28_ipin_a",
+            "value": 8.421664e-07,
+            "why": "smallest margin"
+          }
+        }
+      }
+    }
+  }
+}

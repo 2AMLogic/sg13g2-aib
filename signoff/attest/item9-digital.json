@@ -3,28 +3,21 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 9/9 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 8/8 attestation checks passed (klt signoff --attest)",
   "source": "signoff/attest/item9-digital.inventory.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 9,
-    "passed_count": 9,
+    "check_count": 8,
+    "passed_count": 8,
     "checks": [
       {
         "check": "present",
         "role": "testbench",
-        "path": "sim/rtl-synth/run_synth.sh",
+        "path": "verification/klt/shift_redundancy.json",
         "passed": true,
-        "content_hash": "sha256:f7a2b5e05575beb8b6c13a0a350e2d5c17cb15b192b929ecd1930b09600a0fee"
-      },
-      {
-        "check": "present",
-        "role": "testbench",
-        "path": "verification/run_tb.py",
-        "passed": true,
-        "content_hash": "sha256:3516f910be0ce60cdad78308daa9255f460774154268d8d19b00f218191f02e4"
+        "content_hash": "sha256:de5d6669ad27b204292f28d847a9ca869a59ce99c68d693140f1a3c8d58dc216"
       },
       {
         "check": "present",
@@ -58,8 +51,16 @@
         "check": "command",
         "role": "cold_start",
         "argv": [
-          "/usr/bin/python3",
-          "verification/run_tb.py"
+          "uvx",
+          "--from",
+          "klayout-tools[functional-verification]==0.9.0",
+          "klt",
+          "functional-verification",
+          "verification/klt/shift_redundancy.json",
+          "-o",
+          "/tmp/item9-digital-cold-start",
+          "--format",
+          "json"
         ],
         "cwd": ".",
         "exit_status": 0,
@@ -82,14 +83,14 @@
         "value": {
           "cocotb": "2.1.0",
           "iverilog": "13.0",
-          "klt": "0.8.0",
+          "klt": "0.9.0",
           "yosys": "0.67"
         }
       }
     ]
   },
   "provenance": {
-    "klt_version": "0.8.0",
+    "klt_version": "0.9.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
@@ -98,7 +99,7 @@
         "path": "signoff/attest/item9-digital.inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"
+      "content_hash": "sha256:53e1ce98bf7222844f5a8737478b85fb3f0aaf575a672705219a149c272c252e"
     }
   }
 }

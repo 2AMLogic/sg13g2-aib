@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Geometry self-checks on layout/aib_io_column.gds (the T-22/DR-0007/DR-0010 structure).
+"""Structural self-checks on layout/aib_io_column.gds (the T-22/DR-0007/DR-0010 structure,
+and the DR-0016 slot order).
 
 Run with the pinned klt environment from the repo root:
     uvx --from "klayout-tools==$(cat signoff/KLT_VERSION)" python -I layout/check_io_column.py layout/aib_io_column.gds
 Exit 0 only if every check passes. These are structural checks, not DRC.
 """
+import re
 import sys
 
 import klayout.db as db
@@ -13,6 +15,13 @@ PITCH, DEPTH, SLOTS = 55.0, 100.0, 24
 DEVICE_LAYERS = [(1, 0), (5, 0), (6, 0), (8, 0), (31, 0), (14, 0)]
 PAD_OPEN = (7.5, 56.0, 47.5, 96.0)
 RAIL_LABELS = ("VSS", "VDDIO")
+# Column slot labels (TM1lbl, 126/1), one per slot: `<role>_<wire>`. DR-0016 numbers the wires
+# 0..21 -- data bits 0..19 on wires 0..19, the two spares as wires 20, 21.
+SLOT_LBL = (126, 1)
+SLOT_LBL_RE = re.compile(r"^(?:TX|RX)_(D(?:1[0-9]|[0-9])|SP[01]|CLKB?)$")
+N_DATA, N_SPARE = 20, 2
+WIRE_OF = dict([(f"D{i}", i) for i in range(N_DATA)]
+               + [(f"SP{i}", N_DATA + i) for i in range(N_SPARE)])
 
 
 def metal_clusters(ly, cell):
@@ -49,6 +58,29 @@ def label_clusters(ly, cell, l2n, r):
                 if n is not None:
                     out.setdefault(n.cluster_id, set()).add(t.string)
             it.next()
+    return out
+
+
+def slot_labels(ly, cell):
+    """[(slot index, wire name)] of one column's slot labels, ordered along the column.
+
+    The unit cells carry their own `PAD` label on the same layer and purpose, so only the
+    `<role>_<wire>` texts `build_column` writes once per slot are read here; the slot index comes
+    from the label's x, not from the order the shapes happen to appear in the stream."""
+    idx = ly.find_layer(*SLOT_LBL)
+    if idx is None:
+        return []
+    out = []
+    it = cell.begin_shapes_rec(idx)
+    while not it.at_end():
+        sh = it.shape()
+        if sh.is_text():
+            t = sh.text.transformed(it.trans())
+            m = SLOT_LBL_RE.match(t.string)
+            if m:
+                out.append((int(t.x * ly.dbu // PITCH), m.group(1)))
+        it.next()
+    out.sort()
     return out
 
 
@@ -125,6 +157,30 @@ def main(path):
         check(f"{col} cell boundaries abut without gap or overlap",
               bnd.count() == 1 and bnd.bbox().width() == int(SLOTS * PITCH * k),
               f"{bnd.count()} polygon(s)")
+        # Slot order (DR-0016, DR-0010 Amendment 2026-11-01). The geometry above is symmetric
+        # whatever wire sits in which slot, so nothing checked so far can see a spare drawn at
+        # the wrong end; these four read the labels that say which slot carries which wire.
+        labs = slot_labels(ly, c)
+        order = [nm for _, nm in labs]
+        check(f"{col}: exactly one slot label per slot, slots 0..{SLOTS - 1}",
+              [s for s, _ in labs] == list(range(SLOTS)), str([s for s, _ in labs]))
+        check(f"{col}: {N_DATA} data + {N_SPARE} spare + CLK + CLKB slot labels",
+              sorted(order) == sorted([f"D{i}" for i in range(N_DATA)]
+                                      + [f"SP{i}" for i in range(N_SPARE)] + ["CLK", "CLKB"]),
+              ",".join(order))
+        sp = [i for i, nm in enumerate(order) if nm.startswith("SP")]
+        check(f"{col}: the two spares are adjacent and at one end of the column (DR-0016)",
+              len(sp) == N_SPARE and sp == list(range(sp[0], sp[0] + N_SPARE))
+              and (sp[0] == 0 or sp[-1] == SLOTS - 1), str(sp))
+        clk = [i for i, nm in enumerate(order) if nm.startswith("CLK")]
+        check(f"{col}: CLK/CLKB occupy the two centre slots (DR-0010 Amendment: the matched span "
+              f"is the 22 I/O cells)", clk == [SLOTS // 2 - 1, SLOTS // 2], str(clk))
+        # A monotonic run is what makes a repair a two-cell move: DR-0016 shifts bits pos..19 two
+        # wires toward the spares, so wire k + 2 must be two slots away from wire k.
+        wires = [WIRE_OF[nm] for nm in order if nm in WIRE_OF]
+        rng = list(range(N_DATA + N_SPARE))
+        check(f"{col}: wires 0..{N_DATA + N_SPARE - 1} run monotonically along the column "
+              f"(DR-0016 two-wire shift)", wires in (rng, rng[::-1]), str(wires))
     return 0 if ok else 1
 
 

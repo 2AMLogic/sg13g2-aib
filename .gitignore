@@ -8,20 +8,33 @@ __pycache__/
 # sim/ harness: per-corner ngspice logs under corners/ are committed evidence
 # (append-only record trail), so they escape the *.log rule.
 !sim/*/corners/**/*.log
+# layout/pex records: the ngspice log is the evidence for each leg's outcome --
+# it is the only place the failing card and ngspice's own message appear (see
+# layout/pex/README.md "The two defects"), so it escapes *.log for the same
+# append-only reason as sim/*/corners above.
+!layout/pex/records/**/*.log
 sim/build/
-# flow/ synthesis: per-record Yosys logs are committed evidence (the same
-# append-only rationale as sim/*/corners above), so they escape *.log too.
-!flow/*/reports/**/*.log
-# sim/harness scratch: generated ngspice decks, disposable (sim/harness/README.md)
+# sim/rtl-synth synthesis: per-record Yosys logs are committed evidence (the
+# same append-only rationale as sim/*/corners above), so they escape *.log too.
+!sim/rtl-synth/records/**/*.log
+# sim/pdk-smoke scratch: run_smoke.sh:28 writes sim/.work/pdk-smoke-<stamp>/
+# (generated deck + Id-Vgs .dat) and never cleans it up; the record itself
+# lands in sim/pdk-smoke/records/<stamp>/.
 sim/.work/
-# machine-local PDK override (sim/harness/pdk.py); never committed
-sim/pdk.local.json
-# synthesis / P&R scratch
-flow/build/
+# sim/channel-eye: run_t16attr.sh regenerates the four T-16 attribution requests
+# with gen_t16attr.py before every run, so the bench-directory copies are
+# disposable output. The run's own copies stay tracked under records/.
+/sim/channel-eye/request_t16attr_*.json
+# sim/channel-eye: run_t16sizing.sh likewise regenerates the finalist sizing
+# request with gen_t16sizing.py --finalist before every fin-* run (no --check
+# guards it), so the bench-directory copy is disposable output. The run's own
+# copy stays tracked under records/.
+/sim/channel-eye/request_t16sz_fin_*.json
 # cocotb/Icarus build + result artifacts (verification/)
 sim_build/
 results.xml
-# local klt install, created by the setup script
+# a local klt venv, if one is made by hand: every klt invocation here runs
+# ephemerally via uvx on the signoff/KLT_VERSION pin, so nothing creates this.
 .venv/
 # >>> loom-managed (do not edit) >>>
 # Loom runtime state (don't commit these)

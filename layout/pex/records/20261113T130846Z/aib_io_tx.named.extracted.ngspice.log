@@ -1,0 +1,11 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * klt sim -- generated corner deck, do not edit
+
+Error on line 413 or its substitute:
+  d.xtx_h.d$132 xtx_h.\$3__t1 xtx_h.vddio__t6 dpantenna a=4p p=8u
+could not find a valid modelname
+    Simulation interrupted due to error!
+

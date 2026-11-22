@@ -1,0 +1,425 @@
+{
+  "record": "channel-eye",
+  "utc_stamp": "20261113T223804Z",
+  "kind": "simulated",
+  "family": "ch-spread",
+  "claim_scope": "CH (modeled channel CH-3MM-RC) at the declared +-20 % R/C spread, kr/kc in {0.8, 1.2}",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 180,
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "pass": 360,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 2880,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-15": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+        "measurement": "t15_ar_bf_short",
+        "value": -2.02759e-11,
+        "why": "smallest margin"
+      }
+    },
+    "T-16": {
+      "verdict": "pass",
+      "pass": 1440,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/-40C/ch_kc=1.2,ch_kr=1.2",
+        "measurement": "t16_dr_cf_long",
+        "value": 4.71331e-10,
+        "why": "smallest margin"
+      }
+    },
+    "T-18": {
+      "verdict": "pass",
+      "pass": 7380,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+        "measurement": "t18_eye_height_ok_v",
+        "value": 0.3431818,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ff/mixed/125C/ch_kc=1.2,ch_kr=0.8",
+        "measurement": "t26_energy_per_bit_simulated_j",
+        "value": 6.92452e-13,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "param_groups": {
+    "ch_kc=0.8,ch_kr=0.8": {
+      "corners": 45,
+      "rows": {
+        "T-01": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8",
+            "measurement": "t01_dout_edges_a",
+            "value": 64.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-09": {
+          "verdict": "pass",
+          "pass": 720,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8",
+            "measurement": "t09_dwell_over_a",
+            "value": 0.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-15": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_sf/mixed/-40C/ch_kc=0.8,ch_kr=0.8",
+            "measurement": "t15_ar_bf_short",
+            "value": -1.86503e-11,
+            "why": "smallest margin"
+          }
+        },
+        "T-16": {
+          "verdict": "pass",
+          "pass": 360,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_sf/mixed/-40C/ch_kc=0.8,ch_kr=0.8",
+            "measurement": "t16_dr_cf_long",
+            "value": 4.86953e-10,
+            "why": "smallest margin"
+          }
+        },
+        "T-18": {
+          "verdict": "pass",
+          "pass": 1845,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ss/mixed/125C/ch_kc=0.8,ch_kr=0.8",
+            "measurement": "t18_eye_height_ok_v",
+            "value": 0.4267777,
+            "why": "smallest margin"
+          }
+        },
+        "T-26": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ff/mixed/125C/ch_kc=0.8,ch_kr=0.8",
+            "measurement": "t26_energy_per_bit_simulated_j",
+            "value": 5.77779e-13,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2": {
+      "corners": 45,
+      "rows": {
+        "T-01": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2",
+            "measurement": "t01_dout_edges_a",
+            "value": 64.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-09": {
+          "verdict": "pass",
+          "pass": 720,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2",
+            "measurement": "t09_dwell_over_a",
+            "value": 0.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-15": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_sf/mixed/-40C/ch_kc=0.8,ch_kr=1.2",
+            "measurement": "t15_ar_bf_short",
+            "value": -1.89727e-11,
+            "why": "smallest margin"
+          }
+        },
+        "T-16": {
+          "verdict": "pass",
+          "pass": 360,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_sf/mixed/-40C/ch_kc=0.8,ch_kr=1.2",
+            "measurement": "t16_dr_cf_long",
+            "value": 4.86733e-10,
+            "why": "smallest margin"
+          }
+        },
+        "T-18": {
+          "verdict": "pass",
+          "pass": 1845,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ss/mixed/125C/ch_kc=0.8,ch_kr=1.2",
+            "measurement": "t18_eye_height_ok_v",
+            "value": 0.4248859,
+            "why": "smallest margin"
+          }
+        },
+        "T-26": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ff/mixed/125C/ch_kc=0.8,ch_kr=1.2",
+            "measurement": "t26_energy_per_bit_simulated_j",
+            "value": 5.77779e-13,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8": {
+      "corners": 45,
+      "rows": {
+        "T-01": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+            "measurement": "t01_dout_edges_a",
+            "value": 64.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-09": {
+          "verdict": "pass",
+          "pass": 720,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+            "measurement": "t09_dwell_over_a",
+            "value": 0.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-15": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_sf/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+            "measurement": "t15_ar_bf_short",
+            "value": -2.02759e-11,
+            "why": "smallest margin"
+          }
+        },
+        "T-16": {
+          "verdict": "pass",
+          "pass": 360,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ss/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+            "measurement": "t16_dr_cf_long",
+            "value": 4.71963e-10,
+            "why": "smallest margin"
+          }
+        },
+        "T-18": {
+          "verdict": "pass",
+          "pass": 1845,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ss/mixed/-40C/ch_kc=1.2,ch_kr=0.8",
+            "measurement": "t18_eye_height_ok_v",
+            "value": 0.3431818,
+            "why": "smallest margin"
+          }
+        },
+        "T-26": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ff/mixed/125C/ch_kc=1.2,ch_kr=0.8",
+            "measurement": "t26_energy_per_bit_simulated_j",
+            "value": 6.92452e-13,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2": {
+      "corners": 45,
+      "rows": {
+        "T-01": {
+          "verdict": "pass",
+          "pass": 90,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2",
+            "measurement": "t01_dout_edges_a",
+            "value": 64.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-09": {
+          "verdict": "pass",
+          "pass": 720,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2",
+            "measurement": "t09_dwell_over_a",
+            "value": 0.0,
+            "why": "smallest margin"
+          }
+        },
+        "T-15": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_sf/mixed/-40C/ch_kc=1.2,ch_kr=1.2",
+            "measurement": "t15_ar_bf_short",
+            "value": -1.98714e-11,
+            "why": "smallest margin"
+          }
+        },
+        "T-16": {
+          "verdict": "pass",
+          "pass": 360,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ss/mixed/-40C/ch_kc=1.2,ch_kr=1.2",
+            "measurement": "t16_dr_cf_long",
+            "value": 4.71331e-10,
+            "why": "smallest margin"
+          }
+        },
+        "T-18": {
+          "verdict": "pass",
+          "pass": 1845,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ss/mixed/-40C/ch_kc=1.2,ch_kr=1.2",
+            "measurement": "t18_eye_height_ok_v",
+            "value": 0.3459625,
+            "why": "smallest margin"
+          }
+        },
+        "T-26": {
+          "verdict": "pass",
+          "pass": 180,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_ff/mixed/125C/ch_kc=1.2,ch_kr=1.2",
+            "measurement": "t26_energy_per_bit_simulated_j",
+            "value": 6.92159e-13,
+            "why": "smallest margin"
+          }
+        }
+      }
+    }
+  },
+  "energy_label": "T-26 energy per bit is SIMULATED; no measurement exists",
+  "batch_job_ids": [
+    "klt-sim-45e8d57256af",
+    "klt-sim-089900f69811",
+    "klt-sim-59bddeebf727",
+    "klt-sim-907301b5ec90",
+    "klt-sim-3f36bdbae4cd",
+    "klt-sim-c29a67f47a97",
+    "klt-sim-34d15fcdb69a",
+    "klt-sim-eb9c98d66622",
+    "klt-sim-909e599415ef",
+    "klt-sim-9919d83f618a",
+    "klt-sim-012a3ec4bb60",
+    "klt-sim-f64286edc9ef",
+    "klt-sim-9bfd2741349c",
+    "klt-sim-2f1b26e642d1",
+    "klt-sim-d6f318388201",
+    "klt-sim-d801517ad53a",
+    "klt-sim-07157fe4b6fb",
+    "klt-sim-ac101e34e7af",
+    "klt-sim-c2b4b2d3e488",
+    "klt-sim-ddf9a826c15b",
+    "klt-sim-36aa4261d145",
+    "klt-sim-f0e3f5f3e1b8",
+    "klt-sim-b229f75aae4c"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

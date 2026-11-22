@@ -7,7 +7,7 @@ gate-level netlist.
 | Partition | Result | Row |
 |---|---|---|
 | Digital (`aib_datapath`) | `status: match`, `power_connectivity.status: match` | `4.digital` reads `met` |
-| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 4224 / 4224 devices, 389 / 389 nets, 101 / 101 pins (DR-0017 stream, #140) | `4.analog` reads `met`, citing `aib_io_column.report.json` |
+| Analog, whole stream (`aib_io_column`: 24 TX + 24 RX units) | `status: match`, 4320 / 4320 devices, 389 / 389 nets, 101 / 101 pins (predriver pull-up stream, #187) | `4.analog` reads `met`, citing `aib_io_column.report.json` |
 | Analog, per cell (`aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`) | `status: match` on all four (stream regenerated, issue #70; the earlier stream was `mismatch`) | not cited: item 4 takes one report per partition (2AMLogic/klayout-tools#4354) |
 
 Issue #40 recorded the analog result as a mismatch and did not change the generator. Issue #70 fixed the
@@ -18,14 +18,40 @@ reports here are those re-runs. The item 1 sources, `gen_reference.py` and the P
 
 | File | What |
 |---|---|
-| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice`; `--check` compares to the committed files |
+| `gen_reference.py` | writes the assembled reference netlists from `design/*.spice` and the `neg/` negative controls (one anchored substitution each); `--check` compares to the committed files |
 | `<cell>.ref.spice` | reference for `aib_io_tx`, `aib_io_rx`, `aib_io_tx_clk`, `aib_io_rx_clk`; each header carries the sha256 of every `design/*.spice` it was built from |
 | `<cell>.request.json`, `<cell>.report.json` | the `klt lvs` request and its `--format json` report, verbatim |
 | `aib_io_column.ref.spice`, `aib_io_column.request.json`, `aib_io_column.report.json` | the whole analog stream (all 48 units) against one generated reference; this is the report `4.analog` cites |
 | `<cell>.diag.*` | the same against a diagnostic reference. **Superseded** by the layout fix (below): the generator path that wrote it is removed, the files are kept as recorded results and do not reproduce. **Not a result reference.** |
 | `aib_datapath.gate.spice`, `aib_datapath.extract.report.json` | layout side of the digital compare: `klt extract --abstract-cells 'sg13g2_*' --def-net-names` of the routed GDS |
 | `digital.request.json`, `digital.report.json` | digital request and report, verbatim |
-| `neg/` | negative controls: digital (the as-built netlist with one gate input rewired) and analog column (`aib_io_column.rewired.ref.spice`: one clamp finger gate moved from `VSS` to `VDDIO`), each with its report |
+| `neg/` | negative controls: digital (the as-built netlist with one gate input rewired) and analog column (`aib_io_column.rewired.ref.spice`: one clamp finger gate moved from `VSS` to `VDDIO`), each with its report. Written by `gen_reference.py`, not by hand (below) |
+
+### Negative controls are generated too (#202)
+
+Each `neg/` file is a copy of a source with exactly one seeded defect, and it only isolates that defect
+while it differs from its source in that line and nothing else. Both were hand-copied until #202, and
+the column one was rebuilt by hand on every regeneration of its source (#94, #140, #187), so a source
+that moved left the copy behind. `gen_reference.py` now derives them, each by one substitution whose
+anchor must match its source exactly once:
+
+| Output | Source | Seeded change | A source edit that moves the anchor |
+|---|---|---|---|
+| `neg/aib_io_column.rewired.ref.spice` | the `aib_io_column` reference as just built, not the committed file | gate of `Mt0esd_Mclamp_f0`: `VSS` -> `VDDIO` | the generator exits non-zero naming the anchor |
+| `neg/aib_datapath.rewired.v` | `../pnr/.klt/place-and-route/aib_datapath.v` | `.A1(tx_wire[0])` -> `.A1(rx_wire[0])` | same |
+
+The anchors are scoped to the defect: the column one stops at the device class, so a clamp *resize*
+flows through into the control untouched, while a *rewiring* of the clamp's other terminals halts the
+generator — at that point the control has to be restated, not silently rebuilt. Both outputs are
+byte-identical to the hand-made copies they replace, so the `reference_sha256` the committed
+`neg/*.report.json` carry is unchanged and `klt lvs --check` still exits 0 on both (run from `neg/`:
+`--check` resolves a report's relative paths against the current directory).
+
+`gen_reference.py --check` runs in CI: it is a line in `scripts/ci/check_local.sh` (the `evidence`
+part), which both jobs in `.github/workflows/ci.yml` call, so a source change that is not carried into
+the committed reference or into a `neg/` control fails the build rather than waiting for someone to run
+the check by hand (#236). The T-10 control bench is the neighbouring case — `sim/mc/gen_mc.py` writes it
+and the same list runs `gen_mc.py --check` (`sim/mc/README.md`).
 
 Provenance: the reference netlists are generated, not hand-written; `design/*.spice` is read only, so the
 item 1 hashes are unchanged. Assembly follows `layout/README.md` ("Assembly choice"): the pad is the
@@ -108,8 +134,11 @@ nothing is claimed against it.
 2. **Finger width convention.** The item 1 netlists carry total `w` with `ng` fingers (the IHP
    model derives a finger as `w/ng`). The generator draws `w` per finger for every device with `ng > 1`
    except `Mp`, `Mn` and `Mclamp`: the eight TX logic devices (`Mnd1p`, `Mnd2p`, `Mnd1n`, `Mnd2n`, `Mnr1p`,
-   `Mnr2p`, `Mnr1n`, `Mnr2n`) and the four RX devices (`Mi1p`, `Mi1n`, `Mi2p`, `Mi2n`), all `ng = 2`. Those
-   are drawn twice as wide as simulated.
+   `Mnr2p`, `Mnr1n`, `Mnr2n`) and the four RX devices (`Mi1p`, `Mi1n`, `Mi2p`, `Mi2n`), which were `ng = 2`
+   throughout on the stream this diagnosis was made against. Those are drawn twice as wide as simulated.
+   (Finger counts have moved since: PR #164 took `Mnr1p` and `Mnr2p` to `ng = 4`, and the generator
+   followed in #187. The convention and the self-check that enforces it are unchanged - the check
+   compares `w * ng` with the netlist total for every device, whatever `ng` is.)
 
 Both were fixed in `layout/gen_io_column.py` (issue #70); the reference netlists were not touched:
 
@@ -123,6 +152,103 @@ Both were fixed in `layout/gen_io_column.py` (issue #70); the reference netlists
 The `*.diag.*` files are the localisation recorded against the old stream. They are kept as the
 record of that diagnosis and no longer reproduce (`--check` reports drift on the layout hash); they
 are not evidence about the current stream.
+
+## Issue #248: DR-0016 spare placement (2026-11-13)
+
+`gen_io_column.py` now labels the column slots `D0..D10, CLK, CLKB, D11..D19, SP0, SP1` instead of
+`SP0, D0..D9, CLK, CLKB, D10..D19, SP1`, so both spares sit at one end as DR-0016 decides (see
+`layout/README.md`, "Spare placement"). Nothing in `design/`, the references or this directory's
+generator changed: the edit renames 24 `TM1lbl` texts per column cell and moves no shape, and the
+non-text geometry of the regenerated stream is bit-identical to the pre-fix one. The five compares
+were re-run only because the stream's content hash changed, which `klt lvs --check` reports as
+`DRIFTED environment.layout_sha256` (exit 3) on every report that binds it:
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4320 / 4320 | 389 / 389 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | 138 / 138 | 17 / 17 | 7 / 7 |
+| `aib_io_rx.report.json` | `match` | 42 / 42 | 6 / 6 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | 276 / 276 | 29 / 29 | 9 / 9 |
+| `aib_io_rx_clk.report.json` | `match` | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Each re-run report is **byte-identical to the one it replaces apart from
+`environment.layout_sha256` and `provenance.input.content_hash`** — same verdict, same counts, same
+warning categories (including the column's 45 `topology` entries and its 47 reported net-name
+mismatches). The negative control re-runs to `status: mismatch`, one `device.unmatched`, klt exit 3,
+4319 / 4320 devices and 387 / 389 nets, also byte-identical apart from those two hashes. `--check`
+exits 0 on all five result reports and on the negative control again.
+
+That the slot labels cannot reach LVS is also structural, not just empirical: the requests read
+label purposes `[126, 1]` for `metal5`/`metal6`, but a slot label is drawn at the cell centre
+(y = 50 um) while the only TopMetal1 in a unit cell is the pad stack (y = 54 .. 98 um), so a slot
+label probes no conductor and names no net. The column's repeated pins stay klt's own `DIN`,
+`DIN$1`, ... numbering ("Limit of the column compare", below), which was never slot order.
+
+The `*.diag.*` files are untouched history and do not reproduce; they bind a stream older than
+either of the two here.
+
+## Issue #387: Resd resize regeneration (2026-11-20)
+
+PR #332 shortened `XResd` to `w=2u l=1u` in the item 1 netlists; `gen_io_column.py` kept
+drawing `Resd` 2 um x 2 um and nothing re-ran the generator, so the committed stream's
+series resistor was twice the schematic's length (#387). The table is now the netlist size
+and the stream was regenerated; the references did not change (they derive from
+`design/*.spice`, which this issue does not touch, and `gen_reference.py --check` is clean),
+and the five compares plus the negative control were re-run with klt 0.9.0 on the new stream
+(`54b42956…`):
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4320 / 4320 | 389 / 389 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | 138 / 138 | 17 / 17 | 7 / 7 |
+| `aib_io_rx.report.json` | `match` | 42 / 42 | 6 / 6 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | 276 / 276 | 29 / 29 | 9 / 9 |
+| `aib_io_rx_clk.report.json` | `match` | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Verdicts, counts and warning categories are identical to the previous stream (including the
+column's 45 `topology` entries). Two payload differences beyond the hashes are the change
+itself becoming visible: the `rppd` `layout_values` entry for `Resd` moves with the halved
+length, and klt's extraction-order numbering of the column's internal nets (`\$148`, ...)
+shifts by one in places -- the bookkeeping the "Limit of the column compare" note below
+already covers. `--check` exits 0 on all five result reports. The negative control re-runs
+to `status: mismatch`, klt exit 3, 48 mismatches with the same category counts as before
+(one `device.unmatched`, 45 `topology`, one `device.geometry_not_compared`, one
+`device.placeholder_value`).
+
+The `*.diag.*` files are untouched history and do not reproduce.
+
+## Issue #187: predriver pull-up regeneration (2026-11-13)
+
+PR #164 widened the TX predriver NOR pull-ups (`Mnr1p`, `Mnr2p`) to `w=8u ng=4` in the item 1
+netlists but left the layout and these references alone, so `4.analog` read `met` against a
+reference that no longer described the item 1 circuit. `gen_io_column.py` now draws both at four
+2 um fingers and the row-33 predriver pmos gaps closed from 2.0 um to 1.2 um to make room (see
+`layout/README.md`); `gen_reference.py` regenerated all five references (`--check` clean) and the
+five compares were re-run with klt 0.9.0:
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4320 / 4320 | 389 / 389 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | 138 / 138 | 17 / 17 | 7 / 7 |
+| `aib_io_rx.report.json` | `match` | 42 / 42 | 6 / 6 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | 276 / 276 | 29 / 29 | 9 / 9 |
+| `aib_io_rx_clk.report.json` | `match` | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Warning categories are the same as before (`device.geometry_not_compared`,
+`device.placeholder_value`, and on the column 45 `topology`). `--check` exits 0 on all five and
+`--check --rerun` exits 0 on all five. The device totals rise by 4 per TX unit (two devices x two
+extra fingers): 134 -> 138, 268 -> 276, 4224 -> 4320. Net and pin counts are unchanged, as expected
+for a change that only adds fingers in parallel.
+
+The negative control was rebuilt by hand on the new column reference with the same single change
+(`Mt0esd_Mclamp_f0` gate `VSS` -> `VDDIO`; `neg/aib_io_column.rewired.ref.spice` differs from
+`aib_io_column.ref.spice` on that one line and no other): `status: mismatch`, one
+`device.unmatched`, klt exit 3, 4319 / 4320 devices and 387 / 389 nets matched. That hand rebuild was
+the last one: #202 made `gen_reference.py` write and check the file (above), reproducing this same
+copy byte for byte, so the report quoted here is unchanged.
+
+The `*.diag.*` files are untouched history and do not reproduce. The sums in the Issue #140 and
+Issue #94 sections above describe earlier streams and are history.
 
 Column compare (issue #40, the `4.analog` citation): `aib_io_column.request.json` extracts the top
 cell (the TX column then the RX column; spares and the clk/clkb pair are ordinary units) and compares

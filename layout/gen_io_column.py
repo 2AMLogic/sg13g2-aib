@@ -13,6 +13,12 @@ design/ (device type, W, L, ng and the net each terminal sits on); the device
 table below repeats those numbers and `check_against_netlists()` fails the run
 if design/*.spice and this table disagree.
 
+`--check` runs that comparison alone and exits: it needs no klayout and no PDK
+(plain `python3 -I layout/gen_io_column.py --check`), which is how the CI
+evidence job runs it, so the table cannot drift from the netlists between
+regenerations. The geometry path runs the same comparison first and then
+imports klayout.
+
 Cells written: aib_io_tx, aib_io_rx (unit cells, 55 x 100 um), aib_io_tx_clk,
 aib_io_rx_clk (clk | clkb pairs), aib_io_column_tx, aib_io_column_rx and the
 top cell aib_io_column.
@@ -28,8 +34,6 @@ import math
 import os
 import re
 import sys
-
-import klayout.db as db
 
 DBU = 0.001
 
@@ -64,8 +68,6 @@ PAD_OPEN = (7.5, 56.0, 47.5, 96.0)     # passivation opening, 40 x 40 um
 PAD_TM1 = (5.5, 54.0, 49.5, 98.0)      # topmost metal, 2 um overlap
 PAD_PLATE = (6.0, 54.2, 49.0, 97.4)    # M3/M4/M5 landing under the pad stack
 
-FINGER = 0.57          # gate pitch for l = 0.13: 0.13 + 2 x 0.14 + 0.16
-
 
 def gx(i):
     return round(OX + P * i, 3)
@@ -98,8 +100,8 @@ TX_DEVICES = [
     ("Mnd2p", "pmos", 2.0, 0.13, 2, dict(D="GP", G="OE", S="VDDIO")),
     ("Mnd1n", "nmos", 2.0, 0.13, 2, dict(D="GP", G="DIN", S="NA")),
     ("Mnd2n", "nmos", 2.0, 0.13, 2, dict(D="NA", G="OE", S="VSS")),
-    ("Mnr1p", "pmos", 2.0, 0.13, 2, dict(D="NB", G="DIN", S="VDDIO")),
-    ("Mnr2p", "pmos", 2.0, 0.13, 2, dict(D="GN", G="OEB", S="NB")),
+    ("Mnr1p", "pmos", 2.0, 0.13, 4, dict(D="NB", G="DIN", S="VDDIO")),
+    ("Mnr2p", "pmos", 2.0, 0.13, 4, dict(D="GN", G="OEB", S="NB")),
     ("Mnr1n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="DIN", S="VSS")),
     ("Mnr2n", "nmos", 1.0, 0.13, 2, dict(D="GN", G="OEB", S="VSS")),
     ("Mp", "pmos", 1.0, 0.13, 54, dict(D="DP", G="GP", S="VDDIO")),
@@ -128,7 +130,7 @@ ESD_DIODES = [
 ESD_MN1 = ("Mn1", "nmos", 2.0, 0.13, 10, dict(D="PAD", G="VSS", S="VSS"))
 ESD_MN2 = ("Mn2", "nmos", 1.0, 0.13, 1, dict(D="PADI", G="VSS", S="VSS"))
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
-ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
+ESD_RES = ("Resd", 2.0, 1.0, "PAD", "PADI")
 # Table w is the drawn finger width for every device. The netlists carry the
 # total width (w_finger * ng; the IHP model derives a finger as w/ng), and the
 # check compares w * ng against that total for every device.
@@ -186,8 +188,10 @@ def check_against_netlists(design_dir):
         assert nodes[:4] == [drain, "VSS", "VSS", "VSS"] and nodes[4].endswith(tbl[1]), tbl[0]
         assert abs(num(kv["w"]) - tbl[2] * tbl[4]) < 1e-9 and abs(num(kv["l"]) - tbl[3]) < 1e-9, tbl[0]
         assert int(kv["ng"]) == tbl[4], tbl[0]
-    nodes, kv = esd["Resd"]
-    assert nodes[:2] == ["PAD", "PADI"] and abs(num(kv["w"]) - 2.0) < 1e-9
+    rname, rw, rl, ra, rb = ESD_RES
+    nodes, kv = esd[rname]
+    assert nodes[:2] == [ra, rb], rname
+    assert abs(num(kv["w"]) - rw) < 1e-9 and abs(num(kv["l"]) - rl) < 1e-9, rname
     tx = parse(os.path.join(design_dir, "aib_tx_data.spice"))
     for name, w, l, a, b in TX_RES:
         nodes, kv = tx[name]
@@ -233,13 +237,12 @@ class Term:
 
 
 class Ctx:
-    """Per-unit-cell drawing state: terminals, anchors and the pin list."""
+    """Per-unit-cell drawing state: terminals and router anchors."""
 
     def __init__(self, d):
         self.d = d
         self.terms = []
         self.anchors = {}      # net -> list of (layer 0/1, col, row)
-        self.pins = []         # (layer, net, x, y)
 
     def add_term(self, t):
         self.terms.append(t)
@@ -438,11 +441,9 @@ def diode(ctx, name, kind, size, cx_col, cy_row, net_a, net_c):
 # Router
 # --------------------------------------------------------------------------
 class Router:
-    def __init__(self, ctx, rows_blocked=()):
-        self.ctx = ctx
+    def __init__(self):
         self.owner = {}                     # (layer, c, r) -> net
         self.used_via1 = {}                 # (c, r) -> net
-        self.paths = []                     # (net, [(layer,c,r),...])
         self.failed = []
 
     def own(self, net, layer, c, r):
@@ -610,36 +611,45 @@ def add_pin(ctx, router, net, col, y_label):
     for r in range(0, ROW_LO + 1):
         router.own(net, 0, col, r)
     ctx.anchor(net, 0, col, ROW_LO)
-    ctx.pins.append((net, x))
 
 
 def build_unit(layout, name, tx):
     cell = layout.create_cell(name)
     d = Draw(layout, cell)
     ctx = Ctx(d)
-    router = Router(ctx)
+    router = Router()
     rails_and_pad(ctx, router, tx)
 
     # --- ESD block (aib_pad_esd) --------------------------------------------
+    # Type, W, L, ng, size and nets come from the checked device table; only the
+    # placement (x, source row, gate row) is local to the drawing.
+    esd_diode = {e[0]: e for e in ESD_DIODES}
+
+    def put_esd_mos(entry, x0, rs, grow):
+        nm, typ, w, l, ng, nets = entry
+        return mos(ctx, typ, w, l, ng, x0, rs, nets, nm, gate_row=grow)
+
+    def put_esd_diode(nm, cx_col, cy_row):
+        _, kind, size, net_a, net_c = esd_diode[nm]
+        return diode(ctx, nm, kind, size, cx_col, cy_row, net_a, net_c)
+
     band_row = 5
     # Mn1 / Dp1 / clamp / Resd / small diodes, left to right, one band.
     c_dn1 = col_of(3.2 + 5.8)
     r_dn1 = band_row + 8
-    # Mn1: grounded-gate nmos w=2 l=0.13 ng=10 (D=PAD, G=S=B=VSS), the PAD-to-VSS drain-junction diode.
-    mos(ctx, "nmos", 2.0, 0.13, 10, 4.4, band_row + 5,
-        dict(D="PAD", G="VSS", S="VSS"), "Mn1", gate_row=band_row + 8)
+    # Mn1: grounded-gate nmos (D=PAD, G=S=B=VSS), the PAD-to-VSS drain-junction diode.
+    put_esd_mos(ESD_MN1, 4.4, band_row + 5, band_row + 8)
     c_dp1 = col_of(gx(c_dn1) + 5.8 + 1.6 + 3.3)
-    diode(ctx, "Dp1", "p", 4.5, c_dp1, r_dn1, "PAD", "VDDIO")
+    put_esd_diode("Dp1", c_dp1, r_dn1)
     xr = gx(c_dp1) + 3.65
-    # Clamp: nmos w=2 l=0.35 ng=20 (D=VDDIO, G=VSS, S=VSS) -- drawn with its own l.
-    mos(ctx, "nmos", 2.0, 0.35, 20, r3(xr + 1.4), band_row + 1,
-        dict(D="VDDIO", G="VSS", S="VSS"), "Mclamp", gate_row=band_row + 6)
-    # Resd (2 um x 2 um) and the secondary diodes.
-    rppd(ctx, "Resd", 2.0, 2.0, r3(xr + 1.6), band_row + 15, "PAD", "PADI")
+    # Clamp -- drawn with its own l, longer than the logic devices'.
+    put_esd_mos(ESD_CLAMP, r3(xr + 1.4), band_row + 1, band_row + 6)
+    # Resd and the secondary diodes.
+    rname, rw, rl, ra, rb = ESD_RES
+    rppd(ctx, rname, rw, rl, r3(xr + 1.6), band_row + 15, ra, rb)
     c_dp2 = col_of(51.6)   # clear of the clamp bulk tap (shared node at 49.5)
-    diode(ctx, "Dp2", "p", 2.0, c_dp2, band_row + 3, "PADI", "VDDIO")
-    mos(ctx, "nmos", 1.0, 0.13, 1, r3(gx(c_dp2) - 0.6), band_row + 8,
-        dict(D="PADI", G="VSS", S="VSS"), "Mn2", gate_row=band_row + 11)
+    put_esd_diode("Dp2", c_dp2, band_row + 3)
+    put_esd_mos(ESD_MN2, r3(gx(c_dp2) - 0.6), band_row + 8, band_row + 11)
     if tx:
         build_tx(ctx, router)
     else:
@@ -660,32 +670,42 @@ def build_unit(layout, name, tx):
     router.emit(d)
     for f in router.failed:
         print('UNROUTED', name, f, file=sys.stderr)
-    return cell, ctx, router
+    return cell
 
 
 def build_tx(ctx, router):
     dev = {n: (t, w, l, ng, nets) for n, t, w, l, ng, nets in TX_DEVICES}
+    res = {n: (w, l, a, b) for n, w, l, a, b in TX_RES}
     add_pin(ctx, router, "DIN", col_of(4.0), 0)
 
     def put(nm, x, row, grow=None):
         t, w, l, ng, nets = dev[nm]
         return mos(ctx, t, w, l, ng, r3(x), row, nets, nm, gate_row=grow)[0]
 
+    def put_res(nm, x, row):
+        w, l, a, b = res[nm]
+        return rppd(ctx, nm, w, l, x, row, a, b)
+
     put("Mp", 5.0, 25, 27)
     put("Mn", 28.0, 33)
-    x = 3.5
+    # Row 33 holds the four predriver pmos, then Mn at x = 28.0. The ng = 4
+    # pull-ups Mnr1p / Mnr2p (#164) are 1.14 um wider each, so with the 2.0 um
+    # device gap this row used, Mnr2p's nwell bulk tap landed on Mn and shorted
+    # DN to VDDIO through a 0.01 um metal1 overlap (#187). Mnd1p keeps its x and
+    # the three gaps behind it close to 1.2 um, leaving the chain clear of Mn.
+    x = 4.3
     for nm in ("Mnd1p", "Mnd2p", "Mnr1p", "Mnr2p"):
-        x = put(nm, x + 2.0, 33)
+        x = put(nm, x + 1.2, 33)
     x = 3.5
     for nm in ("Mnd1n", "Mnd2n", "Mnr1n", "Mnr2n"):
         x = put(nm, x + 2.0, 44)
     x = 3.0
     for nm in ("Mi1p", "Mi1n", "Mpu", "Mpd"):
         x = put(nm, x + 1.5, 53)
-    rppd(ctx, "Rpu", 0.5, 24.0, 28.0, 56, "PUX", "PAD")
-    rppd(ctx, "Rpd", 0.5, 24.0, 28.0, 58, "PAD", "PDX")
-    rppd(ctx, "Rsp", 10.0, 0.5, 45.0, 41, "DP", "PAD")
-    rppd(ctx, "Rsn", 10.0, 0.5, 50.5, 41, "DN", "PAD")
+    put_res("Rpu", 28.0, 56)
+    put_res("Rpd", 28.0, 58)
+    put_res("Rsp", 45.0, 41)
+    put_res("Rsn", 50.5, 41)
 
 
 def build_rx(ctx, router):
@@ -701,76 +721,78 @@ def build_rx(ctx, router):
         x = mos(ctx, t, w, l, ng, r3(x + 2.0), 44, nets, nm)[0]
 
 
-def mirror_x(cell_w, x):
-    return cell_w - x
-
-
-def place(parent, child, slot, mirrored, x_off=0.0):
+def place(parent, child, slot, mirrored, width):
     """Instance of a 55 um unit/pair `child` at pitch slot `slot` (mirrored about its own
     vertical centre line when `mirrored`)."""
     k = 1.0 / DBU
-    x = int(round((x_off + slot * CELL_W) * k))
+    x = int(round(slot * CELL_W * k))
     if mirrored:
-        w = int(round(child_width(child) * k))
+        w = int(round(width * k))
         t = db.Trans(db.Trans.M90, x + w, 0)
     else:
         t = db.Trans(db.Trans.R0, x, 0)
     parent.insert(db.CellInstArray(child.cell_index(), t))
 
 
-_WIDTH = {}
-
-
-def child_width(cell):
-    return _WIDTH[cell.name]
-
-
-def build_pair(layout, name, unit, labels):
+def build_pair(layout, name, unit):
     """clk | clkb pair of two unit cells; slot parity follows the column (left cell mirrored)."""
     cell = layout.create_cell(name)
-    _WIDTH[name] = 2 * CELL_W
-    _WIDTH[unit.name] = CELL_W
-    place(cell, unit, 0, True)
-    place(cell, unit, 1, False)
+    place(cell, unit, 0, True, CELL_W)
+    place(cell, unit, 1, False, CELL_W)
     d = Draw(layout, cell)
     d.rect("Bnd", 0, 0, 2 * CELL_W, CELL_H)
     return cell
 
 
 def build_column(layout, name, unit, pair, role):
-    """24 slots: spare, 10 data, clk/clkb pair, 10 data, spare. Slot k is mirrored when k is odd,
-    so the column is mirror-symmetric about its centre (slot k <-> slot 23-k)."""
+    """24 slots: 11 data, clk/clkb pair, 9 data, 2 spare (DR-0016). Slot k is mirrored when k is
+    odd, so the column is mirror-symmetric about its centre (slot k <-> slot 23-k).
+
+    Wires 0..21 run monotonically along the column -- data bits 0..19 on wires 0..19 and the two
+    spares as wires 20, 21 -- with both spares adjacent at the high-slot end (DR-0016: the shift
+    always runs toward the spares, so repairing a fault at bit `pos` must be a two-cell move of
+    bits `pos..19`, which only a monotonic run of wires gives). The clk/clkb pair sits at the
+    centre of the 22 I/O cells, which is the matched span of the clock tree (DR-0010 Amendment,
+    2026-11-01). Only the slot assignment is asymmetric: every non-clock slot holds the same unit
+    cell at the same parity, so the drawn geometry is mirror-symmetric either way."""
     cell = layout.create_cell(name)
-    n_slots = 2 + 10 + 2 + 10
+    n_slots = 11 + 2 + 9 + 2
     d = Draw(layout, cell)
-    names = ["SP0"] + [f"D{i}" for i in range(10)] + ["CLK", "CLKB"] + [f"D{i}" for i in range(10, 20)] + ["SP1"]
+    names = ([f"D{i}" for i in range(11)] + ["CLK", "CLKB"]
+             + [f"D{i}" for i in range(11, 20)] + ["SP0", "SP1"])
     k = 0
     while k < n_slots:
         if k == 11:
-            place(cell, pair, 11, True)
+            place(cell, pair, 11, True, 2 * CELL_W)
             k += 2
             continue
-        place(cell, unit, k, k % 2 == 1)
+        place(cell, unit, k, k % 2 == 1, CELL_W)
         k += 1
     for k, nm in enumerate(names):
         d.text("TM1lbl", k * CELL_W + CELL_W / 2, CELL_H / 2, f"{role}_{nm}")
-    _WIDTH[name] = n_slots * CELL_W
     return cell
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--output", default="layout/aib_io_column.gds")
+    ap.add_argument("--check", action="store_true",
+                    help="verify the device table against design/*.spice and exit 0; "
+                         "stdlib-only (klayout is imported only on the geometry path), "
+                         "no layout is allocated and nothing is written")
     args = ap.parse_args()
     here = os.path.dirname(os.path.abspath(__file__))
     check_against_netlists(os.path.join(here, "..", "design"))
+    if args.check:
+        return
+    global db
+    import klayout.db as db
     layout = db.Layout()
     layout.dbu = DBU
-    tx, _, _ = build_unit(layout, "aib_io_tx", True)
-    rx, _, _ = build_unit(layout, "aib_io_rx", False)
-    _WIDTH["aib_io_tx"] = _WIDTH["aib_io_rx"] = CELL_W
-    txp = build_pair(layout, "aib_io_tx_clk", tx, None)
-    rxp = build_pair(layout, "aib_io_rx_clk", rx, None)
+    tx = build_unit(layout, "aib_io_tx", True)
+    rx = build_unit(layout, "aib_io_rx", False)
+    txp = build_pair(layout, "aib_io_tx_clk", tx)
+    rxp = build_pair(layout, "aib_io_rx_clk", rx)
     ctx_ = build_column(layout, "aib_io_column_tx", tx, txp, "TX")
     crx = build_column(layout, "aib_io_column_rx", rx, rxp, "RX")
     top = layout.create_cell("aib_io_column")

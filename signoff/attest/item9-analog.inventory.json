@@ -18,8 +18,8 @@
     },
     "tools": {
       "ngspice": "ngspice-46",
-      "osdi": "OpenVAF-Reloaded v24.0.1mob (sim/pdk.json osdi_toolchain)",
-      "klt": "0.8.0"
+      "osdi": "OpenVAF-Reloaded v24.0.1mob (sim/harness/common/build-osdi.sh --print-pins)",
+      "klt": "0.9.0"
     }
   }
 }
