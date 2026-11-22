@@ -28,10 +28,12 @@ optimality. Only `A0` is measured on the two sized lanes — the select-dependen
 property of the select stack, whose devices `sg13g2_mux2_2` does not change, and the first
 record measured it at 0.289 ps worst case.
 
-**Nothing here is graded.** `spec/target-spec.md` T-05 states no bound for its `SIM` leg and
-DR-0023 invents none, so no measurement in this request carries `limits`. T-05 stays a
-**declared gap** in `signoff/block-manifest.json`. The numbers below are *reported*, and
-DR-0024 reads them to choose a placement; they are not a pass or a fail of any row.
+**Nothing here is graded.** When this grid ran, `spec/target-spec.md` T-05 stated no bound
+for its `SIM` leg and DR-0023 invented none, so no measurement in this request carries
+`limits`; DR-0028 has since dropped the T-05 `SIM` leg and removed T-05 from
+`signoff/block-manifest.json` altogether. The numbers below are *reported* evidence for the
+rejected in-lane placement, and DR-0024 reads them to choose the pre-register placement;
+they are not a pass or a fail of any row.
 
 **Claim scope: CH** for the lane loading — each pad drives `aib_pad_esd` into the declared
 channel CH-3MM-RC (`spec/channel/channel_rc.cir`, nominal `kr = kc = 1`), so the TX output
@@ -157,7 +159,7 @@ the mux must now charge.
   serialized wire* (DR-0023's declared placement). DR-0024 reads them as the evidence that
   no in-lane stage fits and puts the remap ahead of the TX input register instead, where the
   in-lane term is zero by construction. Nothing here measures that placement — there is
-  nothing in it to measure in this leg, which is the point.
+  nothing in it to measure in this bench, which is the point.
 - **The moved cost is not measured either.** Ahead of the input register the remap delay
   becomes setup time on the `tx_d0`/`tx_d1` path at 500 MHz, which synthesis and P&R grade
   (item 7 / digital). DR-0024's follow-ups own that, and this record makes no claim that it
@@ -187,4 +189,6 @@ fleet behaviour and was recovered the same way.
 
 Only `report.json.gz` is committed, with no decompressed copy beside it: the pinned grader
 (0.9.0) cannot read a `.json.gz` citation (`2AMLogic/klayout-tools#5452`), but this envelope
-is **not cited** — T-05 is a declared gap — so there is nothing to make readable.
+is **not cited** — T-05 was a declared gap when this grid ran and DR-0028 has since dropped
+its `SIM` leg and removed T-05 from `signoff/block-manifest.json` — so there is nothing to
+make readable.

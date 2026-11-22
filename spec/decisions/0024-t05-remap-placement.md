@@ -4,9 +4,12 @@
 **Rows**: T-05 (and, as consumers of the numbers, T-13 and T-20).
 **Amends**: DR-0023 (decision point 1, the placement, and the stand-in of point 2 — both
 are superseded *for the design*, and stand unchanged as the description of what
-`sim/redundancy-mux/records/20261113T160050Z/` measured). **Related**: DR-0003 (spares per
-direction), DR-0016 (the two-wire shift), DR-0006 (the timing budget T-20 checks), DR-0022
-(a `SIM` leg with no bound). **Filed as**: #232.
+`sim/redundancy-mux/records/20261113T160050Z/` measured), and DR-0028 (decision point 2's
+T-20/T-13 attribution of the in-lane delay terms — superseded by point 2 below; DR-0028's
+removal of the standalone `SIM` leg and T-05's exit from `signoff/block-manifest.json`
+stand). **Related**: DR-0003 (spares per direction), DR-0016 (the two-wire shift), DR-0006
+(the timing budget T-20 checks), DR-0022 (the original bound-less `SIM` leg, since removed
+by DR-0028). **Filed as**: #232.
 
 ## Context
 
@@ -30,7 +33,8 @@ way DR-0001 provides for: a new decision record naming the row and the evidence.
 ## Evidence
 
 Two PVT-FULL records of the same bench, both 45 corners, batch fleet, every measurement
-reported and none graded (T-05's `SIM` leg has no bound — DR-0023, unchanged here):
+reported and none graded (T-05 had no bound for its `SIM` leg when these ran, and DR-0028
+has since dropped the leg — DR-0023, DR-0028):
 
 - `sim/redundancy-mux/records/20261113T160050Z/` — the drive-1 stand-in in the DR-0023
   placement. Four lanes: baseline, control, remap selected to `A0` and to `A1`.
@@ -145,16 +149,16 @@ follow-up below.
 
 **4. The RX side mirrors it.** `rx_remap` goes behind the RX capture register, for the same
 reason and with the same consequence for T-19's capture aperture. It is **not measured**
-here — the T-05 `SIM` leg names the lane to the TX cell — and the follow-up that
+here — the bench under DR-0023 modeled the lane to the TX cell — and the follow-up that
 instantiates it carries that measurement if the RX path turns out to need one.
 
 **5. No bound changes.** T-13, T-19, T-20 and every line of the timing budget are
-untouched. T-05's `SIM` leg still has **no bound of its own** (DR-0023 point 5, unchanged):
-its measurements are reported, never graded. What *does* change is DR-0023's statement of
-where they are consumed — under this record the two rows they reported into, T-20 and
-T-13, receive **no term from T-05**, because point 2 removes both from the TX output rather
-than shrinking either. T-05 stays a declared gap in `signoff/block-manifest.json`, in the
-form DR-0022 established.
+untouched. T-05 carries **no `SIM` leg** (DR-0028): the measurements above are reported
+evidence for a rejected placement, never graded (DR-0023 point 5, DR-0028). What *does*
+change is DR-0023's and DR-0028's statement of where they are consumed — under this record
+the two rows they reported into, T-20 and T-13, receive **no term from T-05**, because
+point 2 removes both from the TX output rather than shrinking either. T-05 is no longer in
+`signoff/block-manifest.json` at all (DR-0028).
 
 **6. The two records stay as they are.** They measure the in-lane arrangement, which is now
 the *rejected* alternative; that is what evidence for a rejection looks like, and records
@@ -195,8 +199,9 @@ measured and why the stand-in was chosen.
 
 ## Consequences
 
-- `spec/target-spec.md` T-05 is edited to state the placement and what the `SIM` leg means
-  under it; the row's Target, Fallback and Stretch values are unchanged.
+- `spec/target-spec.md` T-05 is edited to state the placement, that there is no `SIM` leg
+  (DR-0028), and that the `sim/redundancy-mux/` measurements are reported evidence for the
+  rejected in-lane placement; the row's Target, Fallback and Stretch values are unchanged.
 - DR-0023's status line gains the `Amended by` pointer; nothing else in it changes.
 - `sim/redundancy-mux/` keeps both records and the six-lane deck. The deck still measures
   the **rejected** in-lane arrangement — that is its purpose now, and `sim/README.md` says
