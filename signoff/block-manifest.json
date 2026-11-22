@@ -12,19 +12,19 @@
     },
     "1.analog": {
       "file": "signoff/attest/item1-analog.json",
-      "content_hash": "sha256:fd747b37546c9099f8081e2837588cdabbe8525ab1544b4084b374aa1f2f0258"
+      "content_hash": "sha256:2a56d8e75f04b3af2659743c014849826a1ba9bacfbbafb4a35c4d512e4f078f"
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
-      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e"
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
     },
     "2.digital": {
       "file": "signoff/attest/item2-digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
     "3.analog": {
-      "file": "layout/records/20261113T112710Z/drc_analog.json",
-      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e"
+      "file": "layout/records/20261120T202314Z/drc_analog.json",
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
     },
     "3.digital": {
       "file": "layout/records/20261027T063033Z/drc_digital.json",
@@ -63,6 +63,12 @@
         "file": "sim/clock-path/records/20261113T095936Z/report.json",
         "rows": [
           "T-17"
+        ]
+      },
+      {
+        "file": "sim/channel-model/records/20261121T000100Z/report.json",
+        "rows": [
+          "T-12"
         ]
       }
     ],
@@ -117,7 +123,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:73569b31ae8e2c6f714684e9a0db28e88d04df99bff1df3a85926aa58bb651c9"
+          "content_hash": "sha256:305542b0f92867bf559c1aebe1f7492447808c46d4cd7a1f5424517d8817c327"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
@@ -127,16 +133,16 @@
     },
     "7.analog": [
       {
-        "file": "layout/pex/records/20261113T130842Z/aib_io_tx.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json"
       },
       {
-        "file": "layout/pex/records/20261113T130842Z/aib_io_rx.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json"
       },
       {
-        "file": "layout/pex/records/20261113T130842Z/aib_io_tx_clk.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json"
       },
       {
-        "file": "layout/pex/records/20261113T130842Z/aib_io_rx_clk.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json"
       }
     ],
     "7.digital": {
@@ -144,19 +150,19 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:703daedd8d4c994b524d548e671d9d901006952e1a50cf3b7b436c97f2b8a5e0"
+      "content_hash": "sha256:4f209bb193e57df79e06f02cd279574f5bf0ae5f31ec5dbcd9b3e63006c0ec14"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:703daedd8d4c994b524d548e671d9d901006952e1a50cf3b7b436c97f2b8a5e0"
+      "content_hash": "sha256:4f209bb193e57df79e06f02cd279574f5bf0ae5f31ec5dbcd9b3e63006c0ec14"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
-      "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"
+      "content_hash": "sha256:3766a60bd41e0c417f6ab956c6ccc3456967c62313f937f73849e06b08dc6227"
     },
     "9.digital": {
       "file": "signoff/attest/item9-digital.json",
-      "content_hash": "sha256:9b96fcedd04c8dd1d84b56b08ac3fb3400ca064f1c3379dde4c452b885091a30"
+      "content_hash": "sha256:53e1ce98bf7222844f5a8737478b85fb3f0aaf575a672705219a149c272c252e"
     },
     "10.analog": {
       "file": "signoff/attest/item10.json",
@@ -192,18 +198,6 @@
         "id": "T-01"
       },
       {
-        "id": "T-02",
-        "gap": "SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
-      },
-      {
-        "id": "T-04",
-        "gap": "SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
-      },
-      {
-        "id": "T-05",
-        "gap": "SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ (the drive-1 stand-in) and sim/redundancy-mux/records/20261113T174852Z/ (two sized stages). DR-0024 read those records and placed the remap ahead of the TX input register, where the register re-times it: the in-lane added delay at the TX output is zero by construction, so this row now reports no common added delay into T-20 and no select-dependent delay into T-13. The two records measure the in-lane placement DR-0024 rejects and are its evidence; nothing in them is graded and no bound changes. A standing gap, not pending work. Tracked in #216"
-      },
-      {
         "id": "T-06"
       },
       {
@@ -219,8 +213,7 @@
         "id": "T-11"
       },
       {
-        "id": "T-12",
-        "gap": "channel-model definition, not a block measurable, so not cited as covered; the +/-20 % channel R/C sensitivity its grid column asks for was never run (every record is nominal kr = kc = 1). Tracked in #193"
+        "id": "T-12"
       },
       {
         "id": "T-15"
@@ -285,19 +278,7 @@
     "7.analog": [
       {
         "id": "T-01",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
-      },
-      {
-        "id": "T-02",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg is a pointer, not a bound of its own (DR-0022): the DDR exchange format is verified by RTL and the DDR timing is graded at T-16, T-19 and T-20. The 45-corner t02_* edge-separation measurements in sim/clock-path/records/20261113T095936Z/ are reported inputs to those rows, not a grade of T-02. A standing gap, not pending work. Tracked in #216"
-      },
-      {
-        "id": "T-04",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg is report-only by design (DR-0022): the specification states no clk/clkb crossing requirement, so the 45-corner crossing measurements in sim/clock-path/records/20261113T095936Z/ stay reported evidence of clock-path health rather than a graded claim; the arrangement the row requires is verified by RTL. A standing gap, not pending work. Tracked in #216"
-      },
-      {
-        "id": "T-05",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: SIM leg has no bound of its own (DR-0023): the mux function is verified by RTL, and the remap's added load and delay are measured over the 45-corner PVT-FULL grid in sim/redundancy-mux/records/20261113T160050Z/ (the drive-1 stand-in) and sim/redundancy-mux/records/20261113T174852Z/ (two sized stages). DR-0024 read those records and placed the remap ahead of the TX input register, where the register re-times it: the in-lane added delay at the TX output is zero by construction, so this row now reports no common added delay into T-20 and no select-dependent delay into T-13. The two records measure the in-lane placement DR-0024 rejects and are its evidence; nothing in them is graded and no bound changes. A standing gap, not pending work. Tracked in #216"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-06",
@@ -313,7 +294,7 @@
       },
       {
         "id": "T-09",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-11",
@@ -321,23 +302,23 @@
       },
       {
         "id": "T-12",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: channel-model definition, not a block measurable, so not cited as covered; the +/-20 % channel R/C sensitivity its grid column asks for was never run (every record is nominal kr = kc = 1). Tracked in #193"
+        "gap": "not re-measured post-layout: the channel-model conformance record that covers T-12 in 5.analog (sim/channel-model/records/20261121T000100Z/, DR-0029) grades the committed netlist spec/channel/channel_rc.cir against the declared table, an input definition that layout does not change, and no extracted T-12 measurement exists, so item 7 keeps the row declared. The +/-20 % channel R/C sensitivity run was completed pre-layout by the spread campaign that closed #193 (sim/channel-eye/records/20261113T223804Z-ch-spread/, 180/180 corners); the 1.3 ps T-16 margin that run exposed was later lifted to 19.92 ps by the #251 driver-resistor resize, likewise pre-layout. Not pending work: no tracker is needed against it."
       },
       {
         "id": "T-15",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-16",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-17",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-18",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-20",
@@ -357,7 +338,7 @@
       },
       {
         "id": "T-26",
-        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5493; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
+        "gap": "extracted leg not measured: klt pex cannot simulate an sg13g2 extraction -- the deck writes the pad/ESD antenna diode as a bare `D` card naming `dpantenna`, which the PDK defines only as a `.subckt`, so ngspice stops at netlist load before any analysis. Reproduced in layout/pex/records/20261113T130846Z/ and filed upstream as 2AMLogic/klayout-tools#5491; see layout/pex/README.md 'Defect 2'. Extraction itself is clean and cited above. This row's bench is also a link bench (both ends of the channel in one netlist), which one extracted `--top` per `klt pex` run cannot express; filed upstream as 2AMLogic/klayout-tools#5494; see layout/pex/README.md 'One extracted top per run'. This repo's obligation to submit the committed 45-corner requests and record delta[] once the tool is fixed is tracked in #226"
       },
       {
         "id": "T-28",
@@ -406,7 +387,7 @@
   "claims": {
     "3": {
       "analog": {
-        "report": "layout/records/20261113T112710Z/drc_analog.json",
+        "report": "layout/records/20261120T202314Z/drc_analog.json",
         "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
         "status": "clean",
         "violation_count": 0,

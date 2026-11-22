@@ -17,8 +17,11 @@
 #      launched it" per shard it RECOVERS, still writes the record;
 #   4. a tool/fleet exit code is exit 6 with the record directory removed, and the
 #      PREFIX_WORK / PREFIX_RESUME retry line names a work directory that still exists;
-# plus: klt's own exit 3 (a limit failed) is a result and is still recorded, and a stale
-# generator refuses to submit anything at all.
+# plus: klt's own exit 3 (a limit failed) is a result and is still recorded, a stale
+# generator refuses to submit anything at all, a post-processor refusal (#267's
+# designed abort, issue #276) leaves no record directory behind and keeps the aborted
+# run's klt.stderr outside records/, and `--allow-empty-rows` (#281) is what lets a leg
+# ungraded by construction -- dc-static's esd-diode -- write its deliberately empty rows.
 #
 # Cases 7 and 8 cover the dc-static entry point (#228), the third family on this procedure
 # and the one that needs `--row-map`: 7 is its resolved `--dry-run` configuration, 8 drives
@@ -78,13 +81,13 @@ chmod +x "${TMP}/bin/uvx"
 export STUB_REPORT="${SRC_REC}/report.json.gz"
 export STUB_ARGV="${TMP}/argv"
 
-run_harness() {  # run_harness -> prints the exit code, leaves ${TMP}/stderr
+run_harness() {  # run_harness [extra harness args] -> prints the exit code, leaves ${TMP}/stderr
   local rc=0
   "${HERE}/batch_record.sh" --self test-family --dir "${FAM}" --record test-family \
     --request request.json --generator gen_stub.py --post-label clock-path \
     --max-units-per-job 3 --env-prefix TESTFAM --copy clock_stim.inc \
     --fields-head '{"claim_scope": "test"}' --fields-tail '{"note": "offline stub"}' \
-    --report-only-ranges > "${TMP}/stdout" 2> "${TMP}/stderr" || rc=$?
+    --report-only-ranges "$@" > "${TMP}/stdout" 2> "${TMP}/stderr" || rc=$?
   echo "${rc}"
 }
 # shellcheck disable=SC2012  # the names are UTC stamps this script just created
@@ -198,6 +201,7 @@ assert cfg["env_prefix"] == "DC_STATIC", cfg["env_prefix"]
 # one unsharded job: options.timeout_s 60 puts the fleet's own ceiling at 58 units
 assert cfg["max_units_per_job"] == "45", cfg["max_units_per_job"]
 assert cfg["report_only_ranges"] is True
+assert cfg["allow_empty_rows"] is False, "a graded leg must not opt out of #267"
 # the three sub-benches tb_dc_static.cir .includes; the netlist itself is always copied
 assert set(cfg["copy"]) == {"tb_drive.cir", "tb_pin.cir", "tb_rx_hyst.cir"}, cfg["copy"]
 # the committed request declares no spec_row, so rows come from the prefix map
@@ -213,6 +217,7 @@ cfg = json.loads(sys.argv[1])
 assert cfg["record_suffix"] == "-esd-diode", cfg["record_suffix"]
 assert cfg["row_map"] == {}, "extraction only: nothing is graded, so no row is claimed"
 assert cfg["fields_head"]["claim_scope"].startswith("none:"), cfg["fields_head"]
+assert cfg["allow_empty_rows"] is True, "the extraction leg states its empty rows itself (#281)"
 PY
 }
 want "the esd-diode kind grades no row and claims none" dc_esd_claims_nothing
@@ -284,6 +289,63 @@ assert set(rec["report_only_ranges"]) == {"rx_dn.vth_dn", "rx_up.vddio_v", "rx_u
 PY
   }
   want "the prefix map reproduces the six rows the cited record asserts" dc_rows_match
+fi
+
+# --- 9. a refused post-processor leaves no record directory (#276) ---------------------
+echo "case 9: a post-processor refusal leaves no record and keeps klt.stderr"
+printf '%s\n' 'import sys; sys.exit(0)' > "${FAM}/gen_stub.py"
+python3 -I - "${TMP}/grades-nothing.json.gz" <<'PY'
+import gzip, json, sys
+# A report whose measurement echoes no spec_row and whose name is declared nowhere:
+# channel_eye_post.py refuses the summary with exit 2 (#267). This aborts the harness
+# after the record directory exists -- the leftover used to stay behind committable,
+# with no record.json in it.
+rep = {"corners": [{"corner_id": "mos_tt/1.20V/27C",
+                    "measurements": [{"name": "unmapped.no_such_row", "status": "pass"}]}]}
+with gzip.open(sys.argv[1], "wt") as f:
+    json.dump(rep, f)
+PY
+rc="$(STUB_REPORT="${TMP}/grades-nothing.json.gz" run_harness)"
+check "exit code is the post-processor's refusal (2)" "${rc}" "2"
+check "no record directory is left behind" "$(latest_record)" ""
+want "the abort names the kept stderr location" grep -q 'kept at' "${TMP}/stderr"
+want "nothing was written to stdout" test ! -s "${TMP}/stdout"
+ASIDE="$(sed -n 's/^.*kept at //p' "${TMP}/stderr" | tail -1)"
+if [[ -z "${ASIDE}" || ! -f "${ASIDE}" ]]; then
+  fail "the aborted run's klt.stderr is kept outside records/"
+else
+  ok "the aborted run's klt.stderr is kept outside records/"
+  check "the kept stderr is scrubbed like the record's" \
+    "$(grep -c 's3://<bucket>' "${ASIDE}")" "1"
+  want_not "the kept stderr is not under the family's records/" \
+    test -e "${FAM}/records/$(basename "$(dirname "${ASIDE}")")"
+fi
+if [[ -n "${ASIDE}" ]]; then rm -rf "$(dirname "${ASIDE}")"; fi
+
+# --- 10. the esd-diode opt-out reaches the post-processor (#281) ------------------------
+echo "case 10: --allow-empty-rows lets a leg ungraded by construction write its record"
+# The same grades-nothing report case 9 refused: the flag is the only difference, so
+# exit 0 here is the proof the flag reaches channel_eye_post.py and nothing else changed.
+printf '%s\n' 'import sys; sys.exit(0)' > "${FAM}/gen_stub.py"
+rc="$(STUB_REPORT="${TMP}/grades-nothing.json.gz" run_harness --allow-empty-rows)"
+check "exit code is 0" "${rc}" "0"
+REC3="$(latest_record)"
+if [[ -z "${REC3}" ]]; then
+  fail "the ungraded-by-construction run still wrote no record"
+else
+  ok "the ungraded-by-construction run wrote its record"
+  # shellcheck disable=SC2317  # invoked indirectly, through want() below
+  empty_rows_are_deliberate() { python3 -I - "${REC3}" <<'PY'
+import json, sys
+rows = json.loads(open(f"{sys.argv[1]}/rows.json").read())["rows"]
+assert rows == {}, rows
+rec = json.loads(open(f"{sys.argv[1]}/record.json").read())
+assert rec["rows"] == {}, rec["rows"]
+assert rec["claim_scope"] == "test", rec["claim_scope"]
+PY
+  }
+  want "rows is empty, by the caller's statement and not by accident" empty_rows_are_deliberate
+  rm -rf "${FAM}/records"
 fi
 
 echo

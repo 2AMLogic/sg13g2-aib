@@ -19,10 +19,16 @@ below). Both defects are reproduced by a committed record and filed upstream.
 **The deferred measurement is owned, not dropped.** Issue #81 closes with `7.analog` `unmet`;
 submitting the committed 45-corner requests and recording `delta[]` once the tool is fixed is
 tracked by **#226** (blocked by
-[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491) and
-[#5493](https://github.com/2AMLogic/klayout-tools/issues/5493)), which also owns the two
-acceptance criteria #81 leaves unmet: the per-corner schematic/extracted/delta rows and T-24's
-`PEX` leg. The upstream issues track the tool defects; #226 tracks this repo's re-run.
+[2AMLogic/klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491), with
+[#5494](https://github.com/2AMLogic/klayout-tools/issues/5494) narrowing what one fixed run
+can cover), which also owns the two acceptance criteria #81 leaves unmet: the per-corner
+schematic/extracted/delta rows and T-24's `PEX` leg. The blocking defect owns both criteria — every
+extracted leg dies at netlist load, so neither can produce a row while it is open — while
+the multi-top request blocks only the two link families (`channel-eye`
+T-01, T-09, T-15, T-16, T-18, T-26; `clock-path` T-17), which instantiate both channel ends
+in one netlist; T-24's `PEX` leg and the pin-leg rows run behind a single extracted `--top`
+and do not wait on it. The upstream issues track the tool defects; #226 tracks this repo's
+re-run.
 
 So this directory delivers the extraction evidence that does exist, the benches and requests
 the campaign needs, and the reproduction of what blocks it. **No claim is made here about any
@@ -34,9 +40,16 @@ spec row's post-layout value.** Nothing in `spec/` is relaxed and no cell is cha
 | T-01, T-09, T-15, T-16, T-18, T-26 | `channel-eye` | **not measured** | defect 2, and no bench yet (see "One extracted top per run") |
 | T-17 | `clock-path` | **not measured** | same |
 
-Item 5's own declared gaps (`T-02`, `T-04`, `T-05`, `T-12`, `T-20`, `T-21`, `T-25`, `T-29`)
-are carried forward unchanged, with the same trackers: #216, #192, #193, #194, #195, #196,
-#176. Nothing here measures them and nothing here closes them.
+Item 5's four declared gaps (`T-20`, `T-21`, `T-25`, `T-29`) are carried
+forward unchanged, with the same trackers: T-20 (#194), T-21 (#195),
+T-25 (#196), T-29 (#176). T-12 is no longer an item 5 gap (DR-0029, proposed): the
+channel-model conformance record `sim/channel-model/` covers it pre-layout, and item 7
+keeps its own T-12 declaration, since no extracted T-12 measurement exists.
+`T-02`, `T-04` and `T-05` left the declared set: DR-0026 ruled the first two
+carry no `SIM` leg and DR-0028 removes T-05's (the T-05 measurement campaign the
+closed #192 recorded is complete; its numbers feed T-20 and T-13 as reported inputs).
+Nothing here measures them and nothing here closes them. Item 7 declares all 18 of its rows
+as gaps: the 14 rows item 5 grades plus these four carried forward.
 
 ## The two defects
 
@@ -188,8 +201,11 @@ column to get both ends in one top is 4320 devices over 45 corners of a 141 ns t
 new row coverage, and is not done.
 
 That limitation is filed upstream as a generic gap,
-[2AMLogic/klayout-tools#5493](https://github.com/2AMLogic/klayout-tools/issues/5493). It is the
-second reason the two link families carry no bench here yet: with defect 2 blocking every
+[2AMLogic/klayout-tools#5494](https://github.com/2AMLogic/klayout-tools/issues/5494); it was
+first filed as
+[#5493](https://github.com/2AMLogic/klayout-tools/issues/5493), which closed as docs-only on
+2026-11-13 — the one-`--top` limit is now documented in `klt`'s CLI docs, not removed. It is
+the second reason the two link families carry no bench here yet: with defect 2 blocking every
 extracted leg, there is nothing to validate a link bench against, and committing an unexercised
 one would be scaffolding presented as work. They stay declared gaps.
 
@@ -257,10 +273,32 @@ the schematic DUTs here are generated separately rather than reusing it.
 
 | Record | Mode | What it establishes |
 |---|---|---|
-| `20261113T130842Z` | `extract` | extraction of all four drawn cells: device/net counts, `extraction.model`, `body_bias: biased`, input hash = the committed stream |
+| `20261113T130842Z` | `extract` | extraction of all four drawn cells: device/net counts, `extraction.model`, `body_bias: biased`. Input hash is the **pre-#248** stream, superseded by `20261114T025329Z` below — history, not the cited evidence |
 | `20261113T130846Z` | `probe` | the reproduction of both defects: `*.envbackend.*` (defect 1) and `*.named.*` (defect 2, with the schematic side passing) |
+| `20261114T025329Z` | `extract` | the same extraction re-run after #248 regenerated `layout/aib_io_column.gds` for the DR-0016 spare placement — superseded by `20261120T202530Z` below, history |
+| `20261120T202530Z` | `extract` | the same extraction re-run after #387 redrew `Resd` at the netlist size (`l = 1 um`): input hash = the committed stream `54b42956…`. This is what `signoff/block-manifest.json` cites under 7.analog |
 
-Both records are append-only and keep the request they ran with, which is **not** today's
+`20261120T202530Z` re-binds the extraction to the stream the repo ships after the #387
+`Resd` resize. Unlike #248's label rename, the resize does move geometry inside the unit
+cells, so each new `*.extract.report.json` differs from its `20261114T025329Z` predecessor
+in `provenance.input.content_hash` **and** `extraction.netlist_sha256` (the extracted
+`rppd` cards carry the new `l`); the device counts (42/84/138/276) and net counts
+(6/10/17/29) are unchanged, as is `extraction.pdk.version` (`fetched:0.3.0`) and
+`benches/extraction.json`. The #226 delta campaign must select this record's stream as
+its input. `20261114T025329Z` re-bound the extraction to the stream the repo shipped after
+#248 and in doing so
+measures the claim #248 made in passing — that renaming 24 `TM1lbl` strings inside
+`aib_io_column_tx`/`aib_io_column_rx` cannot move an extraction of the **unit** cells. It
+cannot: each new `*.extract.report.json` differs from its `20261113T130842Z` predecessor in
+exactly one field, `provenance.input.content_hash`. All four `extraction.netlist_sha256` are
+unchanged, so is `extraction.pdk.version` (`fetched:0.3.0`), so are the device counts
+(42/84/138/276) and net counts (6/10/17/29), and `benches/extraction.json` is byte-identical.
+The `20261113T130846Z` probe record still binds the pre-#248 hash and is deliberately left
+alone: it is never cited as 7.analog evidence, and what it establishes — an ngspice
+netlist-**load** failure — is independent of the stream.
+
+All three records are append-only. `20261113T130846Z`, the only one with a measurement leg and
+so the only one that ran a request, keeps the request it ran with, which is **not** today's
 committed request: #210 (merged after this branch was cut) paired the diode section with the
 MOS corner in `sim/pvt_full.py` (#184), so regenerating `benches/request_dc_static_<top>.json`
 moved `ss` to `dio_ss` and `ff` to `dio_ff`. The `tt` bundle — `mos_tt` / `res_typ` / `dio_tt` —

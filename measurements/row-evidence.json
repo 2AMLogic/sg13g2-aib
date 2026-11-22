@@ -33,7 +33,7 @@
         "corner": "n/a (function)",
         "scope": "TC",
         "basis": "RTL simulation, every single-fault position (41 cases)",
-        "note": "RTL leg only. The SIM leg (mux added load and delay inside T-12/T-13) is not measured."
+        "note": "RTL leg only. The analog leg is not graded: the remap's added load and delay are measured over PVT-FULL in sim/redundancy-mux/records/20261113T160050Z/ and reported into T-20 (common term) and T-13 (select-dependent term), with no bound of their own (DR-0023, DR-0028)."
       },
       {
         "record": "signoff/attest/item5-digital/fv_shift_redundancy.json",
@@ -226,6 +226,28 @@
         "scope": "BOTH",
         "basis": "simulated DC, |up trip - down trip| of the receiver, margin to the 60 mV limit, mV",
         "note": "A structural check that no hysteresis was added, not a measurement of a hysteretic circuit: a DC sweep of a memoryless inverter pair cannot show hysteresis (sim/dc-static/README.md). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      }
+    ],
+    "T-12": [
+      {
+        "record": "sim/channel-model/records/20261121T000100Z/rows.json",
+        "field": "rows.T-12.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners x 15 (length, kr, kc) rows",
+        "scope": "CH",
+        "basis": "simulated, per-row verdict for T-12: the committed netlist spec/channel/channel_rc.cir against the declared table spec/channel-model.md (DR-0029, proposed)",
+        "note": "Simulated, not measured. Verifies the netlist against the declared table at CH-3MM-RC, CH-1MM and CH-5MM and the four +-20 % (kr, kc) pairs, at a +-1 % numerical-agreement tolerance (not a spec bound). It does not validate the table against silicon."
+      },
+      {
+        "record": "sim/channel-model/records/20261121T000100Z/rows.json",
+        "field": "rows.T-12.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners x 15 (length, kr, kc) rows",
+        "scope": "CH",
+        "basis": "simulated, failing T-12 ratio measurements of 4050",
+        "note": "Simulated, not measured; see the verdict entry."
       }
     ],
     "T-15": [

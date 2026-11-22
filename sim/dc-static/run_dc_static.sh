@@ -49,6 +49,8 @@ row_map='{"t06_": "T-06",
 t24_label='extracted-capacitance estimate from model small-signal admittance at 500 MHz; no bond pad (PDK bondpad is an empty placeholder); post-layout PEX out of scope'
 row_source='rows are grouped by the --row-map prefix map in run_dc_static.sh, not by a spec_row tag: the committed request declares none and its graded measurements are step-level. signoff/block-manifest.json still asserts these six rows for item 5 / analog (tool gap 2AMLogic/klayout-tools#5462).'
 t25_note='T-25 (ESD level) is not evaluated by this record: no ESD-transient simulation is run here. See spec/decisions/0017-driver-series-resistor-and-esd-diode-area.md.'
+# extra flags for the post-processor, per leg; only a leg may opt itself in
+post_flags=()
 
 case "${kind}" in
   nominal)
@@ -73,8 +75,12 @@ case "${kind}" in
   esd-diode)
     # extraction only: request_esd_diode.json carries no `limits` anywhere, so nothing is
     # graded, `rows` is empty by construction and the numbers live in report_only_ranges.
+    # --allow-empty-rows states that to the post-processor so the empty `rows` is written
+    # instead of refused (#267/#281): it stays in THIS arm, never in the common exec --
+    # the graded nominal/2kv legs must not acquire it.
     req=request_esd_diode.json ; suffix="-esd-diode" ; rec=dc-static-esd-diode
     copy=() ; row_map='{}'
+    post_flags=(--allow-empty-rows)
     head_fields='{"claim_scope": "none: pad-diode device extraction only. No limits, no spec row is graded, and this record is not design evidence for any row."}'
     tail_fields='{"row_source": "no rows: the request carries no limits, so every measurement is report-only (see report_only_ranges).",
        "t25_note": "T-25 is not evaluated: pad capacitance and forward dynamic resistance only; the 0.5 A clamp transient (SIM) and the LAYOUT area/current-path check are not run."}'
@@ -97,4 +103,5 @@ exec "${HERE}/../harness/batch_record.sh" \
   --fields-tail "${tail_fields}" \
   --row-map "${row_map}" \
   --report-only-ranges \
+  ${post_flags[@]+"${post_flags[@]}"} \
   "$@"

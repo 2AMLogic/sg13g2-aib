@@ -150,7 +150,7 @@ def request(netlist: str, steps: list, top: list = None, osdi: bool = True) -> d
     if osdi:
         r["options"]["osdi_preload"] = pvt_full.osdi_preload()
     r["backend"] = "batch"
-    r["batch"] = {"runner_version_check": "warn", "capacity_wait_s": CAPACITY_WAIT_S}
+    r["batch"] = {"capacity_wait_s": CAPACITY_WAIT_S}
     return r
 
 

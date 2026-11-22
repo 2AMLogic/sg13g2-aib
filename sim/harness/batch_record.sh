@@ -18,7 +18,7 @@
 #                   --post-label LABEL --max-units-per-job N --env-prefix PREFIX
 #                   [--self NAME] [--record-suffix SUFFIX] [--copy FILE]...
 #                   [--fields-head JSON] [--fields-tail JSON] [--row-map JSON]
-#                   [--report-only-ranges]
+#                   [--report-only-ranges] [--allow-empty-rows]
 #
 #   --dir                family directory (sim/channel-eye, sim/clock-path, sim/dc-static, ...)
 #   --record             the record.json "record" field
@@ -42,6 +42,11 @@
 #                        from the request, which is correct as long as a prefix map names
 #                        only graded measurements
 #   --report-only-ranges record the min/max over the grid of every ungraded measurement
+#   --allow-empty-rows   pass --allow-empty-rows to the post-processor: a summary that
+#                        grades nothing is written as `rows: {}` instead of being refused
+#                        (#267). Only for a leg ungraded by construction -- dc-static's
+#                        esd-diode extraction -- and stated by that leg's entry point,
+#                        never inferred from the emptiness itself (#281)
 #   --dry-run            print the resolved configuration as JSON and exit, touching nothing
 #                        (needs no PDK and no fleet; this is what the self-tests check the
 #                        entry points with)
@@ -50,11 +55,15 @@
 # 6 a batch/fleet error (no record is written), otherwise 0. klt sim's own 0 (every limit
 # met), 3 (some limit failed) and 4 (unmeasurable corners) are all results: the record is
 # written either way and carries the code as record.json's `klt_exit_code`.
+# A failure after the record directory exists (the post-processor, write_record.py)
+# aborts with that command's exit code: the partial directory is removed and its
+# klt.stderr kept under sim/.work/aborted-*/ (gitignored) rather than left committable
+# as a record directory with no record.json in it (#276).
 set -euo pipefail
 
 SELF="$(basename "${0}")"
 DIR="" ; RECORD="" ; REQUEST="" ; GENERATOR="" ; POST_LABEL="" ; MAX_UNITS="" ; ENV_PREFIX=""
-SUFFIX="" ; FIELDS_HEAD="{}" ; FIELDS_TAIL="{}" ; ROW_MAP="{}" ; RANGES=0 ; DRY=0
+SUFFIX="" ; FIELDS_HEAD="{}" ; FIELDS_TAIL="{}" ; ROW_MAP="{}" ; RANGES=0 ; ALLOW_EMPTY=0 ; DRY=0
 COPY=()
 while [[ $# -gt 0 ]]; do
   case "${1}" in
@@ -72,8 +81,9 @@ while [[ $# -gt 0 ]]; do
     --fields-tail) FIELDS_TAIL="${2}"; shift 2 ;;
     --row-map) ROW_MAP="${2}"; shift 2 ;;
     --report-only-ranges) RANGES=1; shift ;;
+    --allow-empty-rows) ALLOW_EMPTY=1; shift ;;
     --dry-run) DRY=1; shift ;;
-    -h|--help) sed -n '2,52p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help) sed -n '2,61p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "${SELF}: unknown argument '${1}'" >&2; exit 2 ;;
   esac
 done
@@ -91,14 +101,15 @@ k = ("self", "dir", "record", "request", "generator", "post_label", "record_suff
      "max_units_per_job", "env_prefix")
 cfg = dict(zip(k, sys.argv[1:1 + len(k)]))
 cfg["report_only_ranges"] = sys.argv[1 + len(k)] == "1"
-cfg["fields_head"] = json.loads(sys.argv[2 + len(k)])
-cfg["fields_tail"] = json.loads(sys.argv[3 + len(k)])
-cfg["row_map"] = json.loads(sys.argv[4 + len(k)])
-cfg["copy"] = sys.argv[5 + len(k):]
+cfg["allow_empty_rows"] = sys.argv[2 + len(k)] == "1"
+cfg["fields_head"] = json.loads(sys.argv[3 + len(k)])
+cfg["fields_tail"] = json.loads(sys.argv[4 + len(k)])
+cfg["row_map"] = json.loads(sys.argv[5 + len(k)])
+cfg["copy"] = sys.argv[6 + len(k):]
 print(json.dumps(cfg, indent=2))' \
     "${SELF}" "${DIR}" "${RECORD}" "${REQUEST}" "${GENERATOR}" "${POST_LABEL}" "${SUFFIX}" \
-    "${MAX_UNITS}" "${ENV_PREFIX}" "${RANGES}" "${FIELDS_HEAD}" "${FIELDS_TAIL}" "${ROW_MAP}" \
-    ${COPY[@]+"${COPY[@]}"}
+    "${MAX_UNITS}" "${ENV_PREFIX}" "${RANGES}" "${ALLOW_EMPTY}" "${FIELDS_HEAD}" \
+    "${FIELDS_TAIL}" "${ROW_MAP}" ${COPY[@]+"${COPY[@]}"}
   exit 0
 fi
 
@@ -113,10 +124,36 @@ KLT=(uvx --from "klayout-tools==$(cat "${REPO}/signoff/KLT_VERSION")" klt)
 
 python3 -I "${DIR}/${GENERATOR}" --check || { echo "${SELF}: generated files are stale" >&2; exit 4; }
 
+# An aborted run must not leave a half-written directory under records/: it carries no
+# record.json, so check_evidence_format.py skips it, a git add freezes it append-only,
+# and nothing graded is in it (#276). Its klt.stderr is kept under sim/.work/ (the
+# gitignored harness scratch) instead of being discarded with the directory. ${WORK} is
+# never touched here: a batch error keeps it for `klt sim --resume` (RETRY below).
+preserve_stderr() {
+  local aside="${SIM_DIR}/.work/aborted-${DIR##*/}-${STAMP}${SUFFIX}" st=0
+  mkdir -p "${aside}" || st=$?
+  if [[ -f "${REC}/klt.stderr" ]]; then
+    cp "${REC}/klt.stderr" "${aside}/klt.stderr" || st=$?
+  fi
+  echo "${SELF}: the run's klt.stderr is kept at ${aside}/klt.stderr" >&2
+  return "${st}"
+}
+cleanup_abort() {
+  local rc=$?
+  trap - ERR
+  if [[ -d "${REC}" ]]; then
+    preserve_stderr || true
+    echo "${SELF}: aborted (exit ${rc}); no record written" >&2
+    rm -rf "${REC}"
+  fi
+  exit "${rc}"
+}
+
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REC="${DIR}/records/${STAMP}${SUFFIX}"
 [[ -e "${REC}" ]] && { echo "${SELF}: ${REC} exists (records are append-only)" >&2; exit 4; }
 mkdir -p "${REC}"
+trap cleanup_abort ERR
 WORK_VAR="${ENV_PREFIX}_WORK" ; RESUME_VAR="${ENV_PREFIX}_RESUME"
 WORK="${!WORK_VAR:-$(mktemp -d)}"   # kept on a batch error so `klt sim --resume` can reuse it
 RESUME="${!RESUME_VAR:-}"
@@ -157,6 +194,9 @@ cp "${DIR}/$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))[
 POST=(python3 -I "${SIM_DIR}/channel-eye/channel_eye_post.py" "${REC}/report.json.gz"
       --request "${REQUEST}" --label "${POST_LABEL}")
 [[ "${ROW_MAP}" == "{}" ]] || POST+=(--row-map "${ROW_MAP}")
+# only a leg whose entry point states it (dc-static's esd-diode) passes the flag through:
+# an accidentally empty `rows` must still be refused here (#267, #281)
+[[ ${ALLOW_EMPTY} -eq 1 ]] && POST+=(--allow-empty-rows)
 "${POST[@]}" > "${REC}/rows.json"
 
 PDKTAG="$(grep -o '"release_tag": *"[^"]*"' "${SIM_DIR}/pdk.json" | head -1 | cut -d'"' -f4)"

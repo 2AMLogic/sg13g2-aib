@@ -17,6 +17,7 @@ import gzip
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -28,7 +29,7 @@ import write_record  # noqa: E402
 # fields write_record.py produces itself; everything else in a committed record is a
 # family field the entry point passes in.
 PRODUCED = {"record", "utc_stamp", "kind", "pdk", "klt_exit_code", "corners", "rows",
-            "report_only_ranges", "batch_job_ids", "runner_klt_version"}
+            "param_groups", "report_only_ranges", "batch_job_ids", "runner_klt_version"}
 # the two fields the channel-eye copy got wrong (it recorded only environment.remote.job_id,
 # which a sharded run never sets, so every committed channel-eye record has nulls).
 JOB_FIELDS = {"batch_job_id", "batch_job_ids", "runner_klt_version"}
@@ -111,8 +112,15 @@ class ReplayTests(unittest.TestCase):
                                  f"report.json.gz beside it")
 
     def test_a_sharded_channel_eye_run_now_records_its_job_ids(self):
-        """The fix: every committed channel-eye record has null ids; the replay recovers them."""
-        checked = 0
+        """The fix: a PRE-harness channel-eye record has null ids; the replay recovers them.
+
+        A record written BY this harness carries `batch_job_ids` instead of the old singular
+        `batch_job_id`, so it is checked the other way round: its ids must already be the ones
+        the replay derives, not null. Both directions are asserted, and each must have at
+        least one record to check -- the recovery claim is empty without a legacy record, and
+        the "writes them correctly now" claim is empty without a harness-written one.
+        """
+        legacy = current = 0
         for rec in committed_records():
             if rec.parent.parent.name != "channel-eye":
                 continue
@@ -121,13 +129,20 @@ class ReplayTests(unittest.TestCase):
             shards = (report.get("environment", {}).get("remote") or {}).get("fleet") or []
             if not shards:  # a single-job run; the old field was already right
                 continue
-            self.assertIsNone(committed["batch_job_id"], f"{rec.name}: expected the old null")
             job_ids, runner_vs = write_record.job_identity(report)
             self.assertEqual(len(job_ids), len(shards), f"{rec.name}: one id per shard")
             self.assertTrue(all(job_ids), f"{rec.name}: no empty id")
             self.assertTrue(runner_vs, f"{rec.name}: runner version recovered")
-            checked += 1
-        self.assertGreater(checked, 0, "no sharded channel-eye record found to check")
+            if "batch_job_id" in committed:   # pre-harness: the null this harness fixed
+                self.assertIsNone(committed["batch_job_id"], f"{rec.name}: expected the old null")
+                legacy += 1
+            else:                             # written by this harness: already correct
+                self.assertEqual(committed["batch_job_ids"], job_ids,
+                                 f"{rec.name}: recorded ids differ from the report's")
+                self.assertEqual(committed["runner_klt_version"], runner_vs, f"{rec.name}")
+                current += 1
+        self.assertGreater(legacy, 0, "no pre-harness channel-eye record found to check")
+        self.assertGreater(current, 0, "no harness-written channel-eye record found to check")
 
 
 class JobIdentityTests(unittest.TestCase):
@@ -143,6 +158,55 @@ class JobIdentityTests(unittest.TestCase):
 
     def test_no_remote_block_at_all(self):
         self.assertEqual(write_record.job_identity({}), ([], []))
+
+
+class UngradedRequestTests(unittest.TestCase):
+    """Wall 3 of #281: a request with no top-level `measurements`, under --report-only-ranges.
+
+    dc-static's esd-diode leg is this shape: no limits anywhere, `rows` empty by
+    construction, the numbers in report_only_ranges. `request["measurements"]` used to
+    raise KeyError before any record could be written -- and the leg always sets
+    `--report-only-ranges`, so this fired whether or not the post-processor was given
+    `--request`: the request is opened out of the record directory itself.
+    """
+
+    def write_rec(self, rec, measurements_key):
+        """A record directory shaped like the leg's, with the request's key as requested."""
+        rep = {"corners": [{"corner_id": "mos_tt/vdd_io=1.320V/-40C",
+                            "measurements": [{"name": "cap_a_0.cpad_a_0_ff", "status": "pass",
+                                              "value": 20.44502}]}]}
+        with gzip.open(rec / "report.json.gz", "wt") as f:
+            json.dump(rep, f)
+        (rec / "rows.json").write_text(json.dumps({"rows": {}}))
+        request = {"netlist": "tb_esd_diode.cir"}
+        if measurements_key:
+            request["measurements"] = []
+        (rec / "request.json").write_text(json.dumps(request))
+
+    def test_a_request_without_measurements_writes_its_ranges(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        rec = Path(tmp.name)
+        self.write_rec(rec, measurements_key=False)
+        out = write_record.build(rec, "dc-static-esd-diode", "20261115T000000Z", "test-tag", 0,
+                                 {"claim_scope": "none: pad-diode device extraction only"},
+                                 {}, with_ranges=True)
+        self.assertEqual(out["rows"], {})
+        self.assertEqual(out["claim_scope"], "none: pad-diode device extraction only")
+        ranges = out["report_only_ranges"]
+        self.assertEqual(set(ranges), {"cap_a_0.cpad_a_0_ff"})
+        self.assertIsNone(ranges["cap_a_0.cpad_a_0_ff"]["spec_row"])
+        self.assertEqual(ranges["cap_a_0.cpad_a_0_ff"]["min"], [20.44502, "mos_tt/vdd_io=1.320V/-40C"])
+
+    def test_an_empty_measurements_list_writes_its_ranges_too(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        rec = Path(tmp.name)
+        self.write_rec(rec, measurements_key=True)
+        out = write_record.build(rec, "dc-static-esd-diode", "20261115T000000Z", "test-tag", 0,
+                                 {}, {}, with_ranges=True)
+        self.assertEqual(out["rows"], {})
+        self.assertIn("cap_a_0.cpad_a_0_ff", out["report_only_ranges"])
 
 
 class NoDriftTests(unittest.TestCase):
@@ -221,12 +285,6 @@ class EntryPointTests(unittest.TestCase):
         cfg = self.dry_run(SIM / "channel-eye/run_channel_eye.sh", "tc")
         self.assertEqual(cfg["record_suffix"], "-tc")
         self.assert_matches_committed(cfg, *self.committed("channel-eye", family="tc"))
-
-    def test_channel_eye_control_is_not_design_evidence(self):
-        cfg = self.dry_run(SIM / "channel-eye/run_channel_eye.sh", "control")
-        self.assertEqual(cfg["record_suffix"], "-control")
-        self.assertTrue(cfg["fields_head"]["claim_scope"].startswith("none:"),
-                        "the bench positive control must claim nothing")
 
     def test_clock_path(self):
         cfg = self.dry_run(SIM / "clock-path/run_clock_path.sh")

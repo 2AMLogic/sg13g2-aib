@@ -1,6 +1,6 @@
 # DR-0022: the T-02 and T-04 `SIM` legs — a pointer and a report-only leg
 
-**Status**: accepted. **Rows**: T-02, T-04. **Amended by**: this record's own
+**Status**: accepted. **Superseded in part by** [DR-0026](0026-t02-t04-drop-sim-leg.md) (the "declared gaps" bullet only). **Rows**: T-02, T-04. **Amended by**: this record's own
 Amendment, 2026-11-13 (where a wrongly cited T-02 lands; the Decision is unchanged).
 
 ## Context
@@ -211,3 +211,7 @@ appended to the dc-static citation's `rows` at `0f3bf92` returns `uncovered_rows
 grader could check the claim against. Citing a row under an envelope that does not
 measure it is laundering the tool does not catch. The Alternatives bullet's objection
 stands on its own terms — it is honesty, not an enforcement the grader supplies.
+
+**Amendment (DR-0027)**: where this record says T-04's arrangement is verified by `RTL`, it is
+verified by a structural check of the clock-path netlists instead; the RTL has no clk/clkb pair.
+The text above is unchanged.

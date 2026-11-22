@@ -14,20 +14,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install iverilog and cocotb
+      - name: Install iverilog and the pinned klt with the functional-verification extra
         run: |
           sudo apt-get update
           sudo apt-get install -y iverilog
-          python3 -m venv "$RUNNER_TEMP/venv"
-          "$RUNNER_TEMP/venv/bin/pip" install "cocotb>=2.0,<3"
+          pipx install "klayout-tools[functional-verification]==$(cat signoff/KLT_VERSION)"
 
       # One list, in scripts/ci/check_local.sh, so the local run cannot drift
-      # from this one: the benches, both exit-1 negative controls and the
+      # from this one: the benches, both exit-3 negative controls and the
       # expected pass counts all live there.
       - name: Run the RTL benches and their negative controls
-        run: |
-          . "$RUNNER_TEMP/venv/bin/activate"
-          scripts/ci/check_local.sh rtl
+        env:
+          KLT: klt
+        run: scripts/ci/check_local.sh rtl
 
   evidence:
     runs-on: ubuntu-latest
@@ -38,9 +37,18 @@ jobs:
 
       # Same single list as the local run (scripts/ci/check_local.sh); the
       # script prints a ::group:: per checker, so the log stays navigable.
+      # Facts, not logic: check_sim_append_only.py picks the base from these, so
+      # scripts/ci/test_checkers.py can drive the choice. A pull_request compares
+      # against the PR base; a push to a non-default branch against the
+      # merge-base with the default branch (NOT the pre-push head, which would
+      # freeze a record from its own first push); a push to the default branch
+      # against the pre-push head, where a merge-base would be the head itself.
       - name: Run the PDK-free evidence checkers
         env:
           BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_REF: ${{ github.ref }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: scripts/ci/check_local.sh evidence
 
       - name: Install pinned grader

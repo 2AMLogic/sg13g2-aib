@@ -130,7 +130,8 @@ compensation. The 4kv diodes are worse (52.6 fF at VDDIO/2 against 26.3 fF). Add
 ## Effects on other work
 
 If a later decision adopts the dedicated diode, the netlist changes `XDp1` and the layout
-targets of #140 change with it (`layout/gen_io_column.py` `check_against_netlists()`, the
+artifacts of the earlier DR-0017 regeneration (#140, completed by PR #148) change with it
+(`layout/gen_io_column.py` `check_against_netlists()`, the
 `layout/lvs/*.ref.spice` references, the analog DRC/LVS records), and the T-09 re-run (#146)
 must use that netlist. Until then neither moves. This record edits no layout file.
 

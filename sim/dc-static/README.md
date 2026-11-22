@@ -168,8 +168,9 @@ local fallback. Records are append-only — never edit an earlier one.
 **Until #228 this procedure was the recipe above, followed by hand**, and the four committed
 records have four different shapes: none holds the request or the bench it was run from, none
 records `klt_exit_code`, and `records/20261112T001207Z/` — the one
-`signoff/block-manifest.json` cites — has no `record.json` at all, so
-`scripts/ci/check_evidence_format.py` does not look at it. Those four are evidence and are
+`signoff/block-manifest.json` cites — has no `record.json` at all; its own `README.md`
+(#276) says why, and `scripts/ci/check_evidence_format.py` admits a record directory that
+carries one. Those four are evidence and are
 left exactly as they are; the entry point is for the next run. No `record.json` was
 back-filled.
 

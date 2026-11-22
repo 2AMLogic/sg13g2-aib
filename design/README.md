@@ -67,12 +67,30 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
 - `aib_pad_esd`: `XDp1` is 4.5u x 4.5u (was 10u x 10u) because the wider driver and the
   primary diode do not both fit T-24. **T-25 (ESD level) is not evaluated**: no ESD-transient
   simulation exists. DR-0017 states the trade and what would reverse it.
+- `aib_pad_esd` (#251): `XResd` is `w=2u l=1u` (was `l=2u`). The channel-bench T-16 margin at the
+  declared kr = kc = 1.2 corner was 1.331 ps; with this change the worst margin over PVT-FULL x the four
+  (kr, kc) spread pairs is 19.92 ps. T-08 (min margin bound 42.86 ohm) and T-24 (worst 96.42 fF) are unchanged
+  in the dc-static runs. **T-25 is still not evaluated** and `XResd` is the receiver-isolation element, so the
+  halved resistance is an unmeasured ESD cost. `design/aib_pad_esd_2kv.spice` keeps `l=2u` until #196 decides
+  the diode. Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. The committed
+  layout draws `Resd` at this netlist size since the #387 regeneration (2 um wide, 1 um long;
+  DRC `layout/records/20261120T202314Z`). The LVS is a connectivity match
+  on the layout and records `device.geometry_not_compared` for `rppd`, so it cannot
+  distinguish the two resistor lengths; the drawn size rests on the generator table, which
+  the CI evidence job now compares against this netlist on every push
+  (`python3 -I layout/gen_io_column.py --check`).
 
 Known open point: an inverter receiver's threshold moves with
 the `mos_sf`/`mos_fs` corners and mismatch, so T-10 may need a different receiver;
 the Monte Carlo testbench decides. Layout, LVS and the I/O-cell
-assembly are separate issues; their committed artefacts under `layout/` predate DR-0017 and
-are stale against these netlists (regeneration: #140). The forwarded-clock alignment (DLL) is out of scope.
+assembly are separate issues. The DR-0017 regeneration they owed is complete (#140, PR #148),
+and the `XResd l=1u` resize is in the committed layout too (#387): `Resd` is drawn at the
+netlist size and the stream, DRC (`layout/records/20261120T202314Z`), LVS
+(`layout/lvs/README.md` "Issue #387") and extraction records all bind it. The LVS is a
+connectivity match that does not compare `rppd`
+geometry, so the drawn size is attested by the generator table -- now itself checked
+against the netlists in CI -- not by the LVS.
+The forwarded-clock alignment (DLL) is out of scope.
 
 ## Regenerate and check
 
