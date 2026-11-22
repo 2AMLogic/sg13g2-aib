@@ -65,8 +65,16 @@ run_rc() {
 }
 
 if [ "$want_evidence" = 1 ]; then
-  run "Self-test the checkers" \
-    python3 -I scripts/ci/test_checkers.py
+  # The four suites scripts/ci/test_checkers.py aggregates, run one per group so
+  # a red job names the suite; the aggregator is `npm test` and the item 10 audit.
+  run "Self-test the evidence and record-integrity checkers" \
+    python3 -I scripts/ci/test_evidence_checkers.py
+  run "Self-test the signoff, attestation and pin checkers" \
+    python3 -I scripts/ci/test_signoff_pins.py
+  run "Self-test the sim and generator infrastructure" \
+    python3 -I scripts/ci/test_sim_infra.py
+  run "Self-test the CI check list and shared-helper guards" \
+    python3 -I scripts/ci/test_ci_guards.py
 
   # The shared sim record harness, against a stubbed `klt sim`: no PDK and no
   # batch fleet, so it belongs in the PDK-free list like every checker above.
@@ -78,6 +86,14 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_evidence_format.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
     python3 -I scripts/ci/check_design_sources.py
+  # The generator runs the same comparison on the geometry path, but a
+  # regeneration is the only thing that reaches it, so a netlist edit alone
+  # (#332 shortened XResd to l=1u) left the committed device table -- and with
+  # it the stream -- stale with nothing red. The --check entry point is
+  # stdlib-only (no klayout, no PDK), so the evidence job can run it on every
+  # push and the table cannot drift from design/*.spice again.
+  run "Check the I/O column device table against the committed design netlists" \
+    python3 -I layout/gen_io_column.py --check
   run "Check every attested path matches its envelope's content_hash" \
     python3 -I scripts/ci/check_attested_paths.py
   run "Check the item 6 digital not_applicable documents are fresh against the spec" \
@@ -100,13 +116,17 @@ if [ "$want_evidence" = 1 ]; then
   # channel-eye outputs and test_t19.py both T-19 netlists, the same
   # comparison those --check modes make. The one sim generator not reached
   # that way, sim/clock-path/gen_clock_path.py --check, runs inside
-  # test_checkers.py above (with gen_channel_eye, gen_mc and gen_dc_static).
+  # test_ci_guards.py above (with gen_channel_eye, gen_mc and gen_dc_static).
   run "Self-test the channel-eye bench and its pass/fail post-processor" \
     python3 -I sim/channel-eye/test_channel_eye.py
   run "Self-test the T-19 capture-window bench and its aperture post-processor" \
     python3 -I sim/mc/capture_window/test_t19.py
   run "Check every committed sim/ and layout/ request against the one PVT-FULL corner table" \
     python3 -I scripts/ci/check_corner_bundles.py
+  run "Check the T-12 channel-model conformance bench against the generator" \
+    python3 -I sim/channel-model/gen_channel_model.py --check
+  run "Self-test the T-12 channel-model bench (netlist-text solver, seeded netlist edits)" \
+    python3 -I sim/channel-model/test_channel_model.py
   run "Check the item 7 pex benches against the generator" \
     python3 -I layout/pex/gen_pex_benches.py --check
   run "Self-test the item 7 pex benches (pin lists, one .include, row split)" \

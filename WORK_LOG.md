@@ -2,8 +2,22 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-22
+
+- **PR #402**: docs: correct the Resd PolyRes coordinates in layout/README.md
+- **Issue #394** (closed): Correct the Resd PolyRes coordinates recorded in layout/README.md (#387 regeneration)
+- **PR #390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
+- **Issue #387** (closed): layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign
+
+### 2026-11-21
+
+- **PR #393**: feat(sim,signoff): add the T-12 channel-model conformance bench and cite its record
+- **Issue #384** (closed): T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met
+
 ### 2026-11-20
 
+- **PR #389**: refactor: share the T-16 edge selection and drop the card re-parse in gen_t16attr
+- **Issue #388** (closed): Share the T-16 edge selection and remove the SPICE card parser from gen_t16attr
 - **PR #382**: docs: fix stale 8-gap count in signoff/README and date the item-5 grader probes
 - **Issue #380** (closed): signoff/README.md still says "8 real gaps" for item 5 / analog after DR-0026 and DR-0028 cut the row set to 18/5
 - **Issue #379** (closed): Guide docs tick still stages README.md without re-attesting item 10: #284's guard diagnoses the round trip but does not prevent it

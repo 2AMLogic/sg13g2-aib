@@ -40,16 +40,16 @@ spec row's post-layout value.** Nothing in `spec/` is relaxed and no cell is cha
 | T-01, T-09, T-15, T-16, T-18, T-26 | `channel-eye` | **not measured** | defect 2, and no bench yet (see "One extracted top per run") |
 | T-17 | `clock-path` | **not measured** | same |
 
-Item 5's five declared gaps (`T-12`, `T-20`, `T-21`, `T-25`, `T-29`) are carried
+Item 5's four declared gaps (`T-20`, `T-21`, `T-25`, `T-29`) are carried
 forward unchanged, with the same trackers: T-20 (#194), T-21 (#195),
-T-25 (#196), T-29 (#176). T-12 has none: it is a standing declared gap — the channel model
-is a declared input, and the ±20 % R/C spread campaign the closed #193 asked for ran
-pre-layout (`sim/channel-eye/records/20261113T223804Z-ch-spread/`) and is complete.
+T-25 (#196), T-29 (#176). T-12 is no longer an item 5 gap (DR-0029, proposed): the
+channel-model conformance record `sim/channel-model/` covers it pre-layout, and item 7
+keeps its own T-12 declaration, since no extracted T-12 measurement exists.
 `T-02`, `T-04` and `T-05` left the declared set: DR-0026 ruled the first two
 carry no `SIM` leg and DR-0028 removes T-05's (the T-05 measurement campaign the
 closed #192 recorded is complete; its numbers feed T-20 and T-13 as reported inputs).
 Nothing here measures them and nothing here closes them. Item 7 declares all 18 of its rows
-as gaps: the 13 rows item 5 grades plus these five carried forward.
+as gaps: the 14 rows item 5 grades plus these four carried forward.
 
 ## The two defects
 
@@ -275,9 +275,18 @@ the schematic DUTs here are generated separately rather than reusing it.
 |---|---|---|
 | `20261113T130842Z` | `extract` | extraction of all four drawn cells: device/net counts, `extraction.model`, `body_bias: biased`. Input hash is the **pre-#248** stream, superseded by `20261114T025329Z` below — history, not the cited evidence |
 | `20261113T130846Z` | `probe` | the reproduction of both defects: `*.envbackend.*` (defect 1) and `*.named.*` (defect 2, with the schematic side passing) |
-| `20261114T025329Z` | `extract` | the same extraction re-run after #248 regenerated `layout/aib_io_column.gds` for the DR-0016 spare placement: input hash = the committed stream. This is what `signoff/block-manifest.json` cites under 7.analog |
+| `20261114T025329Z` | `extract` | the same extraction re-run after #248 regenerated `layout/aib_io_column.gds` for the DR-0016 spare placement — superseded by `20261120T202530Z` below, history |
+| `20261120T202530Z` | `extract` | the same extraction re-run after #387 redrew `Resd` at the netlist size (`l = 1 um`): input hash = the committed stream `54b42956…`. This is what `signoff/block-manifest.json` cites under 7.analog |
 
-`20261114T025329Z` re-binds the extraction to the stream the repo ships, and in doing so
+`20261120T202530Z` re-binds the extraction to the stream the repo ships after the #387
+`Resd` resize. Unlike #248's label rename, the resize does move geometry inside the unit
+cells, so each new `*.extract.report.json` differs from its `20261114T025329Z` predecessor
+in `provenance.input.content_hash` **and** `extraction.netlist_sha256` (the extracted
+`rppd` cards carry the new `l`); the device counts (42/84/138/276) and net counts
+(6/10/17/29) are unchanged, as is `extraction.pdk.version` (`fetched:0.3.0`) and
+`benches/extraction.json`. The #226 delta campaign must select this record's stream as
+its input. `20261114T025329Z` re-bound the extraction to the stream the repo shipped after
+#248 and in doing so
 measures the claim #248 made in passing — that renaming 24 `TM1lbl` strings inside
 `aib_io_column_tx`/`aib_io_column_rx` cannot move an extraction of the **unit** cells. It
 cannot: each new `*.extract.report.json` differs from its `20261113T130842Z` predecessor in
