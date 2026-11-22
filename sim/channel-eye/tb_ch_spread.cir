@@ -1,0 +1,18 @@
+* tb_ch_spread.cir -- CH-3MM-RC at the declared +-20 % channel R/C spread (T-12).
+* Identical to tb_ch.cir (TX -> declared channel model -> RX, four lanes, tb_body.inc)
+* except that the R and C spread multipliers of spec/channel/channel_rc.cir are lifted to
+* top-level .param and passed into the instance. `corners.params` in a klt sim request can
+* only target a top-level .param, not a subcircuit-local one, so the sweep needs this form;
+* tb_ch.cir itself is left alone because the nominal records cite it.
+* kr = kc = 1 here is the nominal channel; request_ch_spread_1g.json sets the four
+* +-20 % combinations (0.8/0.8, 0.8/1.2, 1.2/0.8, 1.2/1.2).
+* The channel model includes its own far-end load (cfar); not added again here.
+.include ../../spec/channel/channel_rc.cir
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.param ch_kr=1 ch_kc=1
+.subckt link txp rxp gnd
+Xch txp rxp gnd chan_rlc len_mm=3 kr={ch_kr} kc={ch_kc}
+.ends link
+.include tb_body.inc

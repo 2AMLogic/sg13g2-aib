@@ -1,0 +1,583 @@
+{
+  "record": "redundancy-mux",
+  "utc_stamp": "20261113T160050Z",
+  "kind": "simulated",
+  "claim_scope": "CH (modeled channel CH-3MM-RC, nominal) for the lane loading; the reported deltas are lane-internal differences measured inside one simulation, not channel claims",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-05": {
+      "verdict": "reported",
+      "pass": 2205,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  },
+  "report_only_ranges": {
+    "t05_add1_f_s": {
+      "spec_row": "T-05",
+      "min": [
+        7.12095e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        1.84179e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_add1_r_s": {
+      "spec_row": "T-05",
+      "min": [
+        5.37798e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        1.28112e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_add_f_s": {
+      "spec_row": "T-05",
+      "min": [
+        7.11342e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        1.83889e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_add_r_s": {
+      "spec_row": "T-05",
+      "min": [
+        5.37855e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        1.2815e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_b_cl_f": {
+      "spec_row": "T-05",
+      "min": [
+        2.95989e-14,
+        "mos_ss/1.080V/27C"
+      ],
+      "max": [
+        3.35959e-14,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_b_dpf_s": {
+      "spec_row": "T-05",
+      "min": [
+        2.36324e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        5.28728e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_b_dpr_s": {
+      "spec_row": "T-05",
+      "min": [
+        2.36025e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        5.34535e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_b_dsf_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.48373e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        3.19979e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_b_dsr_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.39771e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.96916e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_b_q_c": {
+      "spec_row": "T-05",
+      "min": [
+        6.39337e-14,
+        "mos_ss/1.080V/27C"
+      ],
+      "max": [
+        8.86933e-14,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_b_tf_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.11231e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.30723e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_b_tr_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.38885e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.9674e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_c_cl_f": {
+      "spec_row": "T-05",
+      "min": [
+        2.95989e-14,
+        "mos_ss/1.080V/27C"
+      ],
+      "max": [
+        3.35959e-14,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_c_dpf_s": {
+      "spec_row": "T-05",
+      "min": [
+        2.36324e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        5.28728e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_c_dpr_s": {
+      "spec_row": "T-05",
+      "min": [
+        2.36025e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        5.34535e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_c_dsf_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.48373e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        3.19979e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_c_dsr_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.39771e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.96916e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_c_q_c": {
+      "spec_row": "T-05",
+      "min": [
+        6.39337e-14,
+        "mos_ss/1.080V/27C"
+      ],
+      "max": [
+        8.86933e-14,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_c_tf_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.11231e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.30723e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_c_tr_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.38885e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.9674e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_ctl_cl_f": {
+      "spec_row": "T-05",
+      "min": [
+        -2.14949e-26,
+        "mos_ss/1.080V/125C"
+      ],
+      "max": [
+        1.67491e-26,
+        "mos_ff/1.320V/125C"
+      ]
+    },
+    "t05_ctl_f_s": {
+      "spec_row": "T-05",
+      "min": [
+        -3.14329e-23,
+        "mos_ss/1.200V/125C"
+      ],
+      "max": [
+        5.45939e-23,
+        "mos_tt/1.080V/27C"
+      ]
+    },
+    "t05_ctl_r_s": {
+      "spec_row": "T-05",
+      "min": [
+        -2.36574e-22,
+        "mos_tt/1.080V/-40C"
+      ],
+      "max": [
+        1.42275e-22,
+        "mos_ss/1.200V/125C"
+      ]
+    },
+    "t05_dcl_f": {
+      "spec_row": "T-05",
+      "min": [
+        -2.87264e-14,
+        "mos_ff/1.320V/125C"
+      ],
+      "max": [
+        -2.48999e-14,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_dtf_s": {
+      "spec_row": "T-05",
+      "min": [
+        -1.6584e-10,
+        "mos_sf/1.080V/125C"
+      ],
+      "max": [
+        -7.61877e-11,
+        "mos_fs/1.320V/-40C"
+      ]
+    },
+    "t05_dtr_s": {
+      "spec_row": "T-05",
+      "min": [
+        -2.23928e-10,
+        "mos_ss/1.080V/125C"
+      ],
+      "max": [
+        -1.06235e-10,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_load_f_s": {
+      "spec_row": "T-05",
+      "min": [
+        -8.22182e-11,
+        "mos_ss/1.080V/125C"
+      ],
+      "max": [
+        -3.91415e-11,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_load_r_s": {
+      "spec_row": "T-05",
+      "min": [
+        -8.75728e-11,
+        "mos_ss/1.080V/125C"
+      ],
+      "max": [
+        -4.07113e-11,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_m0_cl_f": {
+      "spec_row": "T-05",
+      "min": [
+        4.49879e-15,
+        "mos_sf/1.080V/125C"
+      ],
+      "max": [
+        5.32149e-15,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_m0_dpf_s": {
+      "spec_row": "T-05",
+      "min": [
+        3.07458e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        7.08497e-10,
+        "mos_ss/1.080V/27C"
+      ]
+    },
+    "t05_m0_dpr_s": {
+      "spec_row": "T-05",
+      "min": [
+        2.8981e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        6.62685e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_m0_dsf_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.09232e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.41959e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_m0_dsr_s": {
+      "spec_row": "T-05",
+      "min": [
+        9.90601e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.09343e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_m0_q_c": {
+      "spec_row": "T-05",
+      "min": [
+        9.71738e-15,
+        "mos_sf/1.080V/125C"
+      ],
+      "max": [
+        1.40487e-14,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_m0_tf_s": {
+      "spec_row": "T-05",
+      "min": [
+        3.13151e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        6.95722e-11,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_m0_tr_s": {
+      "spec_row": "T-05",
+      "min": [
+        3.26501e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        7.2812e-11,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_m1_cl_f": {
+      "spec_row": "T-05",
+      "min": [
+        4.49929e-15,
+        "mos_sf/1.080V/125C"
+      ],
+      "max": [
+        5.31185e-15,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_m1_dpf_s": {
+      "spec_row": "T-05",
+      "min": [
+        3.07533e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        7.08774e-10,
+        "mos_ss/1.080V/27C"
+      ]
+    },
+    "t05_m1_dpr_s": {
+      "spec_row": "T-05",
+      "min": [
+        2.89805e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        6.62647e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_m1_dsf_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.09237e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.41958e-10,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_m1_dsr_s": {
+      "spec_row": "T-05",
+      "min": [
+        9.90723e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.09359e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_m1_q_c": {
+      "spec_row": "T-05",
+      "min": [
+        9.71846e-15,
+        "mos_sf/1.080V/125C"
+      ],
+      "max": [
+        1.40233e-14,
+        "mos_ff/1.320V/-40C"
+      ]
+    },
+    "t05_m1_tf_s": {
+      "spec_row": "T-05",
+      "min": [
+        3.13179e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        6.95628e-11,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_m1_tr_s": {
+      "spec_row": "T-05",
+      "min": [
+        3.26254e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        7.27435e-11,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_sel_f_s": {
+      "spec_row": "T-05",
+      "min": [
+        5.31747e-14,
+        "mos_ff/1.320V/125C"
+      ],
+      "max": [
+        2.89215e-13,
+        "mos_ss/1.080V/-40C"
+      ]
+    },
+    "t05_sel_r_s": {
+      "spec_row": "T-05",
+      "min": [
+        -1.41259e-13,
+        "mos_sf/1.080V/-40C"
+      ],
+      "max": [
+        2.88109e-14,
+        "mos_fs/1.080V/125C"
+      ]
+    },
+    "t05_stage_f_s": {
+      "spec_row": "T-05",
+      "min": [
+        1.10276e-10,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.59883e-10,
+        "mos_ss/1.080V/27C"
+      ]
+    },
+    "t05_stage_r_s": {
+      "spec_row": "T-05",
+      "min": [
+        9.44967e-11,
+        "mos_ff/1.320V/-40C"
+      ],
+      "max": [
+        2.14143e-10,
+        "mos_ss/1.080V/125C"
+      ]
+    },
+    "t05_vdd_v": {
+      "spec_row": "T-05",
+      "min": [
+        1.08,
+        "mos_ff/1.080V/-40C"
+      ],
+      "max": [
+        1.32,
+        "mos_tt/1.320V/27C"
+      ]
+    }
+  },
+  "t05_bound": "none: spec/target-spec.md T-05 states no bound for the SIM leg and DR-0023 invents none. Every measurement is reported. The common added delay reports into T-20 and the select-dependent delay into T-13; neither row is graded here",
+  "negative_control": "t05_ctl_* -- lane c is lane b built a second time (the remap stage shorted out) and must reproduce it; it is the noise floor the added-delay terms are read against, and claims nothing about the design",
+  "batch_job_ids": [
+    "klt-sim-a94a2f2808c6",
+    "klt-sim-82d6afa4a787",
+    "klt-sim-5339be05eb62",
+    "klt-sim-b56d84a3c61a",
+    "klt-sim-020cc006ae0d",
+    "klt-sim-581a99fff713",
+    "klt-sim-cd116930d196",
+    "klt-sim-e65d3d8031d5",
+    "klt-sim-ca390c2b89c5",
+    "klt-sim-eb6b8b2a3cde",
+    "klt-sim-c038b717c0dc",
+    "klt-sim-4e3e3761c440",
+    "klt-sim-4e4b8c61c650",
+    "klt-sim-05baa586e5ea",
+    "klt-sim-c07dfb59dd3c"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

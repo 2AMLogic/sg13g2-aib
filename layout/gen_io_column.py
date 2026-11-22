@@ -13,6 +13,12 @@ design/ (device type, W, L, ng and the net each terminal sits on); the device
 table below repeats those numbers and `check_against_netlists()` fails the run
 if design/*.spice and this table disagree.
 
+`--check` runs that comparison alone and exits: it needs no klayout and no PDK
+(plain `python3 -I layout/gen_io_column.py --check`), which is how the CI
+evidence job runs it, so the table cannot drift from the netlists between
+regenerations. The geometry path runs the same comparison first and then
+imports klayout.
+
 Cells written: aib_io_tx, aib_io_rx (unit cells, 55 x 100 um), aib_io_tx_clk,
 aib_io_rx_clk (clk | clkb pairs), aib_io_column_tx, aib_io_column_rx and the
 top cell aib_io_column.
@@ -28,8 +34,6 @@ import math
 import os
 import re
 import sys
-
-import klayout.db as db
 
 DBU = 0.001
 
@@ -126,7 +130,7 @@ ESD_DIODES = [
 ESD_MN1 = ("Mn1", "nmos", 2.0, 0.13, 10, dict(D="PAD", G="VSS", S="VSS"))
 ESD_MN2 = ("Mn2", "nmos", 1.0, 0.13, 1, dict(D="PADI", G="VSS", S="VSS"))
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
-ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
+ESD_RES = ("Resd", 2.0, 1.0, "PAD", "PADI")
 # Table w is the drawn finger width for every device. The netlists carry the
 # total width (w_finger * ng; the IHP model derives a finger as w/ng), and the
 # check compares w * ng against that total for every device.
@@ -437,11 +441,9 @@ def diode(ctx, name, kind, size, cx_col, cy_row, net_a, net_c):
 # Router
 # --------------------------------------------------------------------------
 class Router:
-    def __init__(self, ctx, rows_blocked=()):
-        self.ctx = ctx
+    def __init__(self):
         self.owner = {}                     # (layer, c, r) -> net
         self.used_via1 = {}                 # (c, r) -> net
-        self.paths = []                     # (net, [(layer,c,r),...])
         self.failed = []
 
     def own(self, net, layer, c, r):
@@ -615,7 +617,7 @@ def build_unit(layout, name, tx):
     cell = layout.create_cell(name)
     d = Draw(layout, cell)
     ctx = Ctx(d)
-    router = Router(ctx)
+    router = Router()
     rails_and_pad(ctx, router, tx)
 
     # --- ESD block (aib_pad_esd) --------------------------------------------
@@ -668,7 +670,7 @@ def build_unit(layout, name, tx):
     router.emit(d)
     for f in router.failed:
         print('UNROUTED', name, f, file=sys.stderr)
-    return cell, ctx, router
+    return cell
 
 
 def build_tx(ctx, router):
@@ -719,70 +721,76 @@ def build_rx(ctx, router):
         x = mos(ctx, t, w, l, ng, r3(x + 2.0), 44, nets, nm)[0]
 
 
-def place(parent, child, slot, mirrored, x_off=0.0):
+def place(parent, child, slot, mirrored, width):
     """Instance of a 55 um unit/pair `child` at pitch slot `slot` (mirrored about its own
     vertical centre line when `mirrored`)."""
     k = 1.0 / DBU
-    x = int(round((x_off + slot * CELL_W) * k))
+    x = int(round(slot * CELL_W * k))
     if mirrored:
-        w = int(round(child_width(child) * k))
+        w = int(round(width * k))
         t = db.Trans(db.Trans.M90, x + w, 0)
     else:
         t = db.Trans(db.Trans.R0, x, 0)
     parent.insert(db.CellInstArray(child.cell_index(), t))
 
 
-_WIDTH = {}
-
-
-def child_width(cell):
-    return _WIDTH[cell.name]
-
-
 def build_pair(layout, name, unit):
     """clk | clkb pair of two unit cells; slot parity follows the column (left cell mirrored)."""
     cell = layout.create_cell(name)
-    _WIDTH[name] = 2 * CELL_W
-    _WIDTH[unit.name] = CELL_W
-    place(cell, unit, 0, True)
-    place(cell, unit, 1, False)
+    place(cell, unit, 0, True, CELL_W)
+    place(cell, unit, 1, False, CELL_W)
     d = Draw(layout, cell)
     d.rect("Bnd", 0, 0, 2 * CELL_W, CELL_H)
     return cell
 
 
 def build_column(layout, name, unit, pair, role):
-    """24 slots: spare, 10 data, clk/clkb pair, 10 data, spare. Slot k is mirrored when k is odd,
-    so the column is mirror-symmetric about its centre (slot k <-> slot 23-k)."""
+    """24 slots: 11 data, clk/clkb pair, 9 data, 2 spare (DR-0016). Slot k is mirrored when k is
+    odd, so the column is mirror-symmetric about its centre (slot k <-> slot 23-k).
+
+    Wires 0..21 run monotonically along the column -- data bits 0..19 on wires 0..19 and the two
+    spares as wires 20, 21 -- with both spares adjacent at the high-slot end (DR-0016: the shift
+    always runs toward the spares, so repairing a fault at bit `pos` must be a two-cell move of
+    bits `pos..19`, which only a monotonic run of wires gives). The clk/clkb pair sits at the
+    centre of the 22 I/O cells, which is the matched span of the clock tree (DR-0010 Amendment,
+    2026-11-01). Only the slot assignment is asymmetric: every non-clock slot holds the same unit
+    cell at the same parity, so the drawn geometry is mirror-symmetric either way."""
     cell = layout.create_cell(name)
-    n_slots = 2 + 10 + 2 + 10
+    n_slots = 11 + 2 + 9 + 2
     d = Draw(layout, cell)
-    names = ["SP0"] + [f"D{i}" for i in range(10)] + ["CLK", "CLKB"] + [f"D{i}" for i in range(10, 20)] + ["SP1"]
+    names = ([f"D{i}" for i in range(11)] + ["CLK", "CLKB"]
+             + [f"D{i}" for i in range(11, 20)] + ["SP0", "SP1"])
     k = 0
     while k < n_slots:
         if k == 11:
-            place(cell, pair, 11, True)
+            place(cell, pair, 11, True, 2 * CELL_W)
             k += 2
             continue
-        place(cell, unit, k, k % 2 == 1)
+        place(cell, unit, k, k % 2 == 1, CELL_W)
         k += 1
     for k, nm in enumerate(names):
         d.text("TM1lbl", k * CELL_W + CELL_W / 2, CELL_H / 2, f"{role}_{nm}")
-    _WIDTH[name] = n_slots * CELL_W
     return cell
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--output", default="layout/aib_io_column.gds")
+    ap.add_argument("--check", action="store_true",
+                    help="verify the device table against design/*.spice and exit 0; "
+                         "stdlib-only (klayout is imported only on the geometry path), "
+                         "no layout is allocated and nothing is written")
     args = ap.parse_args()
     here = os.path.dirname(os.path.abspath(__file__))
     check_against_netlists(os.path.join(here, "..", "design"))
+    if args.check:
+        return
+    global db
+    import klayout.db as db
     layout = db.Layout()
     layout.dbu = DBU
-    tx, _, _ = build_unit(layout, "aib_io_tx", True)
-    rx, _, _ = build_unit(layout, "aib_io_rx", False)
-    _WIDTH["aib_io_tx"] = _WIDTH["aib_io_rx"] = CELL_W
+    tx = build_unit(layout, "aib_io_tx", True)
+    rx = build_unit(layout, "aib_io_rx", False)
     txp = build_pair(layout, "aib_io_tx_clk", tx)
     rxp = build_pair(layout, "aib_io_rx_clk", rx)
     ctx_ = build_column(layout, "aib_io_column_tx", tx, txp, "TX")

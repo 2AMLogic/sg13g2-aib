@@ -1,0 +1,299 @@
+{
+  "record": "channel-model",
+  "utc_stamp": "20261120T220946Z",
+  "kind": "simulated",
+  "claim_scope": "CH (modeled channel): the committed netlist spec/channel/channel_rc.cir implements the declared table spec/channel-model.md; it does NOT validate the table against silicon (T-12 CH only)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 675,
+  "rows": {
+    "T-12": {
+      "verdict": "pass",
+      "pass": 2025,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=1",
+        "measurement": "t12_l_ratio",
+        "value": 1.000001,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "param_groups": {
+    "ch_kc=0.8,ch_kr=0.8,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8,ch_len=1",
+            "measurement": "t12_l_ratio",
+            "value": 0.9999997,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=0.8,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=0.8,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=0.8,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2,ch_len=1",
+            "measurement": "t12_l_ratio",
+            "value": 0.9999992,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=0.8,ch_kr=1.2,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=0.8,ch_kr=1.2,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1,ch_kr=1,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=1",
+            "measurement": "t12_l_ratio",
+            "value": 0.9999996,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1,ch_kr=1,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1,ch_kr=1,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1,ch_kr=1,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=1",
+            "measurement": "t12_l_ratio",
+            "value": 1.000001,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=0.8,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=0.8,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2,ch_len=1": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2,ch_len=1",
+            "measurement": "t12_l_ratio",
+            "value": 0.9999998,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2,ch_len=3": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2,ch_len=3",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    },
+    "ch_kc=1.2,ch_kr=1.2,ch_len=5": {
+      "corners": 45,
+      "rows": {
+        "T-12": {
+          "verdict": "pass",
+          "pass": 135,
+          "fail": 0,
+          "error": 0,
+          "binding": {
+            "corner": "mos_tt/mixed/-40C/ch_kc=1.2,ch_kr=1.2,ch_len=5",
+            "measurement": "r_dc.t12_r_ratio",
+            "value": 1.0,
+            "why": "smallest margin"
+          }
+        }
+      }
+    }
+  },
+  "batch_job_ids": [
+    "klt-sim-1d7e1fd6bbc3",
+    "klt-sim-fd289baac343",
+    "klt-sim-a86c8285f431",
+    "klt-sim-3b1a3a116bd1",
+    "klt-sim-60de47a5ebdf",
+    "klt-sim-ecd49410c181",
+    "klt-sim-7667d3934468",
+    "klt-sim-b4c64c4ba652",
+    "klt-sim-bdc5fed56c2b",
+    "klt-sim-30edb7e3b66d",
+    "klt-sim-546cffb5e3ef",
+    "klt-sim-98cfafa6f7c7"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

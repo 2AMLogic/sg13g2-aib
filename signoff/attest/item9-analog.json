@@ -17,7 +17,7 @@
         "role": "testbench",
         "path": "sim/pdk-smoke/run_smoke.sh",
         "passed": true,
-        "content_hash": "sha256:a04a98f6e5a9d860626d0ad6181ab125cfb4dc8608506df90564d7552c8d52ad"
+        "content_hash": "sha256:8c44c209f65ce73f9848566c09ba7a62273c0773639ed5e6639f876a9ada3b57"
       },
       {
         "check": "present",
@@ -51,15 +51,15 @@
         "role": "tools",
         "passed": true,
         "value": {
-          "klt": "0.8.0",
+          "klt": "0.9.0",
           "ngspice": "ngspice-46",
-          "osdi": "OpenVAF-Reloaded v24.0.1mob (sim/pdk.json osdi_toolchain)"
+          "osdi": "OpenVAF-Reloaded v24.0.1mob (sim/harness/common/build-osdi.sh --print-pins)"
         }
       }
     ]
   },
   "provenance": {
-    "klt_version": "0.8.0",
+    "klt_version": "0.9.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
@@ -68,7 +68,7 @@
         "path": "signoff/attest/item9-analog.inventory.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:c8db0dce64c9f313ff0a040940b37853f048a4e0a9ec27f58a88343582772155"
+      "content_hash": "sha256:3766a60bd41e0c417f6ab956c6ccc3456967c62313f937f73849e06b08dc6227"
     }
   }
 }

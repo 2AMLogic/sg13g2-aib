@@ -152,8 +152,8 @@
     "engine": "klayout",
     "engine_version": "0.30.13",
     "netgen_binary": null,
-    "layout_sha256": "fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
-    "reference_sha256": "236f94023a45b74a8bea45f10bed340078204c2767b7bdb35208a5015fc7e815",
+    "layout_sha256": "54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+    "reference_sha256": "aea085ce86b0340d747228d3d63b2a90bde00e3d67508ff2710a8a974dde8b2d",
     "extracted_netlist": null
   },
   "provenance": {
@@ -168,7 +168,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
       "role": "layout"
     },
     "klayout_version_mismatch": true
@@ -221,7 +221,7 @@
         "layout_devices": 5,
         "layout_values": [
           19.992204677193683,
-          294.222333000997,
+          164.6111665004985,
           12472.01581027668
         ]
       },

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "kind": "generic",
-  "status": "pass",
+  "status": "fail",
   "t1_item": 8,
-  "summary": "T1 item 8 (Characterization report): 4 pass, 0 fail, 26 not-yet-measured of 30 spec rows; status pass means no recorded row fails",
+  "summary": "T1 item 8 (Characterization report): 17 pass, 3 fail, 10 not-yet-measured of 30 spec rows; status pass means no recorded row fails",
   "source": "measurements/characterization-report.md",
   "metrics": {
     "rows_total": 30,
-    "rows_pass": 4,
-    "rows_fail": 0,
-    "rows_not_yet_measured": 26
+    "rows_pass": 17,
+    "rows_fail": 3,
+    "rows_not_yet_measured": 10
   },
   "provenance": {
     "klt_version": null,
@@ -18,7 +18,7 @@
         "path": "measurements/characterization-report.md",
         "scope": "repo"
       },
-      "content_hash": "sha256:2ffcc5e25e46021e3561214fc4afdb9d3e93dded358f0adb5b86dcea77e2bf55"
+      "content_hash": "sha256:27c2435df068f7f415e12b5a99cb44a69c23eccc01274ceab398a8a66ba4a141"
     }
   }
 }

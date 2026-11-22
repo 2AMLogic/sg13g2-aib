@@ -14,26 +14,23 @@ limit edited for item 5 could leave the 2kv re-run measuring the old set. Both
 now come from DC_STEPS below. The ESD-diode request is three step shapes over
 the five DUTs of tb_esd_diode.cir, not 35 hand-written blocks.
 
-All 45-corner requests share one PVT-FULL grid: 5 MOS corners x VDDIO
-1.08/1.20/1.32 V x -40/27/125 C (sim/dc-static/README.md). Unlike sim/mc the
-MOS sections are the plain `mos_<corner>` ones — these are not Monte Carlo
-runs, so per-instance mismatch is not wanted.
+All 45-corner requests share one PVT-FULL grid, and it comes from
+`sim/pvt_full.py` (the repo's one encoding of spec/target-spec.md): 5 MOS
+corners x VDDIO 1.08/1.20/1.32 V x -40/27/125 C, each process corner bundling
+the matching MOS, poly-resistor and diode sections. Unlike sim/mc the MOS
+sections are the plain `mos_<corner>` ones — these are not Monte Carlo runs, so
+per-instance mismatch is not wanted.
 """
-import argparse
 import json
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
+import pvt_full  # noqa: E402  (the one PVT-FULL corner-bundle definition)
+import gen_common  # noqa: E402  (the one write-or-check implementation)
 
-LIBM = "libs.tech/ngspice/models/cornerMOSlv.lib"
-LIBR = "libs.tech/ngspice/models/cornerRES.lib"
-LIBD = "libs.tech/ngspice/models/cornerDIO.lib"
-# The cells use rppd and the antenna diodes as well as thin-oxide MOS, so each
-# process corner is a bundle of the matching MOS, resistor and diode sections.
-RES = {"tt": "res_typ", "ss": "res_wcs", "ff": "res_bcs", "sf": "res_typ", "fs": "res_typ"}
-OSDI = [f"$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/{m}.osdi"
-        for m in ("psp103", "psp103_nqs", "r3_cmc", "mosvar")]
+LIBM = pvt_full.LIB_MOS
 # Host rule (one submit may wait for fleet capacity rather than fail) and
 # sim/dc-static/README.md "Run both with --wait-for-capacity 600".
 CAPACITY_WAIT_S = 600
@@ -47,12 +44,8 @@ PAD_BIAS = (("0", 0), ("5", 0.5), ("10", 1))
 
 
 def corners() -> dict:
-    proc = [{"name": c, "sections": [{"lib": LIBM, "section": f"mos_{c}"},
-                                     {"lib": LIBR, "section": RES[c]},
-                                     {"lib": LIBD, "section": "dio_tt"}]}
-            for c in ("tt", "ss", "ff", "sf", "fs")]
-    return {"process": proc, "supply_v": {"vddio": [1.08, 1.2, 1.32]},
-            "temperature_c": [-40, 27, 125]}
+    """The PVT-FULL grid on the plain `mos_<corner>` sections (no mismatch)."""
+    return pvt_full.corners(("vddio",), style="explicit")
 
 
 def meas(name: str, expr: str, unit: str, **limits) -> dict:
@@ -155,9 +148,9 @@ def request(netlist: str, steps: list, top: list = None, osdi: bool = True) -> d
     r["options"] = {"stage_model_inputs": True, "fail_on_diagnostic": ["nonconvergence"],
                     "timeout_s": 60, "keep_artifacts": False}
     if osdi:
-        r["options"]["osdi_preload"] = OSDI
+        r["options"]["osdi_preload"] = pvt_full.osdi_preload()
     r["backend"] = "batch"
-    r["batch"] = {"runner_version_check": "warn", "capacity_wait_s": CAPACITY_WAIT_S}
+    r["batch"] = {"capacity_wait_s": CAPACITY_WAIT_S}
     return r
 
 
@@ -172,22 +165,9 @@ def requests() -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true",
-                    help="exit 1 if a committed request is stale, writing nothing")
-    args = ap.parse_args()
-    bad = 0
-    for name, req in requests().items():
-        p = HERE / name
-        text = json.dumps(req, indent=2) + "\n"
-        if args.check:
-            if not p.exists() or p.read_text() != text:
-                print(f"STALE: {p.name} (run python3 -I sim/dc-static/{Path(__file__).name})",
-                      file=sys.stderr)
-                bad = 1
-        else:
-            p.write_text(text)
-    return bad
+    outputs = {name: json.dumps(req, indent=2) + "\n" for name, req in requests().items()}
+    return gen_common.write_or_check(outputs, base=HERE,
+                                     description=__doc__.splitlines()[0])
 
 
 if __name__ == "__main__":

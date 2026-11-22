@@ -1,0 +1,52 @@
+{
+  "record": "pex",
+  "mode": "extract",
+  "item": "7.analog",
+  "klt_version": "0.9.0",
+  "layout_sha256": "fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+  "generated_by": "layout/pex/run_pex.sh",
+  "reports": [
+    "aib_io_rx.extract.report.json",
+    "aib_io_rx_clk.extract.report.json",
+    "aib_io_tx.extract.report.json",
+    "aib_io_tx_clk.extract.report.json"
+  ],
+  "summary": {
+    "aib_io_rx.extract.report.json": {
+      "status": "not_checked",
+      "device_count": 42,
+      "net_count": 6,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 0,
+      "delta_errors": 0
+    },
+    "aib_io_rx_clk.extract.report.json": {
+      "status": "not_checked",
+      "device_count": 84,
+      "net_count": 10,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 0,
+      "delta_errors": 0
+    },
+    "aib_io_tx.extract.report.json": {
+      "status": "not_checked",
+      "device_count": 138,
+      "net_count": 17,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 0,
+      "delta_errors": 0
+    },
+    "aib_io_tx_clk.extract.report.json": {
+      "status": "not_checked",
+      "device_count": 276,
+      "net_count": 29,
+      "body_bias": "biased",
+      "input_content_hash": "sha256:fcf9e0eaa1423f1e8608927ef974ac5b302216e47f59ef89460fcb0a06afa31e",
+      "delta_rows": 0,
+      "delta_errors": 0
+    }
+  }
+}

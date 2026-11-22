@@ -1,0 +1,35 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * klt sim -- generated corner deck, do not edit
+
+Warning: Model issue on line 232 :
+  .model xrx_p.x$1:sg13g2_lv_nmos_psp psp103va type=+1 level=103.60 tr=27. ...
+Unknown model type psp103va - ignored
+
+Warning: Model issue on line 233 :
+  .model xrx_p.x$1:sg13g2_lv_nmos_psp_rf pspnqs103va type=+1 level=103.60  ...
+Unknown model type pspnqs103va - ignored
+
+Warning: Model issue on line 254 :
+  .model xrx_p.x$1:sg13g2_lv_pmos_psp psp103va type=-1 level=103.60 tr=27. ...
+Unknown model type psp103va - ignored
+
+Warning: Model issue on line 255 :
+  .model xrx_p.x$1:sg13g2_lv_pmos_psp_rf pspnqs103va type=-1 level=103.60  ...
+Unknown model type pspnqs103va - ignored
+
+Warning: Model issue on line 256 :
+  .model xrx_p.x$1:nmoscl_psp psp103va type=+1 tr=27.0 dta=0.0 swgeo=1.0 s ...
+Unknown model type psp103va - ignored
+
+Warning: Model issue on line 257 :
+  .model xrx_p.x$1:nmoscl_psp_rf pspnqs103va type=+1 tr=27.0 dta=0.0 swgeo ...
+Unknown model type pspnqs103va - ignored
+
+Error on line 268 or its substitute:
+  n.xrx_p.x$1.nsg13_lv_nmos xrx_p.vddio__t20 xrx_p.vss__t1 xrx_p.vss__t0 xrx_p.vss__t67 xrx_p.x$1:sg13g2_lv_nmos_psp w=    2.000000000000000e-06     l=    3.500000000000000e-07     as=    7.400000000000000e-13     ad=    4.400000000000000e-13     pd=    2.440000000000000e-06     ps=    4.740000000000000e-06     nf=    1.000000000000000e+00     mult=    1.000000000000000e+00     dta=    0.000000000000000e+00     ngcon=2 delvto=0 factuo=1
+Unable to find definition of model xrx_p.x$1:sg13g2_lv_nmos_psp
+    Simulation interrupted due to error!
+

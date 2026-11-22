@@ -4,16 +4,42 @@ Simulation toolchain pin and the PDK/OSDI smoke. No design value lives here.
 
 ## PDK pin
 
-`sim/pdk.json` names the IHP-Open-PDK release (`v0.3.0`), its tarball SHA-256,
-and the OSDI toolchain (OpenVAF-Reloaded `v24.0.1mob`). Every record under
-`sim/` traces to it. Records are append-only: a new run is a new directory,
-and an earlier record is never edited.
+`sim/pdk.json` names the IHP-Open-PDK release (`v0.3.0`) and its tarball
+SHA-256; the OSDI toolchain pins live only in
+`sim/harness/common/build-osdi.sh` (read them with `--print-pins`). Every
+record under `sim/` traces to those pins. Records are append-only: a new run
+is a new directory, and an earlier record is never edited.
+
+## PVT-FULL corner bundle
+
+`sim/pvt_full.py` is the repo's one encoding of the PVT-FULL grid that
+`spec/target-spec.md` defines: the MOS corner -> (poly-resistor section, diode
+section) table, the VDDIO and temperature lists, the four OSDI models, and the
+`corners` object every request generator builds from them. The resistor and
+diode sections follow the MOS corner (tt/sf/fs: `res_typ`/`dio_tt`, ss:
+`res_wcs`/`dio_ss`, ff: `res_bcs`/`dio_ff`); `mos_sf` and `mos_fs` are mixed MOS
+corners with no matching resistor or diode section, so they take the typical
+ones. Stdlib only; no PDK is needed to import it.
+
+`gen_channel_eye.py`, `gen_clock_path.py`, `gen_mc.py` and `gen_dc_static.py`
+all import it rather than restating the table, and
+`scripts/ci/check_corner_bundles.py` (CI) checks every committed request under
+`sim/` and `layout/` against it, so the copies cannot drift apart again (the
+item 7 pex benches under `layout/pex/benches/` re-run the item 5 corner grid, so
+they carry the same corner object). The four families
+write two request shapes -- a bare MOS section name for the transient benches,
+an explicit `{lib, section}` pair (plus `_mismatch` for Monte Carlo, plain
+`mos_<corner>` for dc-static) -- and both come out of the one table.
+
+Records under `*/records/` (in either tree) are **not** checked and are never
+rewritten to match: they are append-only evidence and keep the request they were
+run with.
 
 ## OSDI device models
 
 The PDK ships the PSP103 and `r3_cmc` Verilog-A sources, not `.osdi` binaries.
 `sim/harness/common/build-osdi.sh` is vendored byte-for-byte from
-`2AMLogic/sg13g2-bandgap` at `52535387e6ccf0a89f6490901a9abb2b78144176`
+`2AMLogic/sg13g2-bandgap` at `3d33554f84721ffd7cb1d7aafbc41f51e5aaee5e`
 (`sim/tools/build-osdi.sh`; pinned in `reuse.lock.json`). It sources
 `sim/harness/env.sh`. No `.osdi` is committed; `sim/build/` is gitignored.
 
@@ -31,6 +57,62 @@ sim/pdk-smoke/run_smoke.sh                       # writes sim/pdk-smoke/records/
 A tarball checksum mismatch aborts `fetch-pdk.sh` (exit 4) and leaves no
 install behind. `build-osdi.sh` likewise refuses an unverified compiler.
 
+## Record harness
+
+`sim/channel-eye/run_channel_eye.sh`, `sim/clock-path/run_clock_path.sh`,
+`sim/dc-static/run_dc_static.sh` and `sim/redundancy-mux/run_redundancy_mux.sh` are thin
+entry points over one shared procedure, `sim/harness/batch_record.sh`: resolve the PDK, check the
+generated files are fresh, refuse an existing record directory, submit **one** `klt sim
+--backend batch` request with `--wait-for-capacity 600`, scrub the fleet bucket name out of
+the captured stderr, classify the exit code, copy the request and bench into the record,
+post-process the report and write `record.json` (`sim/harness/write_record.py`). The entry
+points pass only what differs between the families: the request, the record suffix,
+`--max-units-per-job`, the bench files to copy, the generator to `--check`, the row grouping,
+and the family's
+own `record.json` fields. None submits anything itself, so a fleet-handling fix lands once
+(#189; the two original copies had drifted apart on four fleet behaviours).
+
+**All three item 5 (analog) families are on it.** dc-static was the last one recorded by
+hand, from a README recipe, and its four records have four different shapes — none holding
+the request or the bench, none recording `klt_exit_code`, and the one the manifest cites
+holding no `record.json` at all (#228). Those four are append-only evidence and are
+unchanged; `run_dc_static.sh nominal|2kv|esd-diode` is the procedure for the next run.
+
+A tool or fleet error writes **no** record (exit 6) and prints the
+`CHANNEL_EYE_WORK=<dir> CHANNEL_EYE_RESUME=1` line that retries the same batch jobs
+(`CLOCK_PATH_*`, `DC_STATIC_*` and `REDUNDANCY_MUX_*` for the other three runners); there is
+no local fallback. Only klt's summary sentence `were submitted but never launched` discards a
+record — a successful `--resume` prints the same words per shard it recovers, and that
+record is kept. The redundancy-mux record of 2026-11-13 is exactly that case: the first
+submit left one of 15 shards unlaunched and wrote nothing, and the retry launched it and
+kept the record.
+
+`rows` is grouped by spec row. channel-eye and clock-path declare `spec_row` on each
+measurement in the request, so the post-processor reads the grouping straight off it.
+dc-static declares none and all its graded measurements are step-level, so the report names
+them `<step>.tNN_*` where a request would say `tNN_*`; its entry point hands the harness a
+`--row-map` of name prefixes instead (one prefix may name two rows — `t07_t28_ipin_a` grades
+T-07 and T-28). That resolves the rows without editing the committed request bytes the cited
+record was run from; adding `spec_row` tags there would change them and is a separate,
+deliberate re-run.
+
+```bash
+sim/harness/test_batch_record.sh            # the procedure, against a stubbed klt sim
+                                            # (+ the dc-static entry point and its row map)
+python3 -I sim/harness/test_write_record.py  # replays every committed harness record (no dc-static one exists yet)
+sim/channel-eye/run_channel_eye.sh ch --dry-run   # what an entry point passes; submits nothing
+```
+
+Both self-tests are PDK-free, fleet-free and offline, and neither writes under `records/`.
+`write_record.py` collects job ids from `environment.remote.job_id` **and**
+`environment.remote.fleet[]`, so a sharded run (what `--max-units-per-job 1` always produces)
+records them. Records written from 2026-11-13 carry a `batch_job_ids` list and a
+`runner_klt_version` list; the five channel-eye records committed before that keep
+`"batch_job_id": null` and `"runner_klt_version": null`, because the runner that wrote them
+read only `environment.remote.job_id`, which a sharded run never sets. Those records are
+append-only evidence and were not edited: their job ids are in each record's `klt.stderr`
+and in the 45 `fleet` entries of its `report.json.gz`.
+
 ## pdk-smoke
 
 `sim/pdk-smoke/` runs one corner (`mos_tt`, 27 C) with a single local
@@ -45,12 +127,112 @@ models built by the pinned OpenVAF-R. The PDK's `versions.txt` documents 43.
 
 ## rtl-synth
 
-`sim/rtl-synth/run_synth.sh` elaborates `rtl/aib_datapath.v` with Yosys and maps it to
-`sg13g2_stdcell` (typ 1.20 V 25 C liberty from the pinned PDK) for N = 20 and N = 8.
-**Smoke only**: it records the Yosys version, the liberty file (relative to the PDK
-root), the cell counts and the exit code; there is no timing and no area claim. Each
-run writes `sim/rtl-synth/records/<UTC>/` with the `.ys` scripts, Yosys logs and
-`record.json`, append-only like the other records.
+`sim/rtl-synth/records/20261023T171257Z/` is a dated Yosys synthesis smoke of
+`rtl/aib_datapath.v` (N = 20 and N = 8, typ 1.20 V 25 C). It is kept as recorded history,
+append-only. For N = 20 it is superseded by `klt synthesize` (`design/synth/`), which is
+guarded by the hash chain checked in CI. Its generator, `run_synth.sh`, was removed; it is
+in git history at `4bfc8fc`. The N = 8 and typical-corner mappings exist only in that
+record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
+
+## Item 5 / analog: the declared row set
+
+The four families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
+cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
+`SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and four rows
+are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
+
+**Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
+
+| family | record | rows covered |
+|---|---|---|
+| dc-static | `dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 |
+| channel-eye (CH) | `channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
+| clock-path | `clock-path/records/20261113T095936Z/report.json` | T-17 |
+| channel-model (CH) | `channel-model/records/20261121T000100Z/report.json` | T-12 |
+
+The channel-eye, clock-path and channel-model records' measurements carry `spec_row` tags, so the grader
+derives their coverage from the envelope and catches a wrong `rows` entry. **The dc-static
+report has no `spec_row` tags**, so its six rows are `asserted` in `detail.row_sources` —
+taken on this manifest's word, with nothing in the grader checking them. They were checked by
+hand against the report; see `signoff/README.md` ("The declared row set is load-bearing, not
+decorative") for the per-row measurements and bounds, and re-check them there whenever a
+dc-static `rows` entry changes. Tool gap: `2AMLogic/klayout-tools#5462`.
+
+The grader still takes the manifest's word, but the grouping itself is no longer unchecked:
+`sim/harness/test_batch_record.sh` case 8 runs the record harness over this same cited
+`report.json` and checks that `run_dc_static.sh`'s prefix map reproduces exactly these six
+rows, their 45-corner pass counts and T-24's binding corner (#228). That is a check on the
+row *grouping*, not on the manifest's claim that these six are the rows item 5 covers.
+
+The **TC** channel-eye record (`channel-eye/records/20261110T083756Z-tc/`) is deliberately
+**not** cited: it carries the same row ids from the test configuration, and item 5 would then
+mix a modeled-channel claim with a test-configuration one. `spec/test-configuration.md` keeps
+those apart.
+
+**Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
+All four are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-12 is not a gap** (DR-0029, proposed): the channel-model conformance family
+`sim/channel-model/` (below) covers it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
+legs and DR-0028 removes T-05's (no bound exists in the specification for any of the three),
+so the "plain `SIM` leg" rule yields this 18-row set mechanically. T-05's measured load and
+delay stay reported evidence — the common term feeds T-20 and the select-dependent term feeds
+T-13 (DR-0023, DR-0028).
+
+| row | why no envelope covers it | issue |
+|---|---|---|
+| T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
+| T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
+| T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
+| T-29 | no loopback mux exists in `design/`, so L1/L2 cannot be exercised; also a TC row | #176 |
+
+`SIM-MC` rows (T-10, T-13, T-14, T-19) belong to item 6, not here.
+
+### T-12: the conformance family and the ±20 % sensitivity run
+
+`spec/channel/channel_rc.cir` opens "A declared model, not a measured one." The CH-3MM-RC
+parameter set is the **input** to T-01/T-09/T-15/T-16/T-18/T-26, so citing it as a covered row
+would be circular, so the model is not cited as evidence of itself. What *is* measurable is that
+the committed netlist implements the declared table, which nothing checked until
+`sim/channel-model/` (#384, below). T-12 is cited from that record under DR-0029 (proposed).
+
+What its grid column also asked for — "PVT-FULL, plus channel R/C ±20 % (DR-0005)" — **has
+now been run** (#193): `channel-eye/records/20261113T223804Z-ch-spread/` is PVT-FULL at each
+of the four (kr, kc) pairs in {0.8, 1.2}, 180/180 corners with a status, and **all six
+dependent rows pass at all four spread corners**. See that record's `README.md` for the
+per-row, per-spread-corner table; the headline is that the spread is a shunt-**C** effect
+(`kr` moves T-18 by at most 2.8 mV, `kc` by 83.6 mV), that T-15, T-18 and T-26 each bind at
+an **off-diagonal** corner (`kr` 0.8 / `kc` 1.2), and that **T-16's margin narrows to 1.3 ps**
+against its 470 ps edge, from 10.9 ps at the nominal channel. T-16 still passes; no bound was
+relaxed. That 1.3 ps is the historical passing margin: its acceptability was ruled on
+2026-11-18 ([the closed
+#251](https://github.com/2AMLogic/sg13g2-aib/issues/251#issuecomment-6991500973)) — recover the
+margin in the design, with the 470-530 ps window and the declared +20 % channel-C corner
+(DR-0005) unchanged. The sizing study the ruling asked for found it: finalist `S07` leaves a
+**19.92 ps** worst-case T-16 margin across the four spread pairs
+([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
+
+The spread record is **supporting evidence for the six dependent rows, not cited for T-12**. Probed
+with the pinned grader (klt 0.9.0, a scratch copy of the manifest, nothing committed): citing
+it with `rows: ["T-12"]` grades item 5 `unmet` / `invalid_evidence` ("a member names a row
+that is undeclared or a declared gap") while T-12 is a declared gap, and `unmet` /
+`partial_coverage` with `uncovered_rows: ["T-12"]` once it is not — because coverage is
+derived from the `spec_row` tags the report carries, and no measurement carries T-12. So the
+six dependent rows keep their nominal citation (`20261111T235838Z-ch`), unchanged.
+
+### The decompressed `report.json` copies
+
+The channel-eye and clock-path records were written with only `report.json.gz`, and the pinned
+grader (0.9.0) grades a `.json.gz` citation `unmet` / `unreadable_evidence`
+(`2AMLogic/klayout-tools#5452`). Each of those two record directories therefore gained a plain
+`report.json`, produced by `gzip -dc` from the committed `.gz` — **no re-run, no new
+simulation**, byte-identical content. The `.gz` is untouched, so the `sim/` append-only check
+sees only an added file. Verify either copy with:
+
+```bash
+gzip -dc sim/clock-path/records/20261113T095936Z/report.json.gz \
+  | cmp - sim/clock-path/records/20261113T095936Z/report.json   # silent
+```
 
 ## channel-eye
 
@@ -73,17 +255,34 @@ T-26 are report-only, and T-15/T-16/T-18 are not observable in L2 and are not re
 `gen_channel_eye.py` writes `prbs7_stim.inc` and the requests (`--check` for staleness);
 the 75 CH measurements are generated, not hand-written.
 
+A third request, `request_ch_spread_1g.json`, is the **same CH claim at the declared
++-20 % channel R/C spread** that T-12's grid column asks for (#193): PVT-FULL once at each
+of the four (kr, kc) pairs in {0.8, 1.2}, so 45 x 4 = 180 units. It comes out of the same
+`request("ch")` builder with only the netlist and an added `corners.params` axis changed,
+so its measurements and limits cannot drift from the nominal request. Two mechanics are
+worth knowing: `corners.params` can target a **top-level** `.param` only, which is why
+`tb_ch_spread.cir` exists (it is `tb_ch.cir` with `kr`/`kc` lifted to `.param ch_kr`/
+`ch_kc`, leaving the nominal bench the records cite untouched); and the axis is **zipped
+by index, not crossed**, so the four pairs are spelled out as
+`ch_kr: [0.8, 0.8, 1.2, 1.2]`, `ch_kc: [0.8, 1.2, 0.8, 1.2]`. All four are run because R
+and C spread independently and which combination binds differs by row -- the two diagonal
+corners alone cannot bound a row whose worst case is off-diagonal. The corner ids gain a
+trailing `params:` segment, which `channel_eye_post.py` splits off to group one row
+summary per spread corner into the record's `param_groups` (and so that the segment is not
+mistaken for the temperature).
+
 ```bash
 python3 -I sim/channel-eye/test_channel_eye.py        # generator + post-processor self-tests
 cd sim/channel-eye && klt sim request_ch_1g.json --dry-run   # 45 corners
 sim/channel-eye/run_channel_eye.sh ch                 # batch fleet; writes records/<UTC>-ch/
-sim/channel-eye/run_channel_eye.sh tc
+sim/channel-eye/run_channel_eye.sh ch-spread          # the +-20 % R/C spread, 180 units (T-12)
+sim/channel-eye/run_channel_eye.sh tc                 # procedure: "Record harness" above
 ```
 
-Corners: `mos_{tt,ss,ff,sf,fs}` x VDDIO 1.08/1.20/1.32 V x -40/27/125 C; the resistor and
-diode sections follow the MOS corner (tt/sf/fs: `res_typ`/`dio_tt`, ss: `res_wcs`/`dio_ss`,
-ff: `res_bcs`/`dio_ff`). Six supply sources (A/B/clock, TX/RX) sweep together so the energy
-of each block is separable.
+Corners: the 45-unit PVT-FULL grid of `sim/pvt_full.py` (`mos_{tt,ss,ff,sf,fs}` x VDDIO
+1.08/1.20/1.32 V x -40/27/125 C, resistor and diode sections following the MOS corner), built
+from that one table rather than restated here. Six supply sources (A/B/clock, TX/RX) sweep
+together so the energy of each block is separable.
 
 **Status: no 45-corner record exists yet, and no row is claimed.** Findings from bringing
 the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
@@ -94,7 +293,8 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    works. With DIN high the pad stays at ~0 V. Every row therefore fails at every corner
    until the cell is fixed (#35's files; not edited here). `control/aib_tx_data_ctl.spice`
    is a diagnostic copy with that one device changed to `w=2u ng=14` (same 28 um total) and
-   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**.
+   `tb_ctl_ch.cir` / `request_ctl_ch_tt.json` use it. It is **not design evidence**. (The control copy, its bench and its request were
+   later removed; recoverable from commit `103f15e`.)
 2. *Even with that copy the four-lane transient does not complete.* At the first clock
    edge the solve aborts (`Timestep too small ... trouble with node "vdd_crx#branch"`,
    ~0.83 ns). Single-lane isolation runs of 3 ns: TX -> channel -> RX without the pad ESD
@@ -323,6 +523,9 @@ the bench up on the batch fleet (2026-10-27, `mos_tt`, 1.20 V, 27 C):
    requests set `batch.runner_version_check: "warn"`; a 0.7.0 client lacks `--dry-run`,
    `--report-out` and rejects `osdi_preload` on the batch backend. Fleet launches were
    refused at times by the instance cap (`batch_concurrency_cap`).
+   *Superseded (#241, 2026-11-18):* the fleet runner has matched the pinned klt 0.9.0 since
+   2026-11-08, so the generators no longer set `runner_version_check` and klt's default
+   (`enforce`) applies; the sentence above is kept as history.
 
 T-15 note: lanes A and B carry complementary data, so the measured skew is the
 rise/fall (opposite-polarity) arrival difference of one instance, not a layout skew.
@@ -369,6 +572,38 @@ measurements at 45/45 corners; the binding point is now `mos_ss/mixed/-40C` `t16
 the bench and the spec are unchanged. DIN input capacitance of the cell rises (NOR PMOS gate area
 doubled); the upstream driver of DIN is not modelled in this bench.
 
+**±20 % channel R/C spread (#193):** record `channel-eye/records/20261113T223804Z-ch-spread/`
+(simulated, CH-3MM-RC at `kr`/`kc` in {0.8, 1.2}, 180 corners = PVT-FULL × 4 spread corners,
+batch backend, 23 jobs, `klt` exit 0). This is T-12's missing sensitivity run, not a new
+measurement: same measurements, limits and stimulus as `request_ch_1g.json`, from the same
+generator builder. **All six rows pass at all four spread corners** (per-row counts per
+corner in `record.json` → `param_groups`). The spread is a shunt-capacitance effect: T-18 eye
+height 426.8 mV at `kc` 0.8 → 343.2 mV at `kc` 1.2 (against a 90 mV floor), while `kr` moves
+it by at most 2.8 mV; T-26 0.578 → 0.692 pJ simulated (1 pJ ceiling). T-15, T-18 and T-26
+each bind **off-diagonal**, at `kr` 0.8 / `kc` 1.2, so the two diagonal corners alone would
+have mis-stated their worst case — which is why all four were run. **T-16 is the one tight
+row**: `t16_dr_cf_long` is 471.3 ps against the 470 ps lower edge, a 1.3 ps margin where the
+nominal channel leaves 10.9 ps, so the +20 % C corner consumes 9.5 ps of it. It passes; no
+bound, spec row or model value was changed. That 1.3 ps is the historical passing margin: its
+acceptability was ruled on 2026-11-18 ([the closed
+#251](https://github.com/2AMLogic/sg13g2-aib/issues/251#issuecomment-6991500973)) — recover the
+margin in the design, with the 470-530 ps window and the declared +20 % channel-C corner
+(DR-0005) unchanged. The sizing study the ruling asked for found it: finalist `S07` leaves a
+**19.92 ps** worst-case T-16 margin across the four spread pairs
+([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
+The nominal record is untouched.
+
+Two mechanics of this run are worth carrying forward. The request lowers `options.timeout_s`
+to 400 s (the nominal request keeps 2400 s, which its records were run with) **so the fleet
+will pack a job**: the fleet's per-job rule, quoted from its own refusal, is
+`max_units_per_job = floor((max_job_seconds - 120) / options.timeout_s)`, so 2400 s forces one
+unit per job — 180 separate capacity grants, which on a busy fleet launched 4 of 180 in 17
+minutes (ETA 9 h). At 400 s a job carries 8 units, the same 180 units become 23 jobs, and the
+launch rate measured 3.1/min instead of 0.3/min. Neither constant is queryable from the
+client, so both are pinned in `gen_channel_eye.py` (ceiling undocumented:
+`2AMLogic/klayout-tools#4675`; the ceiling treats a job's units as serial although the runner
+runs them concurrently: `#5544`).
+
 ## clock-path
 
 `sim/clock-path/` is the PVT-FULL clock-path family of the T1 item 5 (analog) campaign
@@ -384,6 +619,7 @@ T-21 and T-29 are declared gaps (no DLL-side model, no loopback mux in `design/`
 python3 -I sim/clock-path/gen_clock_path.py --check   # generated files fresh?
 cd sim/clock-path && klt sim request.json --dry-run   # 45 corners
 sim/clock-path/run_clock_path.sh                      # batch fleet; writes records/<UTC>/
+                                                      # procedure: "Record harness" above
 ```
 
 **Status (2026-11-13): the 45-corner record exists.** Record `clock-path/records/20261113T095936Z/`
@@ -428,16 +664,113 @@ line and deleted that record; `run_clock_path.sh` now matches klt's summary sent
 (`were submitted but never launched`) only. No artefacts of that attempt survive, so nothing
 here rests on it.
 
-A record file is immutable from its **first push**, not from merge. `ci.yml` runs the
-append-only check on both the `pull_request` and the `push` event, and its base differs:
-`pull_request.base.sha` (the PR base) versus `github.event.before` (the previously pushed head,
-see `signoff/README.md` -> "What CI checks"). So a record directory that is still new relative to
-`main` — and therefore an addition the PR-event run accepts — is nevertheless already frozen for
-the push-event run as soon as it has been pushed once. Review feedback on a record's own
-`README.md` cannot be applied in place afterwards: the edit surfaces as `M` against the pre-push
-head and fails, and so does reverting it on the next push. Get a record directory's prose right
-in the commit that first pushes it; a correction found later belongs in this file, which is not
-under a `records/` directory and may change.
+A record file — including the record's own `README.md` — is immutable once it is **on `main`**,
+not from its first push. That is the rule DR-0020 ratifies: *"An unmerged result is a claim, not
+evidence, and this repo's recorded results are append-only on `main`"*
+(`spec/decisions/0020-dll-recomparison-t21.md`). `ci.yml` runs the append-only check on both the
+`pull_request` and the `push` event and both now ask that one question: the `pull_request` run
+compares against the PR base, and the `push` run against the merge-base with the default branch
+(see `signoff/README.md` -> "What CI checks"). So review feedback on a not-yet-merged record's
+prose **can** be applied in place: the whole record directory still reads as an addition relative
+to `main`. Correcting a record whose directory is already on `main` still fails, as it must — a
+correction found after merge belongs in this file, which is not under a `records/` directory and
+may change.
+
+Until #255 this was not so: the `push` run's base was `github.event.before`, the previously
+pushed head, which froze a record directory from its own first push and made the two events
+disagree about the same tree (PR #178, PR #233 and PR #249 each hit it). A push **to the default
+branch** is the one case that still compares against the pre-push head: there the merge-base
+would be the head itself, so the diff would go empty and a direct push rewriting landed evidence
+would pass unchecked.
+
+## redundancy-mux
+
+`sim/redundancy-mux/` is the PVT-FULL redundancy-mux family of the T1 item 5 (analog)
+campaign (#42, #192): what the T-05 shift-redundancy remap adds to one TX lane in load and
+delay. Measured row: none since DR-0028 — T-05's `SIM` leg is removed and the row left the
+declared set. **Nothing here is graded** — T-05 states no bound for that leg and DR-0023
+invents none, so no measurement carries `limits`. The two delay terms are reported *into* the
+rows that carry numbers: the common term into T-20, the select-dependent term into T-13
+(DR-0023, DR-0028).
+
+**There is no transistor-level remap in this repo** — `tx_remap` / `rx_remap` are RTL only
+and the committed netlist predates them — so DR-0023 declares the arrangement that is
+measured: the remap on the serialized wire between the serializer mux and `aib_tx_data`'s
+`DIN`, with `sg13g2_mux2_1` (the cell synthesis already maps the serializer mux to; 22
+instances in the committed netlist, vendored unmodified as `sg13g2_mux2_1.inc`) standing in
+for both stages, on the same swept VDDIO as the TX cell. `tb_redundancy_mux.cir` carries four
+lanes on one stimulus and one corner — baseline, a **control** that is the baseline built a
+second time, and two with-mux lanes selected to `A0` and to `A1` — so every reported number
+is a difference measured inside one simulation, and the control measures what is left of the
+bench's own noise. `design/` and `rtl/` are untouched; nothing is instantiated or
+re-synthesized.
+
+```bash
+python3 -I sim/redundancy-mux/gen_redundancy_mux.py --check   # generated files fresh?
+cd sim/redundancy-mux && klt sim request.json --dry-run       # 45 corners
+cd sim/redundancy-mux && klt sim request_tt.json --backend local \
+    --report-out /tmp/rm_tt.json --format json                # one corner, ~15 s, no fleet
+sim/redundancy-mux/run_redundancy_mux.sh                      # batch fleet; writes records/<UTC>/
+                                                              # procedure: "Record harness" above
+```
+
+**Status (2026-11-13): the 45-corner record exists.** Record
+`redundancy-mux/records/20261113T160050Z/` (simulated, 45 corners, batch backend, 15 jobs of
+3 corners; job ids in the record's `batch_job_ids`). `klt sim` exited 0 with 45/45 corners
+carrying a status and all 2205 measurements reported. No local grid was run.
+
+- **The negative control is clean.** Lane `c` is lane `b` built a second time — the remap
+  stage shorted out — and reproduces it to 2.4e-10 ps at worst over the grid, about twelve
+  orders of magnitude below the added delay. A non-zero baseline-to-with-mux delta is the
+  remap and nothing else.
+- **The select-dependent term (T-13) is negligible**: worst **0.289 ps = 0.00029 UI**
+  (`mos_ss`, 1.08 V, −40 °C), which is 0.7 % of T-13's 0.04 UI bound. Whether a repaired
+  wire takes the mux's `A0` or `A1` input is not a meaningful skew contributor.
+- **The common term (T-20) does not fit.** One remap stage adds **53.8 .. 128.2 ps** to a
+  rising edge and **71.1 .. 183.9 ps** to a falling one at the TX pad, worst case
+  **0.184 UI** at `mos_ss`, 1.08 V, −40 °C. T-20 asks for ≥ 0.10 UI of margin remaining, and
+  #177 allocates 0.1075 UI to static off-centring of which the clock path already consumes
+  0.103 UI (#54). The remap as measured exceeds the whole 0.10 UI target on its own at
+  **30 of the 45 corners** (both edges above 0.10 UI at 13 of them); the remaining 15 — the
+  1.32 V corners of `mos_ff`, `mos_sf`, `mos_tt` and `mos_fs`, plus `mos_ff` at 1.20 V — read
+  **0.071 .. 0.099 UI**. At every corner it is far larger than the ~0.0045 UI the allocation
+  leaves after the clock path, so there is no corner at which it fits. It also adds up to
+  56.8 ps of pulse-width distortion to the data lane, which the
+  forwarded clock does not see. No bound is relaxed here; the consequence is filed as #232.
+- **The added load is negative**: the serializer drives two mux inputs (4.5–5.3 fF) instead
+  of one `DIN` (29.6–33.6 fF), so it is **24.9–28.7 fF lighter** and 39–88 ps faster. The
+  whole cost is the remap stage inheriting that ~30 fF load and driving it with the same
+  minimum-strength cell (`sg13g2_mux2_2` and `sg13g2_buf_*` exist and are not measured here).
+
+See the record's `README.md` for the per-corner decomposition and for what the record does
+not settle.
+
+**Correction (2026-11-13, PR #233) to `records/20261113T160050Z/README.md` lines 84-85.**
+That record's README says the remap "exceeds the entire T-20 target on its own, at every
+corner of the grid", and its own parenthesis contradicts it (0.054 UI is below 0.10 UI).
+That record is on `main`, so under DR-0020 it is immutable and the correction lives here. Recomputed
+from the record's committed `report.json.gz` — per corner, the worst of `t05_add_r_s`,
+`t05_add_f_s`, `t05_add1_r_s`, `t05_add1_f_s`:
+
+- above 0.10 UI (100 ps at 1 Gb/s) at **30 of 45** corners, both edges above at 13;
+- the other 15 read **71.2 .. 99.4 ps** (0.071 .. 0.099 UI): the twelve 1.32 V corners of
+  `mos_ff`, `mos_sf`, `mos_tt` and `mos_fs`, plus the three `mos_ff` corners at 1.20 V;
+- worst case **0.184 UI** (`mos_ss`, 1.08 V, −40 °C) and best **0.071 UI** (`mos_ff`,
+  1.32 V, −40 °C) — the 53.8 ps / 0.054 UI in the record's parenthesis is the best *rise*
+  edge, not the per-corner worst.
+
+The record's conclusion is unchanged: at every corner the added delay is far larger than
+the ~0.0045 UI left of #177's 0.1075 UI allocation after the clock path's 0.103 UI (#54),
+so it does not fit anywhere on the grid, and #232 stands as filed. Only the "exceeds the
+whole target at every corner" phrasing is withdrawn. The record's other "every corner"
+statements were re-checked against the same report and hold (fall is the slower edge at
+all 45; `t05_load_*` negative at all 45; the control reproduces the baseline at all 45).
+
+**Also not named in that record's prose**: the report carries one solver diagnostic,
+`singular_matrix` at `mos_sf` / 1.32 V / 125 °C (node `n.xtx_c.xmnd1n.nsg13_lv_nmos#GP`,
+the control lane). The corner is `pass`, its control delta is 2.8e-23 s and its added-delay
+values are in family (69.6 ps rise, 89.5 ps fall), so it looks benign — but the record
+calls the run "clean" without naming it, and this is the one warning in the grid.
 
 ## dc-static
 
@@ -452,3 +785,18 @@ Re-check after the #142 predriver change: `dc-static/records/20261112T001207Z/` 
 `klt-sim-f611a9ac49eb`, same `request.json`): 45/45 corners pass, 810/810 measurements pass,
 so T-06/T-08/T-24 (and T-07, T-11, T-28) are unchanged in verdict. Report only, no
 `record.json`.
+
+All four records above were built by hand. The next run goes through
+`sim/dc-static/run_dc_static.sh nominal|2kv|esd-diode` on the shared procedure ("Record
+harness" above, #228); nothing here is back-filled.
+
+## io-cell-study
+
+`sim/io-cell-study/` is the issue #196 study of the PDK's own `sg13g2_io` pad cells as the AIB
+pin (operator ruling q107): pin capacitance (T-24), driver output resistance (T-08) and a receiver
+level check, one 45-corner `klt sim` request on the batch fleet through the shared procedure
+(`run_io_cell.sh`). Record `records/20261118T213945Z/` (first batch job `klt-sim-3b19c005842a`): 45/45 corners
+solved, nothing graded. Simulated. The cell that fits both T-24's and T-08's fallback columns is
+`IOPadInOut16mA` (163-195 fF; 46-107 / 37-88 ohm), only at its own 3.0-3.6 V `iovdd`; T-16 over the
+channel with this cell is **not measured** (the cell's transient does not converge in ngspice 47).
+See `sim/io-cell-study/README.md`.
