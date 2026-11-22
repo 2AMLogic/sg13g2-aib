@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-22
+
+- **PR #390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
+- **Issue #387** (closed): layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign
+
 ### 2026-11-21
 
 - **PR #393**: feat(sim,signoff): add the T-12 channel-model conformance bench and cite its record
