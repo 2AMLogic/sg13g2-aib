@@ -244,7 +244,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -253,7 +253,7 @@
             "path": "layout/aib_io_column.gds",
             "scope": "repo"
           },
-          "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+          "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
           "input_verified": true,
           "summary": "T1 item 2 (Layout): 3/3 attestation checks passed (klt signoff --attest)",
           "source": "layout/aib_io_column.gds",
@@ -265,7 +265,7 @@
           },
           "regeneration": {
             "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-            "regenerated_hash": "sha256:af6051bb1f17d390d9eef8bcccff1b974e0c1eb6ceec5fd199707c02ac85cd6b",
+            "regenerated_hash": "sha256:312041e0f2547e4a0420254c41c01b7717fa2d9aa95bb5df35c9bdcedec4a148",
             "executed_by_klt": false,
             "hash_kind": "geometry"
           }
@@ -328,11 +328,11 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "layout/records/20261113T231304Z/drc_analog.json",
+        "file": "layout/records/20261120T202314Z/drc_analog.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
-        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
         "input_verified": true,
         "exit_status": 0,
         "coverage": {
@@ -471,7 +471,7 @@
         "command": null,
         "kind": "lvs",
         "check_status": "match",
-        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
         "input_verified": true,
         "exit_status": 0
       }
@@ -513,7 +513,7 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "sim/dc-static/records/20261112T001207Z/report.json",
+          "citation": "sim/dc-static/records/20261123T001034Z/report.json",
           "rows": [
             "T-06",
             "T-07",
@@ -526,7 +526,7 @@
           "reason": null
         },
         {
-          "citation": "sim/channel-eye/records/20261111T235838Z-ch/report.json",
+          "citation": "sim/channel-eye/records/20261123T001529Z-ch/report.json",
           "rows": [
             "T-01",
             "T-09",
@@ -539,7 +539,7 @@
           "reason": null
         },
         {
-          "citation": "sim/clock-path/records/20261113T095936Z/report.json",
+          "citation": "sim/clock-path/records/20261123T001348Z/report.json",
           "rows": [
             "T-17"
           ],
@@ -838,32 +838,32 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "layout/pex/records/20261114T025329Z/aib_io_tx.extract.report.json",
+          "citation": "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "layout/pex/records/20261114T025329Z/aib_io_rx.extract.report.json",
+          "citation": "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "layout/pex/records/20261114T025329Z/aib_io_tx_clk.extract.report.json",
+          "citation": "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "layout/pex/records/20261114T025329Z/aib_io_rx_clk.extract.report.json",
+          "citation": "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         }
       ],
       "detail": {
         "failed_citations": [
-          "layout/pex/records/20261114T025329Z/aib_io_tx.extract.report.json",
-          "layout/pex/records/20261114T025329Z/aib_io_rx.extract.report.json",
-          "layout/pex/records/20261114T025329Z/aib_io_tx_clk.extract.report.json",
-          "layout/pex/records/20261114T025329Z/aib_io_rx_clk.extract.report.json"
+          "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json",
+          "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json",
+          "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json",
+          "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json"
         ]
       }
     },
@@ -1087,7 +1087,7 @@
         "command": null,
         "kind": "erc",
         "check_status": "not_checked",
-        "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
         "input_verified": true,
         "exit_status": 0,
         "parts": [
@@ -1096,7 +1096,7 @@
             "command": null,
             "kind": "erc",
             "check_status": "not_checked",
-            "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+            "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
             "input_verified": true,
             "exit_status": 0
           },
@@ -1105,7 +1105,7 @@
             "command": null,
             "kind": "lvs",
             "check_status": "match",
-            "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+            "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
             "input_verified": true,
             "exit_status": 0
           }

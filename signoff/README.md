@@ -161,9 +161,9 @@ and delay are reported inputs to T-20 and T-13, DR-0023).
 
 | envelope | rows | result |
 |---|---|---|
-| `sim/dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass |
-| `sim/channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated) |
-| `sim/clock-path/records/20261113T095936Z/report.json` | T-17 | 45/45 corners pass (CH) |
+| `sim/dc-static/records/20261123T001034Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass (#408 re-run on the post-`e47bb80` cell; no verdict moved) |
+| `sim/channel-eye/records/20261123T001529Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #408 re-run, no verdict moved) |
+| `sim/clock-path/records/20261123T001348Z/report.json` | T-17 | 45/45 corners pass (CH; #408 re-run, T-17 worst -1.036 % -> -1.140 %, still inside +/-3 %) |
 | `sim/channel-model/records/20261121T000100Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
 
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
@@ -213,7 +213,8 @@ The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
   entry means "the grader did not check this row — verify it by hand", not "checked and
   covered".** Under `5.analog` the six `asserted` rows are exactly the dc-static ones, and they
   are covered on this manifest's word rather than the grader's check. Each was read against
-  `sim/dc-static/records/20261112T001207Z/report.json` by hand; all have bounded, passing
+  `sim/dc-static/records/20261123T001034Z/report.json` by hand (repeated on the #408 re-run; the
+  first read was against `20261112T001207Z`); all have bounded, passing
   measurements over the envelope's 45/45 corners:
 
   | row | measurements | bound |
@@ -251,8 +252,11 @@ The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
   The completeness gap is a real limit of this evidence: no I/O budget is
   invented here, and the TX-to-RX path across the two clocks is not timed.
 - `klt functional-verification` carries no provenance block, so the manifest pins no
-  `content_hash` on these entries. The runner reduces the three absolute scratch
-  paths in `environment` to file names; nothing else is edited.
+  `content_hash` on `fv_shift_redundancy.json`, `fv_datapath_n20.json` or
+  `fv_datapath_n8.json`; with `item7-digital/fv_post_route.json` (same runner), these
+  are the only cited evidence entries left unpinned, each for this reason. The runner
+  reduces the three absolute scratch paths in `environment` to file names; nothing
+  else is edited.
 
 Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate the record:
 
@@ -263,8 +267,9 @@ PDK_ROOT=<path containing ihp-sg13g2> python3 verification/klt/run_evidence.py
 ## Item 7 / analog evidence
 
 `7.analog` reads `unmet` / `check_failed`, citing the four `klt pex --extract-only` reports in
-`layout/pex/records/20261114T025329Z/` (re-run under #253 after #248 regenerated the stream;
-the superseded `20261113T130842Z/` binds the pre-#248 hash and is history, not evidence).
+`layout/pex/records/20261120T202530Z/` (re-run under #387 after the `Resd` resize regenerated
+the stream; the superseded `20261113T130842Z/` and `20261114T025329Z/` bind older hashes and
+are history, not evidence).
 **`check_failed` here does not mean a spec row failed
 post-layout — no spec row was measured post-layout at all.** It means the cited `klt pex` runs
 report `status: "not_checked"`: they extracted the drawn I/O cells (cleanly, with
@@ -297,6 +302,9 @@ machine-readable in one place.
 `attest/item7-digital/fv_post_route.json` is the existing cocotb suite
 (`verification/test_datapath.py`, unchanged) run through `klt functional-verification` on
 the **post-route** netlist with the routed SDF annotated (8/8). It is cited under `7.digital`.
+Like the item-5 attest above it is a `klt functional-verification` record, which carries no
+provenance block, so the manifest pins no `content_hash` on it — it is one of the four
+unpinned citations, all of that kind.
 Inputs, pinned by sha256 in `run_evidence.py` (the run refuses if either changes):
 `layout/pnr/.klt/place-and-route/aib_datapath.v` `a27bec23…` and `aib_datapath_route.sdf`
 `3e8edd07…`, plus the `sg13g2_stdcell` Verilog models from `PDK_ROOT`. The SDF is one corner,
@@ -453,6 +461,21 @@ makes the CI `--check` exit 3 (`drifted`).
   declares a `provenance.input.content_hash` binds the shipped stream it names —
   the gap a manifest pin cannot see (#273). Uncited records are out of the
   population by design;
+- `scripts/ci/check_netlist_closure.py`: every record cited under `evidence`
+  from `sim/` binds the netlists it was computed with. A `klt sim` report
+  records the sha256 of every netlist in its include closure under
+  `environment.netlist_closure`; the checker reads the cited file when it
+  carries that closure and otherwise the `report*.json[.gz]` files beside it
+  (item 6 cites `yield.json`, whose closure lives in the sibling reports),
+  and fails when a `scope: repo` member's hash is not the committed file's
+  (#405: #332's `XResd` edit left cited records describing a cell that no
+  longer existed, with every check green). A cited `sim/` record that reaches
+  no closure is an error. A mismatch already owned by a re-run may sit on the
+  dated allowlist beside the checker (`scripts/ci/netlist_closure_allowlist.json`,
+  keyed on record, member and recorded hash); an entry that stops mismatching
+  fails, so the list only shrinks. It binds nothing else: uncited records, the
+  `signoff/attest/` envelopes, `layout/` records and non-`repo` closure
+  members are out of population;
 - `scripts/ci/check_inventory_klt_pin.py`: every attest inventory that declares
   `pins.tools.klt` pins the same version its paired envelope records as
   `provenance.klt_version` (#324). `--attest` copies pins verbatim and never

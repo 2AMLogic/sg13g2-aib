@@ -1,0 +1,137 @@
+{
+  "record": "rx-threshold-study",
+  "utc_stamp": "20261121T104646Z",
+  "kind": "simulated",
+  "claim_scope": "CH (declared channel CH-3MM-RC, nominal kr = kc = 1)",
+  "study": "issue #386 receiver-threshold sizing study",
+  "variant": "as-drawn receiver (self-check against the committed channel-eye ch record)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-15": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t15_ar_bf_short",
+        "value": -1.84991e-11,
+        "why": "smallest margin"
+      }
+    },
+    "T-16": {
+      "verdict": "pass",
+      "pass": 360,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t16_df_cr_short",
+        "value": 5.0983e-10,
+        "why": "smallest margin"
+      }
+    },
+    "T-18": {
+      "verdict": "pass",
+      "pass": 1845,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/125C",
+        "measurement": "t18_eye_height_ok_v",
+        "value": 0.4795144,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ff/mixed/125C",
+        "measurement": "t26_energy_per_bit_simulated_j",
+        "value": 6.33641e-13,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "batch_job_ids": [
+    "klt-sim-73fea78d9b63",
+    "klt-sim-ad89e181be75",
+    "klt-sim-a3d083c1d5e6",
+    "klt-sim-4fd505090596",
+    "klt-sim-3bce2734b720",
+    "klt-sim-f4c85fb99c72",
+    "klt-sim-a875ffd6e570",
+    "klt-sim-e8ea7083ef53",
+    "klt-sim-dbbf39a86f66",
+    "klt-sim-17b4e0dd7aa8",
+    "klt-sim-ad52d5431715",
+    "klt-sim-83df50a75f1f",
+    "klt-sim-453aa0d91713",
+    "klt-sim-4f1668baa331",
+    "klt-sim-7b05256845d8",
+    "klt-sim-3073c6060af5",
+    "klt-sim-6ddff1b0bfe4",
+    "klt-sim-110f197633c2",
+    "klt-sim-b429f6e4ad4e",
+    "klt-sim-9e62ead73de7",
+    "klt-sim-79d635169043",
+    "klt-sim-9db58366243a",
+    "klt-sim-488da596465a",
+    "klt-sim-675a62deb3e2",
+    "klt-sim-8063797a4462",
+    "klt-sim-3e3220c5df7a",
+    "klt-sim-99503fe72a62",
+    "klt-sim-58fda31fe83f",
+    "klt-sim-a2b99c4fb0fe",
+    "klt-sim-909f7a6b995c",
+    "klt-sim-732f38eff39b",
+    "klt-sim-c2ce23ff28f5",
+    "klt-sim-19faca74cfc4",
+    "klt-sim-0c3400d19a5c",
+    "klt-sim-47bf9307acfa",
+    "klt-sim-d4b68e2353a9",
+    "klt-sim-c3cd81de5598",
+    "klt-sim-32c96671cff0",
+    "klt-sim-789fb18dff47",
+    "klt-sim-eb849941ade2",
+    "klt-sim-0872d68500d0",
+    "klt-sim-611dc850118f",
+    "klt-sim-9ea3e9d3db2a",
+    "klt-sim-3ad4765ea1b7",
+    "klt-sim-f18429b82e64"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

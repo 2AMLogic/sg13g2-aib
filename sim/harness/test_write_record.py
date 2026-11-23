@@ -36,7 +36,7 @@ JOB_FIELDS = {"batch_job_id", "batch_job_ids", "runner_klt_version"}
 
 
 # the families sim/harness/batch_record.sh drives; the other sim/ record families
-# (mc, pdk-smoke, rtl-synth, the local t16attr probes) follow a different procedure.
+# (mc, pdk-smoke, rtl-synth, the T-16 attribution probes) follow a different procedure.
 FAMILIES = ("channel-eye", "clock-path", "redundancy-mux")
 
 
@@ -153,6 +153,16 @@ class JobIdentityTests(unittest.TestCase):
     def test_sharded_run(self):
         rep = {"environment": {"remote": {"fleet": [
             {"job_id": "klt-sim-a", "runner_klt_version": "0.9.0"},
+            {"job_id": "klt-sim-b", "runner_klt_version": "0.9.0"}]}}}
+        self.assertEqual(write_record.job_identity(rep), (["klt-sim-a", "klt-sim-b"], ["0.9.0"]))
+
+    def test_a_null_fleet_entry_is_skipped(self):
+        # a report may carry a placeholder (null) shard among the real ones; the
+        # rx-threshold study's t16-mixed leg lost a complete record to the
+        # AttributeError on one (issue #386)
+        rep = {"environment": {"remote": {"fleet": [
+            {"job_id": "klt-sim-a", "runner_klt_version": "0.9.0"},
+            None,
             {"job_id": "klt-sim-b", "runner_klt_version": "0.9.0"}]}}}
         self.assertEqual(write_record.job_identity(rep), (["klt-sim-a", "klt-sim-b"], ["0.9.0"]))
 

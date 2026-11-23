@@ -65,8 +65,16 @@ run_rc() {
 }
 
 if [ "$want_evidence" = 1 ]; then
-  run "Self-test the checkers" \
-    python3 -I scripts/ci/test_checkers.py
+  # The four suites scripts/ci/test_checkers.py aggregates, run one per group so
+  # a red job names the suite; the aggregator is `npm test` and the item 10 audit.
+  run "Self-test the evidence and record-integrity checkers" \
+    python3 -I scripts/ci/test_evidence_checkers.py
+  run "Self-test the signoff, attestation and pin checkers" \
+    python3 -I scripts/ci/test_signoff_pins.py
+  run "Self-test the sim and generator infrastructure" \
+    python3 -I scripts/ci/test_sim_infra.py
+  run "Self-test the CI check list and shared-helper guards" \
+    python3 -I scripts/ci/test_ci_guards.py
 
   # The shared sim record harness, against a stubbed `klt sim`: no PDK and no
   # batch fleet, so it belongs in the PDK-free list like every checker above.
@@ -78,12 +86,22 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_evidence_format.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
     python3 -I scripts/ci/check_design_sources.py
+  # The generator runs the same comparison on the geometry path, but a
+  # regeneration is the only thing that reaches it, so a netlist edit alone
+  # (#332 shortened XResd to l=1u) left the committed device table -- and with
+  # it the stream -- stale with nothing red. The --check entry point is
+  # stdlib-only (no klayout, no PDK), so the evidence job can run it on every
+  # push and the table cannot drift from design/*.spice again.
+  run "Check the I/O column device table against the committed design netlists" \
+    python3 -I layout/gen_io_column.py --check
   run "Check every attested path matches its envelope's content_hash" \
     python3 -I scripts/ci/check_attested_paths.py
   run "Check the item 6 digital not_applicable documents are fresh against the spec" \
     python3 -I scripts/ci/gen_item6_digital.py
   run "Check the Monte Carlo requests against the generator" \
     python3 -I sim/mc/gen_mc.py --check
+  run "Check the rx-threshold-study benches and requests against the generator" \
+    python3 -I sim/rx-threshold-study/gen_rx_threshold.py --check
   run "Check the per-corner Monte Carlo tables against the committed records" \
     python3 -I sim/mc/gen_per_corner.py --check
   run "Check the dc-static requests against the generator" \
@@ -98,7 +116,7 @@ if [ "$want_evidence" = 1 ]; then
   # channel-eye outputs and test_t19.py both T-19 netlists, the same
   # comparison those --check modes make. The one sim generator not reached
   # that way, sim/clock-path/gen_clock_path.py --check, runs inside
-  # test_checkers.py above (with gen_channel_eye, gen_mc and gen_dc_static).
+  # test_ci_guards.py above (with gen_channel_eye, gen_mc and gen_dc_static).
   run "Self-test the channel-eye bench and its pass/fail post-processor" \
     python3 -I sim/channel-eye/test_channel_eye.py
   run "Self-test the T-19 capture-window bench and its aperture post-processor" \
@@ -142,6 +160,18 @@ if [ "$want_evidence" = 1 ]; then
   run "Check every cited evidence record binds the shipped stream" \
     python3 -I scripts/ci/check_evidence_pins.py
 
+  # A `klt sim` report pins the sha256 of every netlist in its include closure
+  # (environment.netlist_closure) and nothing compared those pins to the tree:
+  # #332's XResd edit left cited analog records describing a cell that no
+  # longer exists, with every check green (#405). Same citation walk as
+  # check_evidence_pins.py -- a cited file under sim/, or the report*.json[.gz]
+  # beside it when the cited file carries no closure (item 6 cites yield.json)
+  # -- and any `scope: repo` member whose hash moved fails unless the mismatch
+  # is on the dated allowlist beside the checker. An entry that stops
+  # mismatching fails too, so the list can only shrink.
+  run "Check every cited sim record's netlist closure matches the tree" \
+    python3 -I scripts/ci/check_netlist_closure.py
+
   # `klt signoff --attest` records an inventory's tool pins verbatim and its
   # own version as provenance, and never compares the two (#324): a pin left
   # behind by a grader bump attests a version the evidence was not produced
@@ -174,6 +204,18 @@ if [ "$want_evidence" = 1 ]; then
     python3 -I scripts/ci/check_sim_append_only.py --base "$base" \
       --event-name "${EVENT_NAME-}" --push-ref "${PUSH_REF-}" \
       --default-branch "${DEFAULT_BRANCH:-main}"
+
+  # A record deck is the bench deck copied verbatim, so its .include strings
+  # stay relative to the bench staging directory (`sim/<family>/`), not to the
+  # record directory it is archived in. #412 deleting a staging-dir sibling
+  # (`sim/channel-eye/esd_sz_*.inc`) silently turned two re-runnable records
+  # into ones needing a hand-repointed include, and nothing saw it (#414).
+  # This resolves every tracked record deck's .include against the record
+  # directory, then the staging directory; $variable paths are skipped and the
+  # dated in-file allowlist is the census at landing (shrink-only, the
+  # netlist_closure_allowlist.json discipline).
+  run "Check record decks' includes resolve record-locally or from the bench staging dir" \
+    python3 -I scripts/ci/check_record_includes.py
 
   run "Check the item 8 characterization report is fresh and pinned" \
     python3 -I scripts/ci/gen_characterization_report.py --check

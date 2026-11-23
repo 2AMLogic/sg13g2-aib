@@ -2,8 +2,44 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-23
+
+- **PR #421**: chore(sim): remove the closed T-16 attribution scaffolding
+- **Issue #420** (closed): Hoist duplicated PWL stimulus helpers into sim/gen_common.py
+- **Issue #418** (closed): Remove the closed T-16 attribution scaffolding from sim/channel-eye (record is self-contained)
+- **PR #417**: fix(ci): fail CI when a record deck's .include stops resolving
+- **PR #416**: fix: pin content_hash on every pinnable evidence citation in the signoff manifest
+- **PR #413**: evidence: re-cite item 5 analog records re-run on the post-e47bb80 pad cell
+- **PR #412**: chore(sim): remove the closed T-16 sizing-study scaffolding
+- **PR #410**: feat(ci): check cited sim records' netlist closures against the tree
+- **PR #399**: evidence(sim): screen and confirm a supply-referenced RX input stage for T-10
+- **Issue #415** (closed): signoff/block-manifest.json: 18 of 37 evidence entries carry no content_hash pin
+- **Issue #414** (closed): Record bench decks' .include paths are staging-dir-relative, so archived decks can silently stop resolving
+- **Issue #411** (closed): Remove the completed #251 T-16 sizing-study scaffolding (12 files, 2576 lines)
+- **Issue #408** (closed): T1 item 5 (analog): re-run the cited dc-static, channel-eye and clock-path records on the current cells — each cites aib_pad_esd at its pre-e47bb80 hash
+- **Issue #405** (closed): No CI check binds a cited analog record's netlist_closure to the tree, so a design/*.spice change silently staleness-es cited evidence
+- **Issue #386** (closed): T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage
+
+### 2026-11-22
+
+- **PR #409**: test: guard test_checkers SUITES and loading against check_local.sh
+- **PR #404**: refactor: split scripts/ci/test_checkers.py into four sibling suites
+- **Issue #406** (closed): Nothing asserts test_checkers.py's SUITES matches check_local.sh, and no CI job runs the aggregator
+- **Issue #401** (closed): Split monolithic scripts/ci/test_checkers.py (2,635 lines) into focused sibling suites
+- **PR #402**: docs: correct the Resd PolyRes coordinates in layout/README.md
+- **Issue #394** (closed): Correct the Resd PolyRes coordinates recorded in layout/README.md (#387 regeneration)
+- **PR #390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
+- **Issue #387** (closed): layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign
+
+### 2026-11-21
+
+- **PR #393**: feat(sim,signoff): add the T-12 channel-model conformance bench and cite its record
+- **Issue #384** (closed): T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met
+
 ### 2026-11-20
 
+- **PR #389**: refactor: share the T-16 edge selection and drop the card re-parse in gen_t16attr
+- **Issue #388** (closed): Share the T-16 edge selection and remove the SPICE card parser from gen_t16attr
 - **PR #382**: docs: fix stale 8-gap count in signoff/README and date the item-5 grader probes
 - **Issue #380** (closed): signoff/README.md still says "8 real gaps" for item 5 / analog after DR-0026 and DR-0028 cut the row set to 18/5
 - **Issue #379** (closed): Guide docs tick still stages README.md without re-attesting item 10: #284's guard diagnoses the round trip but does not prevent it
