@@ -48,7 +48,7 @@ Issues currently being built (`loom:building`).
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#374**: feat(design,sim): adopt diodevdd_2kv as the primary pad diode (DR-0029) and record the failing 0.5 A T-25 transient
 
 ## Approved (Awaiting Merge)
 
@@ -96,7 +96,7 @@ _None._
 | Important | 2 |
 | Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 5 |
-| PRs awaiting review | 0 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 4 |
 | Curated | 14 |
 | Architect / Hermit proposals | 2 |
