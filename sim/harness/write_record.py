@@ -11,6 +11,10 @@ Usage:
       --pdk-tag TAG --klt-exit-code N [--fields-head JSON] [--fields-tail JSON] \
       [--report-only-ranges]
 
+Host paths: before anything is read, report.json.gz and rows.json in REC are scrubbed of
+any string value that is a path into a user's home directory (/home, /Users, /root), the
+one scrub every bench family inherits (#437).
+
 REC must already hold report.json.gz, rows.json and request.json (the copy
 batch_record.sh makes). Nothing outside REC is read or written, and REC itself
 is never re-read once written: records are append-only evidence.
@@ -33,8 +37,57 @@ reports environment.remote.fleet[]. Both are collected, so a sharded run (what
 import argparse
 import gzip
 import json
+import re
 import sys
 from pathlib import Path
+
+# A string value that is a path into some user's home directory. Matched by value over the
+# whole JSON tree, never by field name: the fields that carry one (`client_ngspice_binary`,
+# `ngspice_binary`, a PDK `path`) have already drifted past a per-field scrub once (#437).
+# scripts/ci/check_no_host_paths.py re-implements this one regex on purpose, so the check
+# stays independent of the scrub it polices.
+HOST_PATH = re.compile(r"^/(?:home|Users|root)/[^/]+/(.*)$", re.DOTALL)
+NGSPICE_PLACEHOLDER = "/usr/local/bin/ngspice"
+
+
+def scrub_value(s):
+    """The portable form of one string: a host-home path loses its home prefix."""
+    m = HOST_PATH.match(s)
+    if not m:
+        return s
+    if s.rsplit("/", 1)[-1] == "ngspice":
+        return NGSPICE_PLACEHOLDER
+    return "<home>/" + m.group(1)
+
+
+def scrub_host_paths(obj):
+    """`obj` with every host-home path string rewritten, recursing through dicts and lists."""
+    if isinstance(obj, dict):
+        return {k: scrub_host_paths(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [scrub_host_paths(v) for v in obj]
+    if isinstance(obj, str):
+        return scrub_value(obj)
+    return obj
+
+
+def scrub_record_files(rec: Path):
+    """Scrub the record's own report.json.gz and rows.json in place, before anything is read.
+
+    Only called on a record directory that is still being written; a committed record is
+    never passed here. A file with nothing to scrub is left byte-identical.
+    """
+    gz = rec / "report.json.gz"
+    rep = json.loads(gzip.decompress(gz.read_bytes()))
+    clean = scrub_host_paths(rep)
+    if clean != rep:
+        # mtime=0: the same report always compresses to the same bytes
+        with open(gz, "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as fh:
+            fh.write(json.dumps(clean, indent=2).encode() + b"\n")
+    rows_p = rec / "rows.json"
+    rows = json.loads(rows_p.read_text())
+    if scrub_host_paths(rows) != rows:
+        rows_p.write_text(json.dumps(scrub_host_paths(rows), indent=2) + "\n")
 
 
 def job_identity(report):
@@ -129,6 +182,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     rec = Path(args.rec)
+    scrub_record_files(rec)
     out = build(rec, args.record, args.stamp, args.pdk_tag, args.klt_exit_code,
                 json.loads(args.fields_head), json.loads(args.fields_tail),
                 args.report_only_ranges)
