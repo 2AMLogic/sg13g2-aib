@@ -96,6 +96,13 @@ T-07 and T-28). That resolves the rows without editing the committed request byt
 record was run from; adding `spec_row` tags there would change them and is a separate,
 deliberate re-run.
 
+An archived deck's `.include` strings are relative to the bench staging directory
+(`sim/<family>/`), not to the record directory it is archived in — the deck is copied
+verbatim from the staged bench, so a re-run from a record may need one include repointed at
+the record-local copy beside it (`scripts/ci/check_record_includes.py` fails CI when an
+include resolves from neither place, so a cleanup cannot delete a staging-dir sibling
+silently).
+
 ```bash
 sim/harness/test_batch_record.sh            # the procedure, against a stubbed klt sim
                                             # (+ the dc-static entry point and its row map)
