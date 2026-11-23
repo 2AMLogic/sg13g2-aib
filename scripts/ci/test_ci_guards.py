@@ -166,8 +166,11 @@ class GeneratorFreshnessTests(unittest.TestCase):
 # That happened twice (#173, #219) before anything asserted otherwise. The test
 # below is that assertion: every self-test and every checkable generator in the
 # tracked tree is either *listed* in check_local.sh, *covered* by a listed file
-# that runs it, or *exempt* with a stated reason. Adding a 31st candidate
-# without doing one of the three fails this test.
+# that runs it, *exempt* with a stated reason, or a check-capable generator
+# whose coverage is the freshness run in this file (#395): the derived set that
+# test_every_check_capable_generator_is_fresh executes IS the coverage, valid
+# only while the suite's own run line stays in the check list. Adding a
+# candidate without doing one of those fails this test.
 #
 # Discovery is by file NAME, deliberately, not by grepping for a `--check`
 # literal: scripts/ci/gen_item6_digital.py has no --check flag (checking is its
@@ -182,28 +185,22 @@ class GeneratorFreshnessTests(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 CHECK_LIST = "scripts/ci/check_local.sh"
+# The suite whose freshness run covers the check-capable generators (#395);
+# completeness_errors() accepts its derived subject set as coverage only while
+# this file is tracked and listed in the check list.
+FRESHNESS_SUITE = "scripts/ci/test_ci_guards.py"
 CANDIDATE_GLOBS = ("gen_*.py", "check_*.py", "test_*.py", "test_*.sh")
 
 # candidate -> (file that runs it, why no line of its own is wanted).
 # The covering file must itself be listed in check_local.sh, and must mention
 # the candidate by name -- otherwise the coverage claim has quietly lapsed.
+# Check-capable generators need no entry here since #395: membership in the
+# freshness-run suite is their coverage, and an entry pointing at that suite
+# verified itself -- the completeness test searches the covering file for the
+# candidate's basename, and the covering file contained this very table. The
+# table stays for coverage that lives in a specific non-freshness suite, like
+# the T-19 bench below.
 COVERED = {
-    "sim/channel-eye/gen_channel_eye.py": (
-        "scripts/ci/test_ci_guards.py",
-        "--check runs in test_every_check_capable_generator_is_fresh",
-    ),
-    "sim/clock-path/gen_clock_path.py": (
-        "scripts/ci/test_ci_guards.py",
-        "--check runs in test_every_check_capable_generator_is_fresh",
-    ),
-    "sim/io-cell-study/gen_io_cell.py": (
-        "scripts/ci/test_ci_guards.py",
-        "--check runs in test_every_check_capable_generator_is_fresh",
-    ),
-    "sim/redundancy-mux/gen_redundancy_mux.py": (
-        "scripts/ci/test_ci_guards.py",
-        "--check runs in test_every_check_capable_generator_is_fresh",
-    ),
     "sim/mc/capture_window/gen_t19.py": (
         "sim/mc/capture_window/test_t19.py",
         "test_generated_files_are_fresh compares both T-19 netlists, the same comparison --check makes",
@@ -262,10 +259,21 @@ def gen_scripts(tracked):
                   if fnmatch.fnmatch(posixpath.basename(p), "gen_*.py"))
 
 
+def freshness_subjects(tracked, exempt=EXEMPT, no_check_flag=NO_CHECK_FLAG):
+    """The check-capable generator set: tracked gen_*.py minus the two freshness exemptions.
+
+    #266 derived the freshness test's subjects from the tree; #395 makes
+    completeness_errors() derive the same set, so the two cannot drift: a
+    generator the freshness test runs is exactly one completeness accepts
+    without a COVERED entry.
+    """
+    skip = set(exempt) | set(no_check_flag)
+    return [p for p in gen_scripts(tracked) if p not in skip]
+
+
 TRACKED_GEN_SCRIPTS = gen_scripts(git(REPO, "ls-files").splitlines())
 STRICT_FLAG_SUBJECTS = [p for p in TRACKED_GEN_SCRIPTS if p not in STRICTNESS_UNASSERTABLE]
-FRESHNESS_SUBJECTS = [p for p in TRACKED_GEN_SCRIPTS
-                      if p not in set(EXEMPT) | set(NO_CHECK_FLAG)]
+FRESHNESS_SUBJECTS = freshness_subjects(TRACKED_GEN_SCRIPTS)
 
 
 def strip_sh_comments(text):
@@ -287,12 +295,21 @@ def discover_candidates(tracked):
                   if any(fnmatch.fnmatch(posixpath.basename(p), g) for g in CANDIDATE_GLOBS))
 
 
-def completeness_errors(tracked, check_list_text, covered, exempt, read_text):
+def completeness_errors(tracked, check_list_text, covered, exempt, read_text,
+                        no_check_flag=()):
     """Return a sorted list of ways the check list and its table disagree with the tree.
 
     Pure: every input is passed in, so the failure modes can be tested against
     a fixture without touching the real tree. `read_text` maps a repo-relative
     path to its contents and is only called for covering files.
+
+    A check-capable generator (freshness_subjects) needs no table entry while
+    the freshness suite itself is tracked and listed in the check list: the run
+    line that executes it is its coverage (#395). Explicit COVERED entries are
+    still validated first, so a generator carrying one is judged by that claim,
+    not by freshness membership -- a lapsed entry stays loud. NO_CHECK_FLAG
+    generators stay outside the fallback set: the freshness test cannot run
+    them, so only their own run line covers them.
     """
     tracked = set(tracked)
     code = strip_sh_comments(check_list_text)
@@ -300,6 +317,14 @@ def completeness_errors(tracked, check_list_text, covered, exempt, read_text):
 
     def is_listed(path):
         return path in code
+
+    # #395: the freshness run covers every check-capable generator, but only
+    # while its suite is both tracked and run by the check list -- dropping
+    # that run line makes the coverage lapse loudly, for every generator at
+    # once.
+    freshness_covered = (set(freshness_subjects(tracked, exempt, no_check_flag))
+                         if FRESHNESS_SUITE in tracked and is_listed(FRESHNESS_SUITE)
+                         else set())
 
     # The table must not rot: it may only name tracked files that are not
     # already listed on a command line of their own.
@@ -331,6 +356,8 @@ def completeness_errors(tracked, check_list_text, covered, exempt, read_text):
                 errors.append(f"{path}: covering file {cover} never mentions "
                               f"{posixpath.basename(path)}; the coverage claim has lapsed")
             continue
+        if path in freshness_covered:
+            continue
         errors.append(f"{path}: in neither {CHECK_LIST} nor the COVERED/EXEMPT table in "
                       "scripts/ci/test_ci_guards.py -- add a run line, or a table entry with a reason")
     return sorted(errors)
@@ -350,8 +377,23 @@ class CheckListCompletenessTests(unittest.TestCase):
     # -- the real tree -------------------------------------------------------
 
     def test_every_tracked_checker_is_listed_covered_or_exempt(self):
-        errors = completeness_errors(self.tracked, self.text, COVERED, EXEMPT, self.read)
+        errors = completeness_errors(self.tracked, self.text, COVERED, EXEMPT, self.read,
+                                     NO_CHECK_FLAG)
         self.assertEqual(errors, [], "\n" + "\n".join(errors))
+
+    def test_the_freshness_set_covers_the_generators_the_table_no_longer_lists(self):
+        # #395: the four COVERED entries that pointed back at this file are
+        # gone; their coverage is the freshness run itself, which the real-tree
+        # completeness test above exercises. This pins the membership: if one
+        # of these generators leaves the derived set (EXEMPT, NO_CHECK_FLAG, or
+        # no longer tracked) it must regain a run line or a table entry, or the
+        # test above fails.
+        for gen in ("sim/channel-eye/gen_channel_eye.py",
+                    "sim/clock-path/gen_clock_path.py",
+                    "sim/io-cell-study/gen_io_cell.py",
+                    "sim/redundancy-mux/gen_redundancy_mux.py"):
+            self.assertIn(gen, FRESHNESS_SUBJECTS)
+            self.assertNotIn(gen, COVERED)
 
     def test_discovery_finds_both_the_shell_and_no_flag_classes(self):
         # A discovery key of "*.py" would miss the shell self-test, and one of
@@ -396,13 +438,14 @@ class CheckListCompletenessTests(unittest.TestCase):
     FIX_LIST = ('run "self-test" python3 -I scripts/ci/test_checkers.py\n'
                 'run "b" python3 -I sim/b/test_b.py\n')
 
-    def fixture(self, tracked=None, text=None, covered=None, exempt=None, files=None):
+    def fixture(self, tracked=None, text=None, covered=None, exempt=None, files=None,
+                no_check_flag=()):
         files = files or {}
         return completeness_errors(
             tracked if tracked is not None else self.FIX_TRACKED,
             text if text is not None else self.FIX_LIST,
             covered or {}, exempt or {},
-            lambda p: files.get(p, ""))
+            lambda p: files.get(p, ""), no_check_flag)
 
     def test_a_new_candidate_that_is_neither_listed_nor_tabled_fails(self):
         errors = self.fixture()
@@ -457,6 +500,80 @@ class CheckListCompletenessTests(unittest.TestCase):
                          exempt={"sim/c/gen_c.py": "generator with no check mode"},
                          files={"sim/b/test_b.py": "subprocess.run(['gen_a.py', '--check'])"}),
             [])
+
+    # -- freshness-run coverage of the generators (#395) ----------------------
+    #
+    # The freshness suite's own run line covers every check-capable generator,
+    # so a new gen_*.py needs no table edit -- and the fallback's failure modes
+    # must stay loud: unlist the suite and the coverage lapses, a NO_CHECK_FLAG
+    # generator and a standalone checker are never in the set, and an explicit
+    # COVERED entry is still judged before the fallback can excuse it.
+
+    GUARDS_LINE = 'run "guards" python3 -I scripts/ci/test_ci_guards.py\n'
+
+    def test_a_new_generator_passes_without_a_covered_entry_when_the_suite_is_listed(self):
+        # gen_a.py and gen_d.py are check-capable and covered by the freshness
+        # run -- no COVERED entry, no table edit when a generator joins the tree.
+        tracked = self.FIX_TRACKED + ["scripts/ci/test_ci_guards.py", "sim/d/gen_d.py"]
+        errors = self.fixture(tracked=tracked, text=self.FIX_LIST + self.GUARDS_LINE,
+                              exempt={"sim/c/gen_c.py": "r"})
+        self.assertEqual(errors, [])
+
+    def test_dropping_the_suite_run_line_makes_the_generator_coverage_lapse(self):
+        # The fallback fires only while the suite is listed: removing it (or
+        # leaving only a comment, which strip_sh_comments drops) makes every
+        # generator it covered loud again.
+        tracked = self.FIX_TRACKED + ["scripts/ci/test_ci_guards.py", "sim/d/gen_d.py"]
+        commented = "# run \"guards\" python3 -I scripts/ci/test_ci_guards.py\n"
+        for text in (self.FIX_LIST, self.FIX_LIST + commented):
+            errors = self.fixture(tracked=tracked, text=text,
+                                  exempt={"sim/c/gen_c.py": "r"})
+            self.assertTrue(any(e.startswith("sim/d/gen_d.py:") for e in errors), errors)
+
+    def test_a_no_check_flag_generator_still_fails_when_the_suite_is_listed(self):
+        # The gen_item6_digital.py class: the freshness run cannot execute it,
+        # so only its own run line covers it -- a NO_CHECK_FLAG entry keeps it
+        # out of the fallback set.
+        tracked = self.FIX_TRACKED + ["scripts/ci/test_ci_guards.py",
+                                      "scripts/ci/gen_item6.py"]
+        errors = self.fixture(tracked=tracked, text=self.FIX_LIST + self.GUARDS_LINE,
+                              exempt={"sim/c/gen_c.py": "r"},
+                              no_check_flag={"scripts/ci/gen_item6.py": "no --check flag"})
+        self.assertTrue(any(e.startswith("scripts/ci/gen_item6.py:") for e in errors),
+                        errors)
+
+    def test_an_unlisted_standalone_checker_still_fails_when_the_suite_is_listed(self):
+        # Freshness coverage is for gen_*.py only: sim/e/test_e.py is a
+        # standalone checker and needs its own run line regardless, while the
+        # generator beside it is excused by the fallback.
+        tracked = self.FIX_TRACKED + ["scripts/ci/test_ci_guards.py", "sim/e/test_e.py"]
+        errors = self.fixture(tracked=tracked, text=self.FIX_LIST + self.GUARDS_LINE,
+                              exempt={"sim/c/gen_c.py": "r"})
+        self.assertTrue(any(e.startswith("sim/e/test_e.py:") for e in errors), errors)
+        self.assertFalse(any(e.startswith("sim/a/gen_a.py:") for e in errors), errors)
+
+    def test_a_lapsed_covered_entry_on_a_generator_still_fails(self):
+        # The explicit check runs before the fallback: a stale covering file is
+        # reported even though the generator is in the freshness set, so
+        # gen_t19.py's test_t19.py claim cannot rot silently behind it.
+        tracked = self.FIX_TRACKED + ["scripts/ci/test_ci_guards.py", "sim/d/gen_d.py"]
+        text = self.FIX_LIST + self.GUARDS_LINE
+        errors = self.fixture(tracked=tracked, text=text,
+                              covered={"sim/d/gen_d.py": ("sim/gone/test_gone.py", "why")},
+                              exempt={"sim/c/gen_c.py": "r"})
+        self.assertTrue(any("covering file sim/gone/test_gone.py is not tracked" in e
+                            for e in errors), errors)
+        errors = self.fixture(tracked=tracked, text=text,
+                              covered={"sim/d/gen_d.py": ("sim/b/test_b.py", "why")},
+                              exempt={"sim/c/gen_c.py": "r"},
+                              files={"sim/b/test_b.py": "runs something else"})
+        self.assertTrue(any("the coverage claim has lapsed" in e for e in errors), errors)
+        # ...and a covering file that is not itself listed cannot cover either.
+        errors = self.fixture(tracked=tracked, text=text,
+                              covered={"sim/d/gen_d.py": ("sim/c/gen_c.py", "why")},
+                              files={"sim/c/gen_c.py": "runs gen_d.py"})
+        self.assertTrue(any("covering file sim/c/gen_c.py is not itself in" in e
+                            for e in errors), errors)
 
 
 # ---------------------------------------------------------------------------
