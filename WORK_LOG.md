@@ -4,6 +4,13 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-23
 
+- **PR #430**: chore: ignore .loom/account-ranking.* daemon state in .gitignore
+- **Issue #429** (closed): gitignore: .loom/account-ranking.* daemon state trips check-main-clean.sh on every sweep
+- **PR #424**: feat(design): adopt the supply-referenced RX data receiver, split clock legs to aib_rx_inv (T-10 fix)
+- **PR #425**: docs(channel-model): state seeded-defect band exit without the unmet 10% margin claim
+- **Issue #396** (closed): sim/channel-model README overstates the seeded-defect detection margin (measured: 2 %, not >=10 %)
+- **PR #423**: ci: accept freshness-run membership as generator coverage in the completeness check
+- **Issue #395** (closed): Use the generator freshness run to establish CI coverage and drop five manual entries
 - **Issue #398** (in progress): adopt the supply-referenced RX input stage for the `aib_rx_data` data lanes — receive split landed (`aib_rx_inv` carries the committed inverter for the clock legs), T-10 passes on the adopted cell (0/5400 out), layout/DRC/LVS/PEX re-attested, T-19 recorded as the adoption's failing row (#190 tracks the output-stage fix)
 - **PR #391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate
 - **Issue #385** (closed): T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes
