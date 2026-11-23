@@ -140,10 +140,22 @@
       }
     },
     "7.analog": [
-      "layout/pex/records/20261123T093102Z/aib_io_tx.extract.report.json",
-      "layout/pex/records/20261123T093102Z/aib_io_rx.extract.report.json",
-      "layout/pex/records/20261123T093102Z/aib_io_tx_clk.extract.report.json",
-      "layout/pex/records/20261123T093102Z/aib_io_rx_clk.extract.report.json"
+      {
+        "file": "layout/pex/records/20261123T093102Z/aib_io_tx.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
+      },
+      {
+        "file": "layout/pex/records/20261123T093102Z/aib_io_rx.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
+      },
+      {
+        "file": "layout/pex/records/20261123T093102Z/aib_io_tx_clk.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
+      },
+      {
+        "file": "layout/pex/records/20261123T093102Z/aib_io_rx_clk.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
+      }
     ],
     "7.digital": {
       "file": "signoff/attest/item7-digital/fv_post_route.json"

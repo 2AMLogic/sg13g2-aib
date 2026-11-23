@@ -121,7 +121,7 @@ def main(path):
         res = db.Region(cell.begin_shapes_rec(ly.find_layer(128, 0)))
         for poly in res.each():
             bx = poly.bbox()
-            yc = poly.bbox().center().y * ly.dbu
+            yc = bx.center().y * ly.dbu
             ends = [cluster_at(l2n, r, bx.left * ly.dbu - 0.28, yc), cluster_at(l2n, r, bx.right * ly.dbu + 0.28, yc)]
             if cn == "aib_io_rx" and (bx.width() * ly.dbu) > 40:
                 divider.append(ends)
@@ -138,10 +138,10 @@ def main(path):
                 return labels.get(c, set())
             vdd = [e for e in divider if any(lab(x) & {"VDDIO"} for x in e)]
             vss = [e for e in divider if any(lab(x) & {"VSS"} for x in e)]
-            mids = {frozenset(x for e in divider for x in e if not (lab(x) & set(RAIL_LABELS)))}
+            mids = frozenset(x for e in divider for x in e if not (lab(x) & set(RAIL_LABELS)))
             check(f"{cn}: the divider is two long resistor legs VDDIO--vrn--VSS",
-                  len(divider) == 2 and len(vdd) == 1 and len(vss) == 1
-                  and len(mids) == 1 and len(next(iter(mids))) == 1,
+                  len(divider) == 2 and all(None not in e for e in divider)
+                  and len(vdd) == 1 and len(vss) == 1 and len(mids) == 1,
                   f"{len(divider)} legs")
         bad = []
         recog = db.Region(cell.begin_shapes_rec(ly.find_layer(99, 31)))

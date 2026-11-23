@@ -159,7 +159,7 @@ min(a+phi, c-phi) on the rising-data eye and min(b+phi, d-phi) on the falling-da
 - **Decision: the output stage stays as adopted, and the T-19 cost is recorded, not
   hidden.** By the issue's stated test — one legal phase per operating condition against the
   existing budget, read from the four separations — the phase exists at all 45 corners and the
-  binding 188.0 ps clears the 150 ps budget with 37.9 ps. The T-19 re-run on the adopted cell
+  binding 187.9 ps clears the 150 ps budget with 37.9 ps. The T-19 re-run on the adopted cell
   (`sim/mc/records/20261123T094302Z-t19/`) adds the measured aperture: **the T-19 row itself
   fails** (151 of 900 draws over 150 ps; 8 of 45 corners' means 156-442 ps, hold-dominated;
   at `ss/1.080V/-40C` the capture boundary leaves the bench's sweep window), because the same
