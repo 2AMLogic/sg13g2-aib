@@ -45,9 +45,10 @@ import subprocess
 import sys
 
 RECORD_PARTS = ("records", "corners")
-# check_evidence_format.py reads this constant (parsed, not imported: both checkers
-# run under python3 -I), so the two cannot disagree about what counts as a record
-# root again (#315).
+# check_evidence_format.py imports this constant (the sibling-import idiom of
+# check_record_includes.py: the checker's own directory goes on sys.path first,
+# because python3 -I leaves it off), so the two cannot disagree about what
+# counts as a record root again (#315).
 RECORD_ROOTS = ("sim", "layout/pex")
 
 
