@@ -1,0 +1,61 @@
+{
+  "record": "mc-t10",
+  "utc_stamp": "20261123T092848Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-10",
+  "claim_scope": "BOTH (receiver input stage; no channel model)",
+  "design_commit": "feature/issue-398 (the #398 adoption: design/aib_rx_data.spice is the supply-referenced stage selected by the #386 study, subckt rx__vref of sim/rx-threshold-study/cand_cells.inc, device sizes verbatim; the study's records/20261121T091822Z-mc/ is the study evidence for the same cell)",
+  "requests": {
+    "nominal": "request_t10.json",
+    "negative_control": "request_t10_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 120,
+    "seed": 4410,
+    "samples": 5400,
+    "negative_control_seed": 4411,
+    "negative_control_samples": 900,
+    "negative_control_defect": "input-pair NMOS (Mnp) made 4x narrower: w=0.25u ng=1 instead of w=1u ng=2 (gen_mc.py substitutes it into the inlined design cell); the same defect the study's control seeded",
+    "control_sweep_deviation": "the control's DC sweep is widened to Vfr 0.15-0.95 (the degraded cell crosses at fr 0.66-0.75 over the grid, outside the committed 0.3-0.7 window; the nominal bench keeps the committed window) -- the one stated deviation, carried by the #386 study control and by gen_mc.py"
+  },
+  "coverage_note": "the grid varies MOS mismatch only (mos_*_mismatch sections); the divider is a pair of corner-section rppd resistors with no independent resistor-pair mismatch in this model set, same coverage as the study record and the committed 2026-11-08 record",
+  "result": {
+    "status": "pass",
+    "mean_mv": 2.741416081481482,
+    "sigma_mv": 9.599779881646251,
+    "worst_draw_mv": 42.2976,
+    "draws_outside_limits": 0,
+    "corners_with_out_of_limit_draws": 0,
+    "sample_size_verdict": "sufficient",
+    "sigma_to_spec": 5.964572586501778,
+    "sigma_to_spec_lower_bound": 5.848953298220917,
+    "negative_control": "detected",
+    "negative_control_degradation_detected": true
+  },
+  "per_corner": {
+    "mean_mv_range": [-2.39, 10.78],
+    "sigma_mv_range": [7.53, 10.81],
+    "worst_mean_plus_3sigma": "ff/1.200V/125C = +41.3 mV",
+    "worst_mean_minus_3sigma": "fs/1.080V/-40C = -30.7 mV"
+  },
+  "supply_current": {
+    "measurement": "rx_up.ivdd_a, |i(vddio)| at the crossing point (input at the switching threshold, i.e. at VDDIO/2 by construction of the bench) of the same committed nominal request",
+    "grid_range_ua": [34.6, 185.4],
+    "grid_mean_ua": 84.7,
+    "tt_1v2_27c_span_ua": [64.0, 94.2],
+    "tt_1v2_27c_mean_ua": 81.3,
+    "tt_1v2_27c_midpoint_power_uw": 97.6
+  },
+  "note": "T-10 PASSES on the adopted cell: klt yield pass at +-60 mV / 3 sigma, sigma-to-spec 5.96 (lower confidence bound 5.85 against 3), 0 of 5400 draws and 0 of 45 corners outside the limits, sample-size verdict sufficient (required 183), negative control detected (0 of 900 degraded draws in limit). Pooled mean +2.7 mV, sigma 9.6 mV, worst draw +42.3 mV; distribution consistent with normal (Anderson-Darling). Supersedes the failing record 20261108T035315Z-t10 (mean +34.9 mV, sigma 22.6 mV, 13 of 45 corners with out-of-limit draws), which stays untouched as append-only evidence. Per-corner reading in sim/mc/per_corner.md. The control's sweep window deviation is stated above; the limit, sigma convention and sample shape are unchanged, and the spec's T-10 row is untouched. Recorded, not tuned."
+}

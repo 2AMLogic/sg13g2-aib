@@ -10,7 +10,7 @@ and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
 `7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
 runs extracted the cells and graded nothing, which is not the same as a spec row failing);
 `8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — one recorded row
-fails (T-10), so the aggregate's envelope is `status: fail`; that is the report following the records,
+fails (T-19, since the #398 adoption; before it, T-10), so the aggregate's envelope is `status: fail`; that is the report following the records,
 not a spec target being missed by the report);
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
@@ -41,7 +41,11 @@ derives `item6/digital-spec.json` (a ratified JSON row list for the five determi
 digital rows) from `spec/target-spec.md` and writes `item6/digital-statement.json`; the
 manifest binds both by hash. `6.analog` cites the `klt yield` reports under
 `sim/mc/records/` with `rows`, and `spec_rows."6"` declares all six STAT rows; rows
-without a campaign are declared gaps (see `sim/mc/README.md`), so analog stays `unmet`.
+without a campaign are declared gaps (see `sim/mc/README.md`). Since the #398 adoption
+T-10, T-15 and T-16 pass and **T-19 is the recorded failure** (the adopted receiver's
+slow asymmetric output edge widens the capture aperture past the 150 ps row at the
+low-supply ss/sf corners; `sim/mc/records/20261123T094302Z-t19/`, #190 tracks the
+output-stage work), so analog stays `unmet` — on that failure, not on T-10.
 
 ## Item 1 / digital attestation
 
@@ -161,9 +165,9 @@ and delay are reported inputs to T-20 and T-13, DR-0023).
 
 | envelope | rows | result |
 |---|---|---|
-| `sim/dc-static/records/20261123T001034Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass (#408 re-run on the post-`e47bb80` cell; no verdict moved) |
-| `sim/channel-eye/records/20261123T001529Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #408 re-run, no verdict moved) |
-| `sim/clock-path/records/20261123T001348Z/report.json` | T-17 | 45/45 corners pass (CH; #408 re-run, T-17 worst -1.036 % -> -1.140 %, still inside +/-3 %) |
+| `sim/dc-static/records/20261123T091724Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass (#398 re-run on the adopted cell; T-11 unchanged, T-24 76.3-92.4 fF as the study measured) |
+| `sim/channel-eye/records/20261123T093440Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #398 re-run on the split; T-16 binding margin unchanged, T-26 energy per bit 0.387-0.741 pJ, +9.4-22.3 % per corner from the standing divider/tail current) |
+| `sim/clock-path/records/20261123T091724Z/report.json` | T-17 | 45/45 corners pass (CH; #398 re-run on the split; T-17 still inside +/-3 %; the t02 separations the two-edge disposition reads are in its `report_only_ranges`) |
 | `sim/channel-model/records/20261121T000100Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
 
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
@@ -213,7 +217,7 @@ The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
   entry means "the grader did not check this row — verify it by hand", not "checked and
   covered".** Under `5.analog` the six `asserted` rows are exactly the dc-static ones, and they
   are covered on this manifest's word rather than the grader's check. Each was read against
-  `sim/dc-static/records/20261123T001034Z/report.json` by hand (repeated on the #408 re-run; the
+  `sim/dc-static/records/20261123T091724Z/report.json` by hand (repeated on the #408 re-run and the #398 re-run; the
   first read was against `20261112T001207Z`); all have bounded, passing
   measurements over the envelope's 45/45 corners:
 
@@ -370,12 +374,14 @@ while already being cited for item 5 and item 6 (issue #230). The map may still
 carry extra entries the manifest does not cite; the check is one-directional.
 
 **Item 8 currently reads `unmet` / `check_failed`, and that is the honest state.**
-T-10 has a committed `klt yield` record whose verdict is `fail`, so the envelope is
-`status: fail` and the aggregate says so -- one failing row of 30; T-15 and T-16 pass on
-the 2026-11-20 re-run of #385, whose records supersede (and leave untouched) the
-2026-11-10 failing ones. No spec
-target, limit or comparator was changed, and no record under `sim/*/records/` was
-touched, to produce it. The `met` reading it replaced was an artefact of those
+T-19 has a committed `klt yield` record whose verdict is `fail` (the #398 adoption's
+recorded cost on the adopted receiver, `sim/mc/records/20261123T094302Z-t19/`), so the
+envelope is `status: fail` and the aggregate says so -- one failing row of 30; T-10 now
+passes on the adopted cell (`sim/mc/records/20261123T092848Z-t10/`), the failure this
+item used to carry. T-15 and T-16 pass on the #398 re-runs
+(`sim/mc/records/20261123T093311Z-t{15,16}/`), which supersede (and leave untouched) the
+2026-11-10 failing ones. No spec target, limit or comparator was changed, and no record
+under `sim/*/records/` was touched, to produce it. The `met` reading it replaced was an artefact of those
 records never being read.
 
 ## Item 9 attestation

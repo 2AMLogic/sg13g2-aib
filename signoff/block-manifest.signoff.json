@@ -39,13 +39,13 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:2a56d8e75f04b3af2659743c014849826a1ba9bacfbbafb4a35c4d512e4f078f",
+        "content_hash": "sha256:e36ef92bbb40837511bd358c85773406853355297c830983cee314921bc8e589",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
           "t1_item": 1,
           "path": null,
-          "content_hash": "sha256:2a56d8e75f04b3af2659743c014849826a1ba9bacfbbafb4a35c4d512e4f078f",
+          "content_hash": "sha256:e36ef92bbb40837511bd358c85773406853355297c830983cee314921bc8e589",
           "input_verified": true,
           "members": [
             {
@@ -77,7 +77,7 @@
                 "path": "design/aib_rx_clk.sch",
                 "scope": "repo"
               },
-              "content_hash": "sha256:e6c3f1ef5cbf82ea49b83e8aacca20db3e2fa99542b04ab2212825558a5bdce3",
+              "content_hash": "sha256:b46a6ce4fe476aa1f7493a714b4fd3d36c885321d6d3a515f9b3676c7416d9b6",
               "status": "verified"
             },
             {
@@ -85,7 +85,7 @@
                 "path": "design/aib_rx_clk.spice",
                 "scope": "repo"
               },
-              "content_hash": "sha256:0e53de36f4d0d2585452746bb2cb5d35e7c8b0801cdf597efe1dbb7bc01b5b2d",
+              "content_hash": "sha256:3675d8bb85f776fda07a1183adfd3b846062bd034c49d054a4f905cf58a95bb7",
               "status": "verified"
             },
             {
@@ -101,7 +101,7 @@
                 "path": "design/aib_rx_data.sch",
                 "scope": "repo"
               },
-              "content_hash": "sha256:81de2401c83db5f14b86d325828b608fdc8f0a67a1e809f751df9245657a35ea",
+              "content_hash": "sha256:bfb573506f61d9a70eb725e52f059cecec9c1aec1798bb1d435999d1f75f3193",
               "status": "verified"
             },
             {
@@ -109,7 +109,7 @@
                 "path": "design/aib_rx_data.spice",
                 "scope": "repo"
               },
-              "content_hash": "sha256:43f326de980bc5a817d6235ab5402de4aa02886619ead25e7e60c41dfef99eab",
+              "content_hash": "sha256:7863828c03ab4412c465be9931b6f8172fc90fe572ec64c72c4bb36cc34d6774",
               "status": "verified"
             },
             {
@@ -118,6 +118,30 @@
                 "scope": "repo"
               },
               "content_hash": "sha256:f2429c002d765a623b15027a235473620ea37f350b38104bbd62acd88fcce6db",
+              "status": "verified"
+            },
+            {
+              "path": {
+                "path": "design/aib_rx_inv.sch",
+                "scope": "repo"
+              },
+              "content_hash": "sha256:1fc643599f9def9a27edb7e5e867ee0059063530b7a7ac2250aca8b2ac5ddf12",
+              "status": "verified"
+            },
+            {
+              "path": {
+                "path": "design/aib_rx_inv.spice",
+                "scope": "repo"
+              },
+              "content_hash": "sha256:8cd42264f8014ff28951be5fb52e9ed94fadb94b89fc99aba5291e6d6b8b90fe",
+              "status": "verified"
+            },
+            {
+              "path": {
+                "path": "design/aib_rx_inv.sym",
+                "scope": "repo"
+              },
+              "content_hash": "sha256:0f4af551f079f9d4162a76f33e4995018c3d429380ab1df826be0cce9f9014e8",
               "status": "verified"
             },
             {
@@ -181,17 +205,17 @@
                 "path": "signoff/attest/item1-analog.inventory.json",
                 "scope": "repo"
               },
-              "content_hash": "sha256:639e952606c35a23e4a15ee182b41390873659dfc8d4ad63a1450a57c9bc47d4",
+              "content_hash": "sha256:cdef0f074e5ad5fbdf558a676d2a30bb187f74fbc5aeb4b381be4b2281cd43e3",
               "status": "verified"
             }
           ],
-          "summary": "T1 item 1 (Design sources): 21/21 attestation checks passed (klt signoff --attest)",
+          "summary": "T1 item 1 (Design sources): 25/25 attestation checks passed (klt signoff --attest)",
           "source": "signoff/attest/item1-analog.inventory.json",
           "attestation": {
             "producer": "klt signoff --attest",
             "inventory_schema_version": 1,
-            "check_count": 21,
-            "passed_count": 21
+            "check_count": 25,
+            "passed_count": 25
           }
         }
       }
@@ -244,7 +268,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -253,7 +277,7 @@
             "path": "layout/aib_io_column.gds",
             "scope": "repo"
           },
-          "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+          "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
           "input_verified": true,
           "summary": "T1 item 2 (Layout): 3/3 attestation checks passed (klt signoff --attest)",
           "source": "layout/aib_io_column.gds",
@@ -265,7 +289,7 @@
           },
           "regeneration": {
             "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-            "regenerated_hash": "sha256:312041e0f2547e4a0420254c41c01b7717fa2d9aa95bb5df35c9bdcedec4a148",
+            "regenerated_hash": "sha256:b10e356c25dce92c6cefd4f1c7a22e2b15b1f858a629da37e21e42a9deb21c05",
             "executed_by_klt": false,
             "hash_kind": "geometry"
           }
@@ -328,11 +352,11 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "layout/records/20261120T202314Z/drc_analog.json",
+        "file": "layout/records/20261123T092956Z/drc_analog.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
-        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
         "input_verified": true,
         "exit_status": 0,
         "coverage": {
@@ -471,7 +495,7 @@
         "command": null,
         "kind": "lvs",
         "check_status": "match",
-        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
         "input_verified": true,
         "exit_status": 0
       }
@@ -513,7 +537,7 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "sim/dc-static/records/20261123T001034Z/report.json",
+          "citation": "sim/dc-static/records/20261123T091724Z/report.json",
           "rows": [
             "T-06",
             "T-07",
@@ -526,7 +550,7 @@
           "reason": null
         },
         {
-          "citation": "sim/channel-eye/records/20261123T001529Z-ch/report.json",
+          "citation": "sim/channel-eye/records/20261123T093440Z-ch/report.json",
           "rows": [
             "T-01",
             "T-09",
@@ -539,7 +563,7 @@
           "reason": null
         },
         {
-          "citation": "sim/clock-path/records/20261123T001348Z/report.json",
+          "citation": "sim/clock-path/records/20261123T091724Z/report.json",
           "rows": [
             "T-17"
           ],
@@ -709,15 +733,15 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "sim/mc/records/20261108T035315Z-t10/yield.json",
+          "citation": "sim/mc/records/20261123T092848Z-t10/yield.json",
           "rows": [
             "T-10"
           ],
-          "status": "unmet",
-          "reason": "check_failed"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/mc/records/20261120T202400Z-t15/yield.json",
+          "citation": "sim/mc/records/20261123T093311Z-t15/yield.json",
           "rows": [
             "T-15"
           ],
@@ -725,7 +749,7 @@
           "reason": null
         },
         {
-          "citation": "sim/mc/records/20261120T202400Z-t16/yield.json",
+          "citation": "sim/mc/records/20261123T093311Z-t16/yield.json",
           "rows": [
             "T-16"
           ],
@@ -733,20 +757,20 @@
           "reason": null
         },
         {
-          "citation": "sim/mc/records/20261112T082047Z-t19/yield.json",
+          "citation": "sim/mc/records/20261123T094302Z-t19/yield.json",
           "rows": [
             "T-19"
           ],
-          "status": "met",
-          "reason": null
+          "status": "unmet",
+          "reason": "check_failed"
         }
       ],
       "detail": {
         "failed_citations": [
-          "sim/mc/records/20261108T035315Z-t10/yield.json"
+          "sim/mc/records/20261123T094302Z-t19/yield.json"
         ],
         "failed_rows": [
-          "T-10"
+          "T-19"
         ],
         "uncovered_rows": [],
         "declared_gaps": [
@@ -761,9 +785,9 @@
         ],
         "unratified_rows": [],
         "row_sources": {
+          "T-10": "asserted",
           "T-15": "asserted",
-          "T-16": "asserted",
-          "T-19": "asserted"
+          "T-16": "asserted"
         }
       }
     },
@@ -838,32 +862,32 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json",
+          "citation": "layout/pex/records/20261123T093102Z/aib_io_tx.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json",
+          "citation": "layout/pex/records/20261123T093102Z/aib_io_rx.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json",
+          "citation": "layout/pex/records/20261123T093102Z/aib_io_tx_clk.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json",
+          "citation": "layout/pex/records/20261123T093102Z/aib_io_rx_clk.extract.report.json",
           "status": "unmet",
           "reason": "check_failed"
         }
       ],
       "detail": {
         "failed_citations": [
-          "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json",
-          "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json",
-          "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json",
-          "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json"
+          "layout/pex/records/20261123T093102Z/aib_io_tx.extract.report.json",
+          "layout/pex/records/20261123T093102Z/aib_io_rx.extract.report.json",
+          "layout/pex/records/20261123T093102Z/aib_io_tx_clk.extract.report.json",
+          "layout/pex/records/20261123T093102Z/aib_io_rx_clk.extract.report.json"
         ]
       }
     },
@@ -1087,7 +1111,7 @@
         "command": null,
         "kind": "erc",
         "check_status": "not_checked",
-        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
         "input_verified": true,
         "exit_status": 0,
         "parts": [
@@ -1096,7 +1120,7 @@
             "command": null,
             "kind": "erc",
             "check_status": "not_checked",
-            "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+            "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
             "input_verified": true,
             "exit_status": 0
           },
@@ -1105,7 +1129,7 @@
             "command": null,
             "kind": "lvs",
             "check_status": "match",
-            "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+            "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
             "input_verified": true,
             "exit_status": 0
           }

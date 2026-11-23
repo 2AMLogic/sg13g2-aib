@@ -27,14 +27,14 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import gen_common  # noqa: E402  (write_or_check)
 
-# The graded STAT rows (sim/mc/README.md). T-10 still fails on its 2026-11-08 record
-# (#386 tracks a re-run on the current cells); T-15 / T-16 are the 2026-11-20 re-runs of
-# #385, which pass. T-19 passes and is out of scope; T-13 / T-14 have no record on
-# main (#136).
+# The graded STAT rows (sim/mc/README.md). T-10 passes on the #398 adoption record
+# (the supply-referenced cell landed from the #386 study); T-15 / T-16 are the #398
+# re-runs on the split cells. T-19 passes and is out of scope; T-13 / T-14 have no record
+# on main (#136).
 RECORDS = [
-    ("T-10 receiver threshold", "records/20261108T035315Z-t10"),
-    ("T-15 RX data-to-data skew (CH)", "records/20261120T202400Z-t15"),
-    ("T-16 RX data-to-clock skew (CH)", "records/20261120T202400Z-t16"),
+    ("T-10 receiver threshold", "records/20261123T092848Z-t10"),
+    ("T-15 RX data-to-data skew (CH)", "records/20261123T093311Z-t15"),
+    ("T-16 RX data-to-clock skew (CH)", "records/20261123T093311Z-t16"),
 ]
 
 # The record's own pooled and per-corner figures reproduce bit-for-bit from the
@@ -62,11 +62,13 @@ inferred from sample order. The generator cross-checks each table's totals again
 record's own pooled `monte_carlo` block and `failed` count, and every per-corner mean and
 sigma against its `by_corner` entry; a mismatch fails the script.
 
-T-15 and T-16 are the 2026-11-20 re-runs of #385 on the cells of `main` at `7a7c5b9`
-(after the TX predriver resize of #164 and the `aib_pad_esd` `XResd` shortening of #332);
-both pass the 7-sigma gate pooled, so their tables say where the binding corner sits rather
-than which corners fail. T-10 remains the failing 2026-11-08 record (#386 tracks its
-re-run).
+T-10, T-15 and T-16 are the 2026-11-23 records of the #398 receive split (the data
+lanes on the adopted supply-referenced receiver, the clock legs on the committed
+inverter): T-10 passes at +-60 mV / 3 sigma with no out-of-limit draw on any corner, and
+the T-15 / T-16 rows are unchanged by the adoption (their 2026-11-20 #385 predecessors,
+on the pre-split cell, read within a fraction of a sigma of these). All three tables say
+where the binding corner sits. The failing 2026-11-08 T-10 record stays committed as
+append-only evidence of the pre-adoption cell.
 
 """
 

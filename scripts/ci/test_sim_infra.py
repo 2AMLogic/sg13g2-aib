@@ -296,6 +296,11 @@ class ClkPairStructureTests(unittest.TestCase):
     def test_rx_clkb_output_unconverted_fails(self):
         self.assertEqual(self.check(self.FILES[1], "Xclkb CLKB_PAD CLKB_O", "Xclkb CLKB_PAD CLK_O"), 1)
 
+    def test_data_receiver_in_a_clock_leg_fails(self):
+        # A clock leg must use the clock-pair inverter receiver, not the supply-referenced data one.
+        self.assertEqual(self.check(self.FILES[1], "Xclk CLK_PAD CLK_O VDDIO VSS aib_rx_inv",
+                                    "Xclk CLK_PAD CLK_O VDDIO VSS aib_rx_data"), 1)
+
     TB = FILES[2]
 
     def test_subckt_local_nets_do_not_bridge_a_cut_clkb_leg(self):

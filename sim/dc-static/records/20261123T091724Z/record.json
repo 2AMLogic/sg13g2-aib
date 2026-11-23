@@ -1,0 +1,129 @@
+{
+  "record": "dc-static",
+  "utc_stamp": "20261123T091724Z",
+  "kind": "simulated",
+  "claim_scope": "BOTH (channel and test configuration); no channel model used",
+  "t24_label": "extracted-capacitance estimate from model small-signal admittance at 500 MHz; no bond pad (PDK bondpad is an empty placeholder); post-layout PEX out of scope",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-06": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ss/mixed/125C",
+        "measurement": "drv_ld.t06_voh_droop_v",
+        "value": 0.07510153,
+        "why": "smallest margin"
+      }
+    },
+    "T-07": {
+      "verdict": "pass",
+      "pass": 135,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.418801e-07,
+        "why": "smallest margin"
+      }
+    },
+    "T-08": {
+      "verdict": "pass",
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/-40C",
+        "measurement": "drv_ld.t08_rout_up_ohm",
+        "value": 42.86275,
+        "why": "smallest margin"
+      }
+    },
+    "T-11": {
+      "verdict": "pass",
+      "pass": 45,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "sf/mixed/125C",
+        "measurement": "t11_hyst_mv",
+        "value": 0.001716,
+        "why": "smallest margin"
+      }
+    },
+    "T-24": {
+      "verdict": "pass",
+      "pass": 135,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ss/mixed/125C",
+        "measurement": "cap_10.t24_cpin_ff",
+        "value": 92.4237,
+        "why": "smallest margin"
+      }
+    },
+    "T-28": {
+      "verdict": "pass",
+      "pass": 225,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.418801e-07,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "report_only_ranges": {
+    "rx_dn.vth_dn": {
+      "spec_row": null,
+      "min": [
+        0.4981701,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5081335,
+        "ff/1.320V/125C"
+      ]
+    },
+    "rx_up.vddio_v": {
+      "spec_row": null,
+      "min": [
+        1.08,
+        "ff/1.080V/-40C"
+      ],
+      "max": [
+        1.32,
+        "tt/1.320V/27C"
+      ]
+    },
+    "rx_up.vth_up": {
+      "spec_row": null,
+      "min": [
+        0.4981703,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5081341,
+        "ff/1.320V/125C"
+      ]
+    }
+  },
+  "row_source": "rows are grouped by the --row-map prefix map in run_dc_static.sh, not by a spec_row tag: the committed request declares none and its graded measurements are step-level. signoff/block-manifest.json still asserts these six rows for item 5 / analog (tool gap 2AMLogic/klayout-tools#5462).",
+  "t25_note": "T-25 (ESD level) is not evaluated by this record: no ESD-transient simulation is run here. See spec/decisions/0017-driver-series-resistor-and-esd-diode-area.md.",
+  "batch_job_ids": [
+    "klt-sim-7e473ef68554"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

@@ -4,6 +4,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-23
 
+- **Issue #398** (in progress): adopt the supply-referenced RX input stage for the `aib_rx_data` data lanes — receive split landed (`aib_rx_inv` carries the committed inverter for the clock legs), T-10 passes on the adopted cell (0/5400 out), layout/DRC/LVS/PEX re-attested, T-19 recorded as the adoption's failing row (#190 tracks the output-stage fix)
 - **PR #391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate
 - **Issue #385** (closed): T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes
 - **PR #421**: chore(sim): remove the closed T-16 attribution scaffolding
