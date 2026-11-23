@@ -13,9 +13,9 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 - **Issue #415** (closed): signoff/block-manifest.json: 18 of 37 evidence entries carry no content_hash pin
 - **Issue #414** (closed): Record bench decks' .include paths are staging-dir-relative, so archived decks can silently stop resolving
 - **Issue #411** (closed): Remove the completed #251 T-16 sizing-study scaffolding (12 files, 2576 lines)
-- **Issue #408** (closed): T1 item 5 (analog): re-run the cited dc-static, channel-eye and clock-path records on the current cells
-- **Issue #405** (closed): No CI check binds a cited analog record's netlist_closure to the tree
-- **Issue #386** (closed): T-10: receiver threshold fails Monte Carlo on systematic corner shift — sizing study for the aib_rx_data input stage
+- **Issue #408** (closed): T1 item 5 (analog): re-run the cited dc-static, channel-eye and clock-path records on the current cells — each cites aib_pad_esd at its pre-e47bb80 hash
+- **Issue #405** (closed): No CI check binds a cited analog record's netlist_closure to the tree, so a design/*.spice change silently staleness-es cited evidence
+- **Issue #386** (closed): T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage
 
 ### 2026-11-22
 
