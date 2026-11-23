@@ -4,6 +4,9 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-23
 
+- **PR #421**: chore(sim): remove the closed T-16 attribution scaffolding
+- **Issue #420** (closed): Hoist duplicated PWL stimulus helpers into sim/gen_common.py
+- **Issue #418** (closed): Remove the closed T-16 attribution scaffolding from sim/channel-eye (record is self-contained)
 - **PR #417**: fix(ci): fail CI when a record deck's .include stops resolving
 - **PR #416**: fix: pin content_hash on every pinnable evidence citation in the signoff manifest
 - **PR #413**: evidence: re-cite item 5 analog records re-run on the post-e47bb80 pad cell
