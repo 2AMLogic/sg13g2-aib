@@ -2,8 +2,27 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-23
+
+- **PR #417**: fix(ci): fail CI when a record deck's .include stops resolving
+- **PR #416**: fix: pin content_hash on every pinnable evidence citation in the signoff manifest
+- **PR #413**: evidence: re-cite item 5 analog records re-run on the post-e47bb80 pad cell
+- **PR #412**: chore(sim): remove the closed T-16 sizing-study scaffolding
+- **PR #410**: feat(ci): check cited sim records' netlist closures against the tree
+- **PR #399**: evidence(sim): screen and confirm a supply-referenced RX input stage for T-10
+- **Issue #415** (closed): signoff/block-manifest.json: 18 of 37 evidence entries carry no content_hash pin
+- **Issue #414** (closed): Record bench decks' .include paths are staging-dir-relative, so archived decks can silently stop resolving
+- **Issue #411** (closed): Remove the completed #251 T-16 sizing-study scaffolding (12 files, 2576 lines)
+- **Issue #408** (closed): T1 item 5 (analog): re-run the cited dc-static, channel-eye and clock-path records on the current cells
+- **Issue #405** (closed): No CI check binds a cited analog record's netlist_closure to the tree
+- **Issue #386** (closed): T-10: receiver threshold fails Monte Carlo on systematic corner shift — sizing study for the aib_rx_data input stage
+
 ### 2026-11-22
 
+- **PR #409**: test: guard test_checkers SUITES and loading against check_local.sh
+- **PR #404**: refactor: split scripts/ci/test_checkers.py into four sibling suites
+- **Issue #406** (closed): Nothing asserts test_checkers.py's SUITES matches check_local.sh, and no CI job runs the aggregator
+- **Issue #401** (closed): Split monolithic scripts/ci/test_checkers.py (2,635 lines) into focused sibling suites
 - **PR #402**: docs: correct the Resd PolyRes coordinates in layout/README.md
 - **Issue #394** (closed): Correct the Resd PolyRes coordinates recorded in layout/README.md (#387 regeneration)
 - **PR #390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
