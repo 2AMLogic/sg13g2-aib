@@ -129,6 +129,11 @@
           "name": "vddio_v",
           "expr": "v(vddio)[0]",
           "unit": "V"
+        },
+        {
+          "name": "ivdd_a",
+          "spice": ".meas dc ivdd_a FIND i(vddio) AT=0.5",
+          "unit": "A"
         }
       ]
     }

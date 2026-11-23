@@ -1,20 +1,20 @@
 * tb_body.inc -- four-lane channel testbench body (circuit body for `klt sim`).
 *
-* Lanes (each: aib_tx_data -> aib_pad_esd -> link -> aib_pad_esd -> aib_rx_data):
-*   A   data lane, PRBS-7                 pin rxa
+* Lanes (each: aib_tx_data -> aib_pad_esd -> link -> aib_pad_esd -> receiver):
+*   A   data lane, PRBS-7                 pin rxa   (aib_rx_data: supply-referenced, #398)
 *   B   data lane, complement of A        pin rxb   (T-15: opposite-polarity edges launch together)
 *   C   forwarded clock, clk              pin rxc   (clk and clkb are the quasi-differential pair, T-04)
 *   CB  forwarded clock, clkb             pin rxcb
 * The including netlist defines `.subckt link txp rxp gnd` first: the declared channel
 * CH-3MM-RC (tb_ch.cir) or the declared L2 wire-bond loopback (tb_tc.cir).
 *
-* Cells are .include'd by the including netlist, never copied. design/aib_{tx,rx}_clk.spice
-* embed copies of aib_tx_data / aib_rx_data, so the clock cells are not included next to the
-* data cells: the clock lane is two aib_tx_data / aib_rx_data instances, which is what those
-* cells are.
+* Receive split (#398): the data lanes A/B take aib_rx_data (the supply-referenced
+* stage adopted from the #386 study); the clock lanes C/CB take aib_rx_inv, the
+* committed inverter receiver that aib_rx_clk instantiates in both legs -- which is
+* what those lanes are. Cells are .include'd by the including netlist, never copied.
 .include prbs7_stim.inc
 
-* One lane. OE tied high (driving), weak pull-up gate PUN high (off), pull-down gate PD low (off).
+* One data lane. OE tied high (driving), weak pull-up gate PUN high (off), pull-down gate PD low (off).
 * DOUT carries a declared 5 fF load (an RTL flop input; no PDK or layout value behind it).
 .subckt lane din dout rxp vtx vrx
 Xtx   din vtx vtx 0 txi vtx 0 aib_tx_data
@@ -24,6 +24,16 @@ Xesdr rxp rxi vrx 0 aib_pad_esd
 Xrx   rxi dout vrx 0 aib_rx_data
 Cdout dout 0 5f
 .ends lane
+
+* The same lane with the committed inverter receiver (the clock leg's cell, #398).
+.subckt lane_clk din dout rxp vtx vrx
+Xtx   din vtx vtx 0 txi vtx 0 aib_tx_data
+Xesdt txp txi vtx 0 aib_pad_esd
+Xlnk  txp rxp 0 link
+Xesdr rxp rxi vrx 0 aib_pad_esd
+Xrxi  rxi dout vrx 0 aib_rx_inv
+Cdout dout 0 5f
+.ends lane_clk
 
 * Supplies: one source per block so the energy of each is separable; corners.supply_v sweeps
 * them together. Nominal value only here, `klt sim` alters it per corner.
@@ -42,8 +52,8 @@ Bdcn dcn 0 V = v(pcb)*v(vdd_ctx)
 
 Xa  da  douta  rxa  vdd_atx vdd_arx lane
 Xb  db  doutb  rxb  vdd_btx vdd_brx lane
-Xcp dcp doutcp rxc  vdd_ctx vdd_crx lane
-Xcn dcn doutcn rxcb vdd_ctx vdd_crx lane
+Xcp dcp doutcp rxc  vdd_ctx vdd_crx lane_clk
+Xcn dcn doutcn rxcb vdd_ctx vdd_crx lane_clk
 
 * Zero-crossing probes (no loading): data minus RX mid-rail, clock quasi-differential.
 Bdsa dsa  0 V = v(rxa) - 0.5*v(vdd_arx)

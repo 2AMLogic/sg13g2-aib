@@ -254,6 +254,7 @@ a re-run, never edit an old one. Each is cited under `3.analog` / `3.digital` in
 | `20261113T112710Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the `ng = 4` predriver pull-ups, #187) | clean, 0 violations |
 | `20261113T231304Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the DR-0016 spare placement, #248) | clean, 0 violations |
 | `20261120T202314Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the `Resd` `l = 1 um` resize, #387) | clean, 0 violations |
+| `20261123T092956Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the #398 receive split: `aib_io_rx` draws the adopted supply-referenced receiver, new `aib_io_rx_inv` unit for the clock pair) | clean, 0 violations |
 | `20261027T063033Z` | `drc_digital.json` | `pnr/.klt/place-and-route/aib_datapath.gds` (digital) | clean, 0 violations |
 
 Clean is not full signoff: the curated deck does not model the pad (`Pad.*`) or latch-up

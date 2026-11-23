@@ -1,19 +1,23 @@
 v {xschem version=3.4.7 file_version=1.3
 * aib_rx_clk -- quasi-differential forwarded-clock receiver (T-04).
-* Two aib_rx_data receivers, one per leg. The clk/clkb crossing at the
-* receiver is what T-04 verifies in simulation; nothing is claimed here.
+* Two aib_rx_inv receivers, one per leg (#398 split): the clock legs keep
+* the committed inverter receiver -- as drawn before the split -- because
+* the supply-referenced stage adopted for aib_rx_data multiplies clock-path
+* duty distortion ~8x at the binding corner (sim/rx-threshold-study,
+* clock-path leg). The clk/clkb crossing at the receiver is what T-04
+* verifies in simulation; nothing is claimed here.
 }
 G {}
 K {}
 V {}
 S {}
 E {}
-C {aib_rx_data.sym} 200 200 0 0 {name=Xclk}
+C {aib_rx_inv.sym} 200 200 0 0 {name=Xclk}
 C {lab_pin.sym} 140 170 0 0 {name=l1 lab=CLK_PAD}
 C {lab_pin.sym} 260 170 0 0 {name=l2 lab=CLK_O}
 C {lab_pin.sym} 200 140 0 0 {name=l3 lab=VDDIO}
 C {lab_pin.sym} 200 260 0 0 {name=l4 lab=VSS}
-C {aib_rx_data.sym} 500 200 0 0 {name=Xclkb}
+C {aib_rx_inv.sym} 500 200 0 0 {name=Xclkb}
 C {lab_pin.sym} 440 170 0 0 {name=l5 lab=CLKB_PAD}
 C {lab_pin.sym} 560 170 0 0 {name=l6 lab=CLKB_O}
 C {lab_pin.sym} 500 140 0 0 {name=l7 lab=VDDIO}

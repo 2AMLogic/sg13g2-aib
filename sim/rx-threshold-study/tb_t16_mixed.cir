@@ -6,7 +6,13 @@
 .include ../../spec/channel/channel_rc.cir
 .include ../../design/aib_tx_data.spice
 .include ../../design/aib_pad_esd.spice
-.include ../../design/aib_rx_data.spice
+* inverter candidate base: XMi1p w=2.5u ng=2, XMi1n w=1u ng=2, both l=0.13u; restore stage as committed
+.subckt aib_rx_data PAD DOUT VDDIO VSS
+XMi1p M1 PAD VDDIO VDDIO sg13_lv_pmos w=2.5u l=0.13u ng=2 m=1
+XMi1n M1 PAD VSS VSS sg13_lv_nmos w=1u l=0.13u ng=2 m=1
+XMi2p DOUT M1 VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
+XMi2n DOUT M1 VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
+.ends
 .subckt link txp rxp gnd
 Xch txp rxp gnd chan_rlc len_mm=3
 .ends
