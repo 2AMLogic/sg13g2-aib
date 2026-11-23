@@ -862,5 +862,115 @@ class NetlistClosureTests(unittest.TestCase):
         self.assertIn("duplicate", r.stderr)
 
 
+class RecordIncludesTests(unittest.TestCase):
+    """Every archived record deck's .include resolves, or is allowlisted (#414).
+
+    The seed is the #412 shape: a record deck whose include is relative to the
+    bench staging directory, staged beside a sibling that a later cleanup is
+    free to delete. The checker reads population and bytes from HEAD, so each
+    scenario commits its tree before running it.
+    """
+
+    REC_INC = HERE / "check_record_includes.py"
+    DECK = "sim/s/records/20260101T000000Z/tb.cir"
+    # one real allowlisted pair, for the allowlist's own tests below
+    ALLOWED_DECK = "sim/dc-static/records/20261118T212900Z-t16sz-dc-dpa/tb_dc_static_sz_dpa.cir"
+    ALLOWED_INCLUDE = "../channel-eye/esd_sz_dpa.inc"
+
+    def scenario(self, files):
+        """A committed tree of {path: text}; returns the checker's result."""
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            git(root, "init", "-q", "-b", "main")
+            make_tree(root, GOOD)
+            for path, text in files.items():
+                p = root / path
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(text)
+            git(root, "add", "-A")
+            git(root, "commit", "-qm", "seed")
+            return run(self.REC_INC, cwd=root)
+
+    def test_record_local_include_passes(self):
+        r = self.scenario({self.DECK: ".include helper.inc\n",
+                           "sim/s/records/20260101T000000Z/helper.inc": "* body\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_staging_relative_include_passes(self):
+        # the actual shape of the hazard (#412's decks): the include resolves
+        # only from the bench staging directory (sim/s/), never from the
+        # record directory -- a sibling family holds the file
+        r = self.scenario({self.DECK: ".include ../other/util.inc\n",
+                           "sim/other/util.inc": "* utility\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_dangling_include_fails_naming_deck_and_string(self):
+        r = self.scenario({self.DECK: ".include ../gone.inc\n"})
+        self.assertEqual(r.returncode, 1)
+        self.assertIn(self.DECK, r.stderr)
+        self.assertIn("../gone.inc", r.stderr)
+
+    def test_variable_path_is_skipped(self):
+        r = self.scenario({self.DECK: ".include $PDK_ROOT/libs/spice/sg13g2_io.spi\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("1 $variable path(s) skipped", r.stdout)
+
+    def test_quoted_include_and_trailing_comment_are_parsed(self):
+        # the layout/pex decks already quote their record-local includes; a
+        # trailing ; comment must not become part of the file name
+        r = self.scenario({self.DECK: '.include "helper.inc" ; the body\n',
+                           "sim/s/records/20260101T000000Z/helper.inc": "* body\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_non_record_deck_is_out_of_population(self):
+        r = self.scenario({"sim/s/tb_scratch.cir": ".include ../gone.inc\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("0 record deck(s)", r.stdout)
+
+    def test_a_corners_deck_is_checked_too(self):
+        # membership is RECORD_PARTS (records/ and corners/), the same record
+        # definition check_sim_append_only.py and check_record_not_ignored.py use
+        r = self.scenario({"sim/s/corners/tt/tb.cir": ".include ../gone.inc\n"})
+        self.assertEqual(r.returncode, 1)
+
+    def test_allowlisted_pair_passes(self):
+        r = self.scenario({self.ALLOWED_DECK: f".include {self.ALLOWED_INCLUDE}\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("1 allowlisted", r.stdout)
+
+    def test_allowlist_entry_that_stops_dangling_fails(self):
+        # shrink-only, the netlist_closure_allowlist.json discipline: the
+        # staging-dir sibling came back, so the entry must be dropped
+        r = self.scenario({self.ALLOWED_DECK: f".include {self.ALLOWED_INCLUDE}\n",
+                           "sim/channel-eye/esd_sz_dpa.inc": "* restored\n"})
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("drop it", r.stderr)
+
+    def test_allowlisted_deck_whose_include_changed_fails(self):
+        # the pair is keyed on the verbatim string; a rewritten include (which
+        # append-only forbids on main) must not ride an old entry
+        r = self.scenario({self.ALLOWED_DECK: ".include ../somewhere_else.inc\n"})
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("drop it", r.stderr)
+
+    def test_absent_allowlisted_deck_is_inert_not_stale(self):
+        # a fixture (or foreign) tree that seeds none of the allowlisted decks
+        # must not read their absence as "fixed"; only a present deck whose
+        # pair stopped dangling is stale
+        r = self.scenario({self.DECK: ".include helper.inc\n",
+                           "sim/s/records/20260101T000000Z/helper.inc": "* body\n"})
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_git_failure_exits_2(self):
+        # not a repository: exit 1 would let a broken environment satisfy the
+        # dangling-include negative control above
+        with tempfile.TemporaryDirectory() as t:
+            r = run(self.REC_INC, cwd=Path(t))
+        self.assertEqual(r.returncode, 2)
+
+    def test_the_repo_conforms(self):
+        self.assertEqual(run(self.REC_INC, cwd=REPO).returncode, 0)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

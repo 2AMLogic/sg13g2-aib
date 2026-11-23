@@ -205,6 +205,18 @@ if [ "$want_evidence" = 1 ]; then
       --event-name "${EVENT_NAME-}" --push-ref "${PUSH_REF-}" \
       --default-branch "${DEFAULT_BRANCH:-main}"
 
+  # A record deck is the bench deck copied verbatim, so its .include strings
+  # stay relative to the bench staging directory (`sim/<family>/`), not to the
+  # record directory it is archived in. #412 deleting a staging-dir sibling
+  # (`sim/channel-eye/esd_sz_*.inc`) silently turned two re-runnable records
+  # into ones needing a hand-repointed include, and nothing saw it (#414).
+  # This resolves every tracked record deck's .include against the record
+  # directory, then the staging directory; $variable paths are skipped and the
+  # dated in-file allowlist is the census at landing (shrink-only, the
+  # netlist_closure_allowlist.json discipline).
+  run "Check record decks' includes resolve record-locally or from the bench staging dir" \
+    python3 -I scripts/ci/check_record_includes.py
+
   run "Check the item 8 characterization report is fresh and pinned" \
     python3 -I scripts/ci/gen_characterization_report.py --check
 
