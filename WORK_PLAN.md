@@ -3,7 +3,7 @@
 Backlog snapshot from current GitHub label state, maintained by the Guide role.
 Direction lives in the hand-written roadmap: [`ROADMAP.md`](ROADMAP.md).
 
-The body below is a snapshot of GitHub label state as of the last merged docs-maintenance PR — it may lag live labels until the next one merges. The `_Generated:` stamp at the top of the generated region dates the snapshot; `git log -1 -- WORK_PLAN.md` finds the merge that wrote it.
+The body below is a snapshot of GitHub label state as of the last merged docs-maintenance PR — it may lag live labels until the next one merges. `git log -1 -- WORK_PLAN.md` finds the merge that wrote it, and dates the snapshot.
 
 <!-- guide:plan-body:start -->
 ## Operator Attention: Merge-Risk-Hold Pileup
