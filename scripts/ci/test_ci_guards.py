@@ -114,47 +114,17 @@ class EveryGeneratorParsesItsFlagsStrictlyTests(unittest.TestCase):
         self.assertNotIn("layout/erc/gen_specs.py", STRICTNESS_UNASSERTABLE)
         self.assertIn("layout/erc/gen_specs.py", STRICT_FLAG_SUBJECTS)
 
-    def test_gen_t16attr_refuses_every_argument_shape(self):
-        """#271: gen_t16attr.py read its OUTDIR off argv[0], so every argument was a
-        valid output path -- `--check` exited 0 having checked nothing and left a
-        directory named `--check` behind. The derived test above pins `--chek` for it
-        like every other subject; this one keeps the wider argument shapes that defect
-        needed. Run from an empty cwd, so a stray relative path shows up as a file in
-        it rather than landing in the repo.
-        """
-        gen = "sim/channel-eye/gen_t16attr.py"
-        # no argument at all; an unknown flag; `--check` alone and after a good
-        # OUTDIR (ignoring a trailing flag is the same silent accept).
-        for argv in ([], ["--chek", "out"], ["--check"], ["out", "--check"]):
-            with self.subTest(argv=argv), tempfile.TemporaryDirectory() as t:
-                r = run(REPO / gen, *argv, cwd=t)
-                self.assertEqual(r.returncode, 2,
-                                 f"{gen} {' '.join(argv)}: {r.stdout}{r.stderr}")
-                self.assertEqual(sorted(q.name for q in Path(t).iterdir()), [],
-                                 f"{gen} {' '.join(argv)} created something")
-
-    def test_gen_t16attr_still_writes_when_given_an_outdir(self):
-        # The refusals above must not be bought by breaking the generator: its one
-        # positional OUTDIR is load-bearing (sim/channel-eye/run_t16attr.sh:25).
-        gen = "sim/channel-eye/gen_t16attr.py"
-        written = "request_t16attr_ch_ss.json"
-        with tempfile.TemporaryDirectory() as t:
-            r = run(REPO / gen, t)
-            self.assertEqual(r.returncode, 0, f"{gen} OUTDIR: {r.stdout}{r.stderr}")
-            self.assertTrue((Path(t) / written).is_file(),
-                            f"{gen} OUTDIR did not write {written}")
-
     def test_the_strict_flag_subjects_are_not_decided_by_exempt_membership(self):
         # #266 derives these subjects from discovery, filtered by
         # STRICTNESS_UNASSERTABLE -- the only reason that actually blocks the
         # assertion. The filter must never be EXEMPT, which answers "has no check
-        # mode", a question separate from flag strictness since #271: gen_t16attr.py
-        # is the witness, both EXEMPT from the check list and a strict-flag subject.
+        # mode", a question separate from flag strictness since #271:
+        # layout/erc/gen_specs.py is the witness, both EXEMPT from the check
+        # list and a strict-flag subject.
         self.assertTrue(set(STRICT_FLAG_SUBJECTS) & set(EXEMPT),
                         "no EXEMPT generator is a strict-flag subject any more: being "
                         "EXEMPT has become what decides whether strictness is asserted, "
                         "which is the coupling #271 split apart")
-        self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_FLAG_SUBJECTS)
         # Since #387 the generator has a --check entry point that runs before
         # klayout is imported, so its strictness is asserted like every other
         # subject -- the old witness for "EXEMPT and not a strict subject" is
@@ -253,11 +223,6 @@ EXEMPT = {
         "regenerated only at a klt re-pin (signoff/README.md:429), so proving them fresh "
         "would need the pinned klt environment no CI job runs. Flag strictness is a "
         "separate property and is asserted -- it stays a strict-flag subject (#266)",
-    "sim/channel-eye/gen_t16attr.py":
-        "generator with no check mode: its four request JSONs are gitignored "
-        "(.gitignore:24-27) and run_t16attr.sh regenerates them before every run, so no "
-        "committed tree exists for a --check to prove fresh. Flag strictness is a "
-        "separate property and is asserted -- it stays a strict-flag subject (#271, #266)",
     "sim/gen_common.py": "the shared write-or-check helper (#227); imported, never run",
     "scripts/ci/test_checkers.py":
         "aggregator entry point: signoff/attest/item10.inventory.json and `npm test` run it by name, "
@@ -272,7 +237,7 @@ EXEMPT = {
 # without an entry here is asserted, not silently untested. That is the same rule the
 # check-list completeness test below applies to checkers (#173, #219). It is a
 # different question from EXEMPT above, which answers "has no check mode" (#271
-# split the two): gen_t16attr.py is EXEMPT and still a subject.
+# split the two): layout/erc/gen_specs.py is EXEMPT and still a subject.
 STRICTNESS_UNASSERTABLE = {
     "sim/gen_common.py":
         "the shared write-or-check helper (#227); imported, never run",
@@ -415,15 +380,6 @@ class CheckListCompletenessTests(unittest.TestCase):
         for mod in ("verification/test_datapath.py", "verification/test_shift_redundancy.py"):
             self.assertIn(mod, EXEMPT)
             self.assertIn("cocotb", EXEMPT[mod])
-
-    def test_the_no_check_mode_exemption_does_not_also_claim_loose_flags(self):
-        # #271 split two properties this table used to answer at once. The reason has
-        # to state why there is no check mode -- nothing committed to check -- without
-        # leaving a reader to infer that the script therefore accepts any argument:
-        # gen_t16attr.py parses strictly and stays a strict-flag subject (#266).
-        reason = EXEMPT["sim/channel-eye/gen_t16attr.py"]
-        self.assertIn("gitignored", reason)
-        self.assertIn("sim/channel-eye/gen_t16attr.py", STRICT_FLAG_SUBJECTS)
 
     def test_attest_item2_is_outside_the_discovery_set(self):
         # Stated in the comment above: it matches no glob, and needs pinned klt.

@@ -36,7 +36,7 @@ JOB_FIELDS = {"batch_job_id", "batch_job_ids", "runner_klt_version"}
 
 
 # the families sim/harness/batch_record.sh drives; the other sim/ record families
-# (mc, pdk-smoke, rtl-synth, the local t16attr probes) follow a different procedure.
+# (mc, pdk-smoke, rtl-synth, the T-16 attribution probes) follow a different procedure.
 FAMILIES = ("channel-eye", "clock-path", "redundancy-mux")
 
 

@@ -560,19 +560,22 @@ are untouched.
   fail in L2 did not occur in this run.
 
 **T-16 attribution (#161, parent #142):** record `channel-eye/records/20261111T231422Z-t16attr/`
-(simulated; eight local single-corner runs, no batch job; `channel-eye/run_t16attr.sh`). The
+(simulated; eight local single-corner runs, no batch job). The
 65 ps binding miss above is the pre-#132 driver; on current `main` (record `20261110T082948Z-ch`)
 it is 41.5 ps. At the binding corner the miss is a sum of named terms with zero residual: the TX
 cell's rise/fall delay asymmetry (about -22.5 ps, unchanged by #132), channel/pad loading of the TX
 (-21.5 ps current, -40.6 ps pre-#132) and under 3 ps of channel line and crossing definition.
 The bench measures offset from an unaligned 0.5 UI, which is not the same thing as the spec
 row's skew; neither is changed. See the record's `README.md` for the numbers and the recommendation.
+That record's `Reproduce:` line names `run_t16attr.sh`, which was removed from the working tree
+after the study closed (#418); the script and its generator are in git history at the pre-removal
+commit `1125fe2`, e.g. `git show 1125fe2:sim/channel-eye/run_t16attr.sh`.
 
 **T-16 design fix (#142):** record `channel-eye/records/20261111T235838Z-ch/` (simulated, CH-3MM-RC,
 45 corners, batch backend). The rise/fall asymmetry (term A in the t16attr record) sat in the
 predriver NOR's series PMOS pull-up (`XMnr1p`/`XMnr2p`, 4u/ng=2 -> 8u/ng=4 in `aib_tx_data`): it
 charges the `XMn` gate through two series PMOS, and it was the slow edge. Ideal-connection probe at
-mos_ss/1.08 V/125 C (`run_t16attr.sh` requests, local): data delay rise/fall 144/185 ps -> 145/147
+mos_ss/1.08 V/125 C (local requests): data delay rise/fall 144/185 ps -> 145/147
 ps, `t16_df_cf_long` 477.5 -> 499.0 ps; under the channel 458.5 -> 486.0 ps. T-16 passes 360/360
 measurements at 45/45 corners; the binding point is now `mos_ss/mixed/-40C` `t16_dr_cf_long` =
 480.9 ps (10.9 ps inside the 470 ps edge). T-01, T-09, T-15, T-18, T-26 still pass 45/45. The bound,
