@@ -129,6 +129,25 @@ class FormatTests(unittest.TestCase):
             self.assertIn("(3 record(s) checked)", r.stdout)
             self.assertNotIn("sim record(s)", r.stdout)
 
+    def test_record_roots_imported_not_parsed_from_owner_source(self):
+        with tempfile.TemporaryDirectory() as t, tempfile.TemporaryDirectory() as r:
+            d, root = Path(t), Path(r)
+            for name in (FMT.name, APP.name):
+                shutil.copy(HERE / name, d / name)
+            owner = (d / APP.name).read_text()
+            self.assertIn('RECORD_ROOTS = ("sim", "layout/pex")', owner)
+            (d / APP.name).write_text(owner.replace(
+                'RECORD_ROOTS = ("sim", "layout/pex")',
+                'RECORD_ROOTS: tuple = ("sim", "layout/pex")'))
+            make_tree(root, GOOD)
+            p = root / "layout/pex/records/20260102T000000Z"
+            p.mkdir(parents=True)
+            (p / "rows.json").write_text("{}")
+            res = run(d / FMT.name, "--root", root)
+            self.assertEqual(res.returncode, 1, res.stdout + res.stderr)
+            self.assertIn("layout/pex/records/20260102T000000Z: record directory holds "
+                          "neither record.json nor README.md", res.stderr)
+
 
 class AppendOnlyTests(unittest.TestCase):
     REC = "sim/s/records/20260101T000000Z/record.json"
