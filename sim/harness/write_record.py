@@ -38,9 +38,15 @@ from pathlib import Path
 
 
 def job_identity(report):
-    """(job ids, runner klt versions) of a run, single-job or sharded."""
+    """(job ids, runner klt versions) of a run, single-job or sharded.
+
+    A `fleet` entry may be null (a shard the report carries a placeholder for,
+    e.g. a unit-level error row); those are skipped, not dereferenced -- the
+    rx-threshold study's t16-mixed leg lost an otherwise complete record to the
+    AttributeError on one (issue #386).
+    """
     remote = report.get("environment", {}).get("remote") or {}
-    shards = remote.get("fleet") or []
+    shards = [s for s in (remote.get("fleet") or []) if isinstance(s, dict)]
     job_ids = [j for j in ([remote.get("job_id")] + [s.get("job_id") for s in shards]) if j]
     runner_vs = sorted({v for v in ([remote.get("runner_klt_version")]
                                     + [s.get("runner_klt_version") for s in shards]) if v})

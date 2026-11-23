@@ -1,0 +1,137 @@
+{
+  "record": "rx-threshold-study",
+  "utc_stamp": "20261121T103057Z",
+  "kind": "simulated",
+  "claim_scope": "CH (declared channel CH-3MM-RC, nominal kr = kc = 1)",
+  "study": "issue #386 receiver-threshold sizing study",
+  "variant": "adoptable split: selected study candidate in the data lanes A/B, as-drawn receiver in the clock lanes C/CB",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-15": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t15_ar_bf_short",
+        "value": -1.77945e-11,
+        "why": "smallest margin"
+      }
+    },
+    "T-16": {
+      "verdict": "pass",
+      "pass": 360,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t16_df_cr_short",
+        "value": 5.09547e-10,
+        "why": "smallest margin"
+      }
+    },
+    "T-18": {
+      "verdict": "pass",
+      "pass": 1845,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/125C",
+        "measurement": "t18_eye_height_ok_v",
+        "value": 0.4791572,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ff/mixed/125C",
+        "measurement": "t26_energy_per_bit_simulated_j",
+        "value": 7.41345e-13,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "batch_job_ids": [
+    "klt-sim-44e4b53c12d3",
+    "klt-sim-d2351e374757",
+    "klt-sim-eaa79a6c2ab6",
+    "klt-sim-73178c311ac6",
+    "klt-sim-a49b4d601493",
+    "klt-sim-67743cfc8ddb",
+    "klt-sim-ebce93857b8f",
+    "klt-sim-d1e014605ca3",
+    "klt-sim-8d732494e71e",
+    "klt-sim-f095f5ddfa01",
+    "klt-sim-95ec88f74eac",
+    "klt-sim-622c8f980752",
+    "klt-sim-28b266fa03b2",
+    "klt-sim-c0e7b2c0439b",
+    "klt-sim-fd7592c651bb",
+    "klt-sim-64a396a85f36",
+    "klt-sim-553837bca45e",
+    "klt-sim-e203a5589b8c",
+    "klt-sim-dc700f3b4102",
+    "klt-sim-c62591725c94",
+    "klt-sim-862eb01b87cf",
+    "klt-sim-fad1bb2a6328",
+    "klt-sim-93e4d20ad054",
+    "klt-sim-d901d18f61e2",
+    "klt-sim-de378b61c3bf",
+    "klt-sim-a59ae89c1403",
+    "klt-sim-58674b351b3b",
+    "klt-sim-6a8d4190635c",
+    "klt-sim-b0e39906ab19",
+    "klt-sim-9c377ad65d5a",
+    "klt-sim-5ffb6cc21ab9",
+    "klt-sim-3a0fcf261ccc",
+    "klt-sim-3fb0c875bf63",
+    "klt-sim-c73b0fe1f004",
+    "klt-sim-ac4615c5108a",
+    "klt-sim-c6edef24d1af",
+    "klt-sim-4a81c3b509c0",
+    "klt-sim-1a0de54d47bd",
+    "klt-sim-02e4db11e12f",
+    "klt-sim-b80475b94187",
+    "klt-sim-09f644746441",
+    "klt-sim-9711c0fbe52b",
+    "klt-sim-774b047833aa",
+    "klt-sim-462a7e8e1de6",
+    "klt-sim-cbb4a7631bec"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

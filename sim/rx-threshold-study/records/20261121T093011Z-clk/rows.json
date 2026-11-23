@@ -1,0 +1,24 @@
+{
+  "label": "rx-threshold",
+  "corners": 45,
+  "kind": "simulated",
+  "rows": {
+    "T-02": {
+      "verdict": "reported",
+      "measurements": [
+        "t02_cf_dr__b",
+        "t02_cf_dr__c",
+        "t02_cr_df__b",
+        "t02_cr_df__c",
+        "t02_df_cf__b",
+        "t02_df_cf__c",
+        "t02_dr_cr__b",
+        "t02_dr_cr__c"
+      ],
+      "pass": 360,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  }
+}

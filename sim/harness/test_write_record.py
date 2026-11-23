@@ -156,6 +156,16 @@ class JobIdentityTests(unittest.TestCase):
             {"job_id": "klt-sim-b", "runner_klt_version": "0.9.0"}]}}}
         self.assertEqual(write_record.job_identity(rep), (["klt-sim-a", "klt-sim-b"], ["0.9.0"]))
 
+    def test_a_null_fleet_entry_is_skipped(self):
+        # a report may carry a placeholder (null) shard among the real ones; the
+        # rx-threshold study's t16-mixed leg lost a complete record to the
+        # AttributeError on one (issue #386)
+        rep = {"environment": {"remote": {"fleet": [
+            {"job_id": "klt-sim-a", "runner_klt_version": "0.9.0"},
+            None,
+            {"job_id": "klt-sim-b", "runner_klt_version": "0.9.0"}]}}}
+        self.assertEqual(write_record.job_identity(rep), (["klt-sim-a", "klt-sim-b"], ["0.9.0"]))
+
     def test_no_remote_block_at_all(self):
         self.assertEqual(write_record.job_identity({}), ([], []))
 
