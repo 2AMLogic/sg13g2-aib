@@ -227,8 +227,9 @@ check "an unknown kind is refused with exit 2" "${rc}" "2"
 
 # --- 8. the row map, over a real committed dc-static report ----------------------------
 echo "case 8: --row-map groups a real dc-static report by spec row"
-# sim/dc-static/records/20261112T001207Z/ is the record signoff/block-manifest.json cites for
-# item 5 / analog. It was built by hand and holds no record.json, so this is also the first
+# sim/dc-static/records/20261112T001207Z/ is the record signoff/block-manifest.json cited for
+# item 5 / analog until #408 re-cited the harness-written 20261123T001034Z. It was built by
+# hand and holds no record.json, so this is also the first
 # check that the harness reproduces the six rows that manifest asserts on its own word.
 SRC_DC="${SIM_DIR}/dc-static/records/20261112T001207Z/report.json"
 FAM2="${TMP}/dcfam"

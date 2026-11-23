@@ -2,27 +2,6 @@
   "description": "Known-stale netlist-closure members of cited sim records, each pending the re-run its reason names. Shrink-only: scripts/ci/check_netlist_closure.py fails on an entry that no longer mismatches, so an entry is dropped when its re-run lands, never edited to cover a new mismatch (#405).",
   "entries": [
     {
-      "record": "sim/channel-eye/records/20261111T235838Z-ch/report.json",
-      "member": "design/aib_pad_esd.spice",
-      "sha256": "78e223623f816e37dcb6735de42bb35d93675dd5a8c023ab0a56b1d864d3c83e",
-      "added": "2026-11-22",
-      "reason": "design/aib_pad_esd.spice changed by e47bb80 (PR #332, XResd shortened to l=1u) after this 2026-11-11 record; re-run tracked in #408"
-    },
-    {
-      "record": "sim/clock-path/records/20261113T095936Z/report.json",
-      "member": "design/aib_pad_esd.spice",
-      "sha256": "78e223623f816e37dcb6735de42bb35d93675dd5a8c023ab0a56b1d864d3c83e",
-      "added": "2026-11-22",
-      "reason": "design/aib_pad_esd.spice changed by e47bb80 (PR #332, XResd shortened to l=1u) after this 2026-11-13 record; re-run tracked in #408"
-    },
-    {
-      "record": "sim/dc-static/records/20261112T001207Z/report.json",
-      "member": "design/aib_pad_esd.spice",
-      "sha256": "78e223623f816e37dcb6735de42bb35d93675dd5a8c023ab0a56b1d864d3c83e",
-      "added": "2026-11-22",
-      "reason": "design/aib_pad_esd.spice changed by e47bb80 (PR #332, XResd shortened to l=1u) after this 2026-11-12 record; re-run tracked in #408"
-    },
-    {
       "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
       "member": "design/aib_pad_esd.spice",
       "sha256": "78e223623f816e37dcb6735de42bb35d93675dd5a8c023ab0a56b1d864d3c83e",

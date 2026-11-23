@@ -38,7 +38,8 @@
     },
     "5.analog": [
       {
-        "file": "sim/dc-static/records/20261112T001207Z/report.json",
+        "file": "sim/dc-static/records/20261123T001034Z/report.json",
+        "content_hash": "sha256:ab9af08cbac23b437fc6e8fd5c8cf7e2cac508008802c7b3dcc4fe3c12f4b634",
         "rows": [
           "T-06",
           "T-07",
@@ -49,7 +50,8 @@
         ]
       },
       {
-        "file": "sim/channel-eye/records/20261111T235838Z-ch/report.json",
+        "file": "sim/channel-eye/records/20261123T001529Z-ch/report.json",
+        "content_hash": "sha256:a687eaf36a4e10eab9812059006581483a0f78fa95113fe162ea164d859a2271",
         "rows": [
           "T-01",
           "T-09",
@@ -60,7 +62,8 @@
         ]
       },
       {
-        "file": "sim/clock-path/records/20261113T095936Z/report.json",
+        "file": "sim/clock-path/records/20261123T001348Z/report.json",
+        "content_hash": "sha256:870aa32a6ed763b35d673a473ec4c18dc8993dcd2cce1b3dce58e4bb81d2ddc6",
         "rows": [
           "T-17"
         ]
@@ -150,11 +153,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:4f209bb193e57df79e06f02cd279574f5bf0ae5f31ec5dbcd9b3e63006c0ec14"
+      "content_hash": "sha256:6ccab0b19b13cb46d3ab67f6d8f2da12fd142fdc698b8c2e3fb67306a3235f83"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:4f209bb193e57df79e06f02cd279574f5bf0ae5f31ec5dbcd9b3e63006c0ec14"
+      "content_hash": "sha256:6ccab0b19b13cb46d3ab67f6d8f2da12fd142fdc698b8c2e3fb67306a3235f83"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",

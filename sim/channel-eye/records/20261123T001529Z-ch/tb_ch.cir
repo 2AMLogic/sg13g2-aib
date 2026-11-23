@@ -1,0 +1,11 @@
+* tb_ch.cir -- CH-3MM-RC: TX -> declared channel model -> RX, four lanes (tb_body.inc).
+* The channel model includes its own far-end load (cfar); not added again here.
+* Nominal channel (kr = kc = 1); the +-20 % R/C spread of channel-model.md is not on this grid.
+.include ../../spec/channel/channel_rc.cir
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.subckt link txp rxp gnd
+Xch txp rxp gnd chan_rlc len_mm=3
+.ends link
+.include tb_body.inc
