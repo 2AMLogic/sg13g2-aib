@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-23
 
+- **PR #391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate
+- **Issue #385** (closed): T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes
 - **PR #421**: chore(sim): remove the closed T-16 attribution scaffolding
 - **Issue #420** (closed): Hoist duplicated PWL stimulus helpers into sim/gen_common.py
 - **Issue #418** (closed): Remove the closed T-16 attribution scaffolding from sim/channel-eye (record is self-contained)
