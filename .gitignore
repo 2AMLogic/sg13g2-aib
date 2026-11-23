@@ -108,6 +108,10 @@ results.xml
 /.loom-local/
 # <<< loom-managed <<<
 
+# daemon token-pool state (tokens check --ranking); the loom-managed block above
+# lacks it, so it is ignored here until the template ships upstream in Loom.
+.loom/account-ranking.*
+
 # Repo Skills machine-local install metadata (absolute source path + timestamp)
 .claude/skills/repo/.install-local.json
 
