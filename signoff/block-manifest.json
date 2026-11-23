@@ -31,10 +31,12 @@
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
     "4.analog": {
-      "file": "layout/lvs/aib_io_column.report.json"
+      "file": "layout/lvs/aib_io_column.report.json",
+      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
     },
     "4.digital": {
-      "file": "layout/lvs/digital.report.json"
+      "file": "layout/lvs/digital.report.json",
+      "content_hash": "sha256:516d457db24a99ce52a3e300bbd0f9a7bfdba7507bfc446de36150e0fabe6e0b"
     },
     "5.analog": [
       {
@@ -70,6 +72,7 @@
       },
       {
         "file": "sim/channel-model/records/20261121T000100Z/report.json",
+        "content_hash": "sha256:9e0f4dbb4e1ad2d677521c97b3359f25784cbdaf996bdf957fa9e859be4305ce",
         "rows": [
           "T-12"
         ]
@@ -86,10 +89,12 @@
         "file": "signoff/attest/item5-digital/fv_datapath_n8.json"
       },
       {
-        "file": "signoff/attest/item5-digital/sta_clk.json"
+        "file": "signoff/attest/item5-digital/sta_clk.json",
+        "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
       },
       {
-        "file": "signoff/attest/item5-digital/sta_rx_clk.json"
+        "file": "signoff/attest/item5-digital/sta_rx_clk.json",
+        "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
       }
     ],
     "6.analog": [
@@ -136,16 +141,20 @@
     },
     "7.analog": [
       {
-        "file": "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_tx.extract.report.json",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
       },
       {
-        "file": "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_rx.extract.report.json",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
       },
       {
-        "file": "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_tx_clk.extract.report.json",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
       },
       {
-        "file": "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json"
+        "file": "layout/pex/records/20261120T202530Z/aib_io_rx_clk.extract.report.json",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
       }
     ],
     "7.digital": {
@@ -177,21 +186,26 @@
     },
     "11.analog": [
       {
-        "file": "layout/erc/io_cells.erc-report.json"
+        "file": "layout/erc/io_cells.erc-report.json",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
       },
       {
-        "file": "layout/lvs/aib_io_column.report.json"
+        "file": "layout/lvs/aib_io_column.report.json",
+        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
       }
     ],
     "11.digital": [
       {
-        "file": "layout/erc/aib_datapath.erc-report.json"
+        "file": "layout/erc/aib_datapath.erc-report.json",
+        "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
       },
       {
-        "file": "layout/lvs/digital.report.json"
+        "file": "layout/lvs/digital.report.json",
+        "content_hash": "sha256:516d457db24a99ce52a3e300bbd0f9a7bfdba7507bfc446de36150e0fabe6e0b"
       },
       {
-        "file": "layout/pnr/request.report.json"
+        "file": "layout/pnr/request.report.json",
+        "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
       }
     ]
   },

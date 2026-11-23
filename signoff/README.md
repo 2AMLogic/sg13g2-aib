@@ -252,8 +252,11 @@ The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
   The completeness gap is a real limit of this evidence: no I/O budget is
   invented here, and the TX-to-RX path across the two clocks is not timed.
 - `klt functional-verification` carries no provenance block, so the manifest pins no
-  `content_hash` on these entries. The runner reduces the three absolute scratch
-  paths in `environment` to file names; nothing else is edited.
+  `content_hash` on `fv_shift_redundancy.json`, `fv_datapath_n20.json` or
+  `fv_datapath_n8.json`; with `item7-digital/fv_post_route.json` (same runner), these
+  are the only cited evidence entries left unpinned, each for this reason. The runner
+  reduces the three absolute scratch paths in `environment` to file names; nothing
+  else is edited.
 
 Regenerate (needs `uv`, `iverilog`, `openroad`, and `PDK_ROOT`), then regenerate the record:
 
@@ -299,6 +302,9 @@ machine-readable in one place.
 `attest/item7-digital/fv_post_route.json` is the existing cocotb suite
 (`verification/test_datapath.py`, unchanged) run through `klt functional-verification` on
 the **post-route** netlist with the routed SDF annotated (8/8). It is cited under `7.digital`.
+Like the item-5 attest above it is a `klt functional-verification` record, which carries no
+provenance block, so the manifest pins no `content_hash` on it — it is one of the four
+unpinned citations, all of that kind.
 Inputs, pinned by sha256 in `run_evidence.py` (the run refuses if either changes):
 `layout/pnr/.klt/place-and-route/aib_datapath.v` `a27bec23…` and `aib_datapath_route.sdf`
 `3e8edd07…`, plus the `sg13g2_stdcell` Verilog models from `PDK_ROOT`. The SDF is one corner,
