@@ -4,7 +4,7 @@
   "rows": {
     "T-01": [
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-01.verdict",
         "op": "==",
         "value": "pass",
@@ -14,7 +14,7 @@
         "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t01_dout_edges_a = 64.0 edges. An edge count at the rate, not a BER measurement, and no TC value is in this record."
       },
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-01.fail",
         "op": "==",
         "value": 0,
@@ -48,7 +48,7 @@
     ],
     "T-06": [
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=drv_nl.t06_voh_droop_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -58,7 +58,7 @@
         "note": "Unloaded leg. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=drv_nl.t06_vol_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -68,7 +68,7 @@
         "note": "Unloaded leg. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=drv_ld.t06_voh_droop_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -78,7 +78,7 @@
         "note": "Loaded leg: the 1 mA DC load is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=drv_ld.t06_vol_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -90,7 +90,7 @@
     ],
     "T-07": [
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=lk_0.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -100,7 +100,7 @@
         "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=lk_5.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -110,7 +110,7 @@
         "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=lk_10.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -122,7 +122,7 @@
     ],
     "T-08": [
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=drv_ld.t08_rout_up_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -132,7 +132,7 @@
         "note": "Two-sided limit: the margin is to whichever side binds at the worst corner. The 1 mA chord point is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=drv_ld.t08_rout_dn_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -144,24 +144,24 @@
     ],
     "T-09": [
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-09.verdict",
         "op": "==",
         "value": "pass",
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-09 (overshoot / undershoot level and dwell at the RX pin, both polarities)",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level). This is the CH record the manifest cites under 5.analog; it supersedes the earlier 20261110T082948Z-ch run."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level). This is the CH record the manifest cites under 5.analog; it supersedes the 20261110T082948Z-ch and 20261111T235838Z-ch runs (both describe the pre-e47bb80 pad cell)."
       },
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-09.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-09 corner-measurements of 720",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level). This is the CH record the manifest cites under 5.analog; it supersedes the earlier 20261110T082948Z-ch run."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_tt/mixed/-40C, t09_dwell_over_a = 0.0 (no dwell above the level). This is the CH record the manifest cites under 5.analog; it supersedes the 20261110T082948Z-ch and 20261111T235838Z-ch runs (both describe the pre-e47bb80 pad cell)."
       },
       {
         "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
@@ -218,7 +218,7 @@
     ],
     "T-11": [
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=t11_hyst_mv].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -252,24 +252,24 @@
     ],
     "T-15": [
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-15.verdict",
         "op": "==",
         "value": "pass",
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-15 (lane-to-lane skew at the RX input over the modeled channel)",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -18.5 ps."
       },
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-15.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-15 corner-measurements of 180",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -19.5 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t15_ar_bf_short = -18.5 ps."
       },
       {
         "record": "sim/mc/records/20261110T113631Z-t15/yield.json",
@@ -304,24 +304,24 @@
     ],
     "T-16": [
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-16.verdict",
         "op": "==",
         "value": "pass",
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-16 (data-to-clock skew at the RX input over the modeled channel)",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t16_df_cr_short = 509.8 ps."
       },
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-16.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-16 corner-measurements of 360",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_ss/mixed/-40C, t16_dr_cf_long = 480.9 ps."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). This is the PVT leg; the Monte Carlo leg of the same row is the failing one. A row fails if any record the manifest cites for it fails. Binding corner mos_sf/mixed/-40C, t16_df_cr_short = 509.8 ps."
       },
       {
         "record": "sim/mc/records/20261110T113631Z-t16/yield.json",
@@ -356,46 +356,46 @@
     ],
     "T-17": [
       {
-        "record": "sim/clock-path/records/20261113T095936Z/rows.json",
+        "record": "sim/clock-path/records/20261123T001348Z/rows.json",
         "field": "rows.T-17.verdict",
         "op": "==",
         "value": "pass",
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-17 (forwarded-clock duty-cycle distortion on clk and clkb)",
-        "note": "Simulated, not measured. The record declares CH (modeled channel CH-3MM-RC, nominal) with an ideal 50 % complementary 500 MHz stimulus; the spec row's scope is BOTH, so the TC half is not covered here. Binding corner mos_sf/mixed/-40C, t17_dcd_c = -1.04 %."
+        "note": "Simulated, not measured. The record declares CH (modeled channel CH-3MM-RC, nominal) with an ideal 50 % complementary 500 MHz stimulus; the spec row's scope is BOTH, so the TC half is not covered here. Binding corner mos_sf/mixed/-40C, t17_dcd_c = -1.14 %."
       },
       {
-        "record": "sim/clock-path/records/20261113T095936Z/rows.json",
+        "record": "sim/clock-path/records/20261123T001348Z/rows.json",
         "field": "rows.T-17.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-17 corner-measurements of 270",
-        "note": "Simulated, not measured. The record declares CH (modeled channel CH-3MM-RC, nominal) with an ideal 50 % complementary 500 MHz stimulus; the spec row's scope is BOTH, so the TC half is not covered here. Binding corner mos_sf/mixed/-40C, t17_dcd_c = -1.04 %."
+        "note": "Simulated, not measured. The record declares CH (modeled channel CH-3MM-RC, nominal) with an ideal 50 % complementary 500 MHz stimulus; the spec row's scope is BOTH, so the TC half is not covered here. Binding corner mos_sf/mixed/-40C, t17_dcd_c = -1.14 %."
       }
     ],
     "T-18": [
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-18.verdict",
         "op": "==",
         "value": "pass",
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-18 (far-end RX eye width and height over PRBS-7)",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_ss/mixed/125C, t18_eye_height_ok_v = 0.379 V."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_ss/mixed/125C, t18_eye_height_ok_v = 0.480 V."
       },
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-18.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-18 corner-measurements of 1845",
-        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_ss/mixed/125C, t18_eye_height_ok_v = 0.379 V."
+        "note": "Simulated, not measured. CH only (declared channel model CH-3MM-RC). Binding corner mos_ss/mixed/125C, t18_eye_height_ok_v = 0.480 V."
       }
     ],
     "T-19": [
@@ -456,7 +456,7 @@
     ],
     "T-24": [
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=cap_0.t24_cpin_ff].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -466,7 +466,7 @@
         "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=cap_5.t24_cpin_ff].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -476,7 +476,7 @@
         "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=cap_10.t24_cpin_ff].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -488,24 +488,24 @@
     ],
     "T-26": [
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-26.verdict",
         "op": "==",
         "value": "pass",
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, per-row verdict for T-26 (integrated supply energy per delivered bit over PRBS-7)",
-        "note": "SIMULATED energy per bit; no measurement exists (the record says so in `energy_label`). CH only (declared channel model CH-3MM-RC). Binding corner mos_ff/mixed/125C, t26_energy_per_bit_simulated_j = 0.637 pJ/bit."
+        "note": "SIMULATED energy per bit; no measurement exists (the record says so in `energy_label`). CH only (declared channel model CH-3MM-RC). Binding corner mos_ff/mixed/125C, t26_energy_per_bit_simulated_j = 0.634 pJ/bit."
       },
       {
-        "record": "sim/channel-eye/records/20261111T235838Z-ch/rows.json",
+        "record": "sim/channel-eye/records/20261123T001529Z-ch/rows.json",
         "field": "rows.T-26.fail",
         "op": "==",
         "value": 0,
         "corner": "PVT-FULL, 45 corners",
         "scope": "CH",
         "basis": "simulated, failing T-26 corner-measurements of 180",
-        "note": "SIMULATED energy per bit; no measurement exists (the record says so in `energy_label`). CH only (declared channel model CH-3MM-RC). Binding corner mos_ff/mixed/125C, t26_energy_per_bit_simulated_j = 0.637 pJ/bit."
+        "note": "SIMULATED energy per bit; no measurement exists (the record says so in `energy_label`). CH only (declared channel model CH-3MM-RC). Binding corner mos_ff/mixed/125C, t26_energy_per_bit_simulated_j = 0.634 pJ/bit."
       }
     ],
     "T-27": [
@@ -522,7 +522,7 @@
     ],
     "T-28": [
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=pu_on.t28_rpu_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -532,7 +532,7 @@
         "note": "Pull-strength leg. T-28's tristate and pull *control* is the RTL leg, not this record. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=pd_on.t28_rpd_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -542,7 +542,7 @@
         "note": "Pull-strength leg. T-28's tristate and pull *control* is the RTL leg, not this record. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=lk_0.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -552,7 +552,7 @@
         "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=lk_5.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -562,7 +562,7 @@
         "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261112T001207Z/report.json",
+        "record": "sim/dc-static/records/20261123T001034Z/report.json",
         "field": "measurements[name=lk_10.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,

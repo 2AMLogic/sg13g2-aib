@@ -1,0 +1,206 @@
+{
+  "record": "clock-path",
+  "utc_stamp": "20261123T001348Z",
+  "kind": "simulated",
+  "claim_scope": "CH (modeled channel CH-3MM-RC, nominal); stimulus is an ideal 50 % complementary 500 MHz clock",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-02": {
+      "verdict": "reported",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    },
+    "T-04": {
+      "verdict": "reported",
+      "pass": 225,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    },
+    "T-17": {
+      "verdict": "pass",
+      "pass": 270,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t17_dcd_c",
+        "value": -0.0114041,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "report_only_ranges": {
+    "t02_cf_dr": {
+      "spec_row": "T-02",
+      "min": [
+        5.01187e-10,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/27C"
+      ],
+      "max": [
+        5.7609e-10,
+        "mos_sf/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ]
+    },
+    "t02_cr_df": {
+      "spec_row": "T-02",
+      "min": [
+        4.2391e-10,
+        "mos_sf/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        4.98813e-10,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/27C"
+      ]
+    },
+    "t02_df_cf": {
+      "spec_row": "T-02",
+      "min": [
+        4.99996e-10,
+        "mos_ff/vdd_rx=1.320_vdd_tx=1.320V/-40C"
+      ],
+      "max": [
+        5.00002e-10,
+        "mos_tt/vdd_rx=1.320_vdd_tx=1.320V/-40C"
+      ]
+    },
+    "t02_dr_cr": {
+      "spec_row": "T-02",
+      "min": [
+        5e-10,
+        "mos_ff/vdd_rx=1.080_vdd_tx=1.080V/125C"
+      ],
+      "max": [
+        5.00001e-10,
+        "mos_ss/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ]
+    },
+    "t04_latency_s": {
+      "spec_row": "T-04",
+      "min": [
+        2.69353e-10,
+        "mos_ff/vdd_rx=1.320_vdd_tx=1.320V/-40C"
+      ],
+      "max": [
+        5.23465e-10,
+        "mos_ss/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ]
+    },
+    "t04_xlevel_out_f_v": {
+      "spec_row": "T-04",
+      "min": [
+        -0.627884,
+        "mos_sf/vdd_rx=1.320_vdd_tx=1.320V/-40C"
+      ],
+      "max": [
+        -0.0218616,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/27C"
+      ]
+    },
+    "t04_xlevel_out_r_v": {
+      "spec_row": "T-04",
+      "min": [
+        -0.627884,
+        "mos_sf/vdd_rx=1.320_vdd_tx=1.320V/-40C"
+      ],
+      "max": [
+        -0.0218617,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/27C"
+      ]
+    },
+    "t04_xlevel_pin_f_v": {
+      "spec_row": "T-04",
+      "min": [
+        -0.0266906,
+        "mos_sf/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        0.0115471,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/125C"
+      ]
+    },
+    "t04_xlevel_pin_r_v": {
+      "spec_row": "T-04",
+      "min": [
+        -0.0266906,
+        "mos_sf/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        0.0115471,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/125C"
+      ]
+    },
+    "t17_hi_c": {
+      "spec_row": "T-17",
+      "min": [
+        9.77192e-10,
+        "mos_sf/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        1.00944e-09,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/125C"
+      ]
+    },
+    "t17_hi_cb": {
+      "spec_row": "T-17",
+      "min": [
+        9.77192e-10,
+        "mos_sf/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        1.00944e-09,
+        "mos_fs/vdd_rx=1.320_vdd_tx=1.320V/125C"
+      ]
+    },
+    "t17_per_c": {
+      "spec_row": "T-17",
+      "min": [
+        2e-09,
+        "mos_ff/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        2e-09,
+        "mos_tt/vdd_rx=1.320_vdd_tx=1.320V/27C"
+      ]
+    },
+    "t17_per_cb": {
+      "spec_row": "T-17",
+      "min": [
+        2e-09,
+        "mos_ff/vdd_rx=1.080_vdd_tx=1.080V/-40C"
+      ],
+      "max": [
+        2e-09,
+        "mos_tt/vdd_rx=1.320_vdd_tx=1.320V/27C"
+      ]
+    }
+  },
+  "t04_bound": "none: spec/target-spec.md T-04 states no numeric crossing bound; crossing level and latency are reported",
+  "t02_bound": "none: SIM half reports data-to-clock edge times; the capture aperture (T-19) and margin (T-20) are not graded here",
+  "batch_job_ids": [
+    "klt-sim-e74b0cc3479b",
+    "klt-sim-5d75e1091371",
+    "klt-sim-cd2d59df884b",
+    "klt-sim-02ae94939863",
+    "klt-sim-9c4836f38523",
+    "klt-sim-0606924b9bdc",
+    "klt-sim-4a13f224255f",
+    "klt-sim-16d5bfc8cf09",
+    "klt-sim-e5f63478f2d8",
+    "klt-sim-6727ba67bca8",
+    "klt-sim-d88081fc7ee7",
+    "klt-sim-aa144905bc99",
+    "klt-sim-815abf39c250",
+    "klt-sim-899c9d7bd322",
+    "klt-sim-edd5cf07a83c"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

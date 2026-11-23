@@ -161,9 +161,9 @@ and delay are reported inputs to T-20 and T-13, DR-0023).
 
 | envelope | rows | result |
 |---|---|---|
-| `sim/dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass |
-| `sim/channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated) |
-| `sim/clock-path/records/20261113T095936Z/report.json` | T-17 | 45/45 corners pass (CH) |
+| `sim/dc-static/records/20261123T001034Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass (#408 re-run on the post-`e47bb80` cell; no verdict moved) |
+| `sim/channel-eye/records/20261123T001529Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #408 re-run, no verdict moved) |
+| `sim/clock-path/records/20261123T001348Z/report.json` | T-17 | 45/45 corners pass (CH; #408 re-run, T-17 worst -1.036 % -> -1.140 %, still inside +/-3 %) |
 | `sim/channel-model/records/20261121T000100Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
 
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
@@ -213,7 +213,8 @@ The grader does **not** infer the row set. Verified against 0.9.0 on 2026-11-13:
   entry means "the grader did not check this row — verify it by hand", not "checked and
   covered".** Under `5.analog` the six `asserted` rows are exactly the dc-static ones, and they
   are covered on this manifest's word rather than the grader's check. Each was read against
-  `sim/dc-static/records/20261112T001207Z/report.json` by hand; all have bounded, passing
+  `sim/dc-static/records/20261123T001034Z/report.json` by hand (repeated on the #408 re-run; the
+  first read was against `20261112T001207Z`); all have bounded, passing
   measurements over the envelope's 45/45 corners:
 
   | row | measurements | bound |
