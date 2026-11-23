@@ -74,6 +74,16 @@ ALLOWLIST = {
         "authored in sim/mc/capture_window/, three levels deeper than the sim/mc "
         "staging dir this record was written under; design/aib_rx_data.spice is "
         "tracked at the repo root",
+    ("sim/mc/records/20261123T094302Z-t19/tb_t19.cir",
+     "../../../design/aib_rx_data.spice"):
+        "authored in sim/mc/capture_window/, three levels deeper than the sim/mc "
+        "staging dir this record was written under; design/aib_rx_data.spice is "
+        "tracked at the repo root",
+    ("sim/mc/records/20261123T094302Z-t19/tb_t19_ctl.cir",
+     "../../../design/aib_rx_data.spice"):
+        "authored in sim/mc/capture_window/, three levels deeper than the sim/mc "
+        "staging dir this record was written under; design/aib_rx_data.spice is "
+        "tracked at the repo root",
 }
 
 
