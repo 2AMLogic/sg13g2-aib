@@ -4,6 +4,8 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-23
 
+- **PR #432**: refactor(ci): import RECORD_ROOTS directly in the format checker
+- **Issue #428** (closed): Remove the AST lookup for RECORD_ROOTS in the evidence-format checker
 - **PR #430**: chore: ignore .loom/account-ranking.* daemon state in .gitignore
 - **Issue #429** (closed): gitignore: .loom/account-ranking.* daemon state trips check-main-clean.sh on every sweep
 - **PR #424**: feat(design): adopt the supply-referenced RX data receiver, split clock legs to aib_rx_inv (T-10 fix)
