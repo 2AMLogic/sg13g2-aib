@@ -138,15 +138,29 @@ two layout differences behind the earlier mismatch, and the commands are in
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
 re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.
 
+**Stale at this head:** DR-0030 changed `design/aib_pad_esd.spice` and regenerated the
+`layout/lvs/*.ref.spice` references to the two-diode mapping, but `aib_io_column.report.json` was
+not re-run, so it still attests the earlier reference against the drawn stream. The drawn layout
+and LVS for the promoted cell are tracked in #435.
+
 ## Item 5 / analog evidence
 
 `5.analog` cites five `klt sim` reports as a list, each naming the `rows` it covers, and
 `spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 15 covered and
-3 declared gaps. The item reads **`unmet` / `check_failed`** with `failed_rows: ["T-24", "T-25"]`
-and `uncovered_rows: []`: T-24 on the promoted pad netlist (DR-0030) measures 110.89 fF worst
+3 declared gaps. The item reads **`unmet` / `check_failed`** with
+`failed_rows: ["T-06", "T-07", "T-08", "T-11", "T-24", "T-25", "T-28"]` and `uncovered_rows: []`
+(only T-24 and T-25 actually fail; see the note below the paragraph): T-24 on the promoted pad netlist (DR-0030) measures 110.89 fF worst
 against the 100 fF target (recorded failure; the operator ruling holds the fallback column),
 and the T-25 transient (`sim/esd-transient/records/20261123T211728Z/`, whole I/O cell) fails
 its pre-stated receiver-isolation bound and is with the operator. Every other envelope passes.
+
+`failed_rows` lists five rows that **pass**: T-06, T-07, T-08, T-11 and T-28 are credited as
+failed because a failing `klt sim` envelope credits none of its passing `spec_row`-tagged rows
+(2AMLogic/klayout-tools#6027, fixed on klayout-tools main after the `v0.9.2` tag), and
+`signoff/KLT_VERSION` pins 0.9.0, so no released klt carries the fix here. The per-row truth is
+in the dc-static record's `rows.json` (T-06 180/0, T-07 135/0, T-08 90/0, T-11 45/0, T-28
+225/0, as pass/fail corner counts; only T-24 fails, 90/45). Do not read `failed_rows` as a regression of
+those five.
 
 Three of those gaps are **pending** — a measurement not yet made, which closes when the work is
 done; progress toward T1 is tracked in #3, not here. Those three are T-20, T-21 and T-29,

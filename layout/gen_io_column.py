@@ -210,7 +210,7 @@ def check_against_netlists(design_dir):
             # DR-0030 (#196): the netlist's primary pad diode is the PDK subcircuit
             # diodevdd_2kv (anode PAD, cathode VDDIO, substrate diode to VSS); the drawn
             # cell still carries the 4.5 um dpantenna of this table until the layout is
-            # regenerated (#140). The check pins the netlist side so a further change
+            # regenerated (#435). The check pins the netlist side so a further change
             # there is still caught, and states the drawn-vs-netlist gap here rather
             # than hiding it.
             assert nodes == ["VDDIO", "PAD", "VSS", "diodevdd_2kv"], (name, nodes)

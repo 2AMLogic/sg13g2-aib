@@ -198,7 +198,7 @@ the operator's ruling.
   longer cited. The T-12 far-end-load tie is stated above as unreconciled. *Disputed (a
   ruling, not an agent decision); stale citation fixed.*
 - **T-22 pitch, layout and LVS**: not re-derived. The drawn layout predates the promoted
-  netlist and the reference netlists are regenerated, not re-LVSed (#140); no signoff
+  netlist and the reference netlists are regenerated, not re-LVSed (#435); no signoff
   reading is claimed for this cell. *Still open (follow-up).*
 - **T-16 at PVT-FULL** on the promoted netlist: still the screen only. *Still open
   (follow-up).*
@@ -230,14 +230,14 @@ the operator's ruling.
   would change the `V(PADI)` excursion the record reports.
 - **T-16 at PVT-FULL on the promoted netlist** is a follow-up (K02 was screened at the
   spread corners, not validated at PVT-FULL); the committed layout is stale against the
-  netlists (#140) and stays stale by this record.
+  netlists (#435) and stays stale by this record.
 
 ## Effects on other work
 
 - The LVS reference netlists under `layout/lvs/` are regenerated from the sources in the
   PR that carries this record (they are derived, and CI checks them fresh); the **actual
   LVS re-run, the drawn layout and the I/O-column regeneration are follow-up issues**
-  (#140), as DR-0018 already anticipated.
+  (#435), as DR-0018 already anticipated.
 - Channel-eye, T-09 and T-16 re-runs on the new netlist are follow-up issues.
 - `design/aib_pad_esd_2kv.spice` stays as committed (evidence for DR-0018); its stale
   `l=2u` is documented here and in `design/README.md`.

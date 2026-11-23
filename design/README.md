@@ -74,7 +74,7 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
   positive pulse (`XDp2` is a 2 um antenna diode that cannot conduct); the measurement is
   with the operator, and the pad-side voltage passes are model self-consistency, not
   survivability. `XResd` is `w=2u l=1u` (#251; the `l=2u` in `design/aib_pad_esd_2kv.spice`
-  predates it). Layout is stale against this cell (#140).
+  predates it). Layout is stale against this cell (#435).
 - `aib_pad_esd` (#251): `XResd` is `w=2u l=1u` (was `l=2u`). The channel-bench T-16 margin at the
   declared kr = kc = 1.2 corner was 1.331 ps; with this change the worst margin over PVT-FULL x the four
   (kr, kc) spread pairs is 19.92 ps. T-08 (min margin bound 42.86 ohm) and T-24 (worst 96.42 fF) are unchanged
