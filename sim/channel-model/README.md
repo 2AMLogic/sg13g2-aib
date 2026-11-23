@@ -70,7 +70,8 @@ supports one value per quantity.
 **±1 %** on each ratio. This is a numerical-agreement tolerance, a property of the check and
 **not a spec bound**; no Target, Fallback or Stretch value changes. It is wide enough to
 absorb solver noise (the offline solve of the committed netlist stays within 1e-5) and narrow enough that
-any of the seeded defects below leaves the band by 10 % or more.
+each seeded defect pushes at least one measured ratio outside the band (see
+`test_each_seeded_netlist_defect_leaves_the_band`).
 
 ## Negative control
 
