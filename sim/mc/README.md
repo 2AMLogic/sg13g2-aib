@@ -78,7 +78,8 @@ the inverter cell's was not. Per-corner means -2.4..+10.8 mV, per-corner sigma 7
 [per_corner.md](per_corner.md). Negative control detected (0 of 900 degraded draws in
 limit). The same record's `rx_up.ivdd_a` gives the standing supply current: at
 tt / 1.2 V / 27 C the 120 draws span 64.0-94.2 uA (mean 81.3 uA, midpoint power 97.6 uW per
-receiver); grid mean span 34.6-185.4 uA. Mismatch coverage: MOS only — the divider's
+receiver; 2.15 mW across the 20+2 data and spare lanes); across the 45-corner grid the 5400
+draws span 34.6-185.4 uA (per-corner means 36.6-152.5 uA, grand mean 84.7 uA). Mismatch coverage: MOS only — the divider's
 `rppd` pair carries no independent resistor-pair mismatch in this model set (documented in
 the record and the design note).
 

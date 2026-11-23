@@ -125,13 +125,15 @@ records are the evidence, this note quotes them):
   (`rx_up.ivdd_a`, |i(VDDIO)| at the switching point, i.e. with the input at the threshold
   — at VDDIO/2 by construction of the bench): at tt / 1.2 V / 27 C the 120 draws span
   **64.0-94.2 uA, mean 81.3 uA** — midpoint DC power **1.2 V x 81.3 uA = 97.6 uW per
-  receiver**. Over the 45-corner grid the mean spans 34.6-185.4 uA (mismatch live). This is
-  the architecture's standing cost, ~0.7-0.8 mW across the 20+2 data lanes at 1.2 V;
-  rail-idle power would need a rail-input measurement, which this record is not.
+  receiver**. Over the 45-corner grid the 5400 draws span 34.6-185.4 uA (per-corner means
+  36.6-152.5 uA, grand mean 84.7 uA; mismatch live). This is the architecture's standing
+  midpoint cost, **2.15 mW** across the 20+2 data and spare lanes at tt / 1.2 V / 27 C
+  (~2.1-2.2 mW); rail-idle power would need a rail-input measurement, which this record is
+  not.
 - **Energy per bit (T-26, SIMULATED).** The split raises the lane energy per bit
   `t26_energy_per_bit_simulated_j` from 0.354-0.634 pJ/bit (the same-day pre-split record
-  `sim/channel-eye/records/20261123T001529Z-ch/`) to **0.387-0.741 pJ/bit** (+9.4 % at the
-  low end, +17.0 % at the high end, over the same 45 corners); the RX lane's own energy
+  `sim/channel-eye/records/20261123T001529Z-ch/`) to **0.387-0.741 pJ/bit** (+9.4 % to
+  +22.3 % per corner over the same 45 corners); the RX lane's own energy
   rises from 0.845-2.24 pJ to 5.12-18.4 pJ per 127-bit integration (0.0403-0.145 pJ/bit),
   the divider + tail current dominating. Labelled SIMULATED; no measurement exists.
 - **Mismatch coverage.** The committed T-10 Monte Carlo varies MOS mismatch only

@@ -166,7 +166,7 @@ and delay are reported inputs to T-20 and T-13, DR-0023).
 | envelope | rows | result |
 |---|---|---|
 | `sim/dc-static/records/20261123T091724Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass (#398 re-run on the adopted cell; T-11 unchanged, T-24 76.3-92.4 fF as the study measured) |
-| `sim/channel-eye/records/20261123T093440Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #398 re-run on the split; T-16 binding margin unchanged, T-26 energy per bit 0.387-0.741 pJ, +9-17 % from the standing divider/tail current) |
+| `sim/channel-eye/records/20261123T093440Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #398 re-run on the split; T-16 binding margin unchanged, T-26 energy per bit 0.387-0.741 pJ, +9.4-22.3 % per corner from the standing divider/tail current) |
 | `sim/clock-path/records/20261123T091724Z/report.json` | T-17 | 45/45 corners pass (CH; #398 re-run on the split; T-17 still inside +/-3 %; the t02 separations the two-edge disposition reads are in its `report_only_ranges`) |
 | `sim/channel-model/records/20261121T000100Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
 
