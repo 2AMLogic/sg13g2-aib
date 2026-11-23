@@ -1,0 +1,37 @@
+{
+  "label": "esd-transient",
+  "corners": 1,
+  "kind": "simulated",
+  "rows": {
+    "T-25": {
+      "verdict": "fail",
+      "measurements": [
+        "pwr.t25_ipadi_neg_pk_a",
+        "pwr.t25_ipadi_pos_pk_a",
+        "pwr.t25_vadi_neg_pk_v",
+        "pwr.t25_vadi_pos_pk_v",
+        "pwr.t25_vpad_neg_pk_v",
+        "pwr.t25_vpad_pos_pk_v",
+        "t25_pwr_neg_relief",
+        "t25_pwr_pos_relief",
+        "t25_unpwr_neg_relief",
+        "t25_unpwr_pos_relief",
+        "unpwr.t25_ipadi_neg_pk_a",
+        "unpwr.t25_ipadi_pos_pk_a",
+        "unpwr.t25_vadi_neg_pk_v",
+        "unpwr.t25_vadi_pos_pk_v",
+        "unpwr.t25_vpad_neg_pk_v",
+        "unpwr.t25_vpad_pos_pk_v"
+      ],
+      "pass": 14,
+      "fail": 2,
+      "error": 0,
+      "binding": {
+        "corner": "tt/mixed/27C",
+        "measurement": "pwr.t25_vadi_pos_pk_v",
+        "value": 5.130981,
+        "why": "fail"
+      }
+    }
+  }
+}

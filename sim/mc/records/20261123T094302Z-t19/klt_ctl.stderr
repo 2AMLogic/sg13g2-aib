@@ -1,0 +1,1038 @@
+klt sim: notice: splitting 900 units into 16 batch jobs of at most 57 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt: batch job klt-sim-e7bdeaaa86bc submitting to s3://<bucket>/jobs/klt-sim-e7bdeaaa86bc
+klt: batch job klt-sim-8428205bde6b submitting to s3://<bucket>/jobs/klt-sim-8428205bde6b
+klt: batch job klt-sim-b1f73ac45e98 submitting to s3://<bucket>/jobs/klt-sim-b1f73ac45e98
+klt: batch job klt-sim-78ea61cb8476 submitting to s3://<bucket>/jobs/klt-sim-78ea61cb8476
+klt: batch job klt-sim-9468f0dbf89e submitting to s3://<bucket>/jobs/klt-sim-9468f0dbf89e
+klt: batch job klt-sim-8ccce542cee9 submitting to s3://<bucket>/jobs/klt-sim-8ccce542cee9
+klt: batch job klt-sim-07bc6a02be8b submitting to s3://<bucket>/jobs/klt-sim-07bc6a02be8b
+klt: batch job klt-sim-114d150dbccf submitting to s3://<bucket>/jobs/klt-sim-114d150dbccf
+klt: batch job klt-sim-e9bbaf1049b1 submitting to s3://<bucket>/jobs/klt-sim-e9bbaf1049b1
+klt: batch job klt-sim-e1a12b8a7399 submitting to s3://<bucket>/jobs/klt-sim-e1a12b8a7399
+klt: batch job klt-sim-11b6c4c4c166 submitting to s3://<bucket>/jobs/klt-sim-11b6c4c4c166
+klt: batch job klt-sim-70b313832370 submitting to s3://<bucket>/jobs/klt-sim-70b313832370
+klt: batch job klt-sim-de60cdc173a1 submitting to s3://<bucket>/jobs/klt-sim-de60cdc173a1
+klt: batch job klt-sim-9074b2db8e19 submitting to s3://<bucket>/jobs/klt-sim-9074b2db8e19
+klt: batch job klt-sim-a76f708b5cc9 submitting to s3://<bucket>/jobs/klt-sim-a76f708b5cc9
+klt: batch job klt-sim-97f4e5f9296a submitting to s3://<bucket>/jobs/klt-sim-97f4e5f9296a
+klt sim: batch job klt-sim-de60cdc173a1: submitted
+klt sim: shards 0/16 launched, 1 launching, 15 pending, 0 collected; launch rate unknown, ETA unknown
+klt sim: batch job klt-sim-9074b2db8e19: submitted
+klt sim: batch job klt-sim-e9bbaf1049b1: submitted
+klt sim: batch job klt-sim-e7bdeaaa86bc: submitted
+klt sim: batch job klt-sim-9468f0dbf89e: submitted
+klt sim: batch job klt-sim-b1f73ac45e98: submitted
+klt sim: batch job klt-sim-78ea61cb8476: submitted
+klt sim: batch job klt-sim-a76f708b5cc9: submitted
+klt sim: batch job klt-sim-e1a12b8a7399: submitted
+klt sim: batch job klt-sim-07bc6a02be8b: submitted
+klt sim: batch job klt-sim-114d150dbccf: submitted
+klt sim: batch job klt-sim-11b6c4c4c166: submitted
+klt sim: batch job klt-sim-de60cdc173a1 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-de60cdc173a1`
+klt sim: batch job klt-sim-9074b2db8e19 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-9074b2db8e19`
+klt sim: batch job klt-sim-97f4e5f9296a: submitted
+klt sim: batch job klt-sim-e7bdeaaa86bc launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-e7bdeaaa86bc`
+klt sim: batch job klt-sim-e9bbaf1049b1 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-e9bbaf1049b1`
+klt sim: batch job klt-sim-9468f0dbf89e launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-9468f0dbf89e`
+klt sim: batch job klt-sim-8ccce542cee9: submitted
+klt sim: batch job klt-sim-de60cdc173a1 state=no status.json yet elapsed=7s
+klt sim: batch job klt-sim-9074b2db8e19 state=no status.json yet elapsed=12s
+klt sim: batch job klt-sim-a76f708b5cc9 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-a76f708b5cc9`
+klt sim: batch job klt-sim-78ea61cb8476 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-78ea61cb8476`
+klt sim: batch job klt-sim-e7bdeaaa86bc state=no status.json yet elapsed=10s
+klt sim: batch job klt-sim-e9bbaf1049b1 state=no status.json yet elapsed=9s
+klt sim: batch job klt-sim-07bc6a02be8b launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-07bc6a02be8b`
+klt sim: batch job klt-sim-9468f0dbf89e state=no status.json yet elapsed=9s
+klt sim: batch job klt-sim-a76f708b5cc9 state=no status.json yet elapsed=3s
+klt sim: batch job klt-sim-78ea61cb8476 state=no status.json yet elapsed=3s
+klt sim: batch job klt-sim-8428205bde6b: submitted
+klt sim: batch job klt-sim-07bc6a02be8b state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-70b313832370: submitted
+klt sim: batch job klt-sim-114d150dbccf launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-114d150dbccf`
+klt sim: batch job klt-sim-114d150dbccf state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-b1f73ac45e98 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-b1f73ac45e98`
+klt sim: batch job klt-sim-b1f73ac45e98 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-11b6c4c4c166 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-11b6c4c4c166`
+klt sim: batch job klt-sim-97f4e5f9296a launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-97f4e5f9296a`
+klt sim: batch job klt-sim-11b6c4c4c166 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-97f4e5f9296a state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-e1a12b8a7399 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-e1a12b8a7399`
+klt sim: batch job klt-sim-e1a12b8a7399 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-8ccce542cee9 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-8ccce542cee9`
+klt sim: batch job klt-sim-8ccce542cee9 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-8428205bde6b launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-8428205bde6b`
+klt sim: shards 16/16 launched, 0 launching, 0 pending, 0 collected; launch rate 26.2/min, ETA 0m
+klt sim: batch job klt-sim-70b313832370 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-70b313832370`
+klt sim: batch job klt-sim-8428205bde6b state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-70b313832370 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-de60cdc173a1: running
+klt sim: batch job klt-sim-de60cdc173a1 state=running elapsed=37s
+klt sim: batch job klt-sim-9074b2db8e19: running
+klt sim: batch job klt-sim-9074b2db8e19 state=running elapsed=43s
+klt sim: batch job klt-sim-e7bdeaaa86bc: running
+klt sim: batch job klt-sim-e7bdeaaa86bc state=running elapsed=40s
+klt sim: batch job klt-sim-e9bbaf1049b1: running
+klt sim: batch job klt-sim-e9bbaf1049b1 state=running elapsed=40s
+klt sim: batch job klt-sim-9468f0dbf89e: running
+klt sim: batch job klt-sim-9468f0dbf89e state=running elapsed=40s
+klt sim: batch job klt-sim-a76f708b5cc9: running
+klt sim: batch job klt-sim-a76f708b5cc9 state=running elapsed=34s
+klt sim: batch job klt-sim-78ea61cb8476: running
+klt sim: batch job klt-sim-78ea61cb8476 state=running elapsed=33s
+klt sim: batch job klt-sim-07bc6a02be8b: running
+klt sim: batch job klt-sim-07bc6a02be8b state=running elapsed=33s
+klt sim: batch job klt-sim-114d150dbccf: running
+klt sim: batch job klt-sim-114d150dbccf state=running elapsed=31s
+klt sim: batch job klt-sim-b1f73ac45e98: running
+klt sim: batch job klt-sim-b1f73ac45e98 state=running elapsed=31s
+klt sim: batch job klt-sim-11b6c4c4c166: running
+klt sim: batch job klt-sim-11b6c4c4c166 state=running elapsed=31s
+klt sim: batch job klt-sim-97f4e5f9296a: running
+klt sim: batch job klt-sim-97f4e5f9296a state=running elapsed=32s
+klt sim: batch job klt-sim-e1a12b8a7399: running
+klt sim: batch job klt-sim-e1a12b8a7399 state=running elapsed=31s
+klt sim: batch job klt-sim-8ccce542cee9: running
+klt sim: batch job klt-sim-8ccce542cee9 state=running elapsed=31s
+klt sim: batch job klt-sim-8428205bde6b: running
+klt sim: batch job klt-sim-8428205bde6b state=running elapsed=31s
+klt sim: batch job klt-sim-70b313832370: running
+klt sim: batch job klt-sim-70b313832370 state=running elapsed=31s
+klt sim: batch job klt-sim-de60cdc173a1: done
+klt sim: batch job klt-sim-9074b2db8e19: failed
+klt sim: batch job klt-sim-e7bdeaaa86bc: done
+klt sim: batch job klt-sim-9468f0dbf89e: failed
+klt sim: batch job klt-sim-a76f708b5cc9: done
+klt sim: batch job klt-sim-78ea61cb8476: done
+klt sim: batch job klt-sim-07bc6a02be8b: done
+klt sim: batch job klt-sim-114d150dbccf: failed
+klt sim: batch job klt-sim-b1f73ac45e98: failed
+klt sim: batch job klt-sim-97f4e5f9296a: failed
+klt sim: batch job klt-sim-8428205bde6b: done
+klt sim: batch job klt-sim-70b313832370: done
+klt sim: batch job klt-sim-e9bbaf1049b1: done
+klt sim: batch job klt-sim-11b6c4c4c166: done
+klt sim: batch job klt-sim-e1a12b8a7399: done
+klt sim: batch job klt-sim-8ccce542cee9: done
+netlist: sim/mc/capture_window/tb_t19_ctl.cir
+status: fail
+corners: 900  passed: 831  failed: 69  errored: 0  inconclusive: 0
+engine: ngspice 47
+models_lib: <unresolved>
+pdk: ihp-sg13g2 fetched:0.3.0 (via PDK_ROOT environment variable)
+
+measurements:
+  cw.xs [pass]  worst=-0.06 @ tt/1.080V/-40C/mc0 (margin=None)
+    mc: n=900 mean=-0.11072222222222222 sigma=0.0445897197751677  p5=-0.19  p50=-0.11  p95=-0.05
+  cw.ys [pass]  worst=-0.26 @ tt/1.080V/-40C/mc0 (margin=None)
+    mc: n=900 mean=-0.25684444444444443 sigma=0.08989945082937967  p5=-0.4  p50=-0.24  p95=-0.12
+  cw.dr [pass]  worst=1.029621e-10 @ tt/1.080V/-40C/mc0 (margin=None)
+    mc: n=900 mean=1.4143819053333331e-10 sigma=2.670312953982991e-10  p5=8.2086027e-11  p50=1.044266e-10  p95=1.3838307999999996e-10
+  cw.df [pass]  worst=4.262792e-10 @ tt/1.080V/-40C/mc0 (margin=None)
+    mc: n=900 mean=3.518101454444444e-10 sigma=1.4084384943371049e-10  p5=1.89657325e-10  p50=3.1836230000000003e-10  p95=6.358922900000001e-10
+  t19_aperture_ps [fail]  worst=438.5854 @ ss/1.080V/27C/mc10 (margin=-288.5854)
+    mc: n=900 mean=64.24975534444444 sigma=231.60328143538015  p5=57.726409000000004  p50=79.2067  p95=215.54651499999997
+  t19_setup_ps [pass]  worst=-37.9621 @ tt/1.080V/-40C/mc0 (margin=None)
+    mc: n=900 mean=-25.715974477777777 sigma=275.4628042928952  p5=-44.65915  p50=9.908095  p95=65.50880499999997
+  t19_hold_ps [pass]  worst=161.2792 @ tt/1.080V/-40C/mc0 (margin=None)
+    mc: n=900 mean=89.96570100000001 sigma=76.00678453961024  p5=11.857650000000001  p50=75.58930000000001  p95=230.89229
+
+tt/1.080V/-40C/mc0  [pass]  runtime=5.635s
+tt/1.080V/-40C/mc1  [pass]  runtime=5.642s
+tt/1.080V/-40C/mc2  [pass]  runtime=5.594s
+tt/1.080V/-40C/mc3  [pass]  runtime=5.57s
+tt/1.080V/-40C/mc4  [pass]  runtime=5.583s
+tt/1.080V/-40C/mc5  [pass]  runtime=5.666s
+tt/1.080V/-40C/mc6  [pass]  runtime=5.666s
+tt/1.080V/-40C/mc7  [pass]  runtime=5.606s
+tt/1.080V/-40C/mc8  [pass]  runtime=5.471s
+tt/1.080V/-40C/mc9  [pass]  runtime=5.48s
+tt/1.080V/-40C/mc10  [pass]  runtime=5.462s
+tt/1.080V/-40C/mc11  [pass]  runtime=5.494s
+tt/1.080V/-40C/mc12  [pass]  runtime=5.49s
+tt/1.080V/-40C/mc13  [fail]  runtime=5.478s
+tt/1.080V/-40C/mc14  [pass]  runtime=5.464s
+tt/1.080V/-40C/mc15  [pass]  runtime=5.426s
+tt/1.080V/-40C/mc16  [pass]  runtime=5.192s
+tt/1.080V/-40C/mc17  [pass]  runtime=5.161s
+tt/1.080V/-40C/mc18  [pass]  runtime=5.177s
+tt/1.080V/-40C/mc19  [pass]  runtime=5.192s
+tt/1.080V/27C/mc0  [pass]  runtime=5.157s
+tt/1.080V/27C/mc1  [pass]  runtime=5.075s
+tt/1.080V/27C/mc2  [pass]  runtime=5.196s
+tt/1.080V/27C/mc3  [pass]  runtime=5.082s
+tt/1.080V/27C/mc4  [pass]  runtime=5.024s
+tt/1.080V/27C/mc5  [pass]  runtime=4.973s
+tt/1.080V/27C/mc6  [pass]  runtime=5.023s
+tt/1.080V/27C/mc7  [pass]  runtime=5.024s
+tt/1.080V/27C/mc8  [pass]  runtime=5.074s
+tt/1.080V/27C/mc9  [pass]  runtime=4.974s
+tt/1.080V/27C/mc10  [pass]  runtime=5.022s
+tt/1.080V/27C/mc11  [pass]  runtime=5.074s
+tt/1.080V/27C/mc12  [pass]  runtime=5.023s
+tt/1.080V/27C/mc13  [pass]  runtime=5.073s
+tt/1.080V/27C/mc14  [pass]  runtime=4.974s
+tt/1.080V/27C/mc15  [pass]  runtime=4.972s
+tt/1.080V/27C/mc16  [pass]  runtime=5.024s
+tt/1.080V/27C/mc17  [pass]  runtime=5.074s
+tt/1.080V/27C/mc18  [pass]  runtime=5.025s
+tt/1.080V/27C/mc19  [pass]  runtime=4.974s
+tt/1.080V/125C/mc0  [pass]  runtime=4.926s
+tt/1.080V/125C/mc1  [pass]  runtime=4.974s
+tt/1.080V/125C/mc2  [pass]  runtime=5.023s
+tt/1.080V/125C/mc3  [pass]  runtime=4.975s
+tt/1.080V/125C/mc4  [pass]  runtime=4.974s
+tt/1.080V/125C/mc5  [pass]  runtime=4.974s
+tt/1.080V/125C/mc6  [pass]  runtime=4.973s
+tt/1.080V/125C/mc7  [pass]  runtime=5.024s
+tt/1.080V/125C/mc8  [pass]  runtime=4.974s
+tt/1.080V/125C/mc9  [pass]  runtime=4.973s
+tt/1.080V/125C/mc10  [pass]  runtime=4.973s
+tt/1.080V/125C/mc11  [pass]  runtime=4.974s
+tt/1.080V/125C/mc12  [pass]  runtime=4.974s
+tt/1.080V/125C/mc13  [pass]  runtime=4.974s
+tt/1.080V/125C/mc14  [pass]  runtime=4.975s
+tt/1.080V/125C/mc15  [pass]  runtime=4.974s
+tt/1.080V/125C/mc16  [pass]  runtime=4.929s
+tt/1.080V/125C/mc17  [pass]  runtime=5.046s
+tt/1.080V/125C/mc18  [pass]  runtime=5.052s
+tt/1.080V/125C/mc19  [pass]  runtime=5.089s
+tt/1.200V/-40C/mc0  [pass]  runtime=4.982s
+tt/1.200V/-40C/mc1  [pass]  runtime=5.024s
+tt/1.200V/-40C/mc2  [pass]  runtime=4.947s
+tt/1.200V/-40C/mc3  [pass]  runtime=4.931s
+tt/1.200V/-40C/mc4  [pass]  runtime=4.946s
+tt/1.200V/-40C/mc5  [pass]  runtime=4.822s
+tt/1.200V/-40C/mc6  [pass]  runtime=4.922s
+tt/1.200V/-40C/mc7  [pass]  runtime=4.822s
+tt/1.200V/-40C/mc8  [pass]  runtime=4.872s
+tt/1.200V/-40C/mc9  [pass]  runtime=4.772s
+tt/1.200V/-40C/mc10  [pass]  runtime=4.771s
+tt/1.200V/-40C/mc11  [pass]  runtime=4.771s
+tt/1.200V/-40C/mc12  [pass]  runtime=4.821s
+tt/1.200V/-40C/mc13  [pass]  runtime=4.821s
+tt/1.200V/-40C/mc14  [pass]  runtime=4.821s
+tt/1.200V/-40C/mc15  [pass]  runtime=4.772s
+tt/1.200V/-40C/mc16  [pass]  runtime=4.822s
+tt/1.200V/-40C/mc17  [pass]  runtime=4.821s
+tt/1.200V/-40C/mc18  [pass]  runtime=4.822s
+tt/1.200V/-40C/mc19  [pass]  runtime=4.821s
+tt/1.200V/27C/mc0  [pass]  runtime=4.822s
+tt/1.200V/27C/mc1  [pass]  runtime=4.772s
+tt/1.200V/27C/mc2  [pass]  runtime=4.871s
+tt/1.200V/27C/mc3  [pass]  runtime=4.821s
+tt/1.200V/27C/mc4  [pass]  runtime=4.822s
+tt/1.200V/27C/mc5  [pass]  runtime=4.971s
+tt/1.200V/27C/mc6  [pass]  runtime=4.872s
+tt/1.200V/27C/mc7  [pass]  runtime=4.871s
+tt/1.200V/27C/mc8  [pass]  runtime=4.821s
+tt/1.200V/27C/mc9  [pass]  runtime=4.822s
+tt/1.200V/27C/mc10  [pass]  runtime=4.822s
+tt/1.200V/27C/mc11  [pass]  runtime=4.822s
+tt/1.200V/27C/mc12  [pass]  runtime=4.821s
+tt/1.200V/27C/mc13  [pass]  runtime=4.771s
+tt/1.200V/27C/mc14  [pass]  runtime=4.821s
+tt/1.200V/27C/mc15  [pass]  runtime=4.772s
+tt/1.200V/27C/mc16  [pass]  runtime=4.871s
+tt/1.200V/27C/mc17  [pass]  runtime=4.872s
+tt/1.200V/27C/mc18  [pass]  runtime=4.822s
+tt/1.200V/27C/mc19  [pass]  runtime=4.822s
+tt/1.200V/125C/mc0  [pass]  runtime=4.871s
+tt/1.200V/125C/mc1  [pass]  runtime=4.821s
+tt/1.200V/125C/mc2  [pass]  runtime=4.872s
+tt/1.200V/125C/mc3  [pass]  runtime=4.871s
+tt/1.200V/125C/mc4  [pass]  runtime=4.872s
+tt/1.200V/125C/mc5  [pass]  runtime=4.922s
+tt/1.200V/125C/mc6  [pass]  runtime=4.872s
+tt/1.200V/125C/mc7  [pass]  runtime=4.872s
+tt/1.200V/125C/mc8  [pass]  runtime=4.871s
+tt/1.200V/125C/mc9  [pass]  runtime=4.871s
+tt/1.200V/125C/mc10  [pass]  runtime=4.822s
+tt/1.200V/125C/mc11  [pass]  runtime=4.872s
+tt/1.200V/125C/mc12  [pass]  runtime=4.872s
+tt/1.200V/125C/mc13  [pass]  runtime=4.875s
+tt/1.200V/125C/mc14  [pass]  runtime=5.026s
+tt/1.200V/125C/mc15  [pass]  runtime=5.024s
+tt/1.200V/125C/mc16  [pass]  runtime=5.072s
+tt/1.200V/125C/mc17  [pass]  runtime=5.123s
+tt/1.200V/125C/mc18  [pass]  runtime=5.122s
+tt/1.200V/125C/mc19  [pass]  runtime=5.073s
+tt/1.320V/-40C/mc0  [pass]  runtime=4.922s
+tt/1.320V/-40C/mc1  [pass]  runtime=4.971s
+tt/1.320V/-40C/mc2  [pass]  runtime=4.822s
+tt/1.320V/-40C/mc3  [pass]  runtime=4.771s
+tt/1.320V/-40C/mc4  [pass]  runtime=4.872s
+tt/1.320V/-40C/mc5  [pass]  runtime=4.821s
+tt/1.320V/-40C/mc6  [pass]  runtime=4.772s
+tt/1.320V/-40C/mc7  [pass]  runtime=4.772s
+tt/1.320V/-40C/mc8  [pass]  runtime=4.772s
+tt/1.320V/-40C/mc9  [pass]  runtime=4.77s
+tt/1.320V/-40C/mc10  [pass]  runtime=4.772s
+tt/1.320V/-40C/mc11  [pass]  runtime=4.822s
+tt/1.320V/-40C/mc12  [pass]  runtime=4.773s
+tt/1.320V/-40C/mc13  [pass]  runtime=4.773s
+tt/1.320V/-40C/mc14  [pass]  runtime=4.772s
+tt/1.320V/-40C/mc15  [pass]  runtime=4.822s
+tt/1.320V/-40C/mc16  [pass]  runtime=4.771s
+tt/1.320V/-40C/mc17  [pass]  runtime=4.771s
+tt/1.320V/-40C/mc18  [pass]  runtime=4.772s
+tt/1.320V/-40C/mc19  [pass]  runtime=4.771s
+tt/1.320V/27C/mc0  [pass]  runtime=4.822s
+tt/1.320V/27C/mc1  [pass]  runtime=4.771s
+tt/1.320V/27C/mc2  [pass]  runtime=4.822s
+tt/1.320V/27C/mc3  [pass]  runtime=4.821s
+tt/1.320V/27C/mc4  [pass]  runtime=4.821s
+tt/1.320V/27C/mc5  [pass]  runtime=4.822s
+tt/1.320V/27C/mc6  [pass]  runtime=4.822s
+tt/1.320V/27C/mc7  [pass]  runtime=4.822s
+tt/1.320V/27C/mc8  [pass]  runtime=4.822s
+tt/1.320V/27C/mc9  [pass]  runtime=4.822s
+tt/1.320V/27C/mc10  [pass]  runtime=4.772s
+tt/1.320V/27C/mc11  [pass]  runtime=4.821s
+tt/1.320V/27C/mc12  [pass]  runtime=4.721s
+tt/1.320V/27C/mc13  [pass]  runtime=4.772s
+tt/1.320V/27C/mc14  [pass]  runtime=4.772s
+tt/1.320V/27C/mc15  [pass]  runtime=4.771s
+tt/1.320V/27C/mc16  [pass]  runtime=4.821s
+tt/1.320V/27C/mc17  [pass]  runtime=4.772s
+tt/1.320V/27C/mc18  [pass]  runtime=4.771s
+tt/1.320V/27C/mc19  [pass]  runtime=4.771s
+tt/1.320V/125C/mc0  [pass]  runtime=4.821s
+tt/1.320V/125C/mc1  [pass]  runtime=4.872s
+tt/1.320V/125C/mc2  [pass]  runtime=4.921s
+tt/1.320V/125C/mc3  [pass]  runtime=4.922s
+tt/1.320V/125C/mc4  [pass]  runtime=4.972s
+tt/1.320V/125C/mc5  [pass]  runtime=4.872s
+tt/1.320V/125C/mc6  [pass]  runtime=4.821s
+tt/1.320V/125C/mc7  [pass]  runtime=4.871s
+tt/1.320V/125C/mc8  [pass]  runtime=4.871s
+tt/1.320V/125C/mc9  [pass]  runtime=4.871s
+tt/1.320V/125C/mc10  [pass]  runtime=4.826s
+tt/1.320V/125C/mc11  [pass]  runtime=5.076s
+tt/1.320V/125C/mc12  [pass]  runtime=5.024s
+tt/1.320V/125C/mc13  [pass]  runtime=5.023s
+tt/1.320V/125C/mc14  [pass]  runtime=5.024s
+tt/1.320V/125C/mc15  [pass]  runtime=5.073s
+tt/1.320V/125C/mc16  [pass]  runtime=4.972s
+tt/1.320V/125C/mc17  [pass]  runtime=5.022s
+tt/1.320V/125C/mc18  [pass]  runtime=5.022s
+tt/1.320V/125C/mc19  [pass]  runtime=4.872s
+ss/1.080V/-40C/mc0  [pass]  runtime=4.972s
+ss/1.080V/-40C/mc1  [pass]  runtime=4.922s
+ss/1.080V/-40C/mc2  [pass]  runtime=5.023s
+ss/1.080V/-40C/mc3  [pass]  runtime=4.973s
+ss/1.080V/-40C/mc4  [fail]  runtime=4.973s
+ss/1.080V/-40C/mc5  [pass]  runtime=4.973s
+ss/1.080V/-40C/mc6  [pass]  runtime=5.022s
+ss/1.080V/-40C/mc7  [pass]  runtime=4.972s
+ss/1.080V/-40C/mc8  [pass]  runtime=4.972s
+ss/1.080V/-40C/mc9  [fail]  runtime=4.972s
+ss/1.080V/-40C/mc10  [pass]  runtime=5.072s
+ss/1.080V/-40C/mc11  [pass]  runtime=4.972s
+ss/1.080V/-40C/mc12  [pass]  runtime=4.973s
+ss/1.080V/-40C/mc13  [fail]  runtime=5.021s
+ss/1.080V/-40C/mc14  [pass]  runtime=5.023s
+ss/1.080V/-40C/mc15  [pass]  runtime=4.973s
+ss/1.080V/-40C/mc16  [fail]  runtime=5.022s
+ss/1.080V/-40C/mc17  [pass]  runtime=4.973s
+ss/1.080V/-40C/mc18  [pass]  runtime=4.921s
+ss/1.080V/-40C/mc19  [pass]  runtime=4.973s
+ss/1.080V/27C/mc0  [fail]  runtime=4.974s
+ss/1.080V/27C/mc1  [fail]  runtime=4.972s
+ss/1.080V/27C/mc2  [fail]  runtime=4.972s
+ss/1.080V/27C/mc3  [fail]  runtime=4.972s
+ss/1.080V/27C/mc4  [fail]  runtime=5.023s
+ss/1.080V/27C/mc5  [fail]  runtime=5.022s
+ss/1.080V/27C/mc6  [fail]  runtime=4.972s
+ss/1.080V/27C/mc7  [fail]  runtime=4.973s
+ss/1.080V/27C/mc8  [fail]  runtime=4.973s
+ss/1.080V/27C/mc9  [fail]  runtime=4.973s
+ss/1.080V/27C/mc10  [fail]  runtime=5.023s
+ss/1.080V/27C/mc11  [fail]  runtime=4.922s
+ss/1.080V/27C/mc12  [fail]  runtime=4.972s
+ss/1.080V/27C/mc13  [fail]  runtime=4.973s
+ss/1.080V/27C/mc14  [fail]  runtime=4.973s
+ss/1.080V/27C/mc15  [fail]  runtime=4.972s
+ss/1.080V/27C/mc16  [fail]  runtime=4.972s
+ss/1.080V/27C/mc17  [fail]  runtime=4.974s
+ss/1.080V/27C/mc18  [fail]  runtime=5.023s
+ss/1.080V/27C/mc19  [fail]  runtime=4.972s
+ss/1.080V/125C/mc0  [fail]  runtime=4.972s
+ss/1.080V/125C/mc1  [fail]  runtime=4.973s
+ss/1.080V/125C/mc2  [fail]  runtime=4.973s
+ss/1.080V/125C/mc3  [fail]  runtime=4.971s
+ss/1.080V/125C/mc4  [fail]  runtime=4.972s
+ss/1.080V/125C/mc5  [fail]  runtime=4.922s
+ss/1.080V/125C/mc6  [fail]  runtime=4.923s
+ss/1.080V/125C/mc7  [fail]  runtime=4.972s
+ss/1.080V/125C/mc8  [fail]  runtime=5.733s
+ss/1.080V/125C/mc9  [fail]  runtime=5.731s
+ss/1.080V/125C/mc10  [fail]  runtime=5.676s
+ss/1.080V/125C/mc11  [fail]  runtime=5.726s
+ss/1.080V/125C/mc12  [fail]  runtime=5.724s
+ss/1.080V/125C/mc13  [fail]  runtime=5.674s
+ss/1.080V/125C/mc14  [fail]  runtime=5.73s
+ss/1.080V/125C/mc15  [fail]  runtime=5.675s
+ss/1.080V/125C/mc16  [fail]  runtime=5.527s
+ss/1.080V/125C/mc17  [fail]  runtime=5.528s
+ss/1.080V/125C/mc18  [fail]  runtime=5.526s
+ss/1.080V/125C/mc19  [fail]  runtime=5.575s
+ss/1.200V/-40C/mc0  [pass]  runtime=5.676s
+ss/1.200V/-40C/mc1  [pass]  runtime=5.674s
+ss/1.200V/-40C/mc2  [pass]  runtime=5.675s
+ss/1.200V/-40C/mc3  [pass]  runtime=5.626s
+ss/1.200V/-40C/mc4  [pass]  runtime=5.675s
+ss/1.200V/-40C/mc5  [pass]  runtime=5.674s
+ss/1.200V/-40C/mc6  [pass]  runtime=5.624s
+ss/1.200V/-40C/mc7  [pass]  runtime=5.827s
+ss/1.200V/-40C/mc8  [pass]  runtime=5.675s
+ss/1.200V/-40C/mc9  [pass]  runtime=5.675s
+ss/1.200V/-40C/mc10  [pass]  runtime=5.677s
+ss/1.200V/-40C/mc11  [pass]  runtime=5.725s
+ss/1.200V/-40C/mc12  [pass]  runtime=5.726s
+ss/1.200V/-40C/mc13  [pass]  runtime=5.728s
+ss/1.200V/-40C/mc14  [pass]  runtime=5.674s
+ss/1.200V/-40C/mc15  [pass]  runtime=5.727s
+ss/1.200V/-40C/mc16  [pass]  runtime=5.726s
+ss/1.200V/-40C/mc17  [pass]  runtime=5.677s
+ss/1.200V/-40C/mc18  [pass]  runtime=5.676s
+ss/1.200V/-40C/mc19  [pass]  runtime=5.926s
+ss/1.200V/27C/mc0  [pass]  runtime=5.675s
+ss/1.200V/27C/mc1  [pass]  runtime=5.723s
+ss/1.200V/27C/mc2  [pass]  runtime=5.674s
+ss/1.200V/27C/mc3  [pass]  runtime=5.626s
+ss/1.200V/27C/mc4  [pass]  runtime=5.625s
+ss/1.200V/27C/mc5  [pass]  runtime=5.626s
+ss/1.200V/27C/mc6  [pass]  runtime=5.627s
+ss/1.200V/27C/mc7  [pass]  runtime=5.626s
+ss/1.200V/27C/mc8  [pass]  runtime=5.625s
+ss/1.200V/27C/mc9  [pass]  runtime=5.627s
+ss/1.200V/27C/mc10  [pass]  runtime=5.625s
+ss/1.200V/27C/mc11  [pass]  runtime=5.627s
+ss/1.200V/27C/mc12  [pass]  runtime=5.678s
+ss/1.200V/27C/mc13  [pass]  runtime=5.675s
+ss/1.200V/27C/mc14  [pass]  runtime=5.624s
+ss/1.200V/27C/mc15  [pass]  runtime=5.679s
+ss/1.200V/27C/mc16  [pass]  runtime=5.625s
+ss/1.200V/27C/mc17  [pass]  runtime=5.624s
+ss/1.200V/27C/mc18  [pass]  runtime=5.625s
+ss/1.200V/27C/mc19  [pass]  runtime=5.576s
+ss/1.200V/125C/mc0  [pass]  runtime=5.626s
+ss/1.200V/125C/mc1  [pass]  runtime=5.574s
+ss/1.200V/125C/mc2  [pass]  runtime=5.626s
+ss/1.200V/125C/mc3  [pass]  runtime=5.626s
+ss/1.200V/125C/mc4  [pass]  runtime=5.23s
+ss/1.200V/125C/mc5  [pass]  runtime=5.228s
+ss/1.200V/125C/mc6  [pass]  runtime=5.174s
+ss/1.200V/125C/mc7  [pass]  runtime=5.177s
+ss/1.200V/125C/mc8  [pass]  runtime=5.173s
+ss/1.200V/125C/mc9  [pass]  runtime=5.175s
+ss/1.200V/125C/mc10  [pass]  runtime=5.123s
+ss/1.200V/125C/mc11  [pass]  runtime=5.173s
+ss/1.200V/125C/mc12  [pass]  runtime=5.023s
+ss/1.200V/125C/mc13  [pass]  runtime=5.026s
+ss/1.200V/125C/mc14  [pass]  runtime=5.023s
+ss/1.200V/125C/mc15  [pass]  runtime=5.023s
+ss/1.200V/125C/mc16  [pass]  runtime=5.025s
+ss/1.200V/125C/mc17  [pass]  runtime=5.023s
+ss/1.200V/125C/mc18  [pass]  runtime=5.077s
+ss/1.200V/125C/mc19  [pass]  runtime=5.026s
+ss/1.320V/-40C/mc0  [pass]  runtime=4.873s
+ss/1.320V/-40C/mc1  [pass]  runtime=4.876s
+ss/1.320V/-40C/mc2  [pass]  runtime=4.873s
+ss/1.320V/-40C/mc3  [pass]  runtime=4.922s
+ss/1.320V/-40C/mc4  [pass]  runtime=4.871s
+ss/1.320V/-40C/mc5  [pass]  runtime=4.822s
+ss/1.320V/-40C/mc6  [pass]  runtime=4.923s
+ss/1.320V/-40C/mc7  [pass]  runtime=4.973s
+ss/1.320V/-40C/mc8  [pass]  runtime=4.823s
+ss/1.320V/-40C/mc9  [pass]  runtime=4.872s
+ss/1.320V/-40C/mc10  [pass]  runtime=4.873s
+ss/1.320V/-40C/mc11  [pass]  runtime=4.871s
+ss/1.320V/-40C/mc12  [pass]  runtime=4.922s
+ss/1.320V/-40C/mc13  [pass]  runtime=4.822s
+ss/1.320V/-40C/mc14  [pass]  runtime=4.873s
+ss/1.320V/-40C/mc15  [pass]  runtime=4.873s
+ss/1.320V/-40C/mc16  [pass]  runtime=4.874s
+ss/1.320V/-40C/mc17  [pass]  runtime=4.923s
+ss/1.320V/-40C/mc18  [pass]  runtime=4.874s
+ss/1.320V/-40C/mc19  [pass]  runtime=4.922s
+ss/1.320V/27C/mc0  [pass]  runtime=4.822s
+ss/1.320V/27C/mc1  [pass]  runtime=4.873s
+ss/1.320V/27C/mc2  [pass]  runtime=4.874s
+ss/1.320V/27C/mc3  [pass]  runtime=4.874s
+ss/1.320V/27C/mc4  [pass]  runtime=4.824s
+ss/1.320V/27C/mc5  [pass]  runtime=4.872s
+ss/1.320V/27C/mc6  [pass]  runtime=4.823s
+ss/1.320V/27C/mc7  [pass]  runtime=4.873s
+ss/1.320V/27C/mc8  [pass]  runtime=4.824s
+ss/1.320V/27C/mc9  [pass]  runtime=4.923s
+ss/1.320V/27C/mc10  [pass]  runtime=4.824s
+ss/1.320V/27C/mc11  [pass]  runtime=4.923s
+ss/1.320V/27C/mc12  [pass]  runtime=4.924s
+ss/1.320V/27C/mc13  [pass]  runtime=4.874s
+ss/1.320V/27C/mc14  [pass]  runtime=4.872s
+ss/1.320V/27C/mc15  [pass]  runtime=4.873s
+ss/1.320V/27C/mc16  [pass]  runtime=4.873s
+ss/1.320V/27C/mc17  [pass]  runtime=4.876s
+ss/1.320V/27C/mc18  [pass]  runtime=4.875s
+ss/1.320V/27C/mc19  [pass]  runtime=4.874s
+ss/1.320V/125C/mc0  [pass]  runtime=5.176s
+ss/1.320V/125C/mc1  [pass]  runtime=5.176s
+ss/1.320V/125C/mc2  [pass]  runtime=5.173s
+ss/1.320V/125C/mc3  [pass]  runtime=5.174s
+ss/1.320V/125C/mc4  [pass]  runtime=5.172s
+ss/1.320V/125C/mc5  [pass]  runtime=5.224s
+ss/1.320V/125C/mc6  [pass]  runtime=5.223s
+ss/1.320V/125C/mc7  [pass]  runtime=5.171s
+ss/1.320V/125C/mc8  [pass]  runtime=5.025s
+ss/1.320V/125C/mc9  [pass]  runtime=5.076s
+ss/1.320V/125C/mc10  [pass]  runtime=5.022s
+ss/1.320V/125C/mc11  [pass]  runtime=5.123s
+ss/1.320V/125C/mc12  [pass]  runtime=5.022s
+ss/1.320V/125C/mc13  [pass]  runtime=5.023s
+ss/1.320V/125C/mc14  [pass]  runtime=5.023s
+ss/1.320V/125C/mc15  [pass]  runtime=5.122s
+ss/1.320V/125C/mc16  [pass]  runtime=5.074s
+ss/1.320V/125C/mc17  [pass]  runtime=5.022s
+ss/1.320V/125C/mc18  [pass]  runtime=5.073s
+ss/1.320V/125C/mc19  [pass]  runtime=5.073s
+ff/1.080V/-40C/mc0  [pass]  runtime=5.023s
+ff/1.080V/-40C/mc1  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc2  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc3  [pass]  runtime=5.023s
+ff/1.080V/-40C/mc4  [pass]  runtime=4.973s
+ff/1.080V/-40C/mc5  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc6  [pass]  runtime=5.024s
+ff/1.080V/-40C/mc7  [pass]  runtime=5.073s
+ff/1.080V/-40C/mc8  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc9  [pass]  runtime=5.022s
+ff/1.080V/-40C/mc10  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc11  [pass]  runtime=5.025s
+ff/1.080V/-40C/mc12  [pass]  runtime=5.024s
+ff/1.080V/-40C/mc13  [pass]  runtime=4.971s
+ff/1.080V/-40C/mc14  [pass]  runtime=5.023s
+ff/1.080V/-40C/mc15  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc16  [pass]  runtime=5.025s
+ff/1.080V/-40C/mc17  [pass]  runtime=4.972s
+ff/1.080V/-40C/mc18  [pass]  runtime=4.973s
+ff/1.080V/-40C/mc19  [pass]  runtime=4.974s
+ff/1.080V/27C/mc0  [pass]  runtime=5.224s
+ff/1.080V/27C/mc1  [pass]  runtime=5.023s
+ff/1.080V/27C/mc2  [pass]  runtime=5.022s
+ff/1.080V/27C/mc3  [pass]  runtime=5.022s
+ff/1.080V/27C/mc4  [pass]  runtime=5.022s
+ff/1.080V/27C/mc5  [pass]  runtime=5.023s
+ff/1.080V/27C/mc6  [pass]  runtime=5.022s
+ff/1.080V/27C/mc7  [pass]  runtime=5.073s
+ff/1.080V/27C/mc8  [pass]  runtime=5.024s
+ff/1.080V/27C/mc9  [pass]  runtime=5.022s
+ff/1.080V/27C/mc10  [pass]  runtime=5.023s
+ff/1.080V/27C/mc11  [pass]  runtime=5.022s
+ff/1.080V/27C/mc12  [pass]  runtime=5.024s
+ff/1.080V/27C/mc13  [pass]  runtime=4.972s
+ff/1.080V/27C/mc14  [pass]  runtime=5.074s
+ff/1.080V/27C/mc15  [pass]  runtime=5.024s
+ff/1.080V/27C/mc16  [pass]  runtime=6.385s
+ff/1.080V/27C/mc17  [pass]  runtime=6.328s
+ff/1.080V/27C/mc18  [pass]  runtime=6.299s
+ff/1.080V/27C/mc19  [pass]  runtime=6.3s
+ff/1.080V/125C/mc0  [pass]  runtime=6.431s
+ff/1.080V/125C/mc1  [pass]  runtime=6.413s
+ff/1.080V/125C/mc2  [pass]  runtime=6.338s
+ff/1.080V/125C/mc3  [pass]  runtime=6.341s
+ff/1.080V/125C/mc4  [pass]  runtime=6.202s
+ff/1.080V/125C/mc5  [pass]  runtime=6.063s
+ff/1.080V/125C/mc6  [pass]  runtime=6.086s
+ff/1.080V/125C/mc7  [pass]  runtime=6.077s
+ff/1.080V/125C/mc8  [pass]  runtime=6.127s
+ff/1.080V/125C/mc9  [pass]  runtime=6.113s
+ff/1.080V/125C/mc10  [pass]  runtime=6.131s
+ff/1.080V/125C/mc11  [pass]  runtime=6.086s
+ff/1.080V/125C/mc12  [pass]  runtime=5.725s
+ff/1.080V/125C/mc13  [pass]  runtime=5.727s
+ff/1.080V/125C/mc14  [pass]  runtime=5.726s
+ff/1.080V/125C/mc15  [pass]  runtime=5.775s
+ff/1.080V/125C/mc16  [pass]  runtime=5.675s
+ff/1.080V/125C/mc17  [pass]  runtime=5.726s
+ff/1.080V/125C/mc18  [pass]  runtime=5.724s
+ff/1.080V/125C/mc19  [pass]  runtime=5.676s
+ff/1.200V/-40C/mc0  [pass]  runtime=5.574s
+ff/1.200V/-40C/mc1  [pass]  runtime=5.576s
+ff/1.200V/-40C/mc2  [pass]  runtime=5.676s
+ff/1.200V/-40C/mc3  [pass]  runtime=5.574s
+ff/1.200V/-40C/mc4  [pass]  runtime=5.577s
+ff/1.200V/-40C/mc5  [pass]  runtime=5.676s
+ff/1.200V/-40C/mc6  [pass]  runtime=5.575s
+ff/1.200V/-40C/mc7  [pass]  runtime=5.573s
+ff/1.200V/-40C/mc8  [pass]  runtime=5.575s
+ff/1.200V/-40C/mc9  [pass]  runtime=5.525s
+ff/1.200V/-40C/mc10  [pass]  runtime=5.525s
+ff/1.200V/-40C/mc11  [pass]  runtime=5.626s
+ff/1.200V/-40C/mc12  [pass]  runtime=5.576s
+ff/1.200V/-40C/mc13  [pass]  runtime=5.575s
+ff/1.200V/-40C/mc14  [pass]  runtime=5.624s
+ff/1.200V/-40C/mc15  [pass]  runtime=5.525s
+ff/1.200V/-40C/mc16  [pass]  runtime=5.575s
+ff/1.200V/-40C/mc17  [pass]  runtime=5.625s
+ff/1.200V/-40C/mc18  [pass]  runtime=5.674s
+ff/1.200V/-40C/mc19  [pass]  runtime=5.575s
+ff/1.200V/27C/mc0  [pass]  runtime=5.625s
+ff/1.200V/27C/mc1  [pass]  runtime=5.726s
+ff/1.200V/27C/mc2  [pass]  runtime=5.575s
+ff/1.200V/27C/mc3  [pass]  runtime=5.625s
+ff/1.200V/27C/mc4  [pass]  runtime=5.575s
+ff/1.200V/27C/mc5  [pass]  runtime=5.675s
+ff/1.200V/27C/mc6  [pass]  runtime=5.625s
+ff/1.200V/27C/mc7  [pass]  runtime=5.623s
+ff/1.200V/27C/mc8  [pass]  runtime=5.625s
+ff/1.200V/27C/mc9  [pass]  runtime=5.575s
+ff/1.200V/27C/mc10  [pass]  runtime=5.625s
+ff/1.200V/27C/mc11  [pass]  runtime=5.626s
+ff/1.200V/27C/mc12  [pass]  runtime=5.673s
+ff/1.200V/27C/mc13  [pass]  runtime=5.588s
+ff/1.200V/27C/mc14  [pass]  runtime=5.709s
+ff/1.200V/27C/mc15  [pass]  runtime=5.512s
+ff/1.200V/27C/mc16  [pass]  runtime=5.513s
+ff/1.200V/27C/mc17  [pass]  runtime=5.509s
+ff/1.200V/27C/mc18  [pass]  runtime=5.426s
+ff/1.200V/27C/mc19  [pass]  runtime=5.456s
+ff/1.200V/125C/mc0  [pass]  runtime=5.325s
+ff/1.200V/125C/mc1  [pass]  runtime=5.375s
+ff/1.200V/125C/mc2  [pass]  runtime=5.374s
+ff/1.200V/125C/mc3  [pass]  runtime=5.375s
+ff/1.200V/125C/mc4  [pass]  runtime=5.323s
+ff/1.200V/125C/mc5  [pass]  runtime=5.324s
+ff/1.200V/125C/mc6  [pass]  runtime=5.325s
+ff/1.200V/125C/mc7  [pass]  runtime=5.325s
+ff/1.200V/125C/mc8  [pass]  runtime=5.274s
+ff/1.200V/125C/mc9  [pass]  runtime=5.275s
+ff/1.200V/125C/mc10  [pass]  runtime=5.323s
+ff/1.200V/125C/mc11  [pass]  runtime=5.273s
+ff/1.200V/125C/mc12  [pass]  runtime=5.324s
+ff/1.200V/125C/mc13  [pass]  runtime=5.324s
+ff/1.200V/125C/mc14  [pass]  runtime=5.273s
+ff/1.200V/125C/mc15  [pass]  runtime=5.325s
+ff/1.200V/125C/mc16  [pass]  runtime=5.375s
+ff/1.200V/125C/mc17  [pass]  runtime=5.425s
+ff/1.200V/125C/mc18  [pass]  runtime=5.375s
+ff/1.200V/125C/mc19  [pass]  runtime=5.38s
+ff/1.320V/-40C/mc0  [pass]  runtime=5.323s
+ff/1.320V/-40C/mc1  [pass]  runtime=5.424s
+ff/1.320V/-40C/mc2  [pass]  runtime=5.273s
+ff/1.320V/-40C/mc3  [pass]  runtime=5.275s
+ff/1.320V/-40C/mc4  [pass]  runtime=5.424s
+ff/1.320V/-40C/mc5  [pass]  runtime=5.326s
+ff/1.320V/-40C/mc6  [pass]  runtime=5.329s
+ff/1.320V/-40C/mc7  [pass]  runtime=5.275s
+ff/1.320V/-40C/mc8  [pass]  runtime=5.326s
+ff/1.320V/-40C/mc9  [pass]  runtime=5.274s
+ff/1.320V/-40C/mc10  [pass]  runtime=5.325s
+ff/1.320V/-40C/mc11  [pass]  runtime=5.324s
+ff/1.320V/-40C/mc12  [pass]  runtime=5.324s
+ff/1.320V/-40C/mc13  [pass]  runtime=5.323s
+ff/1.320V/-40C/mc14  [pass]  runtime=5.273s
+ff/1.320V/-40C/mc15  [pass]  runtime=5.326s
+ff/1.320V/-40C/mc16  [pass]  runtime=5.327s
+ff/1.320V/-40C/mc17  [pass]  runtime=5.275s
+ff/1.320V/-40C/mc18  [pass]  runtime=5.225s
+ff/1.320V/-40C/mc19  [pass]  runtime=5.273s
+ff/1.320V/27C/mc0  [pass]  runtime=5.273s
+ff/1.320V/27C/mc1  [pass]  runtime=5.274s
+ff/1.320V/27C/mc2  [pass]  runtime=5.425s
+ff/1.320V/27C/mc3  [pass]  runtime=5.275s
+ff/1.320V/27C/mc4  [pass]  runtime=5.275s
+ff/1.320V/27C/mc5  [pass]  runtime=5.325s
+ff/1.320V/27C/mc6  [pass]  runtime=5.275s
+ff/1.320V/27C/mc7  [pass]  runtime=5.273s
+ff/1.320V/27C/mc8  [pass]  runtime=5.283s
+ff/1.320V/27C/mc9  [pass]  runtime=5.272s
+ff/1.320V/27C/mc10  [pass]  runtime=5.329s
+ff/1.320V/27C/mc11  [pass]  runtime=5.277s
+ff/1.320V/27C/mc12  [pass]  runtime=5.272s
+ff/1.320V/27C/mc13  [pass]  runtime=5.271s
+ff/1.320V/27C/mc14  [pass]  runtime=5.325s
+ff/1.320V/27C/mc15  [pass]  runtime=5.274s
+ff/1.320V/27C/mc16  [pass]  runtime=5.175s
+ff/1.320V/27C/mc17  [pass]  runtime=5.174s
+ff/1.320V/27C/mc18  [pass]  runtime=5.179s
+ff/1.320V/27C/mc19  [pass]  runtime=5.174s
+ff/1.320V/125C/mc0  [pass]  runtime=5.223s
+ff/1.320V/125C/mc1  [pass]  runtime=5.228s
+ff/1.320V/125C/mc2  [pass]  runtime=5.178s
+ff/1.320V/125C/mc3  [pass]  runtime=5.175s
+ff/1.320V/125C/mc4  [pass]  runtime=5.175s
+ff/1.320V/125C/mc5  [pass]  runtime=5.173s
+ff/1.320V/125C/mc6  [pass]  runtime=5.225s
+ff/1.320V/125C/mc7  [pass]  runtime=5.176s
+ff/1.320V/125C/mc8  [pass]  runtime=5.179s
+ff/1.320V/125C/mc9  [pass]  runtime=5.228s
+ff/1.320V/125C/mc10  [pass]  runtime=5.274s
+ff/1.320V/125C/mc11  [pass]  runtime=5.223s
+ff/1.320V/125C/mc12  [pass]  runtime=5.224s
+ff/1.320V/125C/mc13  [pass]  runtime=5.273s
+ff/1.320V/125C/mc14  [pass]  runtime=5.274s
+ff/1.320V/125C/mc15  [pass]  runtime=5.226s
+ff/1.320V/125C/mc16  [pass]  runtime=5.223s
+ff/1.320V/125C/mc17  [pass]  runtime=5.226s
+ff/1.320V/125C/mc18  [pass]  runtime=5.225s
+ff/1.320V/125C/mc19  [pass]  runtime=5.227s
+sf/1.080V/-40C/mc0  [fail]  runtime=5.423s
+sf/1.080V/-40C/mc1  [fail]  runtime=5.478s
+sf/1.080V/-40C/mc2  [fail]  runtime=5.426s
+sf/1.080V/-40C/mc3  [pass]  runtime=5.474s
+sf/1.080V/-40C/mc4  [pass]  runtime=5.423s
+sf/1.080V/-40C/mc5  [fail]  runtime=5.527s
+sf/1.080V/-40C/mc6  [fail]  runtime=5.428s
+sf/1.080V/-40C/mc7  [pass]  runtime=5.478s
+sf/1.080V/-40C/mc8  [fail]  runtime=5.478s
+sf/1.080V/-40C/mc9  [fail]  runtime=5.527s
+sf/1.080V/-40C/mc10  [fail]  runtime=5.477s
+sf/1.080V/-40C/mc11  [fail]  runtime=5.527s
+sf/1.080V/-40C/mc12  [pass]  runtime=5.525s
+sf/1.080V/-40C/mc13  [fail]  runtime=5.525s
+sf/1.080V/-40C/mc14  [fail]  runtime=5.477s
+sf/1.080V/-40C/mc15  [fail]  runtime=5.478s
+sf/1.080V/-40C/mc16  [pass]  runtime=5.478s
+sf/1.080V/-40C/mc17  [fail]  runtime=5.478s
+sf/1.080V/-40C/mc18  [fail]  runtime=5.478s
+sf/1.080V/-40C/mc19  [fail]  runtime=5.476s
+sf/1.080V/27C/mc0  [pass]  runtime=5.376s
+sf/1.080V/27C/mc1  [fail]  runtime=5.425s
+sf/1.080V/27C/mc2  [fail]  runtime=5.429s
+sf/1.080V/27C/mc3  [pass]  runtime=5.428s
+sf/1.080V/27C/mc4  [pass]  runtime=5.335s
+sf/1.080V/27C/mc5  [fail]  runtime=5.374s
+sf/1.080V/27C/mc6  [pass]  runtime=5.375s
+sf/1.080V/27C/mc7  [pass]  runtime=5.444s
+sf/1.080V/27C/mc8  [fail]  runtime=5.35s
+sf/1.080V/27C/mc9  [fail]  runtime=5.375s
+sf/1.080V/27C/mc10  [pass]  runtime=5.395s
+sf/1.080V/27C/mc11  [fail]  runtime=5.426s
+sf/1.080V/27C/mc12  [fail]  runtime=5.123s
+sf/1.080V/27C/mc13  [pass]  runtime=5.022s
+sf/1.080V/27C/mc14  [pass]  runtime=5.023s
+sf/1.080V/27C/mc15  [pass]  runtime=5.073s
+sf/1.080V/27C/mc16  [pass]  runtime=5.072s
+sf/1.080V/27C/mc17  [pass]  runtime=5.072s
+sf/1.080V/27C/mc18  [fail]  runtime=5.023s
+sf/1.080V/27C/mc19  [fail]  runtime=5.072s
+sf/1.080V/125C/mc0  [pass]  runtime=4.972s
+sf/1.080V/125C/mc1  [pass]  runtime=5.023s
+sf/1.080V/125C/mc2  [pass]  runtime=4.973s
+sf/1.080V/125C/mc3  [pass]  runtime=5.024s
+sf/1.080V/125C/mc4  [pass]  runtime=5.022s
+sf/1.080V/125C/mc5  [pass]  runtime=5.023s
+sf/1.080V/125C/mc6  [pass]  runtime=5.023s
+sf/1.080V/125C/mc7  [pass]  runtime=4.972s
+sf/1.080V/125C/mc8  [pass]  runtime=4.974s
+sf/1.080V/125C/mc9  [pass]  runtime=5.023s
+sf/1.080V/125C/mc10  [pass]  runtime=5.023s
+sf/1.080V/125C/mc11  [pass]  runtime=4.973s
+sf/1.080V/125C/mc12  [pass]  runtime=4.973s
+sf/1.080V/125C/mc13  [pass]  runtime=4.972s
+sf/1.080V/125C/mc14  [pass]  runtime=5.073s
+sf/1.080V/125C/mc15  [pass]  runtime=4.972s
+sf/1.080V/125C/mc16  [pass]  runtime=4.975s
+sf/1.080V/125C/mc17  [pass]  runtime=4.974s
+sf/1.080V/125C/mc18  [pass]  runtime=4.974s
+sf/1.080V/125C/mc19  [pass]  runtime=5.023s
+sf/1.200V/-40C/mc0  [pass]  runtime=4.922s
+sf/1.200V/-40C/mc1  [pass]  runtime=4.923s
+sf/1.200V/-40C/mc2  [pass]  runtime=4.972s
+sf/1.200V/-40C/mc3  [pass]  runtime=4.972s
+sf/1.200V/-40C/mc4  [pass]  runtime=5.022s
+sf/1.200V/-40C/mc5  [pass]  runtime=4.973s
+sf/1.200V/-40C/mc6  [pass]  runtime=4.922s
+sf/1.200V/-40C/mc7  [pass]  runtime=4.923s
+sf/1.200V/-40C/mc8  [pass]  runtime=4.973s
+sf/1.200V/-40C/mc9  [pass]  runtime=4.922s
+sf/1.200V/-40C/mc10  [pass]  runtime=4.924s
+sf/1.200V/-40C/mc11  [pass]  runtime=4.922s
+sf/1.200V/-40C/mc12  [pass]  runtime=4.873s
+sf/1.200V/-40C/mc13  [pass]  runtime=4.922s
+sf/1.200V/-40C/mc14  [pass]  runtime=4.923s
+sf/1.200V/-40C/mc15  [pass]  runtime=4.922s
+sf/1.200V/-40C/mc16  [pass]  runtime=4.972s
+sf/1.200V/-40C/mc17  [pass]  runtime=5.023s
+sf/1.200V/-40C/mc18  [pass]  runtime=4.972s
+sf/1.200V/-40C/mc19  [pass]  runtime=4.923s
+sf/1.200V/27C/mc0  [pass]  runtime=5.024s
+sf/1.200V/27C/mc1  [pass]  runtime=5.022s
+sf/1.200V/27C/mc2  [pass]  runtime=5.023s
+sf/1.200V/27C/mc3  [pass]  runtime=5.123s
+sf/1.200V/27C/mc4  [pass]  runtime=5.022s
+sf/1.200V/27C/mc5  [pass]  runtime=5.072s
+sf/1.200V/27C/mc6  [pass]  runtime=5.024s
+sf/1.200V/27C/mc7  [pass]  runtime=5.022s
+sf/1.200V/27C/mc8  [pass]  runtime=4.873s
+sf/1.200V/27C/mc9  [pass]  runtime=4.972s
+sf/1.200V/27C/mc10  [pass]  runtime=4.872s
+sf/1.200V/27C/mc11  [pass]  runtime=4.872s
+sf/1.200V/27C/mc12  [pass]  runtime=4.822s
+sf/1.200V/27C/mc13  [pass]  runtime=4.921s
+sf/1.200V/27C/mc14  [pass]  runtime=4.871s
+sf/1.200V/27C/mc15  [pass]  runtime=4.921s
+sf/1.200V/27C/mc16  [pass]  runtime=4.922s
+sf/1.200V/27C/mc17  [pass]  runtime=4.923s
+sf/1.200V/27C/mc18  [pass]  runtime=4.921s
+sf/1.200V/27C/mc19  [pass]  runtime=4.871s
+sf/1.200V/125C/mc0  [pass]  runtime=4.871s
+sf/1.200V/125C/mc1  [pass]  runtime=4.921s
+sf/1.200V/125C/mc2  [pass]  runtime=4.922s
+sf/1.200V/125C/mc3  [pass]  runtime=4.872s
+sf/1.200V/125C/mc4  [pass]  runtime=4.872s
+sf/1.200V/125C/mc5  [pass]  runtime=4.922s
+sf/1.200V/125C/mc6  [pass]  runtime=4.972s
+sf/1.200V/125C/mc7  [pass]  runtime=4.871s
+sf/1.200V/125C/mc8  [pass]  runtime=4.921s
+sf/1.200V/125C/mc9  [pass]  runtime=4.922s
+sf/1.200V/125C/mc10  [pass]  runtime=4.871s
+sf/1.200V/125C/mc11  [pass]  runtime=4.871s
+sf/1.200V/125C/mc12  [pass]  runtime=4.872s
+sf/1.200V/125C/mc13  [pass]  runtime=4.922s
+sf/1.200V/125C/mc14  [pass]  runtime=4.871s
+sf/1.200V/125C/mc15  [pass]  runtime=4.921s
+sf/1.200V/125C/mc16  [pass]  runtime=4.922s
+sf/1.200V/125C/mc17  [pass]  runtime=4.822s
+sf/1.200V/125C/mc18  [pass]  runtime=4.872s
+sf/1.200V/125C/mc19  [pass]  runtime=4.922s
+sf/1.320V/-40C/mc0  [pass]  runtime=4.822s
+sf/1.320V/-40C/mc1  [pass]  runtime=4.821s
+sf/1.320V/-40C/mc2  [pass]  runtime=4.821s
+sf/1.320V/-40C/mc3  [pass]  runtime=4.871s
+sf/1.320V/-40C/mc4  [pass]  runtime=4.771s
+sf/1.320V/-40C/mc5  [pass]  runtime=4.872s
+sf/1.320V/-40C/mc6  [pass]  runtime=4.821s
+sf/1.320V/-40C/mc7  [pass]  runtime=4.822s
+sf/1.320V/-40C/mc8  [pass]  runtime=4.872s
+sf/1.320V/-40C/mc9  [pass]  runtime=4.771s
+sf/1.320V/-40C/mc10  [pass]  runtime=4.822s
+sf/1.320V/-40C/mc11  [pass]  runtime=4.822s
+sf/1.320V/-40C/mc12  [pass]  runtime=4.771s
+sf/1.320V/-40C/mc13  [pass]  runtime=4.772s
+sf/1.320V/-40C/mc14  [pass]  runtime=4.821s
+sf/1.320V/-40C/mc15  [pass]  runtime=4.822s
+sf/1.320V/-40C/mc16  [pass]  runtime=5.531s
+sf/1.320V/-40C/mc17  [pass]  runtime=5.433s
+sf/1.320V/-40C/mc18  [pass]  runtime=5.478s
+sf/1.320V/-40C/mc19  [pass]  runtime=5.429s
+sf/1.320V/27C/mc0  [pass]  runtime=5.477s
+sf/1.320V/27C/mc1  [pass]  runtime=5.428s
+sf/1.320V/27C/mc2  [pass]  runtime=5.424s
+sf/1.320V/27C/mc3  [pass]  runtime=5.426s
+sf/1.320V/27C/mc4  [pass]  runtime=5.276s
+sf/1.320V/27C/mc5  [pass]  runtime=5.274s
+sf/1.320V/27C/mc6  [pass]  runtime=5.223s
+sf/1.320V/27C/mc7  [pass]  runtime=5.273s
+sf/1.320V/27C/mc8  [pass]  runtime=5.222s
+sf/1.320V/27C/mc9  [pass]  runtime=5.224s
+sf/1.320V/27C/mc10  [pass]  runtime=5.223s
+sf/1.320V/27C/mc11  [pass]  runtime=5.224s
+sf/1.320V/27C/mc12  [pass]  runtime=5.224s
+sf/1.320V/27C/mc13  [pass]  runtime=5.224s
+sf/1.320V/27C/mc14  [pass]  runtime=5.327s
+sf/1.320V/27C/mc15  [pass]  runtime=5.276s
+sf/1.320V/27C/mc16  [pass]  runtime=5.223s
+sf/1.320V/27C/mc17  [pass]  runtime=5.274s
+sf/1.320V/27C/mc18  [pass]  runtime=5.275s
+sf/1.320V/27C/mc19  [pass]  runtime=5.274s
+sf/1.320V/125C/mc0  [pass]  runtime=5.324s
+sf/1.320V/125C/mc1  [pass]  runtime=5.323s
+sf/1.320V/125C/mc2  [pass]  runtime=5.373s
+sf/1.320V/125C/mc3  [pass]  runtime=5.374s
+sf/1.320V/125C/mc4  [pass]  runtime=5.424s
+sf/1.320V/125C/mc5  [pass]  runtime=5.373s
+sf/1.320V/125C/mc6  [pass]  runtime=5.324s
+sf/1.320V/125C/mc7  [pass]  runtime=5.324s
+sf/1.320V/125C/mc8  [pass]  runtime=5.274s
+sf/1.320V/125C/mc9  [pass]  runtime=5.324s
+sf/1.320V/125C/mc10  [pass]  runtime=5.273s
+sf/1.320V/125C/mc11  [pass]  runtime=5.275s
+sf/1.320V/125C/mc12  [pass]  runtime=5.275s
+sf/1.320V/125C/mc13  [pass]  runtime=5.273s
+sf/1.320V/125C/mc14  [pass]  runtime=5.373s
+sf/1.320V/125C/mc15  [pass]  runtime=5.273s
+sf/1.320V/125C/mc16  [pass]  runtime=5.323s
+sf/1.320V/125C/mc17  [pass]  runtime=5.274s
+sf/1.320V/125C/mc18  [pass]  runtime=5.273s
+sf/1.320V/125C/mc19  [pass]  runtime=5.274s
+fs/1.080V/-40C/mc0  [pass]  runtime=5.375s
+fs/1.080V/-40C/mc1  [pass]  runtime=5.375s
+fs/1.080V/-40C/mc2  [pass]  runtime=5.374s
+fs/1.080V/-40C/mc3  [pass]  runtime=5.374s
+fs/1.080V/-40C/mc4  [pass]  runtime=5.275s
+fs/1.080V/-40C/mc5  [pass]  runtime=5.273s
+fs/1.080V/-40C/mc6  [pass]  runtime=5.374s
+fs/1.080V/-40C/mc7  [pass]  runtime=5.325s
+fs/1.080V/-40C/mc8  [pass]  runtime=5.325s
+fs/1.080V/-40C/mc9  [pass]  runtime=5.324s
+fs/1.080V/-40C/mc10  [pass]  runtime=5.324s
+fs/1.080V/-40C/mc11  [pass]  runtime=5.426s
+fs/1.080V/-40C/mc12  [pass]  runtime=5.742s
+fs/1.080V/-40C/mc13  [pass]  runtime=5.827s
+fs/1.080V/-40C/mc14  [pass]  runtime=5.833s
+fs/1.080V/-40C/mc15  [pass]  runtime=5.816s
+fs/1.080V/-40C/mc16  [pass]  runtime=5.838s
+fs/1.080V/-40C/mc17  [pass]  runtime=5.888s
+fs/1.080V/-40C/mc18  [pass]  runtime=5.817s
+fs/1.080V/-40C/mc19  [pass]  runtime=5.824s
+fs/1.080V/27C/mc0  [pass]  runtime=5.49s
+fs/1.080V/27C/mc1  [pass]  runtime=5.582s
+fs/1.080V/27C/mc2  [pass]  runtime=5.553s
+fs/1.080V/27C/mc3  [pass]  runtime=5.554s
+fs/1.080V/27C/mc4  [pass]  runtime=5.519s
+fs/1.080V/27C/mc5  [pass]  runtime=5.513s
+fs/1.080V/27C/mc6  [pass]  runtime=5.501s
+fs/1.080V/27C/mc7  [pass]  runtime=5.541s
+fs/1.080V/27C/mc8  [pass]  runtime=5.224s
+fs/1.080V/27C/mc9  [pass]  runtime=5.175s
+fs/1.080V/27C/mc10  [pass]  runtime=5.224s
+fs/1.080V/27C/mc11  [pass]  runtime=5.224s
+fs/1.080V/27C/mc12  [pass]  runtime=5.224s
+fs/1.080V/27C/mc13  [pass]  runtime=5.224s
+fs/1.080V/27C/mc14  [pass]  runtime=5.224s
+fs/1.080V/27C/mc15  [pass]  runtime=5.174s
+fs/1.080V/27C/mc16  [pass]  runtime=5.224s
+fs/1.080V/27C/mc17  [pass]  runtime=5.125s
+fs/1.080V/27C/mc18  [pass]  runtime=5.174s
+fs/1.080V/27C/mc19  [pass]  runtime=5.275s
+fs/1.080V/125C/mc0  [pass]  runtime=5.275s
+fs/1.080V/125C/mc1  [pass]  runtime=5.224s
+fs/1.080V/125C/mc2  [pass]  runtime=5.273s
+fs/1.080V/125C/mc3  [pass]  runtime=5.224s
+fs/1.080V/125C/mc4  [pass]  runtime=5.224s
+fs/1.080V/125C/mc5  [pass]  runtime=5.225s
+fs/1.080V/125C/mc6  [pass]  runtime=5.224s
+fs/1.080V/125C/mc7  [pass]  runtime=5.224s
+fs/1.080V/125C/mc8  [pass]  runtime=5.224s
+fs/1.080V/125C/mc9  [pass]  runtime=5.274s
+fs/1.080V/125C/mc10  [pass]  runtime=5.275s
+fs/1.080V/125C/mc11  [pass]  runtime=5.224s
+fs/1.080V/125C/mc12  [pass]  runtime=5.224s
+fs/1.080V/125C/mc13  [pass]  runtime=5.225s
+fs/1.080V/125C/mc14  [pass]  runtime=5.274s
+fs/1.080V/125C/mc15  [pass]  runtime=5.225s
+fs/1.080V/125C/mc16  [pass]  runtime=5.275s
+fs/1.080V/125C/mc17  [pass]  runtime=5.225s
+fs/1.080V/125C/mc18  [pass]  runtime=5.274s
+fs/1.080V/125C/mc19  [pass]  runtime=5.224s
+fs/1.200V/-40C/mc0  [pass]  runtime=5.074s
+fs/1.200V/-40C/mc1  [pass]  runtime=5.124s
+fs/1.200V/-40C/mc2  [pass]  runtime=5.075s
+fs/1.200V/-40C/mc3  [pass]  runtime=5.075s
+fs/1.200V/-40C/mc4  [pass]  runtime=5.175s
+fs/1.200V/-40C/mc5  [pass]  runtime=5.124s
+fs/1.200V/-40C/mc6  [pass]  runtime=5.074s
+fs/1.200V/-40C/mc7  [pass]  runtime=5.124s
+fs/1.200V/-40C/mc8  [pass]  runtime=5.825s
+fs/1.200V/-40C/mc9  [pass]  runtime=5.665s
+fs/1.200V/-40C/mc10  [pass]  runtime=5.68s
+fs/1.200V/-40C/mc11  [pass]  runtime=5.699s
+fs/1.200V/-40C/mc12  [pass]  runtime=5.708s
+fs/1.200V/-40C/mc13  [pass]  runtime=5.785s
+fs/1.200V/-40C/mc14  [pass]  runtime=5.754s
+fs/1.200V/-40C/mc15  [pass]  runtime=5.754s
+fs/1.200V/-40C/mc16  [pass]  runtime=5.223s
+fs/1.200V/-40C/mc17  [pass]  runtime=5.173s
+fs/1.200V/-40C/mc18  [pass]  runtime=5.19s
+fs/1.200V/-40C/mc19  [pass]  runtime=5.172s
+fs/1.200V/27C/mc0  [pass]  runtime=5.179s
+fs/1.200V/27C/mc1  [pass]  runtime=5.177s
+fs/1.200V/27C/mc2  [pass]  runtime=5.227s
+fs/1.200V/27C/mc3  [pass]  runtime=5.236s
+fs/1.200V/27C/mc4  [pass]  runtime=5.173s
+fs/1.200V/27C/mc5  [pass]  runtime=5.173s
+fs/1.200V/27C/mc6  [pass]  runtime=5.123s
+fs/1.200V/27C/mc7  [pass]  runtime=5.122s
+fs/1.200V/27C/mc8  [pass]  runtime=5.172s
+fs/1.200V/27C/mc9  [pass]  runtime=5.123s
+fs/1.200V/27C/mc10  [pass]  runtime=5.172s
+fs/1.200V/27C/mc11  [pass]  runtime=5.122s
+fs/1.200V/27C/mc12  [pass]  runtime=5.222s
+fs/1.200V/27C/mc13  [pass]  runtime=5.124s
+fs/1.200V/27C/mc14  [pass]  runtime=5.122s
+fs/1.200V/27C/mc15  [pass]  runtime=5.122s
+fs/1.200V/27C/mc16  [pass]  runtime=5.122s
+fs/1.200V/27C/mc17  [pass]  runtime=5.222s
+fs/1.200V/27C/mc18  [pass]  runtime=5.122s
+fs/1.200V/27C/mc19  [pass]  runtime=5.122s
+fs/1.200V/125C/mc0  [pass]  runtime=5.172s
+fs/1.200V/125C/mc1  [pass]  runtime=5.172s
+fs/1.200V/125C/mc2  [pass]  runtime=5.223s
+fs/1.200V/125C/mc3  [pass]  runtime=5.222s
+fs/1.200V/125C/mc4  [pass]  runtime=5.172s
+fs/1.200V/125C/mc5  [pass]  runtime=5.272s
+fs/1.200V/125C/mc6  [pass]  runtime=5.222s
+fs/1.200V/125C/mc7  [pass]  runtime=5.172s
+fs/1.200V/125C/mc8  [pass]  runtime=5.222s
+fs/1.200V/125C/mc9  [pass]  runtime=5.172s
+fs/1.200V/125C/mc10  [pass]  runtime=5.172s
+fs/1.200V/125C/mc11  [pass]  runtime=5.222s
+fs/1.200V/125C/mc12  [pass]  runtime=5.222s
+fs/1.200V/125C/mc13  [pass]  runtime=5.222s
+fs/1.200V/125C/mc14  [pass]  runtime=5.172s
+fs/1.200V/125C/mc15  [pass]  runtime=5.222s
+fs/1.200V/125C/mc16  [pass]  runtime=5.222s
+fs/1.200V/125C/mc17  [pass]  runtime=5.222s
+fs/1.200V/125C/mc18  [pass]  runtime=5.172s
+fs/1.200V/125C/mc19  [pass]  runtime=5.224s
+fs/1.320V/-40C/mc0  [pass]  runtime=5.123s
+fs/1.320V/-40C/mc1  [pass]  runtime=5.122s
+fs/1.320V/-40C/mc2  [pass]  runtime=5.121s
+fs/1.320V/-40C/mc3  [pass]  runtime=5.122s
+fs/1.320V/-40C/mc4  [pass]  runtime=5.434s
+fs/1.320V/-40C/mc5  [pass]  runtime=5.245s
+fs/1.320V/-40C/mc6  [pass]  runtime=5.268s
+fs/1.320V/-40C/mc7  [pass]  runtime=5.326s
+fs/1.320V/-40C/mc8  [pass]  runtime=5.28s
+fs/1.320V/-40C/mc9  [pass]  runtime=5.282s
+fs/1.320V/-40C/mc10  [pass]  runtime=5.269s
+fs/1.320V/-40C/mc11  [pass]  runtime=5.255s
+fs/1.320V/-40C/mc12  [pass]  runtime=5.086s
+fs/1.320V/-40C/mc13  [pass]  runtime=5.19s
+fs/1.320V/-40C/mc14  [pass]  runtime=5.125s
+fs/1.320V/-40C/mc15  [pass]  runtime=5.189s
+fs/1.320V/-40C/mc16  [pass]  runtime=5.178s
+fs/1.320V/-40C/mc17  [pass]  runtime=5.201s
+fs/1.320V/-40C/mc18  [pass]  runtime=5.104s
+fs/1.320V/-40C/mc19  [pass]  runtime=5.152s
+fs/1.320V/27C/mc0  [pass]  runtime=4.901s
+fs/1.320V/27C/mc1  [pass]  runtime=4.891s
+fs/1.320V/27C/mc2  [pass]  runtime=4.868s
+fs/1.320V/27C/mc3  [pass]  runtime=4.884s
+fs/1.320V/27C/mc4  [pass]  runtime=4.883s
+fs/1.320V/27C/mc5  [pass]  runtime=4.857s
+fs/1.320V/27C/mc6  [pass]  runtime=4.848s
+fs/1.320V/27C/mc7  [pass]  runtime=4.84s
+fs/1.320V/27C/mc8  [pass]  runtime=4.722s
+fs/1.320V/27C/mc9  [pass]  runtime=4.772s
+fs/1.320V/27C/mc10  [pass]  runtime=4.723s
+fs/1.320V/27C/mc11  [pass]  runtime=4.771s
+fs/1.320V/27C/mc12  [pass]  runtime=4.771s
+fs/1.320V/27C/mc13  [pass]  runtime=4.721s
+fs/1.320V/27C/mc14  [pass]  runtime=4.721s
+fs/1.320V/27C/mc15  [pass]  runtime=4.721s
+fs/1.320V/27C/mc16  [pass]  runtime=4.722s
+fs/1.320V/27C/mc17  [pass]  runtime=4.723s
+fs/1.320V/27C/mc18  [pass]  runtime=4.771s
+fs/1.320V/27C/mc19  [pass]  runtime=4.721s
+fs/1.320V/125C/mc0  [pass]  runtime=4.821s
+fs/1.320V/125C/mc1  [pass]  runtime=4.871s
+fs/1.320V/125C/mc2  [pass]  runtime=4.872s
+fs/1.320V/125C/mc3  [pass]  runtime=4.821s
+fs/1.320V/125C/mc4  [pass]  runtime=4.822s
+fs/1.320V/125C/mc5  [pass]  runtime=4.872s
+fs/1.320V/125C/mc6  [pass]  runtime=4.821s
+fs/1.320V/125C/mc7  [pass]  runtime=4.871s
+fs/1.320V/125C/mc8  [pass]  runtime=4.871s
+fs/1.320V/125C/mc9  [pass]  runtime=4.872s
+fs/1.320V/125C/mc10  [pass]  runtime=4.872s
+fs/1.320V/125C/mc11  [pass]  runtime=4.821s
+fs/1.320V/125C/mc12  [pass]  runtime=4.822s
+fs/1.320V/125C/mc13  [pass]  runtime=4.871s
+fs/1.320V/125C/mc14  [pass]  runtime=4.873s
+fs/1.320V/125C/mc15  [pass]  runtime=4.821s
+fs/1.320V/125C/mc16  [pass]  runtime=4.821s
+fs/1.320V/125C/mc17  [pass]  runtime=4.821s
+fs/1.320V/125C/mc18  [pass]  runtime=5.022s
+fs/1.320V/125C/mc19  [pass]  runtime=4.821s

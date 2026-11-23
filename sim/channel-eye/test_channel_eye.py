@@ -136,7 +136,11 @@ class GeneratorTests(unittest.TestCase):
         t15, t16 = gen.skew_pairs()
         self.assertEqual(len(t15), 4)
         self.assertEqual(len(t16), 8)
-        self.assertTrue(all("TRIG v(dsa)" in c for _, c in t15 + t16))
+        self.assertTrue(all("TRIG v(dsa)" in c for _, c in t15))
+        # T-16 entries are the selection itself (bit index, polarities, crossing counts)
+        # plus the card rendered from it (#388).
+        self.assertTrue(all("TRIG v(dsa)" in e["card"] for e in t16))
+        self.assertTrue(all({"i", "pol", "n", "cpol", "cn"} <= e.keys() for e in t16))
 
 
 class PostTests(unittest.TestCase):

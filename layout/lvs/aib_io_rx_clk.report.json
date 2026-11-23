@@ -150,17 +150,17 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.14",
     "netgen_binary": null,
-    "layout_sha256": "175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
-    "reference_sha256": "26e495ab6528c3b094cc6346c08698a02e5cf53ede504e2d3c002a12a3f1e091",
+    "layout_sha256": "d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
+    "reference_sha256": "6118c84fa0fd1f01723c9269139a21e24227df189d48715f400820f672622c17",
     "extracted_netlist": null
   },
   "provenance": {
     "klt_version": "0.9.0",
     "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
     "klt_reinstall_spec": "klayout-tools==0.9.0",
-    "klayout_version": "0.30.13",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sg13g2",
@@ -168,7 +168,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
       "role": "layout"
     },
     "klayout_version_mismatch": true
@@ -205,7 +205,7 @@
     {
       "category": "device.placeholder_value",
       "severity": "warning",
-      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 2 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 2 instance(s), R 294.222333000997) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
+      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 2 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 2 instance(s), R 164.6111665004985) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
       "side": "reference",
       "net": null,
       "device": {
@@ -220,7 +220,7 @@
         "reference_devices": 2,
         "layout_devices": 2,
         "layout_values": [
-          294.222333000997
+          164.6111665004985
         ]
       },
       "circuit": null,
@@ -231,12 +231,12 @@
   "net_correspondence": [
     {
       "layout": "\\$9",
-      "reference": "ARX/M1",
+      "reference": "AINV/M1",
       "pin": false
     },
     {
       "layout": "\\$10",
-      "reference": "BRX/M1",
+      "reference": "BINV/M1",
       "pin": false
     },
     {

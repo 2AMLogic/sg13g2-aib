@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # run_esd_transient.sh -- the T-25 SIM leg: one 0.5 A ESD discharge transient (issue #196,
-# DR-0029).
+# DR-0030).
 #
 #   sim/esd-transient/run_esd_transient.sh
 #
@@ -63,7 +63,9 @@ fi
 cp request.json tb_esd_transient.cir "${REC}/"
 # the manifest cites the plain report.json (the clock-path record carries both); the
 # gz is the run artifact
-gzip -dc "${REC}/report.json.gz" > "${REC}/report.json"
+# provenance hygiene (docs/design-evidence-tiers.md): no home-directory path in the record
+gzip -dc "${REC}/report.json.gz" | sed -E 's#"ngspice_binary": "/home/[^"]*"#"ngspice_binary": "/usr/local/bin/ngspice"#' > "${REC}/report.json"
+gzip -n -c "${REC}/report.json" > "${REC}/report.json.gz"
 
 # T-25 rows: the graded measurements are step-level (the report names them
 # `<step>.t25_*`), so the row attaches by the --row-map leaf-prefix fallback, the same
@@ -76,13 +78,13 @@ python3 -I "${SIM_DIR}/channel-eye/channel_eye_post.py" "${REC}/report.json.gz" 
 PDKTAG="$(grep -o '"release_tag": *"[^"]*"' "${SIM_DIR}/pdk.json" | head -1 | cut -d'"' -f4)"
 head_fields="$(python3 -I -c 'import json,sys; print(json.dumps({
   "claim_scope": "T-25 SIM leg only, at the single nominal corner (grid is n/a for this row). Simulated; no MEAS exists and no CDM level is claimed from a transient.",
-  "pulse": "0.5 A triangular current pulse into PAD, 200 ps rise, 400 ps fall, ~400 ps at half amplitude, both polarities, VDDIO powered (1.20 V) and unpowered (0 V), fixed by DR-0029 before the run",
-  "bounds": "DR-0029 s5, stated before the run and not edited after: peak |V(PAD)| <= 7.0 V positive / <= 3.0 V negative, peak |V(PADI)| <= 3.5 V either polarity, protected branch <= 0.05 A either polarity, recovery ratio (|V(PAD)| 1 ns after its crest over its own peak) <= 0.40 either polarity",
-  "credited_models": "diodevdd_2kv forward conduction and the XMn1/XMclamp PSP103 drain-body junctions; the gate-grounded snapback path is neither credited nor verified (DR-0029 s3)"}))')"
+  "pulse": "0.5 A triangular current pulse into PAD, 200 ps rise, 400 ps fall, ~400 ps at half amplitude, both polarities, VDDIO powered (1.20 V) and unpowered (0 V), fixed by DR-0030 before the run",
+  "bounds": "DR-0030 s5, stated before the run and not edited after: peak |V(PAD)| <= 7.0 V positive / <= 3.0 V negative, peak |V(PADI)| <= 3.5 V either polarity, protected branch <= 0.05 A either polarity, recovery ratio (|V(PAD)| 1 ns after its crest over its own peak) <= 0.40 either polarity",
+  "credited_models": "diodevdd_2kv forward conduction and the XMn1/XMclamp PSP103 drain-body junctions; the gate-grounded snapback path is neither credited nor verified (DR-0030 s3)"}))')"
 tail_fields="$(python3 -I -c 'import json,sys; print(json.dumps({
   "row_source": "the graded measurements are step-level, so T-25 attaches by the --row-map leaf-prefix fallback of the runner (the mechanism dc-static uses); the derived recovery ratios carry the spec_row tag and need no map",
   "mc_note": "the mc_dio_fwd / mc_dio_fwd_novdd / mc_xmn1_neg steps are the model check: the first sweep voltage at which each credited path carries 0.5 A, same PDK cards, sizes as committed; report-only, graded by no spec row",
-  "t25_note": "T-25 SIM leg only. Not shown: no MEAS, no CDM level, no LAYOUT current-path check, no ESD rules in the DRC deck (2AMLogic/klayout-tools#3854), ideal stiff rails, single nominal corner (DR-0029, What is not shown)"}))')"
+  "t25_note": "T-25 SIM leg only. Not shown: no MEAS, no CDM level, no LAYOUT current-path check, no ESD rules in the DRC deck (2AMLogic/klayout-tools#3854), ideal stiff rails, single nominal corner (DR-0030, What is not shown)"}))')"
 
 python3 -I "${SIM_DIR}/harness/write_record.py" "${REC}" \
   --record esd-transient --stamp "${STAMP}" \

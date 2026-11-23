@@ -12,33 +12,36 @@
     },
     "1.analog": {
       "file": "signoff/attest/item1-analog.json",
-      "content_hash": "sha256:c12cff025cb9686c2a6b116a5da106bc1b324713f689338dd592318e0af3ad4a"
+      "content_hash": "sha256:c7da83b120258fbecbeaefa00942fbe0f7a8dad134df67e6209493c9bda9afbd"
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9"
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
     },
     "2.digital": {
       "file": "signoff/attest/item2-digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
     "3.analog": {
-      "file": "layout/records/20261113T231304Z/drc_analog.json",
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9"
+      "file": "layout/records/20261123T092956Z/drc_analog.json",
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
     },
     "3.digital": {
       "file": "layout/records/20261027T063033Z/drc_digital.json",
       "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
     },
     "4.analog": {
-      "file": "layout/lvs/aib_io_column.report.json"
+      "file": "layout/lvs/aib_io_column.report.json",
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
     },
     "4.digital": {
-      "file": "layout/lvs/digital.report.json"
+      "file": "layout/lvs/digital.report.json",
+      "content_hash": "sha256:516d457db24a99ce52a3e300bbd0f9a7bfdba7507bfc446de36150e0fabe6e0b"
     },
     "5.analog": [
       {
-        "file": "sim/dc-static/records/20261112T001207Z/report.json",
+        "file": "sim/dc-static/records/20261123T211634Z/report.json",
+        "content_hash": "sha256:ab9af08cbac23b437fc6e8fd5c8cf7e2cac508008802c7b3dcc4fe3c12f4b634",
         "rows": [
           "T-06",
           "T-07",
@@ -49,7 +52,8 @@
         ]
       },
       {
-        "file": "sim/channel-eye/records/20261111T235838Z-ch/report.json",
+        "file": "sim/channel-eye/records/20261123T093440Z-ch/report.json",
+        "content_hash": "sha256:ea9fdd160c303863293109db99ac0f38cdf219d061eb482b50f922f1caad4419",
         "rows": [
           "T-01",
           "T-09",
@@ -60,13 +64,21 @@
         ]
       },
       {
-        "file": "sim/clock-path/records/20261113T095936Z/report.json",
+        "file": "sim/clock-path/records/20261123T091724Z/report.json",
+        "content_hash": "sha256:3ea39be918568f7118f3a06071aff9c8a793a905fc4ad3ae944dc68e76c7f4ac",
         "rows": [
           "T-17"
         ]
       },
       {
-        "file": "sim/esd-transient/records/20261119T085126Z/report.json",
+        "file": "sim/channel-model/records/20261121T000100Z/report.json",
+        "content_hash": "sha256:9e0f4dbb4e1ad2d677521c97b3359f25784cbdaf996bdf957fa9e859be4305ce",
+        "rows": [
+          "T-12"
+        ]
+      },
+      {
+        "file": "sim/esd-transient/records/20261123T211728Z/report.json",
         "rows": [
           "T-25"
         ]
@@ -83,37 +95,39 @@
         "file": "signoff/attest/item5-digital/fv_datapath_n8.json"
       },
       {
-        "file": "signoff/attest/item5-digital/sta_clk.json"
+        "file": "signoff/attest/item5-digital/sta_clk.json",
+        "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
       },
       {
-        "file": "signoff/attest/item5-digital/sta_rx_clk.json"
+        "file": "signoff/attest/item5-digital/sta_rx_clk.json",
+        "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
       }
     ],
     "6.analog": [
       {
-        "file": "sim/mc/records/20261108T035315Z-t10/yield.json",
-        "content_hash": "sha256:2db1f964470a8953ce8784820907d330873f383b14cbd3eee7203e77fe43ecac",
+        "file": "sim/mc/records/20261123T092848Z-t10/yield.json",
+        "content_hash": "sha256:72d4f4361996be2dc3a99ed1788e176e4fc553ab60e791177b602a694a90a5d0",
         "rows": [
           "T-10"
         ]
       },
       {
-        "file": "sim/mc/records/20261110T113631Z-t15/yield.json",
-        "content_hash": "sha256:3fd5be041efc841c14f4a72c8cb64a244615a1f930684a26bfd2f9b53121bba1",
+        "file": "sim/mc/records/20261123T093311Z-t15/yield.json",
+        "content_hash": "sha256:c0a80949ababde677eb17d299e8e163643eaaa60b28d089b4708536794c0c402",
         "rows": [
           "T-15"
         ]
       },
       {
-        "file": "sim/mc/records/20261110T113631Z-t16/yield.json",
-        "content_hash": "sha256:30279e0d0d716ec384b9e7f4afb03466a8ab797c8df5544695fa654651f4b070",
+        "file": "sim/mc/records/20261123T093311Z-t16/yield.json",
+        "content_hash": "sha256:6ad0a490f7dd718509cd50343a8b1ea284c29e4fcbd2bc71b47a97472b7b886f",
         "rows": [
           "T-16"
         ]
       },
       {
-        "file": "sim/mc/records/20261112T082047Z-t19/yield.json",
-        "content_hash": "sha256:a5bfd3694835f713f5cbda16fc6525a3ab6eb9c5e401568702d22bea905025b0",
+        "file": "sim/mc/records/20261123T094302Z-t19/yield.json",
+        "content_hash": "sha256:4a678b113f73b82298f94c173ecbf9f721fe7b7b6efb84b14962e5412573956f",
         "rows": [
           "T-19"
         ]
@@ -133,16 +147,20 @@
     },
     "7.analog": [
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_tx.extract.report.json"
+        "file": "layout/pex/records/20261123T093102Z/aib_io_tx.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       },
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_rx.extract.report.json"
+        "file": "layout/pex/records/20261123T093102Z/aib_io_rx.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       },
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_tx_clk.extract.report.json"
+        "file": "layout/pex/records/20261123T093102Z/aib_io_tx_clk.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       },
       {
-        "file": "layout/pex/records/20261114T025329Z/aib_io_rx_clk.extract.report.json"
+        "file": "layout/pex/records/20261123T093102Z/aib_io_rx_clk.extract.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       }
     ],
     "7.digital": {
@@ -150,11 +168,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:b98a95c95449b61cef9f1b117cefeedac38c1ca834c280d93690e7509faf5431"
+      "content_hash": "sha256:3672442e2a9a8a29ed44aaf53b33c6a1938a49ca426522d396500729a3568cbc"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:b98a95c95449b61cef9f1b117cefeedac38c1ca834c280d93690e7509faf5431"
+      "content_hash": "sha256:3672442e2a9a8a29ed44aaf53b33c6a1938a49ca426522d396500729a3568cbc"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -174,21 +192,26 @@
     },
     "11.analog": [
       {
-        "file": "layout/erc/io_cells.erc-report.json"
+        "file": "layout/erc/io_cells.erc-report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       },
       {
-        "file": "layout/lvs/aib_io_column.report.json"
+        "file": "layout/lvs/aib_io_column.report.json",
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       }
     ],
     "11.digital": [
       {
-        "file": "layout/erc/aib_datapath.erc-report.json"
+        "file": "layout/erc/aib_datapath.erc-report.json",
+        "content_hash": "sha256:971af57a23583548c7ef6efb2b6fd66a6dea55d0a478aec7ac9e500681e4fcc9"
       },
       {
-        "file": "layout/lvs/digital.report.json"
+        "file": "layout/lvs/digital.report.json",
+        "content_hash": "sha256:516d457db24a99ce52a3e300bbd0f9a7bfdba7507bfc446de36150e0fabe6e0b"
       },
       {
-        "file": "layout/pnr/request.report.json"
+        "file": "layout/pnr/request.report.json",
+        "content_hash": "sha256:43736551ba49fcac8dfd62e577f59c617a22492e226645b7a415ef49ecca52d1"
       }
     ]
   },
@@ -213,8 +236,7 @@
         "id": "T-11"
       },
       {
-        "id": "T-12",
-        "gap": "channel-model definition, not a block measurable, so not cited as covered: the declared model (DR-0005) is the input to T-01/T-09/T-15/T-16/T-18/T-26, and citing an input definition as evidence of itself would be circular. The +/-20 % channel R/C sensitivity its grid column asks for was completed by the spread campaign that closed #193 -- sim/channel-eye/records/20261113T223804Z-ch-spread/ is PVT-FULL at each of the four (kr, kc) pairs in {0.8, 1.2}, 180/180 corners, and all six dependent rows pass at all four spread corners (T-16's margin there narrows to 1.3 ps against its 470 ps edge, from 10.9 ps nominal; reported, not relaxed). That 1.3 ps reading was closed out by a design change, not a bound change: the #251 sizing study's driver-resistor resize grades a 19.92 ps worst-case T-16 margin at the declared spread (sim/channel-eye/records/20261118T220000Z-t16-sizing/). That record is referenced here rather than cited as an envelope because coverage is derived from the spec_row tags a report carries and no measurement carries T-12: probed with the pinned klt 0.9.0, citing it with rows [T-12] grades item 5 invalid_evidence while T-12 is a declared gap, and partial_coverage with uncovered_rows [T-12] once it is not. The six dependent rows keep their nominal citation. A standing gap, not pending work: the model is a declared input, and no tracker is open against it."
+        "id": "T-12"
       },
       {
         "id": "T-15"
@@ -302,7 +324,7 @@
       },
       {
         "id": "T-12",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: channel-model definition, not a block measurable, so not cited as covered. The +/-20 % channel R/C sensitivity its grid column asks for was completed pre-layout by the spread campaign that closed #193, against the declared DR-0005 model (sim/channel-eye/records/20261113T223804Z-ch-spread/, 180/180 corners, all six dependent rows pass at all four spread corners); the 1.3 ps T-16 margin that run exposed was later lifted to 19.92 ps by the #251 driver-resistor resize, likewise pre-layout -- neither run is re-made on the extracted netlist. A standing gap, not pending work: the model is a declared input, and no tracker is open against it."
+        "gap": "not re-measured post-layout: the channel-model conformance record that covers T-12 in 5.analog (sim/channel-model/records/20261121T000100Z/, DR-0029) grades the committed netlist spec/channel/channel_rc.cir against the declared table, an input definition that layout does not change, and no extracted T-12 measurement exists, so item 7 keeps the row declared. The +/-20 % channel R/C sensitivity run was completed pre-layout by the spread campaign that closed #193 (sim/channel-eye/records/20261113T223804Z-ch-spread/, 180/180 corners); the 1.3 ps T-16 margin that run exposed was later lifted to 19.92 ps by the #251 driver-resistor resize, likewise pre-layout. Not pending work: no tracker is needed against it."
       },
       {
         "id": "T-15",
@@ -334,7 +356,7 @@
       },
       {
         "id": "T-25",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: the 0.5 A transient ran on the schematic netlist and failed its receiver-isolation bound (DR-0029, sim/esd-transient/records/20261119T085126Z, returned to the operator); no post-layout T-25 exists. Grid is n/a for this row. Tracked in #196"
+        "gap": "carried forward from 5.analog, not re-measured post-layout: the 0.5 A transient ran on the schematic netlist (whole I/O cell, DR-0030) and failed its receiver-isolation bound (sim/esd-transient/records/20261123T211728Z, returned to the operator); no post-layout T-25 exists. Grid is n/a for this row. Tracked in #196"
       },
       {
         "id": "T-26",
@@ -387,7 +409,7 @@
   "claims": {
     "3": {
       "analog": {
-        "report": "layout/records/20261113T231304Z/drc_analog.json",
+        "report": "layout/records/20261123T092956Z/drc_analog.json",
         "deck": "sg13g2 (curated) sha256:1c95db40596afc5412e216009bcf0b775d1d74895b32738447eccbc76336dd15",
         "status": "clean",
         "violation_count": 0,

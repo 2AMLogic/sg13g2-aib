@@ -48,7 +48,7 @@ row_map='{"t06_": "T-06",
           "t28_": "T-28"}'
 t24_label='extracted-capacitance estimate from model small-signal admittance at 500 MHz; no bond pad (PDK bondpad is an empty placeholder); post-layout PEX out of scope'
 row_source='rows are grouped by the --row-map prefix map in run_dc_static.sh, not by a spec_row tag: the committed request declares none and its graded measurements are step-level. signoff/block-manifest.json still asserts these six rows for item 5 / analog (tool gap 2AMLogic/klayout-tools#5462).'
-t25_note='T-25 (ESD level) is not evaluated by this record: no ESD-transient simulation is run here. See spec/decisions/0029-adopt-diodevdd-2kv-and-t25-transient.md and sim/esd-transient/.'
+t25_note='T-25 (ESD level) is not evaluated by this record: no ESD-transient simulation is run here. See spec/decisions/0030-adopt-diodevdd-2kv-and-t25-transient.md and sim/esd-transient/.'
 # extra flags for the post-processor, per leg; only a leg may opt itself in
 post_flags=()
 

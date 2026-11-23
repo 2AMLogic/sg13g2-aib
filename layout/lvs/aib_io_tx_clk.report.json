@@ -150,17 +150,17 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.14",
     "netgen_binary": null,
-    "layout_sha256": "175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
-    "reference_sha256": "f7645b79a4e3769c0b6a915728443db4b00a8e48861f73aa5c3d2e2a368ac10c",
+    "layout_sha256": "d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
+    "reference_sha256": "1098c3f50e9344dd52b04f85f71ca8aeb16e3b69f7a1876bb838a406ca2ea875",
     "extracted_netlist": null
   },
   "provenance": {
     "klt_version": "0.9.0",
     "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
     "klt_reinstall_spec": "klayout-tools==0.9.0",
-    "klayout_version": "0.30.13",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sg13g2",
@@ -168,7 +168,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
       "role": "layout"
     },
     "klayout_version_mismatch": true
@@ -221,7 +221,7 @@
         "layout_devices": 10,
         "layout_values": [
           19.992204677193683,
-          294.222333000997,
+          164.6111665004985,
           12472.01581027668
         ]
       },

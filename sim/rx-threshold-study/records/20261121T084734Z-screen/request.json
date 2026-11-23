@@ -1,0 +1,245 @@
+{
+  "engine": "ngspice",
+  "netlist": "tb_screen.cir",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "corners": {
+    "process": [
+      {
+        "name": "tt",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_tt"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "ss",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ss"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ss"
+          }
+        ]
+      },
+      {
+        "name": "ff",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ff"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_bcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ff"
+          }
+        ]
+      },
+      {
+        "name": "sf",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_sf"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "fs",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_fs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vddio": [
+        1.08,
+        1.2,
+        1.32
+      ]
+    },
+    "temperature_c": [
+      -40,
+      27,
+      125
+    ]
+  },
+  "analysis_steps": [
+    {
+      "name": "rx_up",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vfr 0.15 0.95 0.0005"
+      },
+      "alter": {},
+      "measurements": [
+        {
+          "name": "vth_base",
+          "spice": ".meas dc vth_base WHEN v(dnorm_base)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_r20",
+          "spice": ".meas dc vth_r20 WHEN v(dnorm_r20)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_r225",
+          "spice": ".meas dc vth_r225 WHEN v(dnorm_r225)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_r30",
+          "spice": ".meas dc vth_r30 WHEN v(dnorm_r30)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_r35",
+          "spice": ".meas dc vth_r35 WHEN v(dnorm_r35)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_l25",
+          "spice": ".meas dc vth_l25 WHEN v(dnorm_l25)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_l50",
+          "spice": ".meas dc vth_l50 WHEN v(dnorm_l50)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_a2",
+          "spice": ".meas dc vth_a2 WHEN v(dnorm_a2)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_vref",
+          "spice": ".meas dc vth_vref WHEN v(dnorm_vref)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vddio_v",
+          "expr": "v(vddio)[0]",
+          "unit": "V"
+        }
+      ]
+    }
+  ],
+  "measurements": [
+    {
+      "name": "t10_base_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_base-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_r20_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_r20-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_r225_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_r225-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_r30_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_r30-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_r35_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_r35-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_l25_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_l25-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_l50_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_l50-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_a2_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_a2-0.5)*rx_up.vddio_v*1000"
+    },
+    {
+      "name": "t10_vref_mv",
+      "unit": "mV",
+      "spec_row": "T-10",
+      "expr": "(rx_up.vth_vref-0.5)*rx_up.vddio_v*1000"
+    }
+  ],
+  "options": {
+    "stage_model_inputs": true,
+    "fail_on_diagnostic": [
+      "nonconvergence"
+    ],
+    "timeout_s": 60,
+    "keep_artifacts": false,
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ]
+  },
+  "backend": "batch",
+  "batch": {
+    "capacity_wait_s": 600
+  }
+}

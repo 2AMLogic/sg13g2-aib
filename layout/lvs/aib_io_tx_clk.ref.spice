@@ -2,9 +2,10 @@
 * Plain-element form for `klt lvs`; flattened from the item 1 netlists:
 *   design/aib_pad_esd.spice sha256:3cb704eb07544c97702c141626fe54285850dfc17a7ca20932c3bc24c6609489
 *   design/aib_tx_data.spice sha256:667c53139825da4804873cab2f2038c4576063c466dfb9ce16c1a9a527bbf545
-*   design/aib_rx_data.spice sha256:43f326de980bc5a817d6235ab5402de4aa02886619ead25e7e60c41dfef99eab
+*   design/aib_rx_data.spice sha256:7863828c03ab4412c465be9931b6f8172fc90fe572ec64c72c4bb36cc34d6774
+*   design/aib_rx_inv.spice sha256:8cd42264f8014ff28951be5fb52e9ed94fadb94b89fc99aba5291e6d6b8b90fe
 *   design/aib_tx_clk.spice sha256:35de4d0bc6f1ad109c1477efa0cde485ae7a39f1b90005e92a2a0fd7db55e248
-*   design/aib_rx_clk.spice sha256:0e53de36f4d0d2585452746bb2cb5d35e7c8b0801cdf597efe1dbb7bc01b5b2d
+*   design/aib_rx_clk.spice sha256:3675d8bb85f776fda07a1183adfd3b846062bd034c49d054a4f905cf58a95bb7
 .SUBCKT aib_io_tx_clk DIN DIN$1 OE PAD PAD$1 PD PUN VDDIO VSS
 Daesd_Dp1 PAD VDDIO diodevdd_mod A=35P P=58.08U
 Daesd_Dp1_dsub VSS VDDIO dsub_2kv_mod A=224.956P P=81.12U

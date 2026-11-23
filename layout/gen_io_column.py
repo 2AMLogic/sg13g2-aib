@@ -13,9 +13,16 @@ design/ (device type, W, L, ng and the net each terminal sits on); the device
 table below repeats those numbers and `check_against_netlists()` fails the run
 if design/*.spice and this table disagree.
 
-Cells written: aib_io_tx, aib_io_rx (unit cells, 55 x 100 um), aib_io_tx_clk,
-aib_io_rx_clk (clk | clkb pairs), aib_io_column_tx, aib_io_column_rx and the
-top cell aib_io_column.
+`--check` runs that comparison alone and exits: it needs no klayout and no PDK
+(plain `python3 -I layout/gen_io_column.py --check`), which is how the CI
+evidence job runs it, so the table cannot drift from the netlists between
+regenerations. The geometry path runs the same comparison first and then
+imports klayout.
+
+Cells written: aib_io_tx, aib_io_rx (data unit, 55 x 100 um, the #398 supply-referenced
+receiver), aib_io_rx_inv (the committed inverter receiver the clock pair uses),
+aib_io_tx_clk, aib_io_rx_clk (clk | clkb pairs), aib_io_column_tx, aib_io_column_rx and
+the top cell aib_io_column.
 
 Intra-cell routing is done by a small deterministic maze router (Metal2
 vertical-preferred, Metal3 horizontal-preferred, 0.8 um grid) so the stream is
@@ -28,8 +35,6 @@ import math
 import os
 import re
 import sys
-
-import klayout.db as db
 
 DBU = 0.001
 
@@ -111,11 +116,27 @@ TX_RES = [
     ("Rsp", 10.0, 0.5, "DP", "PAD"),     # DR-0017 series legs: driver drain -> PAD
     ("Rsn", 10.0, 0.5, "DN", "PAD"),
 ]
-RX_DEVICES = [
+RX_INV_DEVICES = [
     ("Mi1p", "pmos", 1.25, 0.13, 2, dict(D="N1", G="PADI", S="VDDIO")),
     ("Mi1n", "nmos", 0.5, 0.13, 2, dict(D="N1", G="PADI", S="VSS")),
     ("Mi2p", "pmos", 2.0, 0.13, 2, dict(D="DOUT", G="N1", S="VDDIO")),
     ("Mi2n", "nmos", 1.0, 0.13, 2, dict(D="DOUT", G="N1", S="VSS")),
+]
+# The adopted data receiver (#398, the #386 study's rx__vref): NMOS input pair against a
+# matched rppd VDDIO/2 divider, PMOS mirror load, ~100 uA tail, restore inverter at half
+# the committed width. Table w is the drawn finger width; the netlists carry w*ng total.
+RX_DATA_DEVICES = [
+    ("Mtail", "nmos", 1.0, 0.5, 2, dict(D="s1", G="VDDIO", S="VSS")),
+    ("Mnp", "nmos", 0.5, 0.5, 2, dict(D="d1", G="PADI", S="s1")),
+    ("Mnn", "nmos", 0.5, 0.5, 2, dict(D="d2", G="vrn", S="s1")),
+    ("Mlp", "pmos", 1.0, 0.25, 4, dict(D="d2", G="d2", S="VDDIO")),
+    ("Mln", "pmos", 1.0, 0.25, 4, dict(D="d1", G="d2", S="VDDIO")),
+    ("Mi2p", "pmos", 2.0, 0.13, 1, dict(D="DOUT", G="d1", S="VDDIO")),
+    ("Mi2n", "nmos", 1.0, 0.13, 1, dict(D="DOUT", G="d1", S="VSS")),
+]
+RX_DATA_RES = [
+    ("Rdiv1", 0.5, 48.0, "VDDIO", "vrn"),   # the matched VDDIO/2 divider
+    ("Rdiv2", 0.5, 48.0, "vrn", "VSS"),
 ]
 # aib_pad_esd: diodes (anode, cathode), clamp, series resistor.
 ESD_DIODES = [
@@ -126,7 +147,7 @@ ESD_DIODES = [
 ESD_MN1 = ("Mn1", "nmos", 2.0, 0.13, 10, dict(D="PAD", G="VSS", S="VSS"))
 ESD_MN2 = ("Mn2", "nmos", 1.0, 0.13, 1, dict(D="PADI", G="VSS", S="VSS"))
 ESD_CLAMP = ("Mclamp", "nmos", 2.0, 0.35, 20, dict(D="VDDIO", G="VSS", S="VSS"))
-ESD_RES = ("Resd", 2.0, 2.0, "PAD", "PADI")
+ESD_RES = ("Resd", 2.0, 1.0, "PAD", "PADI")
 # Table w is the drawn finger width for every device. The netlists carry the
 # total width (w_finger * ng; the IHP model derives a finger as w/ng), and the
 # check compares w * ng against that total for every device.
@@ -166,8 +187,19 @@ def check_against_netlists(design_dir):
             assert int(kv["ng"]) == ng, name
 
     chk_mos(parse(os.path.join(design_dir, "aib_tx_data.spice")), TX_DEVICES)
-    chk_mos(parse(os.path.join(design_dir, "aib_rx_data.spice")), RX_DEVICES,
+    # receive split (#398): the clock-pair unit draws the committed inverter receiver
+    # (aib_rx_inv.spice); the data unit draws the adopted supply-referenced cell
+    # (aib_rx_data.spice). PADI is the layout-side input net behind the ESD series
+    # resistor (the cells' own PAD), N1/M1 the first-stage output node.
+    chk_mos(parse(os.path.join(design_dir, "aib_rx_inv.spice")), RX_INV_DEVICES,
             fix={"PADI": "PAD", "N1": "M1"})
+    chk_mos(parse(os.path.join(design_dir, "aib_rx_data.spice")), RX_DATA_DEVICES,
+            fix={"PADI": "PAD"})
+    rxres = parse(os.path.join(design_dir, "aib_rx_data.spice"))
+    for name, w, l, a, b in RX_DATA_RES:
+        nodes, kv = rxres[name]
+        assert nodes[:2] == [a, b], name
+        assert abs(num(kv["w"]) - w) < 1e-9 and abs(num(kv["l"]) - l) < 1e-9, name
     esd = parse(os.path.join(design_dir, "aib_pad_esd.spice"))
     nodes, kv = esd["Mclamp"]
     assert nodes[:3] == ["VDDIO", "VSS", "VSS"] and int(kv["ng"]) == ESD_CLAMP[4]
@@ -609,7 +641,7 @@ def add_pin(ctx, router, net, col, y_label):
     ctx.anchor(net, 0, col, ROW_LO)
 
 
-def build_unit(layout, name, tx):
+def build_unit(layout, name, tx, rxbuild=None):
     cell = layout.create_cell(name)
     d = Draw(layout, cell)
     ctx = Ctx(d)
@@ -649,7 +681,7 @@ def build_unit(layout, name, tx):
     if tx:
         build_tx(ctx, router)
     else:
-        build_rx(ctx, router)
+        (rxbuild or build_rx_data)(ctx, router)
     # Route.
     allt = {}
     for t in ctx.terms:
@@ -704,8 +736,9 @@ def build_tx(ctx, router):
     put_res("Rsn", 50.5, 41)
 
 
-def build_rx(ctx, router):
-    dev = {n: (t, w, l, ng, nets) for n, t, w, l, ng, nets in RX_DEVICES}
+def build_rx_inv(ctx, router):
+    """The clock-pair unit: the committed inverter receiver as drawn before the #398 split."""
+    dev = {n: (t, w, l, ng, nets) for n, t, w, l, ng, nets in RX_INV_DEVICES}
     add_pin(ctx, router, "DOUT", col_of(4.0), 0)
     x = 3.5
     for nm in ("Mi1p", "Mi2p"):
@@ -715,6 +748,29 @@ def build_rx(ctx, router):
     for nm in ("Mi1n", "Mi2n"):
         t, w, l, ng, nets = dev[nm]
         x = mos(ctx, t, w, l, ng, r3(x + 2.0), 44, nets, nm)[0]
+
+
+def build_rx_data(ctx, router):
+    """The data unit: the adopted supply-referenced receiver (#398). The divider runs the
+    full cell width below the ESD band; the pair/mirror/restore stack sits above it."""
+    dev = {n: (t, w, l, ng, nets) for n, t, w, l, ng, nets in RX_DATA_DEVICES}
+    res = {n: (w, l, a, b) for n, w, l, a, b in RX_DATA_RES}
+    add_pin(ctx, router, "DOUT", col_of(4.0), 0)
+
+    def put(nm, x, row):
+        t, w, l, ng, nets = dev[nm]
+        return mos(ctx, t, w, l, ng, r3(x), row, nets, nm)[0]
+
+    rppd(ctx, "Rdiv1", *res["Rdiv1"][:2], 3.5, 23, res["Rdiv1"][2], res["Rdiv1"][3])
+    rppd(ctx, "Rdiv2", *res["Rdiv2"][:2], 3.5, 25, res["Rdiv2"][2], res["Rdiv2"][3])
+    x = 3.5
+    for nm in ("Mlp", "Mln", "Mi2p"):
+        x = put(nm, x + 2.0, 29) + 0.6
+    x = 3.5
+    x = put("Mtail", x, 33) + 2.0
+    x = put("Mnp", x, 36) + 2.0
+    x = put("Mnn", x, 36) + 2.0
+    put("Mi2n", x, 40)
 
 
 def place(parent, child, slot, mirrored, width):
@@ -772,15 +828,24 @@ def build_column(layout, name, unit, pair, role):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-o", "--output", default="layout/aib_io_column.gds")
+    ap.add_argument("--check", action="store_true",
+                    help="verify the device table against design/*.spice and exit 0; "
+                         "stdlib-only (klayout is imported only on the geometry path), "
+                         "no layout is allocated and nothing is written")
     args = ap.parse_args()
     here = os.path.dirname(os.path.abspath(__file__))
     check_against_netlists(os.path.join(here, "..", "design"))
+    if args.check:
+        return
+    global db
+    import klayout.db as db
     layout = db.Layout()
     layout.dbu = DBU
     tx = build_unit(layout, "aib_io_tx", True)
-    rx = build_unit(layout, "aib_io_rx", False)
+    rx = build_unit(layout, "aib_io_rx", False, build_rx_data)
+    rxi = build_unit(layout, "aib_io_rx_inv", False, build_rx_inv)
     txp = build_pair(layout, "aib_io_tx_clk", tx)
-    rxp = build_pair(layout, "aib_io_rx_clk", rx)
+    rxp = build_pair(layout, "aib_io_rx_clk", rxi)
     ctx_ = build_column(layout, "aib_io_column_tx", tx, txp, "TX")
     crx = build_column(layout, "aib_io_column_rx", rx, rxp, "RX")
     top = layout.create_cell("aib_io_column")

@@ -86,8 +86,8 @@
     {
       "class": "rppd",
       "device_kind": "resistor",
-      "layout_devices": 144,
-      "reference_devices": 144,
+      "layout_devices": 188,
+      "reference_devices": 188,
       "compared": [],
       "not_compared": [
         {
@@ -123,14 +123,14 @@
   "category_error_counts": {},
   "counts": {
     "nets": {
-      "layout": 389,
-      "reference": 389,
-      "matched": 389
+      "layout": 455,
+      "reference": 455,
+      "matched": 455
     },
     "devices": {
-      "layout": 4320,
-      "reference": 4320,
-      "matched": 4320
+      "layout": 4540,
+      "reference": 4540,
+      "matched": 4540
     },
     "pins": {
       "layout": 101,
@@ -151,17 +151,17 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.14",
     "netgen_binary": null,
-    "layout_sha256": "175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
-    "reference_sha256": "10c7b4fc2fe99b207cdad8a9623ecfc5f11c0091a5facbf5526a40488cd7abd2",
+    "layout_sha256": "d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
+    "reference_sha256": "ba76f34c8557de8514881251708dccdb1451e48272654bf520b9c13b24f1679a",
     "extracted_netlist": null
   },
   "provenance": {
     "klt_version": "0.9.0",
     "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
     "klt_reinstall_spec": "klayout-tools==0.9.0",
-    "klayout_version": "0.30.13",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sg13g2",
@@ -169,7 +169,7 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:175eb50e118fc9ff962122d204a650bd6c8b25f29042787f5cdbf844ab002df9",
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
       "role": "layout"
     },
     "klayout_version_mismatch": true
@@ -196,8 +196,8 @@
           "P",
           "W"
         ],
-        "layout_devices": 144,
-        "reference_devices": 144
+        "layout_devices": 188,
+        "reference_devices": 188
       },
       "circuit": null,
       "instance": null,
@@ -206,7 +206,7 @@
     {
       "category": "device.placeholder_value",
       "severity": "warning",
-      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 144 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 144 instance(s), R 19.992204677193683..12472.01581027668) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
+      "description": "reference device class 'RPPD' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'R' value is the literal 0 placeholder on all 188 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'R' was therefore excluded from this compare on both sides (layout: 188 instance(s), R 19.992204677193683..24804.03162055336) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'R' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
       "side": "reference",
       "net": null,
       "device": {
@@ -218,12 +218,13 @@
       "details": {
         "parameter": "R",
         "device_kind": "resistor",
-        "reference_devices": 144,
-        "layout_devices": 144,
+        "reference_devices": 188,
+        "layout_devices": 188,
         "layout_values": [
           19.992204677193683,
-          294.222333000997,
-          12472.01581027668
+          164.6111665004985,
+          12472.01581027668,
+          24804.03162055336
         ]
       },
       "circuit": null,
@@ -236,7 +237,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$147",
+        "layout": "\\$171",
         "reference": "T21TX/DP"
       },
       "device": null,
@@ -252,7 +253,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$149",
+        "layout": "\\$172",
         "reference": "T9TX/DP"
       },
       "device": null,
@@ -268,7 +269,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$150",
+        "layout": "\\$173",
         "reference": "T8TX/DP"
       },
       "device": null,
@@ -284,7 +285,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$151",
+        "layout": "\\$174",
         "reference": "T7TX/DP"
       },
       "device": null,
@@ -300,7 +301,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$152",
+        "layout": "\\$175",
         "reference": "T6TX/DP"
       },
       "device": null,
@@ -316,7 +317,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$153",
+        "layout": "\\$176",
         "reference": "T5TX/DP"
       },
       "device": null,
@@ -332,7 +333,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$154",
+        "layout": "\\$177",
         "reference": "T4TX/DP"
       },
       "device": null,
@@ -348,7 +349,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$155",
+        "layout": "\\$178",
         "reference": "T3TX/DP"
       },
       "device": null,
@@ -364,7 +365,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$156",
+        "layout": "\\$179",
         "reference": "T2TX/DP"
       },
       "device": null,
@@ -380,7 +381,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$157",
+        "layout": "\\$180",
         "reference": "T23TX/DP"
       },
       "device": null,
@@ -396,7 +397,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$159",
+        "layout": "\\$181",
         "reference": "T22TX/DP"
       },
       "device": null,
@@ -412,7 +413,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$160",
+        "layout": "\\$182",
         "reference": "T10TX/DP"
       },
       "device": null,
@@ -428,7 +429,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$161",
+        "layout": "\\$183",
         "reference": "T20TX/DP"
       },
       "device": null,
@@ -444,7 +445,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$162",
+        "layout": "\\$184",
         "reference": "T1TX/DP"
       },
       "device": null,
@@ -460,7 +461,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$163",
+        "layout": "\\$185",
         "reference": "T19TX/DP"
       },
       "device": null,
@@ -476,7 +477,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$164",
+        "layout": "\\$186",
         "reference": "T18TX/DP"
       },
       "device": null,
@@ -492,7 +493,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$165",
+        "layout": "\\$187",
         "reference": "T17TX/DP"
       },
       "device": null,
@@ -508,7 +509,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$166",
+        "layout": "\\$188",
         "reference": "T16TX/DP"
       },
       "device": null,
@@ -524,7 +525,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$167",
+        "layout": "\\$189",
         "reference": "T15TX/DP"
       },
       "device": null,
@@ -540,7 +541,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$168",
+        "layout": "\\$190",
         "reference": "T14TX/DP"
       },
       "device": null,
@@ -556,7 +557,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$169",
+        "layout": "\\$191",
         "reference": "T13TX/DP"
       },
       "device": null,
@@ -572,7 +573,7 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$170",
+        "layout": "\\$192",
         "reference": "T11TX/DP"
       },
       "device": null,
@@ -588,8 +589,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$275",
-        "reference": "R21RX/M1"
+        "layout": "\\$346",
+        "reference": "R20RX/S1"
       },
       "device": null,
       "property": null,
@@ -604,8 +605,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$277",
-        "reference": "R9RX/M1"
+        "layout": "\\$347",
+        "reference": "R9RX/S1"
       },
       "device": null,
       "property": null,
@@ -620,8 +621,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$278",
-        "reference": "R8RX/M1"
+        "layout": "\\$349",
+        "reference": "R8RX/S1"
       },
       "device": null,
       "property": null,
@@ -636,8 +637,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$279",
-        "reference": "R7RX/M1"
+        "layout": "\\$350",
+        "reference": "R7RX/S1"
       },
       "device": null,
       "property": null,
@@ -652,8 +653,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$280",
-        "reference": "R6RX/M1"
+        "layout": "\\$351",
+        "reference": "R6RX/S1"
       },
       "device": null,
       "property": null,
@@ -668,8 +669,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$281",
-        "reference": "R5RX/M1"
+        "layout": "\\$352",
+        "reference": "R5RX/S1"
       },
       "device": null,
       "property": null,
@@ -684,8 +685,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$282",
-        "reference": "R4RX/M1"
+        "layout": "\\$353",
+        "reference": "R4RX/S1"
       },
       "device": null,
       "property": null,
@@ -700,8 +701,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$283",
-        "reference": "R3RX/M1"
+        "layout": "\\$354",
+        "reference": "R3RX/S1"
       },
       "device": null,
       "property": null,
@@ -716,8 +717,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$284",
-        "reference": "R2RX/M1"
+        "layout": "\\$355",
+        "reference": "R2RX/S1"
       },
       "device": null,
       "property": null,
@@ -732,8 +733,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$285",
-        "reference": "R23RX/M1"
+        "layout": "\\$356",
+        "reference": "R21RX/S1"
       },
       "device": null,
       "property": null,
@@ -748,8 +749,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$286",
-        "reference": "R22RX/M1"
+        "layout": "\\$357",
+        "reference": "R22INV/M1"
       },
       "device": null,
       "property": null,
@@ -764,8 +765,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$287",
-        "reference": "R10RX/M1"
+        "layout": "\\$358",
+        "reference": "R23INV/M1"
       },
       "device": null,
       "property": null,
@@ -780,8 +781,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$288",
-        "reference": "R20RX/M1"
+        "layout": "\\$359",
+        "reference": "R10RX/S1"
       },
       "device": null,
       "property": null,
@@ -796,8 +797,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$289",
-        "reference": "R1RX/M1"
+        "layout": "\\$360",
+        "reference": "R1RX/S1"
       },
       "device": null,
       "property": null,
@@ -812,8 +813,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$290",
-        "reference": "R19RX/M1"
+        "layout": "\\$361",
+        "reference": "R19RX/S1"
       },
       "device": null,
       "property": null,
@@ -828,8 +829,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$291",
-        "reference": "R18RX/M1"
+        "layout": "\\$362",
+        "reference": "R18RX/S1"
       },
       "device": null,
       "property": null,
@@ -844,8 +845,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$292",
-        "reference": "R17RX/M1"
+        "layout": "\\$363",
+        "reference": "R17RX/S1"
       },
       "device": null,
       "property": null,
@@ -860,8 +861,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$293",
-        "reference": "R16RX/M1"
+        "layout": "\\$364",
+        "reference": "R16RX/S1"
       },
       "device": null,
       "property": null,
@@ -876,8 +877,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$294",
-        "reference": "R15RX/M1"
+        "layout": "\\$365",
+        "reference": "R15RX/S1"
       },
       "device": null,
       "property": null,
@@ -892,8 +893,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$295",
-        "reference": "R14RX/M1"
+        "layout": "\\$366",
+        "reference": "R14RX/S1"
       },
       "device": null,
       "property": null,
@@ -908,8 +909,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$296",
-        "reference": "R13RX/M1"
+        "layout": "\\$367",
+        "reference": "R13RX/S1"
       },
       "device": null,
       "property": null,
@@ -924,8 +925,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$297",
-        "reference": "R12RX/M1"
+        "layout": "\\$368",
+        "reference": "R12RX/S1"
       },
       "device": null,
       "property": null,
@@ -940,8 +941,8 @@
       "description": "nets were paired ambiguously; the comparer resolved it structurally (consider a hints.same_nets entry to pin this down)",
       "side": "both",
       "net": {
-        "layout": "\\$298",
-        "reference": "R11RX/M1"
+        "layout": "\\$369",
+        "reference": "R11RX/S1"
       },
       "device": null,
       "property": null,
@@ -1438,7 +1439,7 @@
       "pin": true
     },
     {
-      "layout": "\\$63",
+      "layout": "\\$64",
       "reference": "PADI_R0",
       "pin": false
     },
@@ -1448,7 +1449,7 @@
       "pin": false
     },
     {
-      "layout": "\\$74",
+      "layout": "\\$75",
       "reference": "PADI_R10",
       "pin": false
     },
@@ -1503,12 +1504,12 @@
       "pin": false
     },
     {
-      "layout": "\\$75",
+      "layout": "\\$62",
       "reference": "PADI_R20",
       "pin": false
     },
     {
-      "layout": "\\$62",
+      "layout": "\\$72",
       "reference": "PADI_R21",
       "pin": false
     },
@@ -1518,7 +1519,7 @@
       "pin": false
     },
     {
-      "layout": "\\$72",
+      "layout": "\\$74",
       "reference": "PADI_R23",
       "pin": false
     },
@@ -1553,7 +1554,7 @@
       "pin": false
     },
     {
-      "layout": "\\$64",
+      "layout": "\\$63",
       "reference": "PADI_R9",
       "pin": false
     },
@@ -1578,7 +1579,7 @@
       "pin": false
     },
     {
-      "layout": "\\$49",
+      "layout": "\\$38",
       "reference": "PADI_T12",
       "pin": false
     },
@@ -1618,7 +1619,7 @@
       "pin": false
     },
     {
-      "layout": "\\$47",
+      "layout": "\\$48",
       "reference": "PADI_T2",
       "pin": false
     },
@@ -1628,7 +1629,7 @@
       "pin": false
     },
     {
-      "layout": "\\$38",
+      "layout": "\\$40",
       "reference": "PADI_T21",
       "pin": false
     },
@@ -1638,42 +1639,42 @@
       "pin": false
     },
     {
-      "layout": "\\$48",
+      "layout": "\\$49",
       "reference": "PADI_T23",
       "pin": false
     },
     {
-      "layout": "\\$46",
+      "layout": "\\$47",
       "reference": "PADI_T3",
       "pin": false
     },
     {
-      "layout": "\\$45",
+      "layout": "\\$46",
       "reference": "PADI_T4",
       "pin": false
     },
     {
-      "layout": "\\$44",
+      "layout": "\\$45",
       "reference": "PADI_T5",
       "pin": false
     },
     {
-      "layout": "\\$43",
+      "layout": "\\$44",
       "reference": "PADI_T6",
       "pin": false
     },
     {
-      "layout": "\\$42",
+      "layout": "\\$43",
       "reference": "PADI_T7",
       "pin": false
     },
     {
-      "layout": "\\$41",
+      "layout": "\\$42",
       "reference": "PADI_T8",
       "pin": false
     },
     {
-      "layout": "\\$40",
+      "layout": "\\$41",
       "reference": "PADI_T9",
       "pin": false
     },
@@ -1688,1202 +1689,1532 @@
       "pin": true
     },
     {
-      "layout": "\\$276",
-      "reference": "R0RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$287",
-      "reference": "R10RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$298",
-      "reference": "R11RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$297",
-      "reference": "R12RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$296",
-      "reference": "R13RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$295",
-      "reference": "R14RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$294",
-      "reference": "R15RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$293",
-      "reference": "R16RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$292",
-      "reference": "R17RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$291",
-      "reference": "R18RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$290",
-      "reference": "R19RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$289",
-      "reference": "R1RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$288",
-      "reference": "R20RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$275",
-      "reference": "R21RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$286",
-      "reference": "R22RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$285",
-      "reference": "R23RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$284",
-      "reference": "R2RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$283",
-      "reference": "R3RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$282",
-      "reference": "R4RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$281",
-      "reference": "R5RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$280",
-      "reference": "R6RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$279",
-      "reference": "R7RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$278",
-      "reference": "R8RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$277",
-      "reference": "R9RX/M1",
-      "pin": false
-    },
-    {
-      "layout": "\\$232",
-      "reference": "T0TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$148",
-      "reference": "T0TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$173",
-      "reference": "T0TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$135",
-      "reference": "T0TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$316",
-      "reference": "T0TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$175",
-      "reference": "T0TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$174",
-      "reference": "T0TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$375",
-      "reference": "T0TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$352",
-      "reference": "T0TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$244",
-      "reference": "T10TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$160",
-      "reference": "T10TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$203",
-      "reference": "T10TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$141",
-      "reference": "T10TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$328",
-      "reference": "T10TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$205",
-      "reference": "T10TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$204",
-      "reference": "T10TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$381",
-      "reference": "T10TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$364",
-      "reference": "T10TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$254",
-      "reference": "T11TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$170",
-      "reference": "T11TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$228",
-      "reference": "T11TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$146",
-      "reference": "T11TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$338",
-      "reference": "T11TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$230",
-      "reference": "T11TX/NB",
-      "pin": false
-    },
-    {
       "layout": "\\$229",
-      "reference": "T11TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$386",
-      "reference": "T11TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$374",
-      "reference": "T11TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$242",
-      "reference": "T12TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$158",
-      "reference": "T12TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$198",
-      "reference": "T12TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$140",
-      "reference": "T12TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$326",
-      "reference": "T12TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$200",
-      "reference": "T12TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$199",
-      "reference": "T12TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$380",
-      "reference": "T12TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$362",
-      "reference": "T12TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$253",
-      "reference": "T13TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$169",
-      "reference": "T13TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$274",
-      "reference": "T13TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$226",
-      "reference": "T13TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$337",
-      "reference": "T13TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$227",
-      "reference": "T13TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$273",
-      "reference": "T13TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$350",
-      "reference": "T13TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$373",
-      "reference": "T13TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$252",
-      "reference": "T14TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$168",
-      "reference": "T14TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$223",
-      "reference": "T14TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$145",
-      "reference": "T14TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$336",
-      "reference": "T14TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$225",
-      "reference": "T14TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$224",
-      "reference": "T14TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$385",
-      "reference": "T14TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$372",
-      "reference": "T14TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$251",
-      "reference": "T15TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$167",
-      "reference": "T15TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$271",
-      "reference": "T15TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$221",
-      "reference": "T15TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$335",
-      "reference": "T15TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$222",
-      "reference": "T15TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$313",
-      "reference": "T15TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$349",
-      "reference": "T15TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$371",
-      "reference": "T15TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$250",
-      "reference": "T16TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$166",
-      "reference": "T16TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$218",
-      "reference": "T16TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$144",
-      "reference": "T16TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$334",
-      "reference": "T16TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$220",
-      "reference": "T16TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$219",
-      "reference": "T16TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$384",
-      "reference": "T16TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$370",
-      "reference": "T16TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$249",
-      "reference": "T17TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$165",
-      "reference": "T17TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$270",
-      "reference": "T17TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$216",
-      "reference": "T17TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$333",
-      "reference": "T17TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$217",
-      "reference": "T17TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$311",
-      "reference": "T17TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$348",
-      "reference": "T17TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$369",
-      "reference": "T17TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$248",
-      "reference": "T18TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$164",
-      "reference": "T18TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$213",
-      "reference": "T18TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$143",
-      "reference": "T18TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$332",
-      "reference": "T18TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$215",
-      "reference": "T18TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$214",
-      "reference": "T18TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$383",
-      "reference": "T18TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$368",
-      "reference": "T18TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$247",
-      "reference": "T19TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$163",
-      "reference": "T19TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$269",
-      "reference": "T19TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$211",
-      "reference": "T19TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$331",
-      "reference": "T19TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$212",
-      "reference": "T19TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$309",
-      "reference": "T19TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$347",
-      "reference": "T19TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$367",
-      "reference": "T19TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$246",
-      "reference": "T1TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$162",
-      "reference": "T1TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$208",
-      "reference": "T1TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$142",
-      "reference": "T1TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$330",
-      "reference": "T1TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$210",
-      "reference": "T1TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$209",
-      "reference": "T1TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$382",
-      "reference": "T1TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$366",
-      "reference": "T1TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$245",
-      "reference": "T20TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$161",
-      "reference": "T20TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$267",
-      "reference": "T20TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$206",
-      "reference": "T20TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$329",
-      "reference": "T20TX/NA",
+      "reference": "R0RX/D1",
       "pin": false
     },
     {
       "layout": "\\$207",
-      "reference": "T20TX/NB",
+      "reference": "R0RX/D2",
       "pin": false
     },
     {
-      "layout": "\\$308",
-      "reference": "T20TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$346",
-      "reference": "T20TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$365",
-      "reference": "T20TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$231",
-      "reference": "T21TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$147",
-      "reference": "T21TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$255",
-      "reference": "T21TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$171",
-      "reference": "T21TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$315",
-      "reference": "T21TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$172",
-      "reference": "T21TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$299",
-      "reference": "T21TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$339",
-      "reference": "T21TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$351",
-      "reference": "T21TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$243",
-      "reference": "T22TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$159",
-      "reference": "T22TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$266",
-      "reference": "T22TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$201",
-      "reference": "T22TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$327",
-      "reference": "T22TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$202",
-      "reference": "T22TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$306",
-      "reference": "T22TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$345",
-      "reference": "T22TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$363",
-      "reference": "T22TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$241",
-      "reference": "T23TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$157",
-      "reference": "T23TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$265",
-      "reference": "T23TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$196",
-      "reference": "T23TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$325",
-      "reference": "T23TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$197",
-      "reference": "T23TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$304",
-      "reference": "T23TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$344",
-      "reference": "T23TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$361",
-      "reference": "T23TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$240",
-      "reference": "T2TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$156",
-      "reference": "T2TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$193",
-      "reference": "T2TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$139",
-      "reference": "T2TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$324",
-      "reference": "T2TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$195",
-      "reference": "T2TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$194",
-      "reference": "T2TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$379",
-      "reference": "T2TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$360",
-      "reference": "T2TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$239",
-      "reference": "T3TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$155",
-      "reference": "T3TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$264",
-      "reference": "T3TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$191",
-      "reference": "T3TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$323",
-      "reference": "T3TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$192",
-      "reference": "T3TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$263",
-      "reference": "T3TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$343",
-      "reference": "T3TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$359",
-      "reference": "T3TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$238",
-      "reference": "T4TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$154",
-      "reference": "T4TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$188",
-      "reference": "T4TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$138",
-      "reference": "T4TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$322",
-      "reference": "T4TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$190",
-      "reference": "T4TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$189",
-      "reference": "T4TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$378",
-      "reference": "T4TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$358",
-      "reference": "T4TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$237",
-      "reference": "T5TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$153",
-      "reference": "T5TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$262",
-      "reference": "T5TX/GN",
-      "pin": false
-    },
-    {
-      "layout": "\\$186",
-      "reference": "T5TX/GP",
-      "pin": false
-    },
-    {
-      "layout": "\\$321",
-      "reference": "T5TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$187",
-      "reference": "T5TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$301",
-      "reference": "T5TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$342",
-      "reference": "T5TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$357",
-      "reference": "T5TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$236",
-      "reference": "T6TX/DN",
-      "pin": false
-    },
-    {
-      "layout": "\\$152",
-      "reference": "T6TX/DP",
-      "pin": false
-    },
-    {
-      "layout": "\\$183",
-      "reference": "T6TX/GN",
+      "layout": "\\$348",
+      "reference": "R0RX/S1",
       "pin": false
     },
     {
       "layout": "\\$137",
-      "reference": "T6TX/GP",
+      "reference": "R0RX/VRN",
       "pin": false
     },
     {
-      "layout": "\\$320",
-      "reference": "T6TX/NA",
+      "layout": "\\$238",
+      "reference": "R10RX/D1",
       "pin": false
     },
     {
-      "layout": "\\$185",
-      "reference": "T6TX/NB",
+      "layout": "\\$216",
+      "reference": "R10RX/D2",
       "pin": false
     },
     {
-      "layout": "\\$184",
-      "reference": "T6TX/OEB",
+      "layout": "\\$359",
+      "reference": "R10RX/S1",
       "pin": false
     },
     {
-      "layout": "\\$377",
-      "reference": "T6TX/PDX",
+      "layout": "\\$146",
+      "reference": "R10RX/VRN",
       "pin": false
     },
     {
-      "layout": "\\$356",
-      "reference": "T6TX/PUX",
+      "layout": "\\$248",
+      "reference": "R11RX/D1",
       "pin": false
     },
     {
-      "layout": "\\$235",
-      "reference": "T7TX/DN",
+      "layout": "\\$226",
+      "reference": "R11RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$369",
+      "reference": "R11RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$156",
+      "reference": "R11RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$247",
+      "reference": "R12RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$225",
+      "reference": "R12RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$368",
+      "reference": "R12RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$155",
+      "reference": "R12RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$246",
+      "reference": "R13RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$224",
+      "reference": "R13RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$367",
+      "reference": "R13RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$154",
+      "reference": "R13RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$245",
+      "reference": "R14RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$223",
+      "reference": "R14RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$366",
+      "reference": "R14RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$153",
+      "reference": "R14RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$244",
+      "reference": "R15RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$222",
+      "reference": "R15RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$365",
+      "reference": "R15RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$152",
+      "reference": "R15RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$243",
+      "reference": "R16RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$221",
+      "reference": "R16RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$364",
+      "reference": "R16RX/S1",
       "pin": false
     },
     {
       "layout": "\\$151",
-      "reference": "T7TX/DP",
+      "reference": "R16RX/VRN",
       "pin": false
     },
     {
-      "layout": "\\$260",
-      "reference": "T7TX/GN",
+      "layout": "\\$242",
+      "reference": "R17RX/D1",
       "pin": false
     },
     {
-      "layout": "\\$181",
-      "reference": "T7TX/GP",
+      "layout": "\\$220",
+      "reference": "R17RX/D2",
       "pin": false
     },
     {
-      "layout": "\\$319",
-      "reference": "T7TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$182",
-      "reference": "T7TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$259",
-      "reference": "T7TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$341",
-      "reference": "T7TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$355",
-      "reference": "T7TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$234",
-      "reference": "T8TX/DN",
+      "layout": "\\$363",
+      "reference": "R17RX/S1",
       "pin": false
     },
     {
       "layout": "\\$150",
-      "reference": "T8TX/DP",
+      "reference": "R17RX/VRN",
       "pin": false
     },
     {
-      "layout": "\\$178",
-      "reference": "T8TX/GN",
+      "layout": "\\$241",
+      "reference": "R18RX/D1",
       "pin": false
     },
     {
-      "layout": "\\$136",
-      "reference": "T8TX/GP",
+      "layout": "\\$219",
+      "reference": "R18RX/D2",
       "pin": false
     },
     {
-      "layout": "\\$318",
-      "reference": "T8TX/NA",
-      "pin": false
-    },
-    {
-      "layout": "\\$180",
-      "reference": "T8TX/NB",
-      "pin": false
-    },
-    {
-      "layout": "\\$179",
-      "reference": "T8TX/OEB",
-      "pin": false
-    },
-    {
-      "layout": "\\$376",
-      "reference": "T8TX/PDX",
-      "pin": false
-    },
-    {
-      "layout": "\\$354",
-      "reference": "T8TX/PUX",
-      "pin": false
-    },
-    {
-      "layout": "\\$233",
-      "reference": "T9TX/DN",
+      "layout": "\\$362",
+      "reference": "R18RX/S1",
       "pin": false
     },
     {
       "layout": "\\$149",
-      "reference": "T9TX/DP",
+      "reference": "R18RX/VRN",
       "pin": false
     },
     {
-      "layout": "\\$257",
-      "reference": "T9TX/GN",
+      "layout": "\\$240",
+      "reference": "R19RX/D1",
       "pin": false
     },
     {
-      "layout": "\\$176",
-      "reference": "T9TX/GP",
+      "layout": "\\$218",
+      "reference": "R19RX/D2",
       "pin": false
     },
     {
-      "layout": "\\$317",
-      "reference": "T9TX/NA",
+      "layout": "\\$361",
+      "reference": "R19RX/S1",
       "pin": false
     },
     {
-      "layout": "\\$177",
-      "reference": "T9TX/NB",
+      "layout": "\\$148",
+      "reference": "R19RX/VRN",
       "pin": false
     },
     {
-      "layout": "\\$300",
-      "reference": "T9TX/OEB",
+      "layout": "\\$239",
+      "reference": "R1RX/D1",
       "pin": false
     },
     {
-      "layout": "\\$340",
-      "reference": "T9TX/PDX",
+      "layout": "\\$217",
+      "reference": "R1RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$360",
+      "reference": "R1RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$147",
+      "reference": "R1RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$227",
+      "reference": "R20RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$205",
+      "reference": "R20RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$346",
+      "reference": "R20RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$135",
+      "reference": "R20RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$237",
+      "reference": "R21RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$215",
+      "reference": "R21RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$356",
+      "reference": "R21RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$145",
+      "reference": "R21RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$357",
+      "reference": "R22INV/M1",
+      "pin": false
+    },
+    {
+      "layout": "\\$358",
+      "reference": "R23INV/M1",
+      "pin": false
+    },
+    {
+      "layout": "\\$236",
+      "reference": "R2RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$214",
+      "reference": "R2RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$355",
+      "reference": "R2RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$144",
+      "reference": "R2RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$235",
+      "reference": "R3RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$213",
+      "reference": "R3RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$354",
+      "reference": "R3RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$143",
+      "reference": "R3RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$234",
+      "reference": "R4RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$212",
+      "reference": "R4RX/D2",
       "pin": false
     },
     {
       "layout": "\\$353",
+      "reference": "R4RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$142",
+      "reference": "R4RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$233",
+      "reference": "R5RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$211",
+      "reference": "R5RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$352",
+      "reference": "R5RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$141",
+      "reference": "R5RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$232",
+      "reference": "R6RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$210",
+      "reference": "R6RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$351",
+      "reference": "R6RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$140",
+      "reference": "R6RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$231",
+      "reference": "R7RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$209",
+      "reference": "R7RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$350",
+      "reference": "R7RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$139",
+      "reference": "R7RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$230",
+      "reference": "R8RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$208",
+      "reference": "R8RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$349",
+      "reference": "R8RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$138",
+      "reference": "R8RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$228",
+      "reference": "R9RX/D1",
+      "pin": false
+    },
+    {
+      "layout": "\\$206",
+      "reference": "R9RX/D2",
+      "pin": false
+    },
+    {
+      "layout": "\\$347",
+      "reference": "R9RX/S1",
+      "pin": false
+    },
+    {
+      "layout": "\\$136",
+      "reference": "R9RX/VRN",
+      "pin": false
+    },
+    {
+      "layout": "\\$298",
+      "reference": "T0TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$170",
+      "reference": "T0TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$273",
+      "reference": "T0TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$157",
+      "reference": "T0TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$382",
+      "reference": "T0TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$250",
+      "reference": "T0TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$274",
+      "reference": "T0TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$441",
+      "reference": "T0TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$418",
+      "reference": "T0TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$310",
+      "reference": "T10TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$182",
+      "reference": "T10TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$285",
+      "reference": "T10TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$163",
+      "reference": "T10TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$394",
+      "reference": "T10TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$262",
+      "reference": "T10TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$286",
+      "reference": "T10TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$447",
+      "reference": "T10TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$430",
+      "reference": "T10TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$320",
+      "reference": "T11TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$192",
+      "reference": "T11TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$295",
+      "reference": "T11TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$168",
+      "reference": "T11TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$404",
+      "reference": "T11TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$272",
+      "reference": "T11TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$296",
+      "reference": "T11TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$452",
+      "reference": "T11TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$440",
+      "reference": "T11TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$297",
+      "reference": "T12TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$169",
+      "reference": "T12TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$322",
+      "reference": "T12TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$193",
+      "reference": "T12TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$381",
+      "reference": "T12TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$249",
+      "reference": "T12TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$321",
+      "reference": "T12TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$405",
+      "reference": "T12TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$417",
+      "reference": "T12TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$319",
+      "reference": "T13TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$191",
+      "reference": "T13TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$345",
+      "reference": "T13TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$204",
+      "reference": "T13TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$403",
+      "reference": "T13TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$271",
+      "reference": "T13TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$344",
+      "reference": "T13TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$416",
+      "reference": "T13TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$439",
+      "reference": "T13TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$318",
+      "reference": "T14TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$190",
+      "reference": "T14TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$293",
+      "reference": "T14TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$167",
+      "reference": "T14TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$402",
+      "reference": "T14TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$270",
+      "reference": "T14TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$294",
+      "reference": "T14TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$451",
+      "reference": "T14TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$438",
+      "reference": "T14TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$317",
+      "reference": "T15TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$189",
+      "reference": "T15TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$342",
+      "reference": "T15TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$203",
+      "reference": "T15TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$401",
+      "reference": "T15TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$269",
+      "reference": "T15TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$341",
+      "reference": "T15TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$415",
+      "reference": "T15TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$437",
+      "reference": "T15TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$316",
+      "reference": "T16TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$188",
+      "reference": "T16TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$291",
+      "reference": "T16TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$166",
+      "reference": "T16TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$400",
+      "reference": "T16TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$268",
+      "reference": "T16TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$292",
+      "reference": "T16TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$450",
+      "reference": "T16TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$436",
+      "reference": "T16TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$315",
+      "reference": "T17TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$187",
+      "reference": "T17TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$340",
+      "reference": "T17TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$202",
+      "reference": "T17TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$399",
+      "reference": "T17TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$267",
+      "reference": "T17TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$378",
+      "reference": "T17TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$414",
+      "reference": "T17TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$435",
+      "reference": "T17TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$314",
+      "reference": "T18TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$186",
+      "reference": "T18TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$289",
+      "reference": "T18TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$165",
+      "reference": "T18TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$398",
+      "reference": "T18TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$266",
+      "reference": "T18TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$290",
+      "reference": "T18TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$449",
+      "reference": "T18TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$434",
+      "reference": "T18TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$313",
+      "reference": "T19TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$185",
+      "reference": "T19TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$339",
+      "reference": "T19TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$201",
+      "reference": "T19TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$397",
+      "reference": "T19TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$265",
+      "reference": "T19TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$338",
+      "reference": "T19TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$413",
+      "reference": "T19TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$433",
+      "reference": "T19TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$312",
+      "reference": "T1TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$184",
+      "reference": "T1TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$287",
+      "reference": "T1TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$164",
+      "reference": "T1TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$396",
+      "reference": "T1TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$264",
+      "reference": "T1TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$288",
+      "reference": "T1TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$448",
+      "reference": "T1TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$432",
+      "reference": "T1TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$311",
+      "reference": "T20TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$183",
+      "reference": "T20TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$337",
+      "reference": "T20TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$200",
+      "reference": "T20TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$395",
+      "reference": "T20TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$263",
+      "reference": "T20TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$336",
+      "reference": "T20TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$412",
+      "reference": "T20TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$431",
+      "reference": "T20TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$299",
+      "reference": "T21TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$171",
+      "reference": "T21TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$325",
+      "reference": "T21TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$194",
+      "reference": "T21TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$383",
+      "reference": "T21TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$251",
+      "reference": "T21TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$324",
+      "reference": "T21TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$406",
+      "reference": "T21TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$419",
+      "reference": "T21TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$309",
+      "reference": "T22TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$181",
+      "reference": "T22TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$335",
+      "reference": "T22TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$199",
+      "reference": "T22TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$393",
+      "reference": "T22TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$261",
+      "reference": "T22TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$334",
+      "reference": "T22TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$411",
+      "reference": "T22TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$429",
+      "reference": "T22TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$308",
+      "reference": "T23TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$180",
+      "reference": "T23TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$283",
+      "reference": "T23TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$162",
+      "reference": "T23TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$392",
+      "reference": "T23TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$260",
+      "reference": "T23TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$284",
+      "reference": "T23TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$446",
+      "reference": "T23TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$428",
+      "reference": "T23TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$307",
+      "reference": "T2TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$179",
+      "reference": "T2TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$333",
+      "reference": "T2TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$198",
+      "reference": "T2TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$391",
+      "reference": "T2TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$259",
+      "reference": "T2TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$373",
+      "reference": "T2TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$410",
+      "reference": "T2TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$427",
+      "reference": "T2TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$306",
+      "reference": "T3TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$178",
+      "reference": "T3TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$281",
+      "reference": "T3TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$161",
+      "reference": "T3TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$390",
+      "reference": "T3TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$258",
+      "reference": "T3TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$282",
+      "reference": "T3TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$445",
+      "reference": "T3TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$426",
+      "reference": "T3TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$305",
+      "reference": "T4TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$177",
+      "reference": "T4TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$331",
+      "reference": "T4TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$197",
+      "reference": "T4TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$389",
+      "reference": "T4TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$257",
+      "reference": "T4TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$372",
+      "reference": "T4TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$409",
+      "reference": "T4TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$425",
+      "reference": "T4TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$304",
+      "reference": "T5TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$176",
+      "reference": "T5TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$279",
+      "reference": "T5TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$160",
+      "reference": "T5TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$388",
+      "reference": "T5TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$256",
+      "reference": "T5TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$280",
+      "reference": "T5TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$444",
+      "reference": "T5TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$424",
+      "reference": "T5TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$303",
+      "reference": "T6TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$175",
+      "reference": "T6TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$329",
+      "reference": "T6TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$196",
+      "reference": "T6TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$387",
+      "reference": "T6TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$255",
+      "reference": "T6TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$371",
+      "reference": "T6TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$408",
+      "reference": "T6TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$423",
+      "reference": "T6TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$302",
+      "reference": "T7TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$174",
+      "reference": "T7TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$277",
+      "reference": "T7TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$159",
+      "reference": "T7TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$386",
+      "reference": "T7TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$254",
+      "reference": "T7TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$278",
+      "reference": "T7TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$443",
+      "reference": "T7TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$422",
+      "reference": "T7TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$301",
+      "reference": "T8TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$173",
+      "reference": "T8TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$327",
+      "reference": "T8TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$195",
+      "reference": "T8TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$385",
+      "reference": "T8TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$253",
+      "reference": "T8TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$370",
+      "reference": "T8TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$407",
+      "reference": "T8TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$421",
+      "reference": "T8TX/PUX",
+      "pin": false
+    },
+    {
+      "layout": "\\$300",
+      "reference": "T9TX/DN",
+      "pin": false
+    },
+    {
+      "layout": "\\$172",
+      "reference": "T9TX/DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$275",
+      "reference": "T9TX/GN",
+      "pin": false
+    },
+    {
+      "layout": "\\$158",
+      "reference": "T9TX/GP",
+      "pin": false
+    },
+    {
+      "layout": "\\$384",
+      "reference": "T9TX/NA",
+      "pin": false
+    },
+    {
+      "layout": "\\$252",
+      "reference": "T9TX/NB",
+      "pin": false
+    },
+    {
+      "layout": "\\$276",
+      "reference": "T9TX/OEB",
+      "pin": false
+    },
+    {
+      "layout": "\\$442",
+      "reference": "T9TX/PDX",
+      "pin": false
+    },
+    {
+      "layout": "\\$420",
       "reference": "T9TX/PUX",
       "pin": false
     },

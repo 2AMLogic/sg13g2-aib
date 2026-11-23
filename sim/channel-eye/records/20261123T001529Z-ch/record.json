@@ -1,0 +1,137 @@
+{
+  "record": "channel-eye",
+  "utc_stamp": "20261123T001529Z",
+  "kind": "simulated",
+  "family": "ch",
+  "claim_scope": "CH (modeled channel CH-3MM-RC)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 720,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-15": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t15_ar_bf_short",
+        "value": -1.84991e-11,
+        "why": "smallest margin"
+      }
+    },
+    "T-16": {
+      "verdict": "pass",
+      "pass": 360,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_sf/mixed/-40C",
+        "measurement": "t16_df_cr_short",
+        "value": 5.0983e-10,
+        "why": "smallest margin"
+      }
+    },
+    "T-18": {
+      "verdict": "pass",
+      "pass": 1845,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ss/mixed/125C",
+        "measurement": "t18_eye_height_ok_v",
+        "value": 0.4795144,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "pass",
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_ff/mixed/125C",
+        "measurement": "t26_energy_per_bit_simulated_j",
+        "value": 6.33641e-13,
+        "why": "smallest margin"
+      }
+    }
+  },
+  "energy_label": "T-26 energy per bit is SIMULATED; no measurement exists",
+  "batch_job_ids": [
+    "klt-sim-dcfa10453040",
+    "klt-sim-be62a32b8f68",
+    "klt-sim-a3ebbe9bb19e",
+    "klt-sim-39bbacc129a5",
+    "klt-sim-17c2e141b484",
+    "klt-sim-091082b14377",
+    "klt-sim-a4ba460945b9",
+    "klt-sim-6390192780db",
+    "klt-sim-29796becfb45",
+    "klt-sim-80963bccc505",
+    "klt-sim-92c586f6338b",
+    "klt-sim-1f54eef44b24",
+    "klt-sim-fe48eb1379ed",
+    "klt-sim-3470b7a626f6",
+    "klt-sim-bb030fc8858d",
+    "klt-sim-99462c31c56a",
+    "klt-sim-2b28594a7af9",
+    "klt-sim-8b65ea76b283",
+    "klt-sim-3b94b9096c19",
+    "klt-sim-a1d99e0abc0c",
+    "klt-sim-80b04a16938e",
+    "klt-sim-12c1d1a218c6",
+    "klt-sim-982885458900",
+    "klt-sim-c5f98d23c2fa",
+    "klt-sim-af533a8073a3",
+    "klt-sim-2df13f5551bd",
+    "klt-sim-3687478acf4a",
+    "klt-sim-aac78c68ee0a",
+    "klt-sim-d92998e00883",
+    "klt-sim-821ac785e7a8",
+    "klt-sim-99a7dbd8f11d",
+    "klt-sim-65fd85029c0f",
+    "klt-sim-09c0dd541d2d",
+    "klt-sim-071f3bcbdf56",
+    "klt-sim-b8d0b0a4eedc",
+    "klt-sim-c8c8394107f4",
+    "klt-sim-e81141368d59",
+    "klt-sim-61f4dc54e38c",
+    "klt-sim-5db3d4d0aaa4",
+    "klt-sim-480aac51fda6",
+    "klt-sim-b825298e7a80",
+    "klt-sim-248c0cabdeb2",
+    "klt-sim-a436ded072f7",
+    "klt-sim-a1d5122daa24",
+    "klt-sim-b867e678caa7"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

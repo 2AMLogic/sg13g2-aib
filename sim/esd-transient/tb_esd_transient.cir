@@ -1,4 +1,4 @@
-* T-25 SIM leg (issue #196, DR-0029): the 0.5 A ESD discharge transient on the committed
+* T-25 SIM leg (issue #196, DR-0030): the 0.5 A ESD discharge transient on the committed
 * aib_pad_esd netlist (XDp1 = diodevdd_2kv). Circuit body only (klt sim owns the .control
 * block). Both pulse polarities fire in one transient window per supply state -- Ipos
 * injects into PAD at t = 1 ns, Ineg draws out of PAD at t = 51 ns -- and the request's two
@@ -27,13 +27,22 @@
 *                    reverse-biases it, so XMn1 carries no positive-pulse current)
 * PSP103 represents the forward drain-body junction conduction of XMn1/XMclamp and does
 * not represent the gate-grounded snapback path; sg13g2_esd.lib states bv/ibv, so the pad
-* diode model carries a reverse-breakdown representation (DR-0029, "Model check").
+* diode model carries a reverse-breakdown representation (DR-0030, "Model check").
 .options savecurrents
 Vddio vddio 0 dc 1.2
 Vmeas_padi padi_m 0 dc 0
 .include ../../design/aib_pad_esd.spice
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+* Review round 1 (EE-key, PR #374): each DUT is the whole I/O cell, not the ESD subcircuit
+* alone. The tristated driver (OE=0, PD=0, PUN tied to VDDIO so the weak pull-up is off)
+* sits on PAD, so its drain-well diodes through XRsp/XRsn share the pulse current, and the
+* receiver (aib_rx_data) loads PADI as in aib_io_rx.
 Xpad pad_t padi_f vddio 0 aib_pad_esd
+Xtx 0 0 vddio 0 pad_t vddio 0 aib_tx_data
+Xrx padi_f dout_f vddio 0 aib_rx_data
 Xpadi pad_ti padi_m vddio 0 aib_pad_esd
+Xtxi 0 0 vddio 0 pad_ti vddio 0 aib_tx_data
 * identical CDM-class triangular pulses, 0.5 A peak (T-25 / AIB 1.2 Table 19): 200 ps
 * rise, 400 ps fall, ~400 ps at half amplitude; one event per polarity per 80 ns period.
 Ipos 0 pad_t dc 0 pulse 0 0.5 1n 200p 400p 1p 80n

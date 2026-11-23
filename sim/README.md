@@ -96,6 +96,13 @@ T-07 and T-28). That resolves the rows without editing the committed request byt
 record was run from; adding `spec_row` tags there would change them and is a separate,
 deliberate re-run.
 
+An archived deck's `.include` strings are relative to the bench staging directory
+(`sim/<family>/`), not to the record directory it is archived in — the deck is copied
+verbatim from the staged bench, so a re-run from a record may need one include repointed at
+the record-local copy beside it (`scripts/ci/check_record_includes.py` fails CI when an
+include resolves from neither place, so a cleanup cannot delete a staging-dir sibling
+silently).
+
 ```bash
 sim/harness/test_batch_record.sh            # the procedure, against a stubbed klt sim
                                             # (+ the dc-static entry point and its row map)
@@ -136,21 +143,22 @@ record; N = 8 function is covered by `verification/klt/datapath_n8.json`.
 
 ## Item 5 / analog: the declared row set
 
-The three families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
+The four families below are the T1 item 5 (analog) campaign. `signoff/block-manifest.json`
 cites one envelope per family under `evidence."5.analog"` and declares the **full** analog
 `SIM` row set under `spec_rows."5.analog"`. Item 5 / analog reads `unmet` /
-`partial_coverage`: every cited envelope passes, no covered row is uncovered, and five rows
+`partial_coverage`: every cited envelope passes, no covered row is uncovered, and four rows
 are declared gaps. See `signoff/README.md` ("Item 5 / analog evidence") for the grading rules.
 
 **Cited records** (each 45 corners, batch fleet, `klt sim` 0.9.0, PDK v0.3.0):
 
 | family | record | rows covered |
 |---|---|---|
-| dc-static | `dc-static/records/20261112T001207Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 |
-| channel-eye (CH) | `channel-eye/records/20261111T235838Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
-| clock-path | `clock-path/records/20261113T095936Z/report.json` | T-17 |
+| dc-static | `dc-static/records/20261123T001034Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 |
+| channel-eye (CH) | `channel-eye/records/20261123T001529Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 |
+| clock-path | `clock-path/records/20261123T001348Z/report.json` | T-17 |
+| channel-model (CH) | `channel-model/records/20261121T000100Z/report.json` | T-12 |
 
-The channel-eye and clock-path records' measurements carry `spec_row` tags, so the grader
+The channel-eye, clock-path and channel-model records' measurements carry `spec_row` tags, so the grader
 derives their coverage from the envelope and catches a wrong `rows` entry. **The dc-static
 report has no `spec_row` tags**, so its six rows are `asserted` in `detail.row_sources` —
 taken on this manifest's word, with nothing in the grader checking them. They were checked by
@@ -170,10 +178,9 @@ mix a modeled-channel claim with a test-configuration one. `spec/test-configurat
 those apart.
 
 **Declared gaps.** A gap keeps item 5 / analog `unmet`; it is not a deferral of the row.
-Four of the five are *pending* — a measurement that has not been made yet, and the gap closes
-when it is. **T-12 is the remaining standing gap**: the channel model is a declared input, not a
-block measurable (below); its ±20 % sensitivity campaign is complete and no tracker is open
-against it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
+All four are *pending* — a measurement that has not been made yet, and the gap closes
+when it is. **T-12 is not a gap** (DR-0029, proposed): the channel-model conformance family
+`sim/channel-model/` (below) covers it. T-02, T-04 and T-05 are no longer declared: DR-0026 removes the T-02/T-04 `SIM`
 legs and DR-0028 removes T-05's (no bound exists in the specification for any of the three),
 so the "plain `SIM` leg" rule yields this 18-row set mechanically. T-05's measured load and
 delay stay reported evidence — the common term feeds T-20 and the select-dependent term feeds
@@ -181,7 +188,6 @@ T-13 (DR-0023, DR-0028).
 
 | row | why no envelope covers it | issue |
 |---|---|---|
-| T-12 | channel-model *definition*, not a block measurable (the ±20 % sensitivity run it also asked for is complete — see below). **Standing gap**, no tracker open | none |
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
 | T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
@@ -189,11 +195,13 @@ T-13 (DR-0023, DR-0028).
 
 `SIM-MC` rows (T-10, T-13, T-14, T-19) belong to item 6, not here.
 
-### T-12 is an input definition; its ±20 % sensitivity run now exists
+### T-12: the conformance family and the ±20 % sensitivity run
 
 `spec/channel/channel_rc.cir` opens "A declared model, not a measured one." The CH-3MM-RC
 parameter set is the **input** to T-01/T-09/T-15/T-16/T-18/T-26, so citing it as a covered row
-would be circular, and it is not cited. T-12 therefore stays a declared gap.
+would be circular, so the model is not cited as evidence of itself. What *is* measurable is that
+the committed netlist implements the declared table, which nothing checked until
+`sim/channel-model/` (#384, below). T-12 is cited from that record under DR-0029 (proposed).
 
 What its grid column also asked for — "PVT-FULL, plus channel R/C ±20 % (DR-0005)" — **has
 now been run** (#193): `channel-eye/records/20261113T223804Z-ch-spread/` is PVT-FULL at each
@@ -211,13 +219,13 @@ margin in the design, with the 470-530 ps window and the declared +20 % channel-
 **19.92 ps** worst-case T-16 margin across the four spread pairs
 ([`channel-eye/records/20261118T220000Z-t16-sizing/README.md`](channel-eye/records/20261118T220000Z-t16-sizing/README.md)).
 
-The spread record is **referenced from T-12's gap text, not cited as an envelope**. Probed
+The spread record is **supporting evidence for the six dependent rows, not cited for T-12**. Probed
 with the pinned grader (klt 0.9.0, a scratch copy of the manifest, nothing committed): citing
 it with `rows: ["T-12"]` grades item 5 `unmet` / `invalid_evidence` ("a member names a row
 that is undeclared or a declared gap") while T-12 is a declared gap, and `unmet` /
 `partial_coverage` with `uncovered_rows: ["T-12"]` once it is not — because coverage is
 derived from the `spec_row` tags the report carries, and no measurement carries T-12. So the
-six dependent rows keep their nominal citation (`20261111T235838Z-ch`), unchanged.
+six dependent rows keep their nominal citation (`20261123T001529Z-ch`), unchanged.
 
 ### The decompressed `report.json` copies
 
@@ -229,8 +237,8 @@ simulation**, byte-identical content. The `.gz` is untouched, so the `sim/` appe
 sees only an added file. Verify either copy with:
 
 ```bash
-gzip -dc sim/clock-path/records/20261113T095936Z/report.json.gz \
-  | cmp - sim/clock-path/records/20261113T095936Z/report.json   # silent
+gzip -dc sim/clock-path/records/20261123T001348Z/report.json.gz \
+  | cmp - sim/clock-path/records/20261123T001348Z/report.json   # silent
 ```
 
 ## channel-eye
@@ -552,24 +560,41 @@ are untouched.
   fail in L2 did not occur in this run.
 
 **T-16 attribution (#161, parent #142):** record `channel-eye/records/20261111T231422Z-t16attr/`
-(simulated; eight local single-corner runs, no batch job; `channel-eye/run_t16attr.sh`). The
+(simulated; eight local single-corner runs, no batch job). The
 65 ps binding miss above is the pre-#132 driver; on current `main` (record `20261110T082948Z-ch`)
 it is 41.5 ps. At the binding corner the miss is a sum of named terms with zero residual: the TX
 cell's rise/fall delay asymmetry (about -22.5 ps, unchanged by #132), channel/pad loading of the TX
 (-21.5 ps current, -40.6 ps pre-#132) and under 3 ps of channel line and crossing definition.
 The bench measures offset from an unaligned 0.5 UI, which is not the same thing as the spec
 row's skew; neither is changed. See the record's `README.md` for the numbers and the recommendation.
+That record's `Reproduce:` line names `run_t16attr.sh`, which was removed from the working tree
+after the study closed (#418); the script and its generator are in git history at the pre-removal
+commit `1125fe2`, e.g. `git show 1125fe2:sim/channel-eye/run_t16attr.sh`.
 
 **T-16 design fix (#142):** record `channel-eye/records/20261111T235838Z-ch/` (simulated, CH-3MM-RC,
 45 corners, batch backend). The rise/fall asymmetry (term A in the t16attr record) sat in the
 predriver NOR's series PMOS pull-up (`XMnr1p`/`XMnr2p`, 4u/ng=2 -> 8u/ng=4 in `aib_tx_data`): it
 charges the `XMn` gate through two series PMOS, and it was the slow edge. Ideal-connection probe at
-mos_ss/1.08 V/125 C (`run_t16attr.sh` requests, local): data delay rise/fall 144/185 ps -> 145/147
+mos_ss/1.08 V/125 C (local requests): data delay rise/fall 144/185 ps -> 145/147
 ps, `t16_df_cf_long` 477.5 -> 499.0 ps; under the channel 458.5 -> 486.0 ps. T-16 passes 360/360
 measurements at 45/45 corners; the binding point is now `mos_ss/mixed/-40C` `t16_dr_cf_long` =
 480.9 ps (10.9 ps inside the 470 ps edge). T-01, T-09, T-15, T-18, T-26 still pass 45/45. The bound,
 the bench and the spec are unchanged. DIN input capacitance of the cell rises (NOR PMOS gate area
 doubled); the upstream driver of DIN is not modelled in this bench.
+
+**Re-run on the current pad cell (#408):** record `channel-eye/records/20261123T001529Z-ch/`
+(simulated, CH-3MM-RC, 45 corners, batch backend, 45 jobs of 1 unit, `klt` exit 0; job ids in the
+record's `batch_job_ids`). `20261111T235838Z-ch` predates `e47bb80` (`XResd` l 0.5u -> 1u), so its
+`environment.netlist_closure` names `design/aib_pad_esd.spice` at `78e22362...` while the tree holds
+`4de31ffa...`; this record closes against the tree. **All six rows pass at 45/45 corners with the
+same per-row measurement counts — no verdict moved.** What moved is the T-16 margin `e47bb80`
+bought: the binding point moves off `t16_dr_cf_long` (now 490.4 ps, 20.4 ps inside the 470 ps
+floor) to `mos_sf/mixed/-40C` `t16_df_cr_short` = 509.8 ps, 20.2 ps inside the 530 ps ceiling —
+the nominal-record margin is 10.9 -> 20.2 ps, matching the 19.92 ps the S07 sizing study measured
+across the spread pairs. T-15's binding point eases -19.5 -> -18.5 ps (limit +/-60 ps), T-18's
+binding eye height 0.379 -> 0.480 V (floor 90 mV), T-26's binding energy 0.637 -> 0.634 pJ/bit
+(1 pJ ceiling, simulated); T-01 and T-09 are unchanged (64.0 edges; no dwell). The bound, the
+bench and the spec are unchanged.
 
 **±20 % channel R/C spread (#193):** record `channel-eye/records/20261113T223804Z-ch-spread/`
 (simulated, CH-3MM-RC at `kr`/`kc` in {0.8, 1.2}, 180 corners = PVT-FULL × 4 spread corners,
@@ -649,6 +674,23 @@ and `design/` and `spec/` are untouched.
   is a TC row besides). Follow-ups: #175 (T-21), #176 (T-29).
 
 See the record's `README.md` for the per-corner numbers and the decomposition.
+
+**Re-run on the current pad cell (#408):** record `clock-path/records/20261123T001348Z/`
+(simulated, CH-3MM-RC, 45 corners, batch backend, 15 jobs of 3 corners, `klt` exit 0; job ids in
+the record's `batch_job_ids`). `20261113T095936Z` predates `e47bb80` (`XResd` l 0.5u -> 1u), so its
+`environment.netlist_closure` names `design/aib_pad_esd.spice` at `78e22362...` while the tree holds
+`4de31ffa...`; this record closes against the tree. **T-17 still passes at 45/45 corners**
+(270/270 graded measurements) but the worst case deepens **-1.036 % -> -1.140 %** at the same
+`mos_sf`, 1.08 V, -40 C corner, leaving 1.86 % of the +/-3 % bound; D-9 / G3 stays untriggered.
+T-04 and T-02 stay reported, not graded: the pair now crosses the RX **pins** -26.7 .. +11.5 mV
+from VDDIO/2 (no longer within 20 mV; T-04 states no numeric bound either way), the RX **output**
+crossing is up to -627.9 mV off mid-rail (receiver rise/fall asymmetry, as before), and TX-to-RX
+latency is 269.4-523.5 ps. The alternate DDR half-period at the RX output is now off-centre by up
+to **0.076 UI** (423.9 ps instead of 500 ps at `mos_sf`, 1.08 V, -40 C), of which 22.8 ps is at
+the TX pad (twice T-17's 11.4 ps half-UI distortion); the rest is added after the pad, dominantly
+by the receiver — the same decomposition as the 2026-11-13 record, smaller. No bound, spec row or
+bench value changed; the new record carries no per-corner `README.md` of its own, so read the
+numbers above against its `rows.json` / `record.json`.
 
 The 2026-10-27 attempt of this same request produced no record: the submit succeeded (15 jobs of 3
 units) but the fleet left every job `pending` and never launched it. That run did not pass
@@ -785,7 +827,13 @@ Re-check after the #142 predriver change: `dc-static/records/20261112T001207Z/` 
 so T-06/T-08/T-24 (and T-07, T-11, T-28) are unchanged in verdict. Report only, no
 `record.json`.
 
-All four records above were built by hand. The next run goes through
+Re-run on the current pad cell (#408): `dc-static/records/20261123T001034Z/` (batch job
+`klt-sim-ac6b06b68783`, same `request.json`, written by the entry point against the
+post-`e47bb80` cells): 45/45 corners pass, 810/810 measurements pass — no verdict moved; only
+T-24's extracted capacitance shifted (worst 84.2 / 96.4 / 90.3 -> 83.9 / 96.4 / 90.0 fF at
+pad 0 / VDDIO/2 / VDDIO). This is the record the manifest cites.
+
+The four records above were built by hand. The next run goes through
 `sim/dc-static/run_dc_static.sh nominal|2kv|esd-diode` on the shared procedure ("Record
 harness" above, #228); nothing here is back-filled.
 
@@ -802,13 +850,13 @@ See `sim/io-cell-study/README.md`.
 
 ## esd-transient
 
-`sim/esd-transient/` is the T-25 SIM leg (issue #196, operator ruling q210, DR-0029): one
+`sim/esd-transient/` is the T-25 SIM leg (issue #196, operator ruling q210, DR-0030): one
 0.5 A CDM-class triangular pulse into PAD -- both polarities, VDDIO powered and unpowered --
 on the committed `aib_pad_esd` netlist, one nominal corner (`mos_tt`, 1.20 V, 27 C), local
 backend, through `run_esd_transient.sh` (the record procedure of the shared harness minus
 the fleet handling: a single-unit local run). T-25's grid column is n/a, so this is a
-single-configuration bench; the bounds were fixed in DR-0029 before the run and are not
+single-configuration bench; the bounds were fixed in DR-0030 before the run and are not
 edited after it. Three DC model-check steps report the conduction models the transient
 credits (the pad diode's forward I-V at the powered and unpowered rail, XMn1's drain-body
 junction in the negative-pulse direction). Simulated; no MEAS exists and no CDM level is
-claimed from a transient. See `sim/esd-transient/README.md` and DR-0029.
+claimed from a transient. See `sim/esd-transient/README.md` and DR-0030.

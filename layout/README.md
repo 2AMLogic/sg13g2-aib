@@ -211,6 +211,33 @@ net counts (6/10/17/29), so the two records differ in exactly one field each —
 The `lvs/*.diag.*` reports are untouched history and already did not reproduce (they bind a
 stream older than either of these).
 
+### Resd resize (#387, 2026-11-20)
+
+PR #332 shortened `XResd` to `w=2u l=1u` in `design/aib_pad_esd.spice` but the generator
+table still drew `Resd` 2 um x 2 um, and nothing ran the generator's own table check between
+regenerations, so the committed stream (and with it items 2, 3, 4 and 11 / analog) sat on a
+series resistor twice the schematic's length. `ESD_RES` is now the netlist size (2 um wide,
+1 um long), and the comparison that would have caught the drift -- `check_against_netlists`,
+which already existed -- runs in the CI evidence job on every push as
+`python3 -I layout/gen_io_column.py --check` (the generator's new check-only entry point;
+klayout is imported only on the geometry path, so the check is stdlib-only). Demonstrated
+both ways: the check passes on this table and fails at `AssertionError: Resd` with the old
+2 um length restored in a scratch copy.
+
+The resistor body on PolyRes measures 24.85-25.85 um x 16.60-18.60 um in both `aib_io_tx`
+and `aib_io_rx` (1 um along the current path, 2 um wide), against 24.85-26.85 um before. Everything
+else in the unit cells is unchanged. Downstream, all re-run on the new stream
+(`54b42956…`): structural checks clean (`check_io_column.py` exit 0, 38/38), whole-cell DRC
+clean (`records/20261120T202314Z`), the five LVS compares `match` and the negative control
+`mismatch` with the same counts as before (`lvs/README.md` "Issue #387"), the analog ERC
+report re-binds the stream (`erc_status: clean`), `stats/` per-layer numbers re-measure the
+smaller body, `signoff/attest/item2-analog.json` regenerated, and the four `klt pex`
+extractions re-run as `pex/records/20261120T202530Z/` with unchanged device/net counts
+(42/84/138/276 devices, 6/10/17/29 nets). The manifest re-cites the new records and the
+re-grade keeps `2.analog`, `3.analog`, `4.analog` and `11.analog` `met` (16 / 22 T1 as
+before); `7.analog` stays `unmet` / `check_failed` on the extraction-only record. The `#226`
+delta campaign must run on this stream.
+
 ## DRC records
 
 `records/<utc-stamp>/` holds the verbatim `klt drc --deck sg13g2 --format json` reports (pinned
@@ -226,6 +253,8 @@ a re-run, never edit an old one. Each is cited under `3.analog` / `3.digital` in
 | `20261110T082915Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the DR-0017 driver and ESD sizing, #140) | clean, 0 violations |
 | `20261113T112710Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the `ng = 4` predriver pull-ups, #187) | clean, 0 violations |
 | `20261113T231304Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the DR-0016 spare placement, #248) | clean, 0 violations |
+| `20261120T202314Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the `Resd` `l = 1 um` resize, #387) | clean, 0 violations |
+| `20261123T092956Z` | `drc_analog.json` | `aib_io_column.gds` (analog; regenerated for the #398 receive split: `aib_io_rx` draws the adopted supply-referenced receiver, new `aib_io_rx_inv` unit for the clock pair) | clean, 0 violations |
 | `20261027T063033Z` | `drc_digital.json` | `pnr/.klt/place-and-route/aib_datapath.gds` (digital) | clean, 0 violations |
 
 Clean is not full signoff: the curated deck does not model the pad (`Pad.*`) or latch-up

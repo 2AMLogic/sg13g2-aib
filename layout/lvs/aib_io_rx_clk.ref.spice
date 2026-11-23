@@ -2,9 +2,10 @@
 * Plain-element form for `klt lvs`; flattened from the item 1 netlists:
 *   design/aib_pad_esd.spice sha256:3cb704eb07544c97702c141626fe54285850dfc17a7ca20932c3bc24c6609489
 *   design/aib_tx_data.spice sha256:667c53139825da4804873cab2f2038c4576063c466dfb9ce16c1a9a527bbf545
-*   design/aib_rx_data.spice sha256:43f326de980bc5a817d6235ab5402de4aa02886619ead25e7e60c41dfef99eab
+*   design/aib_rx_data.spice sha256:7863828c03ab4412c465be9931b6f8172fc90fe572ec64c72c4bb36cc34d6774
+*   design/aib_rx_inv.spice sha256:8cd42264f8014ff28951be5fb52e9ed94fadb94b89fc99aba5291e6d6b8b90fe
 *   design/aib_tx_clk.spice sha256:35de4d0bc6f1ad109c1477efa0cde485ae7a39f1b90005e92a2a0fd7db55e248
-*   design/aib_rx_clk.spice sha256:0e53de36f4d0d2585452746bb2cb5d35e7c8b0801cdf597efe1dbb7bc01b5b2d
+*   design/aib_rx_clk.spice sha256:3675d8bb85f776fda07a1183adfd3b846062bd034c49d054a4f905cf58a95bb7
 .SUBCKT aib_io_rx_clk DOUT DOUT$1 PAD PAD$1 VDDIO VSS
 Daesd_Dp1 PAD VDDIO diodevdd_mod A=35P P=58.08U
 Daesd_Dp1_dsub VSS VDDIO dsub_2kv_mod A=224.956P P=81.12U
@@ -41,14 +42,14 @@ Maesd_Mclamp_f19 VDDIO VSS VSS VSS nfet L=0.35U W=2U
 Xaesd_Resd PAD PADI_A VSS rppd r=164.6 L=1U W=2U
 Daesd_Dp2 PADI_A VDDIO dpantenna A=4P P=8U
 Maesd_Mn2_f0 PADI_A VSS VSS VSS nfet L=0.13U W=1U
-Marx_Mi1p_f0 arx/M1 PADI_A VDDIO VDDIO pfet L=0.13U W=1.25U
-Marx_Mi1p_f1 arx/M1 PADI_A VDDIO VDDIO pfet L=0.13U W=1.25U
-Marx_Mi1n_f0 arx/M1 PADI_A VSS VSS nfet L=0.13U W=0.5U
-Marx_Mi1n_f1 arx/M1 PADI_A VSS VSS nfet L=0.13U W=0.5U
-Marx_Mi2p_f0 DOUT$1 arx/M1 VDDIO VDDIO pfet L=0.13U W=2U
-Marx_Mi2p_f1 DOUT$1 arx/M1 VDDIO VDDIO pfet L=0.13U W=2U
-Marx_Mi2n_f0 DOUT$1 arx/M1 VSS VSS nfet L=0.13U W=1U
-Marx_Mi2n_f1 DOUT$1 arx/M1 VSS VSS nfet L=0.13U W=1U
+Mainv_Mi1p_f0 ainv/M1 PADI_A VDDIO VDDIO pfet L=0.13U W=1.25U
+Mainv_Mi1p_f1 ainv/M1 PADI_A VDDIO VDDIO pfet L=0.13U W=1.25U
+Mainv_Mi1n_f0 ainv/M1 PADI_A VSS VSS nfet L=0.13U W=0.5U
+Mainv_Mi1n_f1 ainv/M1 PADI_A VSS VSS nfet L=0.13U W=0.5U
+Mainv_Mi2p_f0 DOUT$1 ainv/M1 VDDIO VDDIO pfet L=0.13U W=2U
+Mainv_Mi2p_f1 DOUT$1 ainv/M1 VDDIO VDDIO pfet L=0.13U W=2U
+Mainv_Mi2n_f0 DOUT$1 ainv/M1 VSS VSS nfet L=0.13U W=1U
+Mainv_Mi2n_f1 DOUT$1 ainv/M1 VSS VSS nfet L=0.13U W=1U
 Dbesd_Dp1 PAD$1 VDDIO diodevdd_mod A=35P P=58.08U
 Dbesd_Dp1_dsub VSS VDDIO dsub_2kv_mod A=224.956P P=81.12U
 Mbesd_Mn1_f0 PAD$1 VSS VSS VSS nfet L=0.13U W=2U
@@ -84,12 +85,12 @@ Mbesd_Mclamp_f19 VDDIO VSS VSS VSS nfet L=0.35U W=2U
 Xbesd_Resd PAD$1 PADI_B VSS rppd r=164.6 L=1U W=2U
 Dbesd_Dp2 PADI_B VDDIO dpantenna A=4P P=8U
 Mbesd_Mn2_f0 PADI_B VSS VSS VSS nfet L=0.13U W=1U
-Mbrx_Mi1p_f0 brx/M1 PADI_B VDDIO VDDIO pfet L=0.13U W=1.25U
-Mbrx_Mi1p_f1 brx/M1 PADI_B VDDIO VDDIO pfet L=0.13U W=1.25U
-Mbrx_Mi1n_f0 brx/M1 PADI_B VSS VSS nfet L=0.13U W=0.5U
-Mbrx_Mi1n_f1 brx/M1 PADI_B VSS VSS nfet L=0.13U W=0.5U
-Mbrx_Mi2p_f0 DOUT brx/M1 VDDIO VDDIO pfet L=0.13U W=2U
-Mbrx_Mi2p_f1 DOUT brx/M1 VDDIO VDDIO pfet L=0.13U W=2U
-Mbrx_Mi2n_f0 DOUT brx/M1 VSS VSS nfet L=0.13U W=1U
-Mbrx_Mi2n_f1 DOUT brx/M1 VSS VSS nfet L=0.13U W=1U
+Mbinv_Mi1p_f0 binv/M1 PADI_B VDDIO VDDIO pfet L=0.13U W=1.25U
+Mbinv_Mi1p_f1 binv/M1 PADI_B VDDIO VDDIO pfet L=0.13U W=1.25U
+Mbinv_Mi1n_f0 binv/M1 PADI_B VSS VSS nfet L=0.13U W=0.5U
+Mbinv_Mi1n_f1 binv/M1 PADI_B VSS VSS nfet L=0.13U W=0.5U
+Mbinv_Mi2p_f0 DOUT binv/M1 VDDIO VDDIO pfet L=0.13U W=2U
+Mbinv_Mi2p_f1 DOUT binv/M1 VDDIO VDDIO pfet L=0.13U W=2U
+Mbinv_Mi2n_f0 DOUT binv/M1 VSS VSS nfet L=0.13U W=1U
+Mbinv_Mi2n_f1 DOUT binv/M1 VSS VSS nfet L=0.13U W=1U
 .ENDS

@@ -2,8 +2,65 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-23
+
+- **PR #432**: refactor(ci): import RECORD_ROOTS directly in the format checker
+- **Issue #428** (closed): Remove the AST lookup for RECORD_ROOTS in the evidence-format checker
+- **PR #430**: chore: ignore .loom/account-ranking.* daemon state in .gitignore
+- **Issue #429** (closed): gitignore: .loom/account-ranking.* daemon state trips check-main-clean.sh on every sweep
+- **PR #424**: feat(design): adopt the supply-referenced RX data receiver, split clock legs to aib_rx_inv (T-10 fix)
+- **PR #425**: docs(channel-model): state seeded-defect band exit without the unmet 10% margin claim
+- **Issue #396** (closed): sim/channel-model README overstates the seeded-defect detection margin (measured: 2 %, not >=10 %)
+- **PR #423**: ci: accept freshness-run membership as generator coverage in the completeness check
+- **Issue #395** (closed): Use the generator freshness run to establish CI coverage and drop five manual entries
+- **Issue #398** (in progress): adopt the supply-referenced RX input stage for the `aib_rx_data` data lanes — receive split landed (`aib_rx_inv` carries the committed inverter for the clock legs), T-10 passes on the adopted cell (0/5400 out), layout/DRC/LVS/PEX re-attested, T-19 recorded as the adoption's failing row (#190 tracks the output-stage fix)
+- **PR #391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate
+- **Issue #385** (closed): T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes
+- **PR #421**: chore(sim): remove the closed T-16 attribution scaffolding
+- **Issue #420** (closed): Hoist duplicated PWL stimulus helpers into sim/gen_common.py
+- **Issue #418** (closed): Remove the closed T-16 attribution scaffolding from sim/channel-eye (record is self-contained)
+- **PR #417**: fix(ci): fail CI when a record deck's .include stops resolving
+- **PR #416**: fix: pin content_hash on every pinnable evidence citation in the signoff manifest
+- **PR #413**: evidence: re-cite item 5 analog records re-run on the post-e47bb80 pad cell
+- **PR #412**: chore(sim): remove the closed T-16 sizing-study scaffolding
+- **PR #410**: feat(ci): check cited sim records' netlist closures against the tree
+- **PR #399**: evidence(sim): screen and confirm a supply-referenced RX input stage for T-10
+- **Issue #415** (closed): signoff/block-manifest.json: 18 of 37 evidence entries carry no content_hash pin
+- **Issue #414** (closed): Record bench decks' .include paths are staging-dir-relative, so archived decks can silently stop resolving
+- **Issue #411** (closed): Remove the completed #251 T-16 sizing-study scaffolding (12 files, 2576 lines)
+- **Issue #408** (closed): T1 item 5 (analog): re-run the cited dc-static, channel-eye and clock-path records on the current cells — each cites aib_pad_esd at its pre-e47bb80 hash
+- **Issue #405** (closed): No CI check binds a cited analog record's netlist_closure to the tree, so a design/*.spice change silently staleness-es cited evidence
+- **Issue #386** (closed): T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage
+
+### 2026-11-22
+
+- **PR #409**: test: guard test_checkers SUITES and loading against check_local.sh
+- **PR #404**: refactor: split scripts/ci/test_checkers.py into four sibling suites
+- **Issue #406** (closed): Nothing asserts test_checkers.py's SUITES matches check_local.sh, and no CI job runs the aggregator
+- **Issue #401** (closed): Split monolithic scripts/ci/test_checkers.py (2,635 lines) into focused sibling suites
+- **PR #402**: docs: correct the Resd PolyRes coordinates in layout/README.md
+- **Issue #394** (closed): Correct the Resd PolyRes coordinates recorded in layout/README.md (#387 regeneration)
+- **PR #390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
+- **Issue #387** (closed): layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign
+
+### 2026-11-21
+
+- **PR #393**: feat(sim,signoff): add the T-12 channel-model conformance bench and cite its record
+- **Issue #384** (closed): T-12: give the channel-model row a gradable SIM leg (conformance bench for spec/channel/channel_rc.cir) so item 5 / analog can reach met
+
+### 2026-11-20
+
+- **PR #389**: refactor: share the T-16 edge selection and drop the card re-parse in gen_t16attr
+- **Issue #388** (closed): Share the T-16 edge selection and remove the SPICE card parser from gen_t16attr
+- **PR #382**: docs: fix stale 8-gap count in signoff/README and date the item-5 grader probes
+- **Issue #380** (closed): signoff/README.md still says "8 real gaps" for item 5 / analog after DR-0026 and DR-0028 cut the row set to 18/5
+- **Issue #379** (closed): Guide docs tick still stages README.md without re-attesting item 10: #284's guard diagnoses the round trip but does not prevent it
+
 ### 2026-11-19
 
+- **PR #365**: docs: date DR-0017/DR-0018 staleness prose and retire #140 as the live layout tracker
+- **Issue #362** (closed): design/README.md and DR-0017 cite closed #140 as the live tracker for a layout regeneration that e47bb80 made stale again
+- **PR #337**: evidence(sim): study the PDK sg13g2_io pad cells against T-24 and T-08
 - **PR #371**: check_inventory_klt_pin: compare each ngspice pin to the newest smoke record
 - **PR #370**: docs(spec): drop T-05's SIM leg and leave the analog row set (DR-0028)
 - **PR #369**: signoff: enforce each inventory's klt pin against its envelope's grader version
@@ -125,6 +182,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-13
 
+- **Issue #54** (closed): T1 item 5 (analog) family: clock-path PVT-FULL (T-17/T-04/T-02)
 - **PR #243**: refactor(pex): reduce gen_pex_benches main() to the shared write-or-check helper
 - **Issue #239** (closed): Convert the seventh write-or-check copy: layout/pex/gen_pex_benches.py should use the shared helper
 - **PR #237**: feat(verification): refuse a request key run_tb.py does not read
@@ -218,18 +276,9 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 ### 2026-11-07
 
 - **PR #128**: Bump Repo Skills 0.25.1 -> 0.25.10
-- **PR #118**: fix(layout): regenerate lane column for re-routed slice, attest item2 r7
-- **Issue #114** (closed): Layout: regenerate lane_column.gds after the routed slice re-route
 
 ### 2026-11-06
 
-- **PR #116**: docs(evidence): record routed-datapath LVS on the re-routed stream, still mismatch (r10, r11)
-- **PR #115**: layout: re-route slice_routed.gds from the re-synthesized netlist
-- **PR #107**: docs(evidence): record routed-datapath LVS with top-level pin anchoring off (r8), still mismatch
-- **PR #106**: docs(spec): analyse r7 routed-datapath LVS mismatch categories
-- **PR #105**: docs(evidence): record klt 0.9.1 routed-datapath LVS (r7), still mismatch after the #4954 fix
-- **Issue #112** (closed): Add a toolless freshness check binding slice_routed.gds to the netlist it was routed from
-- **Issue #109** (closed): Layout: re-route layout/slice_routed.gds from the current synthesized netlist
 - **PR #124**: refactor(lvs): remove superseded --diagnostic generator path
 - **PR #123**: chore(sim): remove four regenerable single-corner request copies
 - **Issue #117** (closed): Remove sim/channel-eye/req_commit_*.json: single-corner copies of request_*_1g.json (~1758 lines)
@@ -237,7 +286,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-05
 
-- **PR #102**: docs(evidence): record flattened routed-datapath LVS (r6) and zero-device cause
 - **PR #121**: refactor(signoff): build item 2 envelopes with klt signoff --attest 2
 - **PR #119**: feat(signoff): pin klt 0.9.0 and grade item 11 digital met
 - **Issue #120** (closed): Replace hand-built item 2 attest scripts with klt signoff --attest 2 (available in pinned 0.9.0)
@@ -250,16 +298,12 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-11-02
 
-- **PR #94**: fix(layout): write the routed slice GDS at dbu 0.00025 um via output_dbu_um
-- **PR #92**: docs(evidence): fresh drawn-cell LVS matches and refused routed-datapath LVS record
-- **Issue #93** (closed): Layout: write the routed slice GDS at dbu 0.00025 um so klt lvs accepts it
 - **PR #113**: fix(sim): run channel-eye grid as one-unit batch jobs and keep resume dir
 - **PR #110**: fix(design): replace pad-ESD Dn1 dantenna with grounded-gate NMOS Mn1 so the channel-eye transient completes
 - **Issue #94** (closed): channel-eye: four-lane 1 Gb/s transient aborts (timestep too small) at mos_tt 1.20 V 27 C, CH and TC
 
 ### 2026-11-01
 
-- **PR #81**: feat(synth): re-synthesize slice with abc -constr and record r3 STA
 - **PR #108**: feat(rtl): rewrite T-05 shift remap to DR-0016 layout, state 22-cell span
 - **Issue #105** (closed): T-05 after DR-0016: rewrite the RTL to the two-signal shift with both spares at one end, and state the 22-cell span in the clock-tree record
 - **PR #32**: spec: propose two-signal shift with both spares at one end (T-05, DR-0016)
@@ -267,7 +311,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-31
 
-- **PR #83**: Bump Repo Skills 0.24.7 -> 0.25.1
 - **PR #100**: docs: record grounded-gate NMOS scratch probe that clears the channel-eye abort
 - **PR #98**: docs: record stimulus-side bisect of the channel-eye abort (lane-A intrinsic, numerical, not an overshoot)
 - **PR #96**: docs: record cell-level aib_pad_esd bisect of the channel-eye abort
@@ -281,25 +324,11 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-29
 
-- **PR #78**: fix(rtl): ungate CDC FIFO rdata load; re-synthesized STA still fails setup
 - **PR #90**: feat: pin derived item-7 SDFs in the manifest and check they reproduce
 - **Issue #88** (closed): Stop committing the two derived item-7 SDFs (regenerated by run_evidence.py)
 
 ### 2026-10-28
 
-- **PR #74**: docs(spec): declare item 6 analog partition a gap, scope not_applicable to digital
-- **PR #68**: docs(drc): attribute the last unexplained router M4 residual to a filed tool gap
-- **PR #67**: fix(layout): put router metal on the deck grid and redraw TX/RX cells to the deck; lane-column DRC 408,004 -> 8,208
-- **PR #60**: refactor: share merged_liberty and derive PnR archive root from the lambdapdk pin
-- **PR #56**: feat(layout): write drawn streams at dbu 0.00025 um for klt's asap7 deck
-- **PR #53**: docs(evidence): record klt lvs refusals for both partitions; shipped-cell compare matches
-- **PR #50**: feat(layout): assemble the 17-lane bump-pitch column and attest T1 item 2
-- **Issue #71** (closed): T1 item 6 (Monte Carlo, analog partition): resolve not_applicable_wrong_partition for the drawn TX/RX cells
-- **Issue #57** (closed): Layout: lane column fails ASAP7 DRC (8.1M violations, 65 rules); unblock T1 item 3
-- **Issue #55** (closed): Draw wells, contacts and routing in the TX/RX cell generator so klt lvs can extract the committed topology
-- **Issue #54** (closed): Finish lambdapdk consolidation: dedupe merged_liberty and the hardcoded pin path in PnR regen
-- **Issue #52** (closed): Regenerate drawn cells and lane column at dbu 0.00025 um so klt accepts them for the asap7 deck
-- **Issue #18** (closed): T1 item 2 (layout): routed lane-datapath GDS from a committed P&R flow plus drawn TX/RX cell GDS placed in the bump-pitch lane column
 - **PR #86**: feat: generate CI-checked characterization report for T1 item 8
 - **Issue #82** (closed): T1 item 8 (characterization report): per-row aggregated report over all 30 T- rows, both partitions
 - **PR #85**: feat: cite SDF-annotated post-route functional run as 7.digital
@@ -311,24 +340,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-27
 
-- **PR #46**: chore: ignore negative-control functional-verification reports
-- **PR #44**: refactor: share lambdapdk pin, fetch and Liberty merge between synth and STA regen
-- **PR #43**: feat: add committed place-and-route flow and routed GDS for the synthesized slice
-- **PR #42**: docs: analyse pre-route setup failure and propose CDC FIFO read-enable decision
-- **PR #41**: docs(manifest): record analog half of item 5 as a declared gap
-- **PR #37**: feat(evidence): record pre-route STA and functional-verification reports for item 5 digital
-- **PR #36**: feat: add generator and GDS for drawn TX/RX cell footprints
-- **PR #31**: docs: add item-10 hygiene inventory, attestation envelope and README reproduce section
-- **PR #29**: feat(design): attest T1 item 1 with synthesized slice netlist and drawn-cell SPICE
-- **PR #28**: docs(spec): record that no ratified spec row is statistical (T1 item 6)
-- **Issue #47** (closed): Remove duplicate Liberty merge in layout/pnr/regen.py; it still calls names db763e1 moved
-- **Issue #34** (closed): T1 item 2b: drawn TX/RX cell GDS generator within the lane-cell budget
-- **Issue #33** (closed): T1 item 2a: P&R flow and routed GDS of the slice datapath
-- **Issue #26** (closed): T1 item 10 (repo hygiene): hygiene inventory and klt signoff --attest 10 envelope
-- **Issue #25** (closed): T1 item 9 (testbenches shipped): testbench inventory and klt signoff --attest 9 envelope
-- **Issue #22** (closed): T1 item 6 (Monte Carlo): record that no ratified spec row is statistical
-- **Issue #21** (closed): T1 item 5 (corner verification): klt sta at RVT TT/SS/FF plus a klt functional-verification report for the lane datapath
-- **Issue #17** (closed): T1 item 1 (design sources): synthesized ASAP7 gate-level netlist for rtl/slice.v plus TX-driver/RX-front-end schematic netlists
 - **PR #73**: fix(layout): finger widths from netlist totals; clear clamp tap from PADI diode so analog LVS matches
 - **PR #71**: feat(layout): LVS of the data path (match) and the I/O cells (mismatch)
 - **PR #69**: feat(signoff): record per-partition klt drc reports and cite as T1 item 3
@@ -361,10 +372,6 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-23
 
-- **PR #15**: feat(rtl): add lane serializer/deserializer slice with cocotb loopback testbench
-- **PR #14**: feat(layout): bump map generator, pad-centre checker and self-test
-- **Issue #13** (closed): Commit the bump map and a pad-centre checker with a negative control (spec section 3, decision 0002)
-- **Issue #12** (closed): Lane datapath RTL (4:1 serializer/deserializer to the drawn-cell boundary) with a cold-start cocotb testbench (T1 items 1, 9)
 - **PR #26**: feat: add DDR/SDR serializer, deserializer and L1 loopback RTL with latency bench
 - **PR #25**: feat: add shift-redundancy remap RTL with exhaustive single-fault cocotb bench
 - **Issue #24** (closed): RTL: DDR/SDR serializer, deserializer and L1 loopback with cycle-accounted latency (T-02, T-27, T-29)
@@ -377,12 +384,10 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 ### 2026-10-21
 
-- **PR #10**: Bump Repo Skills 0.24.3 -> 0.24.7
 - **PR #17**: Bump Repo Skills 0.24.3 -> 0.24.7
 
 ### 2026-10-20
 
-- **PR #5**: ci: add klt signoff manifest, verdict of record and drift gate
 - **PR #7**: ci: add signoff record and evidence-format/append-only checks
 - **Issue #5** (closed): T1 item 10: add a block manifest, a committed signoff record and a PDK-free CI that keeps evidence formats valid
 - **PR #12**: docs(spec): record sibling spec-review comment in DR-0014

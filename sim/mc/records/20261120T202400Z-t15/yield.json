@@ -1,0 +1,201 @@
+{
+  "samples": "samples.json",
+  "limits": null,
+  "source": {
+    "kind": "sample-set",
+    "netlist": null,
+    "monte_carlo": null,
+    "provenance": {
+      "seed": 4415,
+      "draws_per_population": 20
+    },
+    "sample_count": 900
+  },
+  "schema_version": 1,
+  "confidence": 0.95,
+  "target_ci_halfwidth": 0.01,
+  "min_samples": 2,
+  "status": "pass",
+  "measurement_count": 1,
+  "measurements": [
+    {
+      "name": "t15_skew_ps",
+      "unit": "ps",
+      "n": 900,
+      "errored": 0,
+      "failed_unmeasurable": 0,
+      "censored": 0,
+      "inconclusive": 0,
+      "limits": {
+        "min": -60.0,
+        "max": 60.0,
+        "target_sigma": 7.0
+      },
+      "source_corners": [
+        "tt/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/-40C",
+        "tt/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/27C",
+        "tt/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/125C",
+        "tt/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/-40C",
+        "tt/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/27C",
+        "tt/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/125C",
+        "tt/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/-40C",
+        "tt/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/27C",
+        "tt/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/125C",
+        "ss/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/-40C",
+        "ss/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/27C",
+        "ss/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/125C",
+        "ss/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/-40C",
+        "ss/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/27C",
+        "ss/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/125C",
+        "ss/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/-40C",
+        "ss/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/27C",
+        "ss/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/125C",
+        "ff/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/-40C",
+        "ff/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/27C",
+        "ff/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/125C",
+        "ff/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/-40C",
+        "ff/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/27C",
+        "ff/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/125C",
+        "ff/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/-40C",
+        "ff/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/27C",
+        "ff/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/125C",
+        "sf/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/-40C",
+        "sf/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/27C",
+        "sf/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/125C",
+        "sf/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/-40C",
+        "sf/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/27C",
+        "sf/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/125C",
+        "sf/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/-40C",
+        "sf/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/27C",
+        "sf/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/125C",
+        "fs/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/-40C",
+        "fs/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/27C",
+        "fs/vdd_arx=1.080_vdd_atx=1.080_vdd_brx=1.080_vdd_btx=1.080_vdd_crx=1.080_vdd_ctx=1.080V/125C",
+        "fs/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/-40C",
+        "fs/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/27C",
+        "fs/vdd_arx=1.200_vdd_atx=1.200_vdd_brx=1.200_vdd_btx=1.200_vdd_crx=1.200_vdd_ctx=1.200V/125C",
+        "fs/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/-40C",
+        "fs/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/27C",
+        "fs/vdd_arx=1.320_vdd_atx=1.320_vdd_brx=1.320_vdd_btx=1.320_vdd_crx=1.320_vdd_ctx=1.320V/125C"
+      ],
+      "distribution": {
+        "model": "normal",
+        "mean": -1.8253768220088937,
+        "stddev": 5.397937514623953,
+        "min": -20.6956,
+        "max": 12.15789,
+        "median": -1.29276,
+        "skewness": -0.4966759660792575,
+        "excess_kurtosis": 0.15972064335271385,
+        "normality": {
+          "test": "anderson-darling",
+          "statistic": 3.484347289599511,
+          "critical_value": 0.787,
+          "significance": 0.05,
+          "verdict": "rejected"
+        }
+      },
+      "yield": {
+        "empirical": {
+          "method": "clopper-pearson",
+          "estimate": 1.0,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.9959096334824296,
+            "high": 1.0
+          },
+          "n": 900
+        },
+        "normal": {
+          "method": "normal-delta",
+          "estimate": 1.0,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 1.0,
+            "high": 1.0
+          },
+          "n": 900
+        },
+        "variance_reduced": null
+      },
+      "capability": {
+        "cp": 3.7051188432279027,
+        "cpk": 3.592398208907626,
+        "cpk_confidence_interval": {
+          "low": 3.424926691323272,
+          "high": 3.75986972649198
+        },
+        "sigma_to_spec": 10.777194626722878,
+        "sigma_to_spec_confidence_interval": {
+          "low": 10.274780073969817,
+          "high": 11.27960917947594
+        },
+        "limiting_side": "lower"
+      },
+      "sample_size": {
+        "n": 900,
+        "observed_ci_halfwidth": 0.0020451832587852214,
+        "target_ci_halfwidth": 0.01,
+        "required_n": 183,
+        "required_n_for_target": null,
+        "verdict": "sufficient",
+        "method": "clopper-pearson-zero-failures",
+        "variance_reduced": null
+      },
+      "negative_control": {
+        "description": "extra 500 fF at receiver input",
+        "n": 900,
+        "errored": 0,
+        "failed_unmeasurable": 0,
+        "censored": 0,
+        "yield": {
+          "empirical": {
+            "method": "clopper-pearson",
+            "estimate": 0.3,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.2702012055757841,
+              "high": 0.3311143831321367
+            },
+            "n": 900
+          },
+          "normal": {
+            "method": "normal-delta",
+            "estimate": 0.27530957783813054,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.25163517734599555,
+              "high": 0.2989839783302655
+            },
+            "n": 900
+          },
+          "variance_reduced": null
+        },
+        "nominal_empirical_estimate": 1.0,
+        "degradation_detected": true,
+        "verdict": "detected"
+      },
+      "analytic_cross_check": null,
+      "sampling": {
+        "strategy": "plain_random",
+        "replicates": null,
+        "effective_sample_size": null
+      },
+      "sigma_target": {
+        "k": 7.0,
+        "sigma_to_spec": 10.777194626722878,
+        "lower_bound": 10.274780073969817,
+        "gate": "lower_bound",
+        "met": true
+      },
+      "status": "pass",
+      "warnings": [
+        "measurement 't15_skew_ps': the sample set is not consistent with a normal distribution (Anderson-Darling A2* = 3.4843 > 0.787); treat the parametric yield estimate and Cpk as indicative only and prefer the empirical estimate",
+        "measurement 't15_skew_ps': no sample fell outside the limits, so the empirical yield is bounded only from below -- \"at least 99.5910% at 95% confidence, N = 900\" is the honest statement, not \"100% yield\"",
+        "measurement 't15_skew_ps': samples were pooled across 45 originating corners; each corner is its own population, so the pooled estimate is a worst-case envelope rather than a distribution anyone sampled"
+      ],
+      "spec_row": null
+    }
+  ],
+  "warnings": []
+}

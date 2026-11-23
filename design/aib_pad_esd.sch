@@ -1,14 +1,14 @@
 v {xschem version=3.4.7 file_version=1.3
 * aib_pad_esd -- pad protection structure for one AIB-class I/O pin.
 * Primary pair + rail clamp at PAD: Dp1 to VDDIO is the PDK pad diode diodevdd_2kv
-* (sg13g2_esd.lib), adopted from the dpantenna antenna-diode by DR-0029 (issue #196,
+* (sg13g2_esd.lib), adopted from the dpantenna antenna-diode by DR-0030 (issue #196,
 * operator ruling 2026-11-18: T-24 is held at its fallback column so the 0.5 A T-25
 * discharge has a device that can carry it); Mn1 to VSS is a grounded-gate NMOS used
 * as its drain-junction diode, see sim/README.md. Series resistor
 * to the core node PADI, small secondary diode pair at PADI (Dp2 to VDDIO; Mn2 to VSS, a
 * grounded-gate NMOS used as its drain-junction diode, see sim/README.md). Thin-oxide
 * devices only (T-06). T-24 is held at its fallback column (108.9 fF against the 100 fF
-* target, DR-0018/DR-0029); the T-25 0.5 A transient is sim/esd-transient/.
+* target, DR-0018/DR-0030); the T-25 0.5 A transient is sim/esd-transient/.
 }
 G {}
 K {}

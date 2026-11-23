@@ -3,7 +3,7 @@
 
 Stdlib only. `python3 -I sim/esd-transient/gen_esd_transient.py [--check]` writes (or
 checks) the committed request, request.json, for tb_esd_transient.cir (issue #196: the
-T-25 SIM leg, the 0.5 A ESD discharge transient, DR-0029).
+T-25 SIM leg, the 0.5 A ESD discharge transient, DR-0030).
 
 T-25's grid column is n/a: this is a single-configuration bench, not a grid. The corners
 object is the PVT-FULL bundle restricted to its nominal point (mos_tt, 1.20 V, 27 C --
@@ -14,7 +14,7 @@ local (`backend: "local"`, one unit); no `--wait-for-capacity` and no fleet are 
 Two tran steps alter Vddio between powered (1.2 V) and unpowered (0 V, the discharge
 case); both pulse polarities fire inside each step and the per-measurement time windows
 separate them (see the bench header). Pulse shape and the pass bounds below are fixed by
-DR-0029 before the run; they are not edited after it.
+DR-0030 before the run; they are not edited after it.
 
 Graded T-25 measurements, per step:
   - peak |V(PAD)| and peak |V(PADI)| per polarity (the clamp-path impedance and the
@@ -46,14 +46,14 @@ import gen_common  # noqa: E402  (the one write-or-check implementation)
 # bound because the meter pins PADI at 0 V).
 # Measurement windows in the 55 ns transient: window A covers the positive pulse
 # (crest at t = 1.2 ns), window B the negative pulse (crest at t = 51.2 ns); the late
-# windows start 1 ns after the crest (DR-0029's recovery bound).
+# windows start 1 ns after the crest (DR-0030's recovery bound).
 MASK_A = "(time ge 0.8n)*(time le 4n)"
 MASK_B = "(time ge 50.8n)*(time le 54n)"
 LATE_A = "(time ge 2.2n)*(time le 3n)"
 LATE_B = "(time ge 52.2n)*(time le 53n)"
 I_PADI = "i(vmeas_padi)"
 TRAN = {"kind": "tran", "args": "1p 55n 0 5p"}
-# DR-0029 s5 bounds, stated before the run.
+# DR-0030 s5 bounds, stated before the run.
 MAX_VPAD_POS = 7.0      # V, positive-pulse peak |V(PAD)|
 MAX_VPAD_NEG = 3.0      # V, negative-pulse peak |V(PAD)|
 MAX_VADI = 3.5          # V, |V(PADI)| either polarity
@@ -70,7 +70,7 @@ def meas(name: str, expr: str, unit: str, limits: dict, graded: bool = True) -> 
 
 
 def tran_step(name: str, alter: dict) -> dict:
-    """One supply state, both pulse polarities, DR-0029 bounds."""
+    """One supply state, both pulse polarities, DR-0030 bounds."""
     return {
         "name": name,
         "analysis": TRAN,
@@ -141,7 +141,7 @@ def steps() -> list:
 
 
 def derived() -> list:
-    """The DR-0029 recovery ratios: late-window |V(PAD)| over its own peak, per step
+    """The DR-0030 recovery ratios: late-window |V(PAD)| over its own peak, per step
     and polarity. Top level (like dc-static's t11_hyst_mv), graded T-25; names carry
     the step because top-level measurement names are globally unique."""
     out = []

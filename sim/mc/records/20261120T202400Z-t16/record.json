@@ -1,0 +1,66 @@
+{
+  "record": "mc-t16",
+  "utc_stamp": "20261120T202400Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-16",
+  "design_commit": "7a7c5b9ac2a124467478559118acaeac5e826965 (main; the design/ netlists the report's netlist_closure hashes were taken at. Includes the TX predriver NOR widening of 89d803b / PR #164 and the aib_pad_esd XResd l=1u shortening of e47bb80 / PR #332; PR #374's pad-diode change was still open and is NOT included)",
+  "klt_version": "0.9.0 (signoff/KLT_VERSION; uvx throwaway environment)",
+  "claim_scope": "CH only (declared channel model spec/channel/channel_rc.cir, CH-3MM-RC nominal); the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here",
+  "bench": "tb_t16.cir: lane A rises and the center-aligned clock pair (rxc - rxcb) rises 500 ps later; graded quantity is the data-to-clock delay minus the nominal 0.5 UI",
+  "skew_definition": "signed difference, limits +-bound, target_sigma 7 each side (sim/mc/README.md, Assumptions for ratification); #136 has not answered otherwise. DR-0019 (PR #168) is awaiting ratification and is not depended on or pre-empted: if it changes the reading, the committed samples can be re-graded without a new simulation",
+  "requests": {
+    "nominal": "request_t16.json",
+    "negative_control": "request_t16_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 40,
+    "seed": 4420,
+    "samples": 1800,
+    "negative_control_seed": 4421,
+    "negative_control_samples": 900
+  },
+  "sample_size": {
+    "required_n": 183,
+    "verdict": "sufficient",
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "observed_ci_halfwidth": 0.0010236394671516713,
+    "method": "clopper-pearson-zero-failures",
+    "basis": "re-run of the 2026-11-10 campaign (#137) at its recorded sample counts (40 per corner, set by that run's 20-draw pilot verdict of 1318), on the cells of main after two resizes (89d803b, e47bb80); the zero-failure method's requirement (183) is far below the recorded count"
+  },
+  "result": {
+    "status": "pass",
+    "unit": "ps",
+    "mean": -0.701230388888889,
+    "sigma": 3.3960730122265312,
+    "min": -15.1299,
+    "max": 12.6054,
+    "tail": "worst draw -15.1 ps against the -30 limit (limiting side lower); zero draws outside +-30 ps",
+    "empirical_yield": 1.0,
+    "empirical_yield_ci": {
+      "low": 0.9979527210656967,
+      "high": 1.0
+    },
+    "sigma_to_spec": 8.627249622028081,
+    "sigma_to_spec_ci": {
+      "low": 8.341592746148876,
+      "high": 8.912906497907285
+    },
+    "target_sigma": 7,
+    "sigma_target_gate": "lower_bound 8.34 >= 7: met",
+    "normality": "rejected",
+    "negative_control": "detected"
+  },
+  "note": "T-16 PASSES the 7-sigma gate on the current cells: pooled over the 45-corner grid mean -0.7 ps, sigma 3.4 ps, sigma-to-spec 8.6 with lower confidence bound 8.3 against 7; no draw falls outside +-30 ps. Supersedes the failing 2026-11-10 record (mean +16.6 ps, sigma 6.6 ps, 3.6 % outside +-30 ps, worst 37.1 ps), which predates the TX predriver NOR widening (89d803b, PR #164) and the aib_pad_esd XResd l=1u shortening (e47bb80, PR #332); both changes target the rise/fall asymmetry in this quantity; the two runs also differ in other inputs (the SS and FF diode sections changed from dio_tt to dio_ss and dio_ff in all four requests, and the ngspice engine moved from 46 to 47). The comparison shows the current cells pass under the current setup; it does not isolate how much of the improvement came from the resizes. The distribution is still not normal (Anderson-Darling rejected), so the empirical tail is the quantity to read: it is empty out to -15.1 ps. One of the six nominal batch shards was lost to an S3 upload failure on first submit (300 units, diagnostic lost_shard) and was recovered by klt sim --resume; the collected report carries all 1800 draws. Pooled grid, as for T-10; per-corner reading in sim/mc/per_corner.md. Recorded, not tuned; the limit and the sigma convention are unchanged, and the 2026-11-10 records stay untouched."
+}

@@ -95,7 +95,7 @@ def main(path):
         print(("PASS " if cond else "FAIL ") + name + (" " + detail if detail else ""))
         ok = ok and cond
 
-    for cn in ("aib_io_tx", "aib_io_rx"):
+    for cn in ("aib_io_tx", "aib_io_rx", "aib_io_rx_inv"):
         bb = ly.cell(cn).dbbox()
         check(f"{cn} bbox is {PITCH} x {DEPTH} um", (bb.width(), bb.height()) == (PITCH, DEPTH), str(bb))
         check(f"{cn} area per wire <= 5500 um2", bb.width() * bb.height() <= 5500.0)
@@ -109,7 +109,7 @@ def main(path):
             check(f"{cn}: nothing on layer {li[0]}/{li[1]} under the pad opening", under.is_empty())
     # Wire connectivity of the unit cells, including the shapes no label names (a short between
     # an unlabelled terminal and a rail is invisible to a check that walks labelled nets only).
-    for cn in ("aib_io_tx", "aib_io_rx"):
+    for cn in ("aib_io_tx", "aib_io_rx", "aib_io_rx_inv"):
         cell = ly.cell(cn)
         l2n, r = metal_clusters(ly, cell)
         labels = label_clusters(ly, cell, l2n, r)
@@ -117,14 +117,32 @@ def main(path):
         check(f"{cn}: no two differently labelled nets share a metal cluster", not multi, ",".join(multi))
         rail_clusters = {c for c, v in labels.items() if v & set(RAIL_LABELS)}
         bad = []
+        divider = []   # aib_io_rx only: the two long VDDIO/2 divider legs (#398), rail-tied by design
         res = db.Region(cell.begin_shapes_rec(ly.find_layer(128, 0)))
         for poly in res.each():
             bx = poly.bbox()
             yc = bx.center().y * ly.dbu
             ends = [cluster_at(l2n, r, bx.left * ly.dbu - 0.28, yc), cluster_at(l2n, r, bx.right * ly.dbu + 0.28, yc)]
+            if cn == "aib_io_rx" and (bx.width() * ly.dbu) > 40:
+                divider.append(ends)
+                continue
             if None in ends or ends[0] == ends[1] or rail_clusters & set(ends):
                 bad.append(f"({bx.left * ly.dbu:.2f},{yc:.2f})")
-        check(f"{cn}: each resistor's two ends are on separate metal clusters, neither on a rail", not bad, " ".join(bad))
+        check(f"{cn}: each resistor's two ends are on separate metal clusters, neither on a rail",
+              not bad, " ".join(bad))
+        if cn == "aib_io_rx":
+            # the #398 receiver's matched divider: exactly two long legs, one ending on the
+            # VDDIO rail, one on VSS, sharing one unlabelled middle cluster (vrn). Those two
+            # legs are the only resistors allowed to land on a rail.
+            def lab(c):
+                return labels.get(c, set())
+            vdd = [e for e in divider if any(lab(x) & {"VDDIO"} for x in e)]
+            vss = [e for e in divider if any(lab(x) & {"VSS"} for x in e)]
+            mids = frozenset(x for e in divider for x in e if not (lab(x) & set(RAIL_LABELS)))
+            check(f"{cn}: the divider is two long resistor legs VDDIO--vrn--VSS",
+                  len(divider) == 2 and all(None not in e for e in divider)
+                  and len(vdd) == 1 and len(vss) == 1 and len(mids) == 1,
+                  f"{len(divider)} legs")
         bad = []
         recog = db.Region(cell.begin_shapes_rec(ly.find_layer(99, 31)))
         for poly in recog.each():

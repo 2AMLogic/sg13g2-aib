@@ -1,0 +1,194 @@
+{
+  "engine": "ngspice",
+  "netlist": "tb_hyst.cir",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "corners": {
+    "process": [
+      {
+        "name": "tt",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_tt"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "ss",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ss"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_wcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ss"
+          }
+        ]
+      },
+      {
+        "name": "ff",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_ff"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_bcs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_ff"
+          }
+        ]
+      },
+      {
+        "name": "sf",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_sf"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      },
+      {
+        "name": "fs",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_fs"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {
+      "vddio": [
+        1.08,
+        1.2,
+        1.32
+      ]
+    },
+    "temperature_c": [
+      -40,
+      27,
+      125
+    ]
+  },
+  "analysis_steps": [
+    {
+      "name": "rx_up",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vfr 0 1 0.001"
+      },
+      "alter": {},
+      "measurements": [
+        {
+          "name": "vth_up_b",
+          "spice": ".meas dc vth_up_b WHEN v(dnorm_b)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_up_c",
+          "spice": ".meas dc vth_up_c WHEN v(dnorm_c)=0.5 RISE=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vddio_v",
+          "expr": "v(vddio)[0]",
+          "unit": "V"
+        }
+      ]
+    },
+    {
+      "name": "rx_dn",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vfr 1 0 -0.001"
+      },
+      "alter": {},
+      "measurements": [
+        {
+          "name": "vth_dn_b",
+          "spice": ".meas dc vth_dn_b WHEN v(dnorm_b)=0.5 FALL=1",
+          "unit": "frac"
+        },
+        {
+          "name": "vth_dn_c",
+          "spice": ".meas dc vth_dn_c WHEN v(dnorm_c)=0.5 FALL=1",
+          "unit": "frac"
+        }
+      ]
+    }
+  ],
+  "measurements": [
+    {
+      "name": "t11_hyst_mv__b",
+      "unit": "mV",
+      "spec_row": "T-11",
+      "expr": "abs(rx_up.vth_up_b-rx_dn.vth_dn_b)*rx_up.vddio_v*1000",
+      "limits": {
+        "max": 60
+      }
+    },
+    {
+      "name": "t11_hyst_mv__c",
+      "unit": "mV",
+      "spec_row": "T-11",
+      "expr": "abs(rx_up.vth_up_c-rx_dn.vth_dn_c)*rx_up.vddio_v*1000",
+      "limits": {
+        "max": 60
+      }
+    }
+  ],
+  "options": {
+    "stage_model_inputs": true,
+    "fail_on_diagnostic": [
+      "nonconvergence"
+    ],
+    "timeout_s": 60,
+    "keep_artifacts": false,
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ]
+  },
+  "backend": "batch",
+  "batch": {
+    "capacity_wait_s": 600
+  }
+}
