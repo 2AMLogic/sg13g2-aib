@@ -2,6 +2,11 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-24
+
+- **PR #438**: feat(sim): scrub host home paths from new records and fail CI on new ones
+- **Issue #437** (closed): provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench
+
 ### 2026-11-23
 
 - **PR #432**: refactor(ci): import RECORD_ROOTS directly in the format checker
