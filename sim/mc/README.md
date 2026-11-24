@@ -33,6 +33,8 @@ cd sim/mc && uvx --from "klayout-tools[yield]==$(cat ../../signoff/KLT_VERSION)"
 # same for request_t10_ctl.json; gunzip both, then, from the directory holding them:
 klt yield-samples report.json --negative-control report_ctl.json --description "<defect>" --measurement t10_offset_mv --format json > samples.json
 klt yield samples.json --format json > yield.json
+# before the record directory is committed: strip host home paths from every JSON in it (#437)
+python3 -I sim/harness/write_record.py sim/mc/records/<stamp>-<row> --scrub-only
 ```
 
 `klt yield` needs the `yield` extra (`klayout-tools[yield]`), which resolves for 0.9.0 in a

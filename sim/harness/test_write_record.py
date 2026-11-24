@@ -219,6 +219,85 @@ class UngradedRequestTests(unittest.TestCase):
         self.assertIn("cap_a_0.cpad_a_0_ff", out["report_only_ranges"])
 
 
+class HostPathScrubTests(unittest.TestCase):
+    """The shared scrub (#437): by value over the whole tree, not by field name."""
+
+    def test_every_home_prefix_in_any_field_and_nesting_is_scrubbed(self):
+        doc = {"environment": {"client_ngspice_binary": "/home/ubuntu/.local/bin/ngspice",
+                               "ngspice_binary": "/Users/dev/bin/ngspice"},
+               "files": [{"path": "/root/work/pdk/models.lib"},
+                         ["/home/x/a/b.cir", "ok"]],
+               "n": 3, "flag": True, "none": None}
+        out = write_record.scrub_host_paths(doc)
+        self.assertEqual(out["environment"]["client_ngspice_binary"], "/usr/local/bin/ngspice")
+        self.assertEqual(out["environment"]["ngspice_binary"], "/usr/local/bin/ngspice")
+        self.assertEqual(out["files"][0]["path"], "<home>/pdk/models.lib")
+        self.assertEqual(out["files"][1], ["<home>/a/b.cir", "ok"])
+        self.assertEqual((out["n"], out["flag"], out["none"]), (3, True, None))
+        self.assertNotIn("/home/", json.dumps(out))
+
+    def test_strings_that_are_not_home_paths_are_untouched(self):
+        keep = ["/usr/local/bin/ngspice", "/tmp/loom-398/x.json", "see /home/ubuntu/x in the log",
+                "/homework/a/b", "home/ubuntu/x", "/home/ubuntu", "corner mos_tt"]
+        self.assertEqual(write_record.scrub_host_paths(keep), keep)
+
+    def test_main_scrubs_the_record_files_it_is_handed(self):
+        with tempfile.TemporaryDirectory() as t:
+            rec = Path(t)
+            rep = {"corners": [], "environment": {"client_ngspice_binary": "/home/ubuntu/.local/bin/ngspice"}}
+            with gzip.open(rec / "report.json.gz", "wt") as f:
+                json.dump(rep, f)
+            (rec / "rows.json").write_text(json.dumps({"rows": {}, "note": "/Users/a/b/c"}))
+            (rec / "request.json").write_text("{}")
+            write_record.main([str(rec), "--record", "x", "--stamp", "20261123T000000Z",
+                               "--pdk-tag", "t", "--klt-exit-code", "0"])
+            for name in ("report.json.gz", "rows.json"):
+                raw = gzip.decompress((rec / name).read_bytes()) if name.endswith(".gz") \
+                    else (rec / name).read_bytes()
+                self.assertNotIn(b"/home/", raw)
+                self.assertNotIn(b"/Users/", raw)
+            self.assertIn(b"/usr/local/bin/ngspice", gzip.decompress((rec / "report.json.gz").read_bytes()))
+
+    def test_a_clean_report_is_left_byte_identical(self):
+        with tempfile.TemporaryDirectory() as t:
+            rec = Path(t)
+            with gzip.open(rec / "report.json.gz", "wt") as f:
+                json.dump({"corners": []}, f)
+            (rec / "rows.json").write_text(json.dumps({"rows": {}}))
+            before = (rec / "report.json.gz").read_bytes()
+            write_record.scrub_record_files(rec)
+            self.assertEqual((rec / "report.json.gz").read_bytes(), before)
+
+
+class ScrubOnlyTests(unittest.TestCase):
+    """--scrub-only: the entry point for the writers that bypass batch_record.sh (#437)."""
+
+    def test_scrubs_every_json_and_gz_and_writes_no_record(self):
+        with tempfile.TemporaryDirectory() as t:
+            rec = Path(t)
+            env = {"environment": {"client_ngspice_binary": "/home/ubuntu/.local/bin/ngspice"}}
+            for name in ("report.json.gz", "report_ctl.json.gz"):
+                with gzip.open(rec / name, "wt") as f:
+                    json.dump(env, f)
+            (rec / "samples.json").write_text(json.dumps({"p": "/Users/a/b/c"}))
+            (rec / "clean.json").write_text(json.dumps({"p": "/tmp/x"}))
+            (rec / "notes.txt").write_text("/home/ubuntu/x")
+            (rec / "empty.json").write_text("")
+            before = (rec / "clean.json").read_bytes()
+            self.assertEqual(write_record.main([str(rec), "--scrub-only"]), 0)
+            for name in ("report.json.gz", "report_ctl.json.gz"):
+                self.assertIn(b"/usr/local/bin/ngspice", gzip.decompress((rec / name).read_bytes()))
+                self.assertNotIn(b"/home/", gzip.decompress((rec / name).read_bytes()))
+            self.assertEqual(json.loads((rec / "samples.json").read_text()), {"p": "<home>/b/c"})
+            self.assertEqual((rec / "clean.json").read_bytes(), before)
+            self.assertEqual((rec / "notes.txt").read_text(), "/home/ubuntu/x")
+            self.assertFalse((rec / "record.json").exists())
+
+    def test_record_flags_are_still_required_without_scrub_only(self):
+        with tempfile.TemporaryDirectory() as t, self.assertRaises(SystemExit):
+            write_record.main([t, "--record", "x"])
+
+
 class NoDriftTests(unittest.TestCase):
     """The duplication this harness replaced must not grow back."""
 

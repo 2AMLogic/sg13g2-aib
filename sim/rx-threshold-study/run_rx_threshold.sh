@@ -129,6 +129,8 @@ mc)
       --measurement t10_offset_mv --format json > "${ASSEMBLE}/samples.json" )
   "${KLT_Y[@]}" yield "${ASSEMBLE}/samples.json" --format json > "${ASSEMBLE}/yield.json"
   cp request_mc.json request_mc_ctl.json tb_mc.cir tb_mc_ctl.cir "${ASSEMBLE}/"
+  # host paths out of every JSON artifact before the record exists (#437)
+  python3 -I "${HARNESS}/write_record.py" "${ASSEMBLE}" --scrub-only
   # every artifact is on disk: the record directory appears atomically, so no
   # half-written directory can sit under records/ (#276)
   mv "${ASSEMBLE}" "${REC}"

@@ -84,6 +84,8 @@ if [ "$want_evidence" = 1 ]; then
     sim/harness/test_batch_record.sh
   run "Check evidence structure and sim/ record format" \
     python3 -I scripts/ci/check_evidence_format.py
+  run "Check no committed record carries a host home-directory path (DR-0030)" \
+    python3 -I scripts/ci/check_no_host_paths.py
   run "Check the committed netlist is fresh against the RTL and the attestation chain" \
     python3 -I scripts/ci/check_design_sources.py
   # The generator runs the same comparison on the geometry path, but a

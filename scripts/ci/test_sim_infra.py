@@ -18,6 +18,63 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _checker_test_helpers import HERE, REPO, run  # noqa: E402
 
 CORNERS = HERE / "check_corner_bundles.py"
+HOSTPATHS = HERE / "check_no_host_paths.py"
+
+
+class HostPathTests(unittest.TestCase):
+    """check_no_host_paths.py: a host path in a committed record fails, a baselined one passes."""
+
+    def tree(self, root, doc, gz=True):
+        import gzip
+        d = root / "sim/fam/records/20260101T000000Z"
+        d.mkdir(parents=True)
+        if gz:
+            (d / "report.json.gz").write_bytes(gzip.compress(json.dumps(doc).encode()))
+        else:
+            (d / "report.json").write_text(json.dumps(doc))
+        return d
+
+    def check(self, root, baseline=()):
+        b = root / "baseline.json"
+        b.write_text(json.dumps({"files": list(baseline)}))
+        return run(HOSTPATHS, "--root", root, "--baseline", b)
+
+    def test_the_repository_passes_today(self):
+        self.assertEqual(run(HOSTPATHS).returncode, 0)
+
+    def test_a_clean_record_passes(self):
+        with tempfile.TemporaryDirectory() as t:
+            self.tree(Path(t), {"environment": {"ngspice_binary": "/usr/local/bin/ngspice",
+                                                "scratch": "/tmp/x/y.json"}})
+            self.assertEqual(self.check(Path(t)).returncode, 0)
+
+    def test_a_host_path_fails_naming_file_and_json_path(self):
+        for gz in (True, False):
+            with tempfile.TemporaryDirectory() as t:
+                self.tree(Path(t), {"environment": {"c": [{"client_ngspice_binary": "/home/u/.local/bin/ngspice"}]}}, gz)
+                r = self.check(Path(t))
+                self.assertEqual(r.returncode, 1)
+                self.assertIn("/environment/c/0/client_ngspice_binary", r.stderr)
+                self.assertIn("records/20260101T000000Z/report.json", r.stderr)
+
+    def test_a_macos_home_path_fails_too(self):
+        with tempfile.TemporaryDirectory() as t:
+            self.tree(Path(t), {"p": "/Users/dev/pdk/x.lib"})
+            self.assertEqual(self.check(Path(t)).returncode, 1)
+
+    def test_a_baselined_offender_passes_and_a_stale_entry_fails(self):
+        with tempfile.TemporaryDirectory() as t:
+            self.tree(Path(t), {"p": "/home/u/x/y"})
+            rel = "sim/fam/records/20260101T000000Z/report.json.gz"
+            self.assertEqual(self.check(Path(t), [rel]).returncode, 0)
+            self.assertEqual(self.check(Path(t), [rel, "sim/fam/records/gone/report.json.gz"]).returncode, 1)
+
+    def test_every_record_writer_outside_batch_record_reaches_the_scrub(self):
+        """The three writers that bypass batch_record.sh must call --scrub-only (#437)."""
+        for rel in ("sim/rx-threshold-study/run_rx_threshold.sh", "layout/pex/run_pex.sh",
+                    "sim/mc/README.md"):
+            self.assertIn("write_record.py", (REPO / rel).read_text(), rel)
+            self.assertIn("--scrub-only", (REPO / rel).read_text(), rel)
 
 
 class CornerBundleTests(unittest.TestCase):

@@ -188,6 +188,9 @@ if [[ "${MODE}" != "extract" ]]; then
   done
 fi
 
+# host paths out of every JSON report before the record is committed (#437)
+python3 -I "${ROOT}/sim/harness/write_record.py" "${REC}" --scrub-only
+
 python3 -I - "${REC}" "${MODE}" "${KLT_VERSION}" "${LAYOUT}" <<'PY'
 import hashlib, json, os, sys
 rec, mode, klt_version, layout = sys.argv[1:5]
