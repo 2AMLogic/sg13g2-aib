@@ -44,13 +44,12 @@ Issues currently being built (`loom:building`).
 - **#176**: T-29 SIM: no loopback mux exists in design/, so loopback modes L1/L2 are unverifiable
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target
-- **#437**: provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#438**: feat(sim): scrub host home paths from new records and fail CI on new ones
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -80,7 +79,6 @@ Issues carrying `loom:curated`.
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
 - **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(curated)*
 - **#427**: Record decks include live design/ netlists by path, so an archived record stops replaying when its cell changes *(curated)*
-- **#437**: provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -99,10 +97,10 @@ _None._
 | Very important | 0 |
 | Important | 2 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 6 |
-| PRs awaiting review | 1 |
+| In Progress (`loom:building`) | 5 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 5 |
-| Curated | 15 |
+| Curated | 14 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
