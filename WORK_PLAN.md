@@ -14,6 +14,7 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
 - **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
+- **#374**: feat(design,sim): adopt diodevdd_2kv as the primary pad diode (DR-0030) and record the failing 0.5 A T-25 transient
 
 ## Very Important
 
@@ -43,12 +44,13 @@ Issues currently being built (`loom:building`).
 - **#176**: T-29 SIM: no loopback mux exists in design/, so loopback modes L1/L2 are unverifiable
 - **#177**: RX receiver buffer adds up to 0.103 UI of DDR half-period off-centring after the pin, where T-16 is graded
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target
+- **#437**: provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#374**: feat(design,sim): adopt diodevdd_2kv as the primary pad diode (DR-0029) and record the failing 0.5 A T-25 transient
+- **#438**: feat(sim): scrub host home paths from new records and fail CI on new ones
 
 ## Approved (Awaiting Merge)
 
@@ -58,6 +60,7 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
 - **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
 - **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
+- **#374**: feat(design,sim): adopt diodevdd_2kv as the primary pad diode (DR-0030) and record the failing 0.5 A T-25 transient
 
 ## Proposed
 
@@ -77,6 +80,7 @@ Issues carrying `loom:curated`.
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
 - **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(curated)*
 - **#427**: Record decks include live design/ netlists by path, so an archived record stops replaying when its cell changes *(curated)*
+- **#437**: provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -91,14 +95,14 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 4 |
+| Operator merge-risk holds | 5 |
 | Very important | 0 |
 | Important | 2 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 5 |
+| In Progress (`loom:building`) | 6 |
 | PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 4 |
-| Curated | 14 |
+| Approved PRs awaiting merge | 5 |
+| Curated | 15 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
