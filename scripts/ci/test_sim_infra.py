@@ -69,6 +69,13 @@ class HostPathTests(unittest.TestCase):
             self.assertEqual(self.check(Path(t), [rel]).returncode, 0)
             self.assertEqual(self.check(Path(t), [rel, "sim/fam/records/gone/report.json.gz"]).returncode, 1)
 
+    def test_every_record_writer_outside_batch_record_reaches_the_scrub(self):
+        """The three writers that bypass batch_record.sh must call --scrub-only (#437)."""
+        for rel in ("sim/rx-threshold-study/run_rx_threshold.sh", "layout/pex/run_pex.sh",
+                    "sim/mc/README.md"):
+            self.assertIn("write_record.py", (REPO / rel).read_text(), rel)
+            self.assertIn("--scrub-only", (REPO / rel).read_text(), rel)
+
 
 class CornerBundleTests(unittest.TestCase):
     """Every committed request under sim/ or layout/ agrees with the PVT-FULL table."""

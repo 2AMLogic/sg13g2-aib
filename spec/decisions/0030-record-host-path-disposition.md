@@ -21,8 +21,13 @@ io-cell-study, mc, redundancy-mux, rx-threshold-study (all `client_ngspice_binar
 `ngspice_binary`) and `layout/pex` (4 reports, `ngspice_binary`, two lines each). The issue's
 count of 16 covered only the files that are plain-text `report.json` (a decompressed copy
 beside a `.gz` is a separate file, and most records carry only the `.gz`).
-No hostname, S3 key or other username was found; `s3://` is already scrubbed to `<bucket>`
-in the stderr copy. `sim/mc/records/*/samples.json` holds `/tmp/loom-398/...` scratch paths:
+No hostname, S3 key or other username was found in those JSON documents; `s3://` is already
+scrubbed to `<bucket>` in the stderr copy. **The survey is bounded to JSON documents.** Free-text
+files are out of scope and are not scrubbed or checked: two committed records,
+`sim/channel-model/records/20261120T220946Z/klt.stderr` and `.../20261120T230233Z/klt.stderr`,
+carry `/home/ubuntu/GitHub/sg13g2-aib/.loom/worktrees/issue-384/sim/build/pdk` and
+`/home/ubuntu/share/pdk`, a user name and a Loom worktree path. They are a known exception to
+this record's title, left as they are under clause 3; `.cir` files were not surveyed. `sim/mc/records/*/samples.json` holds `/tmp/loom-398/...` scratch paths:
 no user name, not a home directory.
 
 ## Decision
@@ -32,7 +37,12 @@ no user name, not a home directory.
    `rows.json` that matches `^/(home|Users|root)/[^/]+/`, by value over the whole JSON tree.
    An `ngspice` binary becomes `/usr/local/bin/ngspice` (the convention the ESD transient
    scrub used); any other path becomes `<home>/<rest>`. Every family that records through
-   `batch_record.sh` inherits it; no runner carries its own.
+   `batch_record.sh` inherits it. Three record writers do not go through it and call the same
+   module's `--scrub-only` entry point, which scrubs every `.json` and `.json.gz` in the record
+   directory and writes nothing else: the `mc` leg of `sim/rx-threshold-study/run_rx_threshold.sh`
+   and `layout/pex/run_pex.sh` call it before the record is complete, and the documented
+   `sim/mc` campaign flow (`sim/mc/README.md`) lists it as its last step, which is a documented
+   step and not enforced by a script. No runner carries its own scrub.
 2. **A checker that keeps it so.** `scripts/ci/check_no_host_paths.py`, in the CI `evidence`
    job through `check_local.sh`, fails on any such string in a committed record, naming the
    file and JSON path.
@@ -51,8 +61,11 @@ no user name, not a home directory.
 
 ## Consequences
 
-New records are clean by construction. The history keeps its leaks until the operator decides
+New records from `batch_record.sh`, the rx-threshold `mc` leg and `layout/pex` are clean by
+construction; a hand-assembled `sim/mc` record is clean only if its operator runs the
+documented `--scrub-only` step, and the CI checker fails the record if they do not. `klt.stderr`
+and other free-text files are not covered (Context). The history keeps its leaks until the operator decides
 otherwise. The ESD transient runner's `sed` (PR #374, not on `main` at this PR's base) becomes
-redundant and should be dropped at that PR's rebase; its two new records need one pass of the
-shared scrub (or of `scrub_host_paths`) before they are committed, since they are new files and
+redundant and should be dropped at that PR's rebase; its two new records need one
+`write_record.py REC --scrub-only` pass before they are committed, since they are new files and
 the checker would fail them.

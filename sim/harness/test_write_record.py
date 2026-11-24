@@ -269,6 +269,35 @@ class HostPathScrubTests(unittest.TestCase):
             self.assertEqual((rec / "report.json.gz").read_bytes(), before)
 
 
+class ScrubOnlyTests(unittest.TestCase):
+    """--scrub-only: the entry point for the writers that bypass batch_record.sh (#437)."""
+
+    def test_scrubs_every_json_and_gz_and_writes_no_record(self):
+        with tempfile.TemporaryDirectory() as t:
+            rec = Path(t)
+            env = {"environment": {"client_ngspice_binary": "/home/ubuntu/.local/bin/ngspice"}}
+            for name in ("report.json.gz", "report_ctl.json.gz"):
+                with gzip.open(rec / name, "wt") as f:
+                    json.dump(env, f)
+            (rec / "samples.json").write_text(json.dumps({"p": "/Users/a/b/c"}))
+            (rec / "clean.json").write_text(json.dumps({"p": "/tmp/x"}))
+            (rec / "notes.txt").write_text("/home/ubuntu/x")
+            (rec / "empty.json").write_text("")
+            before = (rec / "clean.json").read_bytes()
+            self.assertEqual(write_record.main([str(rec), "--scrub-only"]), 0)
+            for name in ("report.json.gz", "report_ctl.json.gz"):
+                self.assertIn(b"/usr/local/bin/ngspice", gzip.decompress((rec / name).read_bytes()))
+                self.assertNotIn(b"/home/", gzip.decompress((rec / name).read_bytes()))
+            self.assertEqual(json.loads((rec / "samples.json").read_text()), {"p": "<home>/b/c"})
+            self.assertEqual((rec / "clean.json").read_bytes(), before)
+            self.assertEqual((rec / "notes.txt").read_text(), "/home/ubuntu/x")
+            self.assertFalse((rec / "record.json").exists())
+
+    def test_record_flags_are_still_required_without_scrub_only(self):
+        with tempfile.TemporaryDirectory() as t, self.assertRaises(SystemExit):
+            write_record.main([t, "--record", "x"])
+
+
 class NoDriftTests(unittest.TestCase):
     """The duplication this harness replaced must not grow back."""
 
