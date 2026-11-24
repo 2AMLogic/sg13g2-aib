@@ -33,7 +33,7 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#427**: Record decks include live design/ netlists by path, so an archived record stops replaying when its cell changes
+_None._
 
 ## In Progress
 
@@ -78,7 +78,6 @@ Issues carrying `loom:curated`.
 - **#226**: T1 item 7 (analog): submit the committed 45-corner pex delta campaign and record delta[] once klt pex can simulate an sg13g2 extraction *(curated)*
 - **#232**: T-20: one shift-redundancy remap stage adds up to 0.184 UI of data-to-clock delay, exceeding the whole margin target *(curated)*
 - **#285**: Remove sim/channel-eye/scratch94: the #111 keep premise expired when the committed ESD diode was resized *(curated)*
-- **#427**: Record decks include live design/ netlists by path, so an archived record stops replaying when its cell changes *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -96,11 +95,11 @@ _None._
 | Operator merge-risk holds | 5 |
 | Very important | 0 |
 | Important | 2 |
-| Ready (`loom:issue`) | 1 |
+| Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 5 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 5 |
-| Curated | 14 |
+| Curated | 13 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 0 |
 <!-- guide:plan-body:end -->
