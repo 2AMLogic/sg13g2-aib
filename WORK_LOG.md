@@ -6,6 +6,7 @@ Chronological record of merged PRs and closed issues. Maintained by the Guide ro
 
 - **PR #438**: feat(sim): scrub host home paths from new records and fail CI on new ones
 - **Issue #437** (closed): provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench
+- **Issue #427** (closed): Record decks include live design/ netlists by path, so an archived record stops replaying when its cell changes
 
 ### 2026-11-23
 
