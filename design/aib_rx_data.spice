@@ -1,8 +1,14 @@
+** klt-netlist-inputs: {"pdk_variant": "ihp-sg13g2", "rcfile": "xschemrc", "xschem_version": "3.4.7"}
 ** sch_path: design/aib_rx_data.sch
 .subckt aib_rx_data PAD DOUT VDDIO VSS
 *.PININFO PAD:I DOUT:O VDDIO:B VSS:B
-XMi1p M1 PAD VDDIO VDDIO sg13_lv_pmos w=2.5u l=0.13u ng=2 m=1
-XMi1n M1 PAD VSS VSS sg13_lv_nmos w=1u l=0.13u ng=2 m=1
-XMi2p DOUT M1 VDDIO VDDIO sg13_lv_pmos w=4u l=0.13u ng=2 m=1
-XMi2n DOUT M1 VSS VSS sg13_lv_nmos w=2u l=0.13u ng=2 m=1
+XRdiv1 VDDIO vrn VSS rppd w=0.5u l=48u m=1 b=0
+XRdiv2 vrn VSS VSS rppd w=0.5u l=48u m=1 b=0
+XMtail s1 VDDIO VSS VSS sg13_lv_nmos w=2u l=0.5u ng=2 m=1
+XMnp d1 PAD s1 VSS sg13_lv_nmos w=1u l=0.5u ng=2 m=1
+XMnn d2 vrn s1 VSS sg13_lv_nmos w=1u l=0.5u ng=2 m=1
+XMlp d2 d2 VDDIO VDDIO sg13_lv_pmos w=4u l=0.25u ng=4 m=1
+XMln d1 d2 VDDIO VDDIO sg13_lv_pmos w=4u l=0.25u ng=4 m=1
+XMi2p DOUT d1 VDDIO VDDIO sg13_lv_pmos w=2u l=0.13u ng=1 m=1
+XMi2n DOUT d1 VSS VSS sg13_lv_nmos w=1u l=0.13u ng=1 m=1
 .ends

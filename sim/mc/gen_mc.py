@@ -33,13 +33,16 @@ ROWS = {}
 
 def request(row: str, ctl: bool) -> dict:
     spec = ROWS[row]
+    steps = spec.get("ctl_steps") if ctl else None
+    if steps is None:
+        steps = spec["steps"]
     return {
         "engine": "ngspice",
         "netlist": spec["ctl_netlist"] if ctl else spec["netlist"],
         "models": {"pdk": "ihp-sg13g2", "lib": LIBM},
         "corners": corners(spec.get("supplies", ("vddio",))),
         "monte_carlo": {"n": spec["n_ctl" if ctl else "n"], "seed": spec["seed_ctl" if ctl else "seed"], "vary": "mismatch"},
-        "analysis_steps": spec["steps"],
+        "analysis_steps": steps,
         "measurements": spec["top"],
         "options": {"stage_model_inputs": True, "fail_on_diagnostic": ["nonconvergence"],
                     "timeout_s": spec.get("timeout_s", 10), "keep_artifacts": False,
@@ -54,31 +57,41 @@ ROWS["t10"] = {
     "steps": [{"name": "rx_up", "analysis": {"kind": "dc", "args": "Vfr 0.3 0.7 0.0005"}, "alter": {},
                "measurements": [
                    {"name": "vth_frac", "spice": ".meas dc vth_frac WHEN v(dnorm)=0.5 RISE=1", "unit": "frac"},
-                   {"name": "vddio_v", "expr": "v(vddio)[0]", "unit": "V"}]}],
+                   {"name": "vddio_v", "expr": "v(vddio)[0]", "unit": "V"},
+                   {"name": "ivdd_a", "spice": ".meas dc ivdd_a FIND i(vddio) AT=0.5", "unit": "A"}]}],
+    # The degraded cell (input-pair NMOS 4x narrower) crosses at fr 0.66-0.75 over the grid
+    # (#386 study, records/20261121T091822Z-mc), outside the committed 0.3-0.7 window, so the
+    # control widens its sweep; the nominal bench keeps the committed window. One stated
+    # deviation, carried by the study and now by this row.
+    "ctl_steps": [{"name": "rx_up", "analysis": {"kind": "dc", "args": "Vfr 0.15 0.95 0.0005"}, "alter": {},
+                   "measurements": [
+                       {"name": "vth_frac", "spice": ".meas dc vth_frac WHEN v(dnorm)=0.5 RISE=1", "unit": "frac"},
+                       {"name": "vddio_v", "expr": "v(vddio)[0]", "unit": "V"}]}],
     "top": [{"name": "t10_offset_mv", "expr": "(rx_up.vth_frac-0.5)*rx_up.vddio_v*1000", "unit": "mV",
              "limits": {"min": -60, "max": 60, "target_sigma": 3}}],
 }
 
 
 # T-10 negative control bench. tb_t10.cir includes design/aib_rx_data.spice as drawn; the
-# control inlines a copy of that cell instead and narrows its first-stage NMOS, which is the
+# control inlines a copy of that cell instead and narrows its input-pair NMOS, which is the
 # one seeded degradation the control exists to detect. Derived from the design cell rather
 # than hand-copied (#202) so a resize of the receiver cannot leave the control on the old
-# device sizes while still claiming to isolate the narrowing. Byte-identical to the bench
-# the committed record cites (sim/mc/records/20261108T035315Z-t10/tb_t10_ctl.cir).
+# device sizes while still claiming to isolate the narrowing. Since the #398 adoption the
+# design cell is the supply-referenced stage (the #386 study's rx__vref); its input-pair NMOS
+# (Mnp, gate PAD) is the degraded device, the same defect the study's control seeded.
 T10_CTL_HEADER = """\
-* T-10 negative control: the receiver's first-stage NMOS is made 4x narrower
-* (w=0.25u instead of 1u), a seeded design degradation that must move the
+* T-10 negative control: the receiver's input-pair NMOS is made 4x narrower
+* (w=0.25u ng=1 instead of w=1u ng=2), a seeded design degradation that must move the
 * threshold out of the +-60 mV bound. A bench copy, not design evidence; the
 * design cell is NOT included here.
 """
 T10_INCLUDE = ".include ../../design/aib_rx_data.spice"
-T10_NMOS = "XMi1n M1 PAD VSS VSS sg13_lv_nmos w={} l=0.13u ng={} m=1"
+T10_NMOS = "XMnp d1 PAD s1 VSS sg13_lv_nmos w={} l=0.5u ng={} m=1"
 
 
 def tb_t10_ctl() -> str:
     """tb_t10.cir with the design cell inlined in place of its .include and the receiver's
-    first-stage NMOS narrowed from w=1u ng=2 to w=0.25u ng=1. The other three devices are
+    input-pair NMOS narrowed from w=1u ng=2 to w=0.25u ng=1. The other devices are
     copied verbatim, so they follow design/aib_rx_data.spice."""
     what = "tb_t10_ctl.cir"
     cell = "\n".join(line for line in (ROOT / "design" / "aib_rx_data.spice").read_text().splitlines()

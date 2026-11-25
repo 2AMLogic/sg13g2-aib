@@ -8,7 +8,7 @@
   "pdk": null,
   "findings_only": true,
   "gate_role": "gate",
-  "gate_count": 148,
+  "gate_count": 193,
   "antenna_tables_omitted": true,
   "gates": [],
   "nets": [
@@ -99,7 +99,7 @@
     "klt_version": "0.9.0",
     "klt_git_commit": "5dbbad05ff42265c92a6f3d2f20d1bbcd2957d49",
     "klt_reinstall_spec": "klayout-tools==0.9.0",
-    "klayout_version": "0.30.13",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sg13g2",
@@ -107,18 +107,18 @@
       "released": true
     },
     "input": {
-      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99",
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe",
       "role": "layout"
     },
     "spec": {
-      "content_hash": "sha256:36121e01956b3151bb1952b4ccc3b08b36f7cc3087e7fc4d367efce5321e5ecf"
+      "content_hash": "sha256:2d5632cbd65f2eab88c39f01b14301502e334c420cb70021805d971e25c43559"
     },
     "devices": [
       {
         "name": "rppd",
         "body_layer": "5/0",
         "on": "gate",
-        "body_area_um2": 912.0,
+        "body_area_um2": 1968.0,
         "source": "deck",
         "superseded_by": null
       }
@@ -143,10 +143,10 @@
     ]
   },
   "compact": {
-    "gate_count": 148,
-    "antenna_levels_skipped": 1036,
-    "antenna_reference_levels": 148,
-    "floating_gate_checked": 148,
+    "gate_count": 193,
+    "antenna_levels_skipped": 1351,
+    "antenna_reference_levels": 193,
+    "floating_gate_checked": 193,
     "skipped_reason": "findings_only"
   }
 }

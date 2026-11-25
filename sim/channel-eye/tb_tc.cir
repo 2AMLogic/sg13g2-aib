@@ -5,6 +5,7 @@
 * This is NOT the channel: no claim made from this netlist is a CH claim.
 .include ../../design/aib_tx_data.spice
 .include ../../design/aib_rx_data.spice
+.include ../../design/aib_rx_inv.spice
 .include ../../design/aib_pad_esd.spice
 .subckt link txp rxp gnd
 Cpin1 txp gnd 0.5p

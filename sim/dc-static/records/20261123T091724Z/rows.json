@@ -1,0 +1,109 @@
+{
+  "label": "nominal",
+  "corners": 45,
+  "kind": "simulated",
+  "rows": {
+    "T-06": {
+      "verdict": "pass",
+      "measurements": [
+        "drv_ld.t06_voh_droop_v",
+        "drv_ld.t06_vol_v",
+        "drv_nl.t06_voh_droop_v",
+        "drv_nl.t06_vol_v"
+      ],
+      "pass": 180,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ss/mixed/125C",
+        "measurement": "drv_ld.t06_voh_droop_v",
+        "value": 0.07510153,
+        "why": "smallest margin"
+      }
+    },
+    "T-07": {
+      "verdict": "pass",
+      "measurements": [
+        "lk_0.t07_t28_ipin_a",
+        "lk_10.t07_t28_ipin_a",
+        "lk_5.t07_t28_ipin_a"
+      ],
+      "pass": 135,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.418801e-07,
+        "why": "smallest margin"
+      }
+    },
+    "T-08": {
+      "verdict": "pass",
+      "measurements": [
+        "drv_ld.t08_rout_dn_ohm",
+        "drv_ld.t08_rout_up_ohm"
+      ],
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/-40C",
+        "measurement": "drv_ld.t08_rout_up_ohm",
+        "value": 42.86275,
+        "why": "smallest margin"
+      }
+    },
+    "T-11": {
+      "verdict": "pass",
+      "measurements": [
+        "t11_hyst_mv"
+      ],
+      "pass": 45,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "sf/mixed/125C",
+        "measurement": "t11_hyst_mv",
+        "value": 0.001716,
+        "why": "smallest margin"
+      }
+    },
+    "T-24": {
+      "verdict": "pass",
+      "measurements": [
+        "cap_0.t24_cpin_ff",
+        "cap_10.t24_cpin_ff",
+        "cap_5.t24_cpin_ff"
+      ],
+      "pass": 135,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ss/mixed/125C",
+        "measurement": "cap_10.t24_cpin_ff",
+        "value": 92.4237,
+        "why": "smallest margin"
+      }
+    },
+    "T-28": {
+      "verdict": "pass",
+      "measurements": [
+        "lk_0.t07_t28_ipin_a",
+        "lk_10.t07_t28_ipin_a",
+        "lk_5.t07_t28_ipin_a",
+        "pd_on.t28_rpd_ohm",
+        "pu_on.t28_rpu_ohm"
+      ],
+      "pass": 225,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C",
+        "measurement": "lk_0.t07_t28_ipin_a",
+        "value": 8.418801e-07,
+        "why": "smallest margin"
+      }
+    }
+  }
+}

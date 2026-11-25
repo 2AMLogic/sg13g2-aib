@@ -1,0 +1,175 @@
+{
+  "record": "rx-threshold-study",
+  "utc_stamp": "20261121T104210Z",
+  "kind": "simulated",
+  "claim_scope": "BOTH, for the study cell only: the receiver input stage at ideal DC/AC/tran stimulus; the channel legs (clk, t16-*) additionally carry the declared CH-3MM-RC model.",
+  "study": "issue #386 receiver-threshold sizing study; candidates are study cells, design/ is untouched",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-02": {
+      "verdict": "reported",
+      "pass": 540,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  },
+  "report_only_ranges": {
+    "t02_cf_dr__b": {
+      "spec_row": "T-02",
+      "min": [
+        5.01187e-10,
+        "mos_fs/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/27C"
+      ],
+      "max": [
+        5.7609e-10,
+        "mos_sf/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ]
+    },
+    "t02_cf_dr__c": {
+      "spec_row": "T-02",
+      "min": [
+        -1.24089e-10,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ],
+      "max": [
+        4.63213e-10,
+        "mos_ff/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/125C"
+      ]
+    },
+    "t02_cf_dr__d": {
+      "spec_row": "T-02",
+      "min": [
+        5.15401e-10,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ],
+      "max": [
+        6.55695e-10,
+        "mos_sf/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/125C"
+      ]
+    },
+    "t02_cr_df__b": {
+      "spec_row": "T-02",
+      "min": [
+        4.2391e-10,
+        "mos_sf/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ],
+      "max": [
+        4.98813e-10,
+        "mos_fs/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/27C"
+      ]
+    },
+    "t02_cr_df__c": {
+      "spec_row": "T-02",
+      "min": [
+        5.36786e-10,
+        "mos_ff/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/125C"
+      ],
+      "max": [
+        1.12409e-09,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ]
+    },
+    "t02_cr_df__d": {
+      "spec_row": "T-02",
+      "min": [
+        5.86777e-10,
+        "mos_ff/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/-40C"
+      ],
+      "max": [
+        1.08977e-09,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ]
+    },
+    "t02_df_cf__b": {
+      "spec_row": "T-02",
+      "min": [
+        4.99996e-10,
+        "mos_ff/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/-40C"
+      ],
+      "max": [
+        5.00002e-10,
+        "mos_tt/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/-40C"
+      ]
+    },
+    "t02_df_cf__c": {
+      "spec_row": "T-02",
+      "min": [
+        4.99896e-10,
+        "mos_tt/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/-40C"
+      ],
+      "max": [
+        5.00083e-10,
+        "mos_ss/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/-40C"
+      ]
+    },
+    "t02_df_cf__d": {
+      "spec_row": "T-02",
+      "min": [
+        -1.3949e-10,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ],
+      "max": [
+        3.92118e-10,
+        "mos_fs/vdd_rx_b=1.320_vdd_rx_c=1.320_vdd_rx_d=1.320_vdd_tx_b=1.320_vdd_tx_c=1.320_vdd_tx_d=1.320V/-40C"
+      ]
+    },
+    "t02_dr_cr__b": {
+      "spec_row": "T-02",
+      "min": [
+        5e-10,
+        "mos_ff/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/125C"
+      ],
+      "max": [
+        5.00001e-10,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ]
+    },
+    "t02_dr_cr__c": {
+      "spec_row": "T-02",
+      "min": [
+        5e-10,
+        "mos_ff/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/125C"
+      ],
+      "max": [
+        5.00001e-10,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ]
+    },
+    "t02_dr_cr__d": {
+      "spec_row": "T-02",
+      "min": [
+        3.79917e-10,
+        "mos_fs/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/125C"
+      ],
+      "max": [
+        5.34322e-10,
+        "mos_ss/vdd_rx_b=1.080_vdd_rx_c=1.080_vdd_rx_d=1.080_vdd_tx_b=1.080_vdd_tx_c=1.080_vdd_tx_d=1.080V/-40C"
+      ]
+    }
+  },
+  "batch_job_ids": [
+    "klt-sim-ed24646b83a7",
+    "klt-sim-32ded5ec07df",
+    "klt-sim-0a6439d97047",
+    "klt-sim-679fd9c0c148",
+    "klt-sim-ec1f97bf476c",
+    "klt-sim-c61860e33ea5",
+    "klt-sim-c1346c99d86b",
+    "klt-sim-717711d1402c",
+    "klt-sim-43368a4ffdc3",
+    "klt-sim-1a836a4cf29f",
+    "klt-sim-96be651b82bf",
+    "klt-sim-804b5cb7b443",
+    "klt-sim-d9efd4799058",
+    "klt-sim-14858d9d525e",
+    "klt-sim-614842c6f1c6"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

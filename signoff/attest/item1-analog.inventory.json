@@ -10,6 +10,8 @@
     "design/aib_tx_data.sym",
     "design/aib_rx_data.sch",
     "design/aib_rx_data.sym",
+    "design/aib_rx_inv.sch",
+    "design/aib_rx_inv.sym",
     "design/aib_tx_clk.sch",
     "design/aib_tx_clk.sym",
     "design/aib_rx_clk.sch",
@@ -63,6 +65,23 @@
           "design/aib_rx_data.sch",
           "-o",
           "design/aib_rx_data.spice",
+          "--check"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/aib_rx_inv.spice",
+      "generator": "klt netlist",
+      "check": {
+        "argv": [
+          "klt",
+          "netlist",
+          "--rcfile",
+          "design/xschemrc",
+          "design/aib_rx_inv.sch",
+          "-o",
+          "design/aib_rx_inv.spice",
           "--check"
         ],
         "local_only": true

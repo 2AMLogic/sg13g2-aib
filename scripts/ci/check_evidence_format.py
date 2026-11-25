@@ -17,11 +17,14 @@ Checks:
 With zero records the record check passes vacuously.
 """
 import argparse
-import ast
 import json
 import re
 import sys
 from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from check_sim_append_only import RECORD_ROOTS  # noqa: E402
 
 EVIDENCE_DIRS = ("spec", "design", "rtl", "verification", "sim", "layout", "measurements")
 REQUIRED_TOP = ("record", "utc_stamp")
@@ -62,25 +65,6 @@ def check_record(path: Path, root: Path):
         if ABS_PATH.search(s):
             errs.append(f"{rel}: absolute path in {where.lstrip('.')}: {s!r}")
     return errs
-
-
-def record_roots():
-    """The record roots, read from check_sim_append_only.py's RECORD_ROOTS.
-
-    One shared definition (#315): both checkers run as `python3 -I`, which drops the
-    script directory from sys.path, so a sibling import is not available and the
-    constant is parsed out of the owner instead. A second copy here is exactly how
-    the two checks came to disagree about what counts as a record root.
-    """
-    owner = Path(__file__).with_name("check_sim_append_only.py")
-    for node in ast.parse(owner.read_text()).body:
-        if isinstance(node, ast.Assign) and any(
-                isinstance(t, ast.Name) and t.id == "RECORD_ROOTS" for t in node.targets):
-            return tuple(ast.literal_eval(node.value))
-    raise SystemExit(f"FAIL: {owner.name}: RECORD_ROOTS not found")
-
-
-RECORD_ROOTS = record_roots()
 
 
 def record_dirs(root: Path):

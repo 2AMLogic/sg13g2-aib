@@ -35,7 +35,7 @@ import gen_common  # noqa: E402  (write_or_check and the seeded-defect substitut
 DESIGN = os.path.join(ROOT, "design")
 OUT = os.path.join(ROOT, "layout", "lvs")
 PNR_V = os.path.join(ROOT, "layout", "pnr", ".klt", "place-and-route", "aib_datapath.v")
-SOURCES = ["aib_pad_esd", "aib_tx_data", "aib_rx_data", "aib_tx_clk", "aib_rx_clk"]
+SOURCES = ["aib_pad_esd", "aib_tx_data", "aib_rx_data", "aib_rx_inv", "aib_tx_clk", "aib_rx_clk"]
 CLK_DIN = ("DIN$1", "DIN")      # the DIN label that shares a unit with PAD, PAD$1 in the drawn tx pair
 CLK_DOUT = ("DOUT$1", "DOUT")    # same for the rx pair
 PAD_OF_DIN = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9, 5: 11, 6: 13, 7: 15, 8: 17, 9: 19, 10: 21, 11: 23, 12: 0, 13: 2, 14: 4, 15: 6, 16: 8, 17: 10, 18: 12, 19: 14, 20: 16, 21: 18, 22: 20, 23: 22}
@@ -173,6 +173,8 @@ def build():
     tx = lambda k, din, pad: (k + "tx", "aib_tx_data", dict(DIN=din, OE="OE", PUN="PUN", PD="PD", PAD=pad,
                                                VDDIO="VDDIO", VSS="VSS"))
     rx = lambda k, pad, dout: (k + "rx", "aib_rx_data", dict(PAD=pad, DOUT=dout, VDDIO="VDDIO", VSS="VSS"))
+    # the #398 receive split: the clock legs keep the committed inverter receiver
+    inv = lambda k, pad, dout: (k + "inv", "aib_rx_inv", dict(PAD=pad, DOUT=dout, VDDIO="VDDIO", VSS="VSS"))
     files = {}
     txpins = ["DIN", "OE", "PAD", "PD", "PUN", "VDDIO", "VSS"]
     files["aib_io_tx"] = cell(subs, "aib_io_tx", txpins, [esd("", "PAD", "PADI"), tx("", "DIN", "PAD")])
@@ -187,8 +189,8 @@ def build():
          tx("b", CLK_DIN[1], "PAD$1")])
     files["aib_io_rx_clk"] = cell(
         subs, "aib_io_rx_clk", ["DOUT", "DOUT$1", "PAD", "PAD$1", "VDDIO", "VSS"],
-        [esd("a", "PAD", "PADI_A"), rx("a", "PADI_A", CLK_DOUT[0]), esd("b", "PAD$1", "PADI_B"),
-         rx("b", "PADI_B", CLK_DOUT[1])])
+        [esd("a", "PAD", "PADI_A"), inv("a", "PADI_A", CLK_DOUT[0]), esd("b", "PAD$1", "PADI_B"),
+         inv("b", "PADI_B", CLK_DOUT[1])])
     # Whole analog partition (top aib_io_column): 24 TX units then 24 RX units on shared OE/PUN/PD
     # and the rails. klt labels the repeated pins DIN, DIN$1, ... / DOUT, ... / PAD, PAD$1, ... in
     # its own extraction order, which does not follow the slot order, so which DIN$i shares a unit
@@ -203,7 +205,11 @@ def build():
         parts += [esd(f"t{i}", pad, f"PADI_T{i}"), tx(f"t{i}", sfx("DIN", i), pad)]
     for i in range(24):
         pad = sfx("PAD", PAD_OF_DOUT[i])
-        parts += [esd(f"r{i}", pad, f"PADI_R{i}"), rx(f"r{i}", f"PADI_R{i}", sfx("DOUT", i))]
+        # the last two DOUTs are the clk/clkb pair (klt's numbering, PAD_OF_DOUT): those two
+        # units carry the committed inverter receiver (#398 split); the rest the adopted
+        # supply-referenced data receiver.
+        unit = inv if i >= 22 else rx
+        parts += [esd(f"r{i}", pad, f"PADI_R{i}"), unit(f"r{i}", f"PADI_R{i}", sfx("DOUT", i))]
     cpins = ([sfx("DIN", i) for i in range(24)] + [sfx("DOUT", i) for i in range(24)] + ["OE"] +
              [sfx("PAD", i) for i in range(48)] + ["PD", "PUN", "VDDIO", "VSS"])
     files["aib_io_column"] = cell(subs, "aib_io_column", cpins, parts)

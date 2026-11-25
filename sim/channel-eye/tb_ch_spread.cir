@@ -10,6 +10,7 @@
 .include ../../spec/channel/channel_rc.cir
 .include ../../design/aib_tx_data.spice
 .include ../../design/aib_rx_data.spice
+.include ../../design/aib_rx_inv.spice
 .include ../../design/aib_pad_esd.spice
 .param ch_kr=1 ch_kc=1
 .subckt link txp rxp gnd

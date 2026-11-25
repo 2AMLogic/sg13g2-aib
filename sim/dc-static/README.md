@@ -10,9 +10,11 @@ table (`sim/pvt_full.py`) rather than restating it; CI checks both that the comm
 requests reproduce (`gen_dc_static.py --check`) and that every committed `sim/` request
 agrees with the table (`scripts/ci/check_corner_bundles.py`).
 
-**Status: recorded, four records (append-only).** The two below are the item 5 pair; see
-"ESD pad diode against T-24" for `20261110T084631Z` and "Batch run history" for the #142
-re-check `20261112T001207Z`, which is the record the manifest cites.
+**Status: recorded, five records (append-only).** The two below are the item 5 pair; see
+"ESD pad diode against T-24" for `20261110T084631Z`, "Batch run history" for the #142
+re-check `20261112T001207Z` and the #408 re-run `20261123T001034Z`, which is the record the
+manifest cites (the #142 one predates `e47bb80` and its closure names `aib_pad_esd.spice` at
+`78e22362...`).
 
 - `records/20261108T002904Z/` (batch `klt-sim-abe0ec2c5d05`): the first-cut cells. T-07, T-11,
   T-28 pass; T-06 (1 mA load), T-08, T-24 fail (issue #130). Untouched.
@@ -167,8 +169,8 @@ local fallback. Records are append-only — never edit an earlier one.
 
 **Until #228 this procedure was the recipe above, followed by hand**, and the four committed
 records have four different shapes: none holds the request or the bench it was run from, none
-records `klt_exit_code`, and `records/20261112T001207Z/` — the one
-`signoff/block-manifest.json` cites — has no `record.json` at all; its own `README.md`
+records `klt_exit_code`, and `records/20261112T001207Z/` — the one `signoff/block-manifest.json`
+cited until #408 — has no `record.json` at all; its own `README.md`
 (#276) says why, and `scripts/ci/check_evidence_format.py` admits a record directory that
 carries one. Those four are evidence and are
 left exactly as they are; the entry point is for the next run. No `record.json` was
@@ -193,6 +195,15 @@ the six rows, their 45-corner counts and T-24's binding corner.
 - `klt-sim-abe0ec2c5d05` (2026-11-08) on runner klt 0.9.0 (compatibility `match`): 45 units
   ran. The job state is `failed` / exit 3 because rows failed (the verdict exit code), not a
   runner crash. This is the recorded run.
+- `klt-sim-ac6b06b68783` (2026-11-23, record `records/20261123T001034Z/`, the #408 re-run): one
+  unsharded job of 45 units on runner klt 0.9.0, `klt` exit 0, written by `run_dc_static.sh
+  nominal` against the post-`e47bb80` cells (`environment.netlist_closure` names
+  `design/aib_pad_esd.spice` at `4de31ffa...`). **All six rows pass at 45/45 corners with the
+  same per-row counts as `20261112T001207Z` — no verdict moved.** `XResd` l 0.5u -> 1u moves
+  only the T-24 extracted capacitance: worst 84.2 / 96.4 / 90.3 fF -> 83.9 / 96.4 / 90.0 fF at
+  pad 0 / VDDIO/2 / VDDIO (margin at the binding `cap_5` corner 3.581 -> 3.582 fF); every other
+  graded measurement is bit-identical to the #142 record, because `XResd` sits between `PAD`
+  and `PADI` and carries no DC current. This is the record the manifest cites.
 
 An earlier local probe (tt, 1.20 V, 27 C) showed a floating pad because `w` of `sg13_lv_*` is
 the total width; fixed by #56/#58 and not repeated here.

@@ -1,0 +1,40 @@
+klt sim: notice: splitting 5400 units into 16 batch jobs of at most 338 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt sim: batch job klt-sim-f1a679834088: done
+klt sim: shards 9/16 launched, 1 launching, 6 pending, 9 collected; launch rate unknown, ETA unknown
+klt sim: batch job klt-sim-f9e9230f589a: done
+klt sim: batch job klt-sim-bbeaa2e3e8cd: done
+klt sim: batch job klt-sim-cef3041e2ccf: done
+klt sim: batch job klt-sim-b90d148944f5: done
+klt sim: batch job klt-sim-9390f9e3a30d: done
+klt sim: batch job klt-sim-a8bb9140d1db: done
+klt sim: batch job klt-sim-68f3e5f4d093: done
+klt sim: batch job klt-sim-eedf9326896f: done
+klt sim: waiting for capacity: 7 of 16 shards pending, 1 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 7 of 16 shards pending, 2 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 7 of 16 shards pending, 3 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 7 of 16 shards pending, 4 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 7 of 16 shards pending, 5 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 7 of 16 shards pending, 6 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 7 of 16 shards pending, 7 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-b07ff5d453ec had been submitted but never launched; launched it
+klt sim: batch job klt-sim-b07ff5d453ec state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-7e768e0307af had been submitted but never launched; launched it
+klt sim: batch job klt-sim-74dd4212deeb had been submitted but never launched; launched it
+klt sim: batch job klt-sim-7e768e0307af state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-e3c0ab50786e had been submitted but never launched; launched it
+klt sim: batch job klt-sim-74dd4212deeb state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-e3c0ab50786e state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-29cef5baf860 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-ad5f2264c4a2 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-29cef5baf860 state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-ad5f2264c4a2 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-b07ff5d453ec: done
+klt sim: batch job klt-sim-7e768e0307af: done
+klt sim: batch job klt-sim-74dd4212deeb: done
+klt sim: batch job klt-sim-e3c0ab50786e: done
+klt sim: batch job klt-sim-29cef5baf860: done
+klt sim: batch job klt-sim-ad5f2264c4a2: done
+klt sim: shards 16/16 launched, 0 launching, 0 pending, 15 collected; launch rate 5.1/min, ETA 0m
+klt sim: batch job klt-sim-40d876010ae0 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-40d876010ae0 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-40d876010ae0: done

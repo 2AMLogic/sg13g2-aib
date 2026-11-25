@@ -1,0 +1,25 @@
+klt sim: notice: splitting 900 units into 3 batch jobs of at most 300 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt: batch job klt-sim-7e2696d2bf60 submitting to s3://<bucket>/jobs/klt-sim-7e2696d2bf60
+klt: batch job klt-sim-9d20d660adb3 submitting to s3://<bucket>/jobs/klt-sim-9d20d660adb3
+klt: batch job klt-sim-d1b1f190a176 submitting to s3://<bucket>/jobs/klt-sim-d1b1f190a176
+klt sim: batch job klt-sim-d1b1f190a176: submitted
+klt sim: shards 0/3 launched, 1 launching, 2 pending, 0 collected; launch rate unknown, ETA unknown
+klt sim: batch job klt-sim-9d20d660adb3: submitted
+klt sim: batch job klt-sim-7e2696d2bf60: submitted
+klt sim: waiting for capacity: 3 of 3 shards pending, 1 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 3 of 3 shards pending, 2 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 3 of 3 shards pending, 3 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-d1b1f190a176 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-d1b1f190a176`
+klt sim: batch job klt-sim-d1b1f190a176 state=no status.json yet elapsed=1s
+klt sim: waiting for capacity: 3 of 3 shards pending, 2 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-d1b1f190a176: failed
+klt sim: shards 2/3 launched, 1 launching, 0 pending, 1 collected; launch rate 0.2/min, ETA 5m
+klt sim: batch job klt-sim-9d20d660adb3 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-9d20d660adb3`
+klt sim: batch job klt-sim-9d20d660adb3 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-9d20d660adb3: running
+klt sim: batch job klt-sim-9d20d660adb3 state=running elapsed=33s
+klt sim: batch job klt-sim-9d20d660adb3: failed
+klt sim: shards 3/3 launched, 0 launching, 0 pending, 2 collected; launch rate 0.3/min, ETA 0m
+klt sim: batch job klt-sim-7e2696d2bf60 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-7e2696d2bf60`
+klt sim: batch job klt-sim-7e2696d2bf60 state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-7e2696d2bf60: failed
