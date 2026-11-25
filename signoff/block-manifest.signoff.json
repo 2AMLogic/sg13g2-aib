@@ -809,7 +809,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:ceb2994a7cc8dd7c66da90eb82c420edcdbb82d10a56239022b68190afc900cd",
+          "content_hash": "sha256:4237fa32907bfb556566fc4ee7ec3531b9bafbfd56009b9f55cd83bc240763d6",
           "status": "ratified",
           "row_count": 5
         },

@@ -1,327 +1,190 @@
-# DR-0021: T-19's aperture is referred to the RX pin, which puts the input stage's rise/fall asymmetry inside T-19
+# DR-0021: Reference T-19's capture aperture to the RX pins
 
-**Status**: **proposed**. Not ratified; ratification follows
-[DR-0001](0001-spec-structure-and-ratification.md) and is a human merge.
-**Rows**: T-19 and T-20 are *named and interpreted*; **neither value is
-changed**. T-16, T-17 and T-18 are cited. **Amends**:
-[DR-0006](0006-timing-budget.md) by naming the node T-19's aperture is referred
-to, which DR-0006 left unstated. No target, fallback or stretch value moves, no
-budget line is added or re-weighted, and **T-20 stays at 0.1075 UI allocated
-against a ≥ 0.10 UI requirement**.
+**Status**: **proposed**. Ratification requires a human merge under
+[DR-0001](0001-spec-structure-and-ratification.md).
+**Rows**: T-19 and T-20. This decision amends [DR-0006](0006-timing-budget.md)
+by naming the reference node for the 0.150 UI capture aperture. The T-20
+allocation gives 0.1075 UI against a requirement of ≥ 0.10 UI at 1 Gb/s.
 
 ## Context
 
-`target-spec.md`'s timing budget chains T-18 (eye at the RX input), T-19 (capture
-aperture), T-16 (data-to-clock skew at the RX input) and T-21 (alignment), and
-closes T-20 at 0.1075 UI — 7.5 ps of slack at the 1 Gb/s target. DR-0006 set
-T-19 at 0.150 UI but never said **at which node** the aperture is measured. The
-T-19 row's verification wording, "`SIM-MC` of the RX capture flop/latch plus
-input stage", implies the input stage is inside the number, but the spec does not
-say so in words.
+T-18 measures the valid eye at the RX data pin, and T-16 grades data-to-clock
+skew at the RX pins. DR-0006 budgeted T-19 between that eye and the sampling
+flop, but left its reference node implicit. Issue #177 arose when the original
+clock-path simulation found 397.4 ps and 602.6 ps between opposite-direction
+edges at the RX **outputs** at `mos_sf`/1.08 V/−40 °C. The 102.6 ps displacement
+from 500 ps (0.103 UI) includes the transmitter, pads, channel and receiver.
 
-Issue #54's clock-path record made that silence expensive. Measuring the DDR data
-edge against the forwarded clock's edges at the **RX outputs** — the nodes a
-capture flop would see — it found the two alternate DDR half-periods at
-**397.4 ps and 602.6 ps** instead of 500 ps at `mos_sf`/1.08 V/−40 °C:
-**0.103 UI** of static off-centring, before any jitter or mismatch. Same-direction
-edges track to under 0.01 ps, because the data lane and the clock lane are the
-same cells on the same channel; the opposite-direction pairs do not cancel.
-
-That term sits between the last pin-referred graded row and the capture node. If
-T-19 is referred to the pin it is inside T-19's 0.150 UI; if T-19 is referred to
-the flop input it is charged to nothing. The spec has to pick one, or T-20 cannot
-be re-derived from results.
+Two receiver designs enter the evidence. The November 12–13 records used
+two-inverter cells for both data and clock. In #398 the data path adopted a
+supply-referenced receiver. The two clock legs kept the inverter as
+`aib_rx_inv`. The November 23 records characterize this split.
 
 ## Pinned sources
 
-| Source | Pin | What was read |
+All timing results here are **simulated, pre-layout**. The channel-eye and
+clock-path records use the modeled CH-3MM-RC channel (scope CH). The T-19
+Monte Carlo benches drive the RX pad and the flop clock with ideal 100 ps
+edges. Their cell-level results apply to CH or TC only at the stated slew.
+
+| Receiver | Source in this repository | Evidence |
 |---|---|---|
-| `sim/clock-path/records/20261113T095936Z/` | `main` @ `8107ae0` | T-02 at the RX outputs 397.4 / 602.6 ps, 0.103 UI (`README.md` 70–71, 79); T-17 worst DCD −1.036 % (28); T-04 crossing at the pins −19.2…+9.1 mV, at the outputs −646.1 mV at `mos_sf`/**1.32 V**/−40 °C (48) |
-| `sim/mc/records/20261112T082047Z-t19/` | `main` @ `8107ae0` | T-19 **pass**: aperture worst draw 68.60 ps of 150, σ-to-spec 9.78 of 7, 900 mismatch draws; per-draw `cw.dr` / `cw.df` pad-to-D delays from `report.json.gz`; `tb_t19.cir`, `record.json` |
-| `sim/channel-eye/records/20261111T235838Z-ch/` | `main` @ `8107ae0` | T-16 **pass 360/360**, T-18 **pass 1845/1845** (`rows.json`); per-corner T-16 values from `report.json.gz` |
-| `design/aib_rx_data.spice`, `design/aib_rx_clk.spice` | `main` @ `8107ae0` | the two-inverter receiver; `aib_rx_clk` is two instances of the same cell |
-| `sim/channel-eye/gen_channel_eye.py` | `main` @ `8107ae0` | T-16 and T-18 probe nodes and limits (`EYE_WIN_PS = 400`) |
-
-Every record here is **simulated**; the clock-path and channel-eye records are
-scope **CH** on the declared channel CH-3MM-RC, and the T-19 record is a
-pre-layout cell property. There is no die-to-die assembly to measure, so nothing
-below is a silicon result.
-
-## What the graded pin-referred rows already cover
-
-This decides whether the term is genuinely uncharged.
-
-- **T-18 is pin-referred and is a real width criterion.** Its eye is measured on
-  `v(rxa)`, the RX pin. `t18_eye_windows_open` counts, over 20 phase offsets, the
-  **0.40 UI-wide** windows (`EYE_WIN_PS = 400`) whose eye height stays ≥ 90 mV,
-  and requires at least one. It passes 1845/1845.
-- **T-16 is pin-referred and *does* bound opposite-direction edges.** All **eight**
-  of its measurements carry the 470–530 ps limit, including the opposite-direction
-  pairs `t16_dr_cf_{long,short}` and `t16_df_cr_{long,short}`; it passes 360/360
-  (8 × 45). At `mos_sf`/1.08 V/−40 °C — the corner that binds the clock-path
-  figure — those intervals measure **482.1, 490.2, 500.9 and 510.0 ps**, within
-  18 ps of nominal. The row's binding draw over the grid is `t16_dr_cf_long` =
-  480.9 ps at `mos_ss`/−40 °C.
-
-So the pin is **not** where the off-centring appears: there the opposite-direction
-data-to-clock interval is bounded to 500 ± 30 ps by a graded, passing row. What
-is charged to **no** row is whatever the receiver adds between the pin and the
-capture node.
+| Adopted (`4b73f7c`) | `design/aib_rx_data.spice`, `design/aib_rx_clk.spice`, `design/README.md` | Supply-referenced data path, inverter clock legs and the output-stage disposition |
+| Adopted | `sim/mc/records/20261123T094302Z-t19/` | D-pin aperture, per-draw results, sweep saturation and recorded failure |
+| Adopted | `sim/clock-path/records/20261123T091724Z/`, `sim/channel-eye/records/20261123T093440Z-ch/` | Edge separations at the RX outputs and T-16/T-18 at the pins |
+| Earlier inverter (`8107ae0`) | `sim/mc/records/20261112T082047Z-t19/` | D-pin aperture and per-draw pad-to-D delays for the matched-cell calculation |
+| Earlier inverter | `sim/clock-path/records/20261113T095936Z/`, `sim/channel-eye/records/20261111T235838Z-ch/` | The original 0.103 UI observation and its pin-side comparison |
 
 ## Decision
 
-### 1. T-19's aperture is referred to the RX pin
+### 1. T-19's aperture is referred to the RX pins
 
-T-19 is the setup + hold aperture **referred to the RX pin** (`rxa`, `rxc`/`rxcb`)
-— the same node T-16 and T-18 are graded at — and therefore includes the RX input
-stage (`aib_rx_data`), not only the capture flop or latch. `target-spec.md`'s
-T-19 row and the Timing budget section are edited to say so.
+Grade the setup and hold window at the data and forwarded-clock pins
+(`rxa`, `rxc`/`rxcb`). This includes the delays from those pins to the
+flop's D and sampling-clock inputs. T-18 checks the 0.40 UI eye at the data
+pin. T-16 checks eight data-to-clock intervals at the pins, including
+opposite-direction edges. On the adopted receiver's channel-eye run, T-18
+passes 1845/1845 checks and T-16 passes 360/360. T-17 already accounts for
+TX clock duty-cycle distortion. Charging the whole 0.103 UI observed across
+the earlier lane to T-19 would count effects upstream of the RX pins twice.
 
-This is the reading the row's existing "plus input stage" wording already
-implied; it is now stated. It leaves **no node between the last pin-referred
-graded row and the capture flop uncharged**, and it changes no number.
+### 2. One sampling phase must satisfy both data polarities and both clock edges
 
-### 2. The quantity inside T-19 is the receiver's own pad-to-D asymmetry, and no clock placement can absorb it
+Let a valid window open at time zero and close at `W` at the data pin. A
+clock edge at time `x` at its pin reaches the sampling flop at `x + c_e`,
+where `c_e` is the delay for that clock edge. The opening and closing data
+edges reach D at `d_open` and `W + d_close`. For a given pairing the setup
+and hold requirements at the flop therefore give
 
-Let the receiver's pin-to-flop delay be `d_r` for a rising edge and `d_f` for a
-falling one, and let **Δ_rx = d_r − d_f**. The clock receiver is the same cell
-(`aib_rx_clk` is two instances of `aib_rx_data`), so the clock sees the same
-`d_r`/`d_f`.
+```
+x ≥ t_su + d_open − c_e
+x ≤ W − (t_h + c_e − d_close)
+```
 
-A 1 UI-wide valid window is bounded by one edge in and one edge out, of opposite
-directions: a `1` bit opens on a data rise and closes on a data fall, a `0` bit
-the reverse. In DDR each is sampled by a rising *or* a falling clock edge
-depending on the pattern phase, so over a data stream **all four pairings occur**.
-Referring the flop's own `t_su`/`t_h` back to the pin through `d_r`/`d_f`:
+Use the data delays `d_r`, `d_f` and the clock delays `c_r`, `c_f` for their
+respective rising and falling edges, including the sampling clock path to
+the active flop. These are the two pin-referred requirements for each pairing.
+Use the flop's setup and hold for that pairing in its row.
 
-| bit | opens / closes | sampling clock edge | pin-referred setup | pin-referred hold |
-|---|---|---|---|---|
-| `1` | rise / fall | rise | `t_su` | `t_h + Δ_rx` |
-| `1` | rise / fall | fall | `t_su + Δ_rx` | `t_h` |
-| `0` | fall / rise | fall | `t_su` | `t_h − Δ_rx` |
-| `0` | fall / rise | rise | `t_su − Δ_rx` | `t_h` |
+| Data bit (opens / closes) | Sampling clock | Setup from opening edge | Hold to closing edge |
+|---|---|---|---|
+| 1 (rise / fall) | rise | `t_su + d_r − c_r` | `t_h + c_r − d_f` |
+| 1 (rise / fall) | fall | `t_su + d_r − c_f` | `t_h + c_f − d_f` |
+| 0 (fall / rise) | fall | `t_su + d_f − c_f` | `t_h + c_f − d_r` |
+| 0 (fall / rise) | rise | `t_su + d_f − c_r` | `t_h + c_r − d_r` |
 
-Each pairing's own aperture is `setup + hold`, so the worst **single pairing** is
-`t_su + t_h + |Δ_rx|`. That is *not* the quantity the budget subtracts from the
-eye. T-21 is a single phase setting, so one placement has to satisfy **all four**
-pairings at once, and the four do not bind on the same side.
+T-21 sets one phase for both clock edges. With nominal DDR spacing at the
+pins (pin-side skew and duty distortion have their own rows), `x` must lie
+in the intersection of all four intervals. Thus the aperture at each draw is
+the **maximum setup column plus the maximum hold column**, which can come
+from different rows. A common data-to-clock delay offset moves the required
+phase. Moving the phase cannot widen the intersection.
 
-Write `x` for the sampling edge's position inside its own bit window, measured at
-the pin. Nominal DDR puts the rising and the falling clock edge one UI apart and
-consecutive bits one UI apart, so **both clock edges sit at the same `x`**
-(departures from that are T-17's duty-cycle distortion and T-16's skew, each
-graded by its own row, and neither is Δ_rx). Each pairing then bounds that same
-`x`:
+**Earlier matched-cell case.** The historical calculation assumes
+`c_r = d_r`, `c_f = d_f` and the same flop setup and hold in every row. With
+`Δ_rx = d_r − d_f`, the largest setup and hold each gain `|Δ_rx|`.
+For positive Δ_rx the falling-clock 1 sets setup and the rising-clock 1
+sets hold. For negative Δ_rx the rising-clock 0 sets setup and the
+falling-clock 0 sets hold. This gives **`t_su + t_h + 2·|Δ_rx|`** for the
+earlier inverter model. The adopted supply-referenced data path and inverter
+clock path require the separate delays above.
 
-| pairing | lower bound on `x` (setup) | upper bound on `x` (hold) |
+### 3. T-19 evidence for the adopted receiver and the earlier inverter
+
+Both T-19 records use 20 mismatch draws at each of 45 PVT corners. The bench
+measures rising-data setup and falling-data hold on one posedge
+`sg13g2_dfrbpq_1`, with an ideal clock at the flop. The aperture in each
+`report.json.gz` is `t19_aperture_ps` at the D-pin 50 % crossing.
+
+| Simulated result at 1 Gb/s | Earlier inverter (Nov 12) | Adopted receiver (Nov 23) |
 |---|---|---|
-| `1` bit, rising clock | `t_su` | `UI − t_h − Δ_rx` |
-| `1` bit, falling clock | `t_su + Δ_rx` | `UI − t_h` |
-| `0` bit, falling clock | `t_su` | `UI − t_h + Δ_rx` |
-| `0` bit, rising clock | `t_su − Δ_rx` | `UI − t_h` |
+| Largest recorded D-pin aperture | 68.60 ps | **541.2365 ps** |
+| D-pin draws over 150 ps | 0 of 900 | **151 of 900** |
+| D-pin σ-to-spec (target 7) | 9.78 | 0.47 |
+| RX-pin aperture | 99.52 ps worst, 0 of 900 over 150 ps, under the matched-cell assumptions | Open pending split-path evidence |
 
-Intersecting all four gives `t_su + |Δ_rx| ≤ x ≤ UI − t_h − |Δ_rx|`, which has a
-solution only if
+On the **adopted receiver**, eight corner means exceed 150 ps. The worst
+readable mean is 442.1 ps at `ss`/1.08 V/27 °C, dominated by hold.
+At `ss`/1.08 V/−40 °C the capture boundary leaves the −400 to +100 ps sweep
+window for some draws. The recorded maximum and failure count describe that
+sweep. A wider sweep at this corner is needed to bound the aperture.
+The characterization report records T-19 as **fail** on this D-pin evidence.
+The bench supplies data delays but omits the inverter clock legs and the
+other capture pairings needed for a pin-referred result.
 
-> **`UI ≥ t_su + t_h + 2·|Δ_rx|`**
+For the **earlier inverter only**, applying decision 2 draw by draw gives
+`t19_aperture_ps + 2·abs(cw.dr − cw.df)` with all delays in ps. Δ_rx ran from
+−1.44 to +19.52 ps. The pin-referred mean was 42.5 ps and the worst was
+**99.52 ps** at `sf`/1.08 V/125 °C (60.48 + 2 × 19.52), about 50 ps below
+150 ps. This historical estimate uses row 1's measured setup and hold for
+the other three pairings and assumes the clock delays match the data delays
+in each draw. The setup and hold thresholds each carry the 10 ps sweep's
+±5 ps quantisation.
 
-For Δ_rx > 0 the binding pair is row 2's setup against row 1's hold; for Δ_rx < 0
-it is row 4's setup against row 3's hold. **The pin-referred capture aperture
-T-19 must cover is therefore `t_su + t_h + 2·|Δ_rx|`**: the asymmetry is paid
-once on each side, because the side it lands on depends on the pairing and a
-single placement sees all of them. The keep-out around one clock position is the
-**sum of the two worst sides**, not the worse of the four per-pairing sums.
+### 4. The earlier 0.103 UI observation motivates a slew measurement
 
-That is the same non-trade seen from the other end: shifting the clock earlier to
-relieve row 1's hold side tightens row 2's setup side by exactly the same amount,
-so the range of valid placements shrinks by `2·|Δ_rx|`, not `|Δ_rx|`.
-**Re-centring buys nothing, so no part of Δ_rx may be credited to T-21**, whose
-0.0625 UI line is quantization and spacing error — a different quantity.
+In the November 13 CH-3MM-RC clock-path record, the TX-pad contribution was
+20.7 ps at `mos_sf`/1.08 V/−40 °C. The approximately 82 ps left after that
+subtraction spans the channel, pad structures and receiver. In the November
+12 inverter Monte Carlo record, Δ_rx at the same corner was 10.54–19.11 ps.
+Combining those figures leaves **63–71 ps** unattributed across the two
+benches. The Monte Carlo bench used an ideal 100 ps input ramp, and neither
+historical record measured the channel's slew at the RX pin. #198 tracks
+that slew measurement and attribution. As a sensitivity check on the historical
+matched-cell model, substituting an 82 ps receiver asymmetry would give about
+233 ps (68.6 + 2 × 82). Neither record establishes that attribution.
 
-The same intersection is what rejects a *halved* figure. One can arrive at half
-of a measured asymmetry by looking at only two of the four pairings and quoting
-the per-side margin after optimal re-centring; that is an artefact of a bench
-whose stimulus is a fixed alternating pattern. Rows 2 and 4 follow from the same
-`d_r`, `d_f` without a new simulation, and they remove the trade.
+The November 23 clock-path record gives end-to-end separations for the
+adopted split. For example, `t02_df_cf` reaches −139.5 ps at the RX outputs
+at `mos_ss`/1.08 V/−40 °C. These separations inform phase placement.
+A pin-referred T-19 result needs setup and hold across all four pairings
+at representative data and clock slews, either by sweeping their relative
+phase at the RX pins or by measuring the separate delays and flop boundaries
+in decision 2 at the same operating condition and mismatch draw.
 
-**The quantity is Δ_rx, not the clock-path record's end-to-end 0.103 UI.** The
-102.6 ps measured at the RX outputs is the asymmetry of the whole lane — TX cell,
-TX pad, channel, two `aib_pad_esd` instances and receiver. Its pre-pin part is
-T-17's and is bounded at the pin by T-16; only the receiver's own share belongs
-inside a pin-referred T-19. Charging the end-to-end figure to T-19 would
-double-count T-16's and T-17's terms.
+### 5. #190 carries the adopted output-stage revision and T-19 re-run
 
-### 3. On the evidence that exists, T-19 still passes pin-referred — worst draw 99.5 ps of 150 ps
+The adopted stage's asymmetric output drives the hold-dominated D-pin
+failure. As recorded in `design/README.md`, #190 owns the output-stage
+revision and T-19 re-run. That work has a measured failure to address
+independently of #198's historical slew question. Check the revision's
+impact on T-10 threshold, T-11 hysteresis and T-24 input capacitance
+(which also loads the channel for T-12). A sizing change propagates
+to the layout, LVS references and signoff evidence under T-30.
 
-**A T-19 result exists and passes**, contrary to the premise of #177 that none
-does. `sim/mc/records/20261112T082047Z-t19/` drives `aib_rx_data` into the D pin
-of `sg13g2_dfrbpq_1` over 900 mismatch draws on the 45-corner grid: aperture
-mean 27.6 ps, σ 12.5 ps, **worst draw 68.60 ps against the 150 ps limit**,
-σ-to-spec 9.78 against a target of 7, empirical yield 900/900, negative control
-detected. Its worst process corner is `sf` (mean 40.7, max 68.6) — the skew
-corner, as this finding predicts.
+### 6. Timing allocations and verification
 
-That result is reported **referred to the D pin**, so by decision 1 it no longer
-answers the row as defined. It does not need a new simulation to do so: the record
-carries the pad-to-D delays `cw.dr` and `cw.df` **per draw**, so by decision 2 the
-pin-referred aperture is `t19_aperture_ps + 2·|cw.dr − cw.df|` draw by draw.
-Computed over all 900 draws of the committed `report.json.gz`:
-
-| quantity | over 900 draws | at `sf`/1.08 V/−40 °C (20 draws) |
-|---|---|---|
-| Δ_rx = `cw.dr − cw.df` | −1.44 … **+19.52** ps, mean 7.45, σ 3.70 | 10.54 … **19.11** ps |
-| aperture, D-referred | … **68.60** ps | 35.37 … 68.60 ps |
-| **aperture, pin-referred** (`aperture + 2·abs(Δ_rx)`) | mean 42.5, **max 99.52** ps | 64.63 … 97.92 ps |
-
-**0 of 900 draws exceed the 150 ps limit pin-referred.** The worst pin-referred
-draw is 99.52 ps at `sf`/1.08 V/**125 °C** (aperture 60.48 + 2 × 19.52) — not the
-same draw as the worst D-referred one (68.60 ps at `sf`/1.08 V/−40 °C), because
-the two terms peak at different corners. So referring T-19 to the pin does **not**
-break the row on the evidence committed to `main`; it leaves about **50 ps** of
-the 150 ps allocation.
-
-Two properties of that figure, both carried over from the bench rather than added
-here:
-
-- **Rows 2–4 reuse row 1's measured `t_su`/`t_h` by assumption.** The bench
-  measures setup on a **rising** D edge and hold on a **falling** D edge of a
-  single posedge flop with an ideal clock (`record.json` →
-  `aperture_definition`), which is row 1's pairing. The record states that the
-  negedge flop "was not run as a second measurement"; the pin-referred figure
-  therefore inherits the assumption that the other three pairings have the same
-  flop-referred `t_su + t_h`. #198 is where that is either confirmed or replaced
-  by a second measurement.
-- **The `+ |Δ_rx|` part is grid-quantized.** `t19_aperture_ps + Δ_rx` is exactly
-  `cw.ys − cw.xs`, the clock-position sweep window, and every one of the 900
-  draws lands on the sweep's **10 ps** grid — so that term carries the ±5 ps
-  per-side quantisation the record declares. The second `|Δ_rx|` is a measured
-  delay difference and is not gridded.
-
-This derivation is stated here, not written into `measurements/row-evidence.json`
-or the characterization report. Recorded results are append-only, and
-re-reporting a row pin-referred is new analysis that belongs in its own recorded
-derivation (filed as **#198**), not in a spec-decision PR. The evidence mapping's
-`basis` line already discloses that the committed figure is "at the D-pin 50 %
-crossing", so the mismatch with the row is visible rather than hidden.
-
-### 4. The clock-path record's "~82 ps, dominantly `aib_rx_data`" attribution is contradicted, and the residue is unexplained
-
-This is the part the decision cannot settle, and it is recorded as open rather
-than resolved.
-
-The clock-path record attributes the 102.6 ps, less T-17's 20.7 ps at the TX pad,
-to "~82 ps … dominantly by `aib_rx_data`". That is a subtraction over an interval
-that also contains the channel and two `aib_pad_esd` instances. The T-19 record
-**measures the receiver per-stage**, and at the same corner gives Δ_rx ≤ 19.11 ps.
-T-17's 20.7 ps plus that is **≈ 31–40 ps of the measured 102.6 ps: roughly
-63–71 ps is unaccounted for by any per-stage measurement on `main`.**
-
-The two benches differ in the edge the pad sees. The T-19 bench drives the pad
-with an **ideal 100 ps linear ramp** (`tb_t19.cir`: `Vpn … pwl(…)` with 0.1 ns
-transitions into `Bpad pad 0 V = v(pn)*v(vdd_rx)`); the clock-path bench drives
-the receiver through `aib_tx_clk` → `aib_pad_esd` → CH-3MM-RC → `aib_pad_esd` →
-`aib_rx_clk`. A receiver's rise/fall asymmetry is slew-dependent, and the T-19
-record states this limit itself: its claim scope holds "only to the extent the
-edge arriving at the RX pad has the declared 100 ps slew; the slew sensitivity is
-not measured here". **Neither record measures the slew at the RX pad** — both
-reports were searched for a slew, rise- or fall-time measurement and have none.
-
-So the candidates are: the receiver's asymmetry is far larger at the channel's
-actual slew; `aib_pad_esd` contributes; the channel contributes; or the
-attribution is wrong. **None is eliminated, and this record adopts neither the
-~82 ps figure nor the 19 ps one as the operating value.** Filed as **#198**:
-measure the pad slew, re-measure `d_r`/`d_f` at it, separate the residue, and
-re-report T-19 pin-referred.
-
-The consequence for the row's verdict is stated plainly: **pin-referred T-19
-passes at the recorded 100 ps pad slew with ~50 ps of margin, and its verdict at
-the channel's actual slew is not established.** If the receiver's share there
-were near the ~82 ps the clock-path record assumes, the pin-referred aperture
-would be ≈ 68.6 + 2 × 82 ≈ **233 ps — failing the 150 ps limit by about 83 ps**,
-not merely reaching it. That is why #198 gates the row and not merely the
-arithmetic: the doubling in decision 2 is what turns a hypothetical "at the
-limit" into a hypothetical clear failure, and it is the formula #198 must
-re-fire against a measured Δ_rx.
-
-### 5. The resize follow-up stays filed, contingent on #198
-
-**#190** (size `aib_rx_data` for rise/fall symmetry) stays open, but as the
-*remedy* conditional on #198's measurement rather than a presumed necessity: on
-the per-stage evidence that exists, Δ_rx ≤ 19.5 ps and no resize is justified.
-Per `CLAUDE.md` it is not done here, and it is larger than the comparable #142 TX
-predriver fix — `layout/gen_io_column.py` asserts the schematic sizes against its
-`RX_DEVICES` table (`chk_mos`), so the GDS, LVS references and signoff manifests
-regenerate (T-30); the first inverter sets **T-10**/**T-11**; and its input is a
-pad node, so its gate capacitance is inside **T-24** and feeds T-12's far-end
-load.
-
-### 6. Nothing else moves
-
-T-02 and T-04 stay report-only; no numeric bound is invented for either. T-16,
-T-17, T-18, T-20 and T-21 keep their values. T-19 keeps 0.150 / 0.250 / 0.150 UI.
-This record adds no row and no budget line.
+T-19 retains its target/fallback/stretch limits of 0.150/0.250/0.150 UI.
+T-02 grades the exchange format in RTL. T-04 grades the forwarded-clock
+arrangement with the netlist connectivity check. Their analog edge
+separations and crossing levels are report-only (DR-0026, DR-0027).
 
 ## Alternatives rejected
 
-- **Refer T-19 to the flop input and add a new budget line for the receiver.**
-  Rejected: T-20 has 0.1075 UI against a ≥ 0.10 UI requirement, so any new line
-  above 0.0075 UI takes T-20 below it. Agents do not relax the ratified spec to
-  make results pass (`CLAUDE.md`), and this is the form that relaxation would
-  take. Referring to the pin needs no new line at all.
-- **Refer T-19 to the flop input and charge the term to T-21.** Rejected by the
-  derivation in decision 2: Δ_rx appears on the setup side and the hold side for
-  different pairings, so sampling-clock placement cannot absorb any of it.
-- **Charge the clock-path record's end-to-end 0.103 UI to T-19.** Rejected: it
-  double-counts T-17's TX-pad term and the pin-side term T-16 already bounds, and
-  it is contradicted as a receiver figure by the per-stage measurement
-  (decisions 2 and 4). It would also have put T-19 at ≈ 68.6 + 2 × 102.6 ≈ 274 ps
-  — failing a row that passes — on the strength of a subtraction.
-- **Charge Δ_rx once — the worst single pairing, `t_su + t_h + |Δ_rx|`.**
-  Rejected by the intersection in decision 2. It takes the largest of the four
-  per-pairing apertures instead of asking which placements satisfy all four at
-  once; because Δ_rx lands on the hold side for one pairing and the setup side
-  for another, and T-21 sets one phase for both, the two worst sides **add**. The
-  valid-placement range shrinks by `2·|Δ_rx|`.
-- **Charge half of a measured asymmetry.** Rejected, with the argument in
-  decision 2: the halving depends on only two of the four (bit, clock-edge)
-  pairings.
-- **Adopt Δ_rx ≤ 19.5 ps as the settled operating value and declare the matter
-  closed.** Rejected: it is measured at an ideal 100 ps pad ramp, and the record
-  that produced it says its slew sensitivity is unmeasured. Treating it as the
-  operating value would bury the 63–71 ps the two records disagree about.
-- **Resize `aib_rx_data` now.** Rejected: on the per-stage evidence there is
-  nothing to fix, and the resize moves T-10/T-11, T-24 and the whole layout and
-  signoff flow (decision 5). It waits on #198.
-- **Grade T-02 against a numeric bound so the term is caught by its own row.**
-  Rejected: T-02 is the DDR *format* row, the numeric capture budget lives in
-  T-19 and T-20, and adding a bound to a report-only row after ratification is a
-  spec change this finding does not need.
-- **Leave the reference node implicit and rely on the row's "plus input stage"
-  wording.** Rejected: that wording is what produced the ambiguity. The
-  verification column says what is simulated; the budget needs the node the
-  aperture is *measured to*, stated as such.
+- **Add a receiver budget line or charge the loss to T-21.** The pin reference
+  includes the receiver paths within T-19. A new line over 0.0075 UI would
+  take the allocated T-20 margin below its requirement. A single T-21 phase
+  can place the sampling edge only within the intersection in decision 2.
+- **Use one pairing, or halve the loss by re-centring an alternating pattern.**
+  Either choice can miss the pairing that sets the opposite bound. Even in
+  the matched-cell case the full DDR stream pays the asymmetry on both sides.
+- **Use the earlier inverter's passing margin or the full 0.103 UI for the
+  adopted data receiver.** The former assumes matching clock and data delays
+  at 100 ps slew. The latter includes pre-pin effects. The current D-pin
+  failure and the two distinct receiver paths require their own evidence.
+- **Add a numerical analog bound to T-02 or T-04.** Their graded criteria
+  are format and connectivity. T-16, T-19 and T-20 carry the DDR timing limits.
 
 ## Consequences
 
-- T-19 is now a pin-referred row, so its `SIM-MC` must drive the input stage from
-  the pin and report the aperture referred to **that** node. A D-referred figure
-  does not answer the row — which the committed result is, so it is re-reported
-  under #198. The derivation in decision 3 shows the existing record already
-  contains what that re-report needs.
-- **The pin-referred aperture is `t_su + t_h + 2·|Δ_rx|`** (decision 2), so a
-  re-report that charges the receiver's rise/fall asymmetry once understates the
-  row by `|Δ_rx|`. This is the formula #198 re-fires, and the quantity any later
-  record must compare against the 150 ps limit.
-- **T-19's worst corner is a skew corner** (`sf`: aperture mean 40.7 / max 68.6 ps,
-  Δ_rx mean 12.1 / max 19.5 ps; worst pin-referred draw 99.5 ps at `sf`/1.08 V/
-  125 °C), not the classic slow/fast pair. This is already observed, not
-  predicted.
-- T-20's allocation and verdict are unchanged, and T-20's `ANALYSIS` now re-derives
-  T-19's contribution from merged records rather than from an allocation alone.
-- **The open item is the pad slew, not the sizing.** #198 measures it and separates
-  the 63–71 ps residue; #190 is the remedy if the answer is large. The next trigger
-  is #198's record, which re-fires decision 3's arithmetic against a measured Δ_rx
-  at the operating slew.
-- `spec/dll-interface.md` and [DR-0020](0020-dll-recomparison-t21.md) are
-  untouched: the DLL-side T-20 shortfall recorded there is a separate finding on
-  the T-21 lines, and this record does not restate it.
+The T-19 `SIM-MC` result used in the budget must cover both sampling edges
+and report the aperture at the RX pins. The adopted design has a recorded
+D-pin failure and an open pin-referred result. #190 tracks the hardware
+revision and re-run. The November 12 passing estimate remains historical
+evidence for the inverter receiver.
+
+The DR-0006 allocation leaves **0.1075 UI**, or 107.5 ps at 1 Gb/s.
+T-20 remains **not-yet-measured** in `measurements/characterization-report.md`.
+Its verification requires the pin-referred T-19 result and the other timing
+inputs, including the separate T-21 DLL evidence in
+[DR-0020](0020-dll-recomparison-t21.md).
