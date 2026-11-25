@@ -20,8 +20,8 @@ I/O column included, and digital corner and post-route verification
 (`5.digital`, `7.digital`). Five rows read `unmet`, each for the reason its
 record gives: `5.analog` `partial_coverage` — 14 of the 18 declared analog SIM
 rows covered by four cited PVT-FULL `klt sim` records, 4 declared gaps;
-`6.analog` `check_failed` — four cited Monte Carlo campaigns, of which T-10
-fails, T-15, T-16 and T-19 pass, and T-13/T-14 are declared gaps with no
+`6.analog` `check_failed` — four cited Monte Carlo campaigns, of which T-19
+fails, T-10, T-15 and T-16 pass, and T-13/T-14 are declared gaps with no
 campaign yet; `7.analog` `check_failed` — four cited `klt pex` runs extracted
 the I/O cells and graded nothing; `8.analog` and `8.digital` `check_failed` —
 the item-8 aggregate envelopes read `fail` (19 pass, 1 fail, 10
@@ -104,8 +104,8 @@ signoff: latch-up and pad rules not transcribed, no ESD rules, the pad/ESD
 structure covered only by generic base-layer rules). Five T1 rows read
 `unmet`, each for the reason its record gives — `5.analog` partial coverage
 (14 of 18 declared SIM rows covered, 4 declared gaps), `6.analog` four cited
-Monte Carlo campaigns with T-10 failing, T-15, T-16 and T-19 passing, and T-13/T-14 declared
-gaps with no campaign yet, `7.analog` four cited `klt pex` runs that extracted
+Monte Carlo campaigns with T-19 failing, T-10, T-15 and T-16 passing, and
+T-13/T-14 declared gaps with no campaign yet, `7.analog` four cited `klt pex` runs that extracted
 the I/O cells and graded nothing, `8.analog`/`8.digital` aggregate envelopes
 reading `fail`. No spec row has been measured post-layout; every number is
 simulated.**
