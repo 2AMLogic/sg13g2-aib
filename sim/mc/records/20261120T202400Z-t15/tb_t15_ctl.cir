@@ -1,0 +1,26 @@
+* tb_t15_ctl.cir -- T-15 data-to-data skew at the RX input, single edge pair (A rises, B falls); NEGATIVE CONTROL: lane B receiver degraded
+* One edge at 2 ns (normalised 0..1 stimulus scaled by the TX supply, 100 ps ramp as the PRBS bench).
+* Subject: the sim/channel-eye lane over CH-3MM-RC (nominal channel); cells .include'd from design/.
+* Supplies: one source per block, corners.supply_v sweeps them together.
+.include ../../spec/channel/channel_rc.cir
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.subckt link txp rxp gnd
+Xch txp rxp gnd chan_rlc len_mm=3
+.ends link
+.include edge_lane_deg.inc
+Vdd_atx vdd_atx 0 DC 1.2
+Vdd_arx vdd_arx 0 DC 1.2
+Vdd_btx vdd_btx 0 DC 1.2
+Vdd_brx vdd_brx 0 DC 1.2
+Vdd_ctx vdd_ctx 0 DC 1.2
+Vdd_crx vdd_crx 0 DC 1.2
+Vpa pa 0 dc 0 pwl(0 0 2n 0 2.1n 1 6n 1)
+Vpb pb 0 dc 1 pwl(0 1 2n 1 2.1n 0 6n 0)
+Bda da 0 V = v(pa)*v(vdd_atx)
+Bdb db 0 V = v(pb)*v(vdd_btx)
+Xa da douta rxa vdd_atx vdd_arx lane
+Xb db doutb rxb vdd_btx vdd_brx lane_deg
+Bdsa dsa 0 V = v(rxa) - 0.5*v(vdd_arx)
+Bdsb dsb 0 V = v(rxb) - 0.5*v(vdd_brx)

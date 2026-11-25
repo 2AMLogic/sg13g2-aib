@@ -300,3 +300,36 @@ the receiver output stage and nothing else). Bookkeeping between identical units
 three were not re-run). The negative control was rebuilt on the new reference (one clamp finger gate
 `VSS` -> `VDDIO`): `mismatch`, one `device.unmatched`, exit 3. The sums above 3360 / 341 in the Issue #94
 section describe the earlier stream and are history.
+
+## Issue #398: receive split regeneration (2026-11-23)
+
+The #398 adoption split the receive path: `design/aib_rx_data.spice` became the
+supply-referenced stage from the #386 study (NMOS pair + matched `rppd` VDDIO/2 divider +
+PMOS mirror + tail, restore inverter at half the committed width), and both clock legs
+keep the committed inverter as a cell of its own, `design/aib_rx_inv.spice`.
+`gen_io_column.py` now draws two RX units -- `aib_io_rx` (the adopted cell, its divider
+running the full cell width below the ESD band) for the data slots and spares, and the
+new `aib_io_rx_inv` for the clock pair -- with a second checked device table
+(`RX_DATA_DEVICES` / `RX_DATA_RES` against `aib_rx_data.spice`, `RX_INV_DEVICES` against
+`aib_rx_inv.spice`). `gen_reference.py` composes the split the same way (`aib_rx_inv` is
+a new source; the pair and the column's two clock units reference it), and
+`check_io_column.py` covers the new unit and the divider's rail-tied legs (the one place
+a resistor may end on a rail, checked as a VDDIO--vrn--VSS chain). The stream was
+regenerated and everything re-ran on it (`d44ff0ab...`):
+
+| Report | Result | Devices | Nets | Pins |
+|---|---|---|---|---|
+| `aib_io_column.report.json` (the `4.analog` citation) | `match` | 4540 / 4540 | 455 / 455 | 101 / 101 |
+| `aib_io_tx.report.json` | `match` | unchanged from #387 | | |
+| `aib_io_rx.report.json` | `match` (the adopted cell, first compare) | 52 / 52 | 9 / 9 | 4 / 4 |
+| `aib_io_tx_clk.report.json` | `match` | unchanged from #387 | | |
+| `aib_io_rx_clk.report.json` | `match` (two `aib_rx_inv` legs) | 84 / 84 | 10 / 10 | 6 / 6 |
+
+Warning categories are unchanged (the column keeps its 45 `topology` entries and the two
+known `rppd` warnings; the divider is a connectivity match -- its geometry, like every
+`rppd`, is `device.geometry_not_compared`). `--check` exits 0 on all five result reports,
+and the negative control re-runs to `status: mismatch` (klt exit 3, 48 mismatches, same
+category counts as #387). The `PAD_OF_DOUT` bookkeeping held: klt's extraction numbering
+still assigns the pair's two units to `DOUT$22`/`DOUT$23`. Whole-column DRC
+(`records/20261123T092956Z`), the ERC report, `stats/`, the item 2 attestation and the
+four `klt pex` extractions (`pex/records/20261123T093102Z/`) all re-ran on this stream.

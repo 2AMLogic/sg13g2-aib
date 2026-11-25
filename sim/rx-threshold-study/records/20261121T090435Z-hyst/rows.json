@@ -1,0 +1,23 @@
+{
+  "label": "rx-threshold",
+  "corners": 45,
+  "kind": "simulated",
+  "rows": {
+    "T-11": {
+      "verdict": "pass",
+      "measurements": [
+        "t11_hyst_mv__b",
+        "t11_hyst_mv__c"
+      ],
+      "pass": 90,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "ff/mixed/125C",
+        "measurement": "t11_hyst_mv__b",
+        "value": 0.001728,
+        "why": "smallest margin"
+      }
+    }
+  }
+}

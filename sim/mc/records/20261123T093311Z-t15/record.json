@@ -1,0 +1,65 @@
+{
+  "record": "mc-t15",
+  "utc_stamp": "20261123T093311Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-15",
+  "design_commit": "feature/issue-398 (the #398 receive split: the data lanes A/B on the adopted supply-referenced aib_rx_data, the clock pair legs unchanged as committed inverters; this bench's two lanes are both data lanes on the adopted cell)",
+  "klt_version": "0.9.0 (signoff/KLT_VERSION; uvx throwaway environment)",
+  "claim_scope": "CH only (declared channel model spec/channel/channel_rc.cir, CH-3MM-RC nominal); the L2 wire-bond loopback does not observe RX-input skew and no TC value is recorded here",
+  "bench": "tb_t15.cir: lane A rises and complement lane B falls together; skew is B's falling minus A's rising mid-rail crossing of the RX pad node",
+  "skew_definition": "signed difference, limits +-bound, target_sigma 7 each side (sim/mc/README.md, Assumptions for ratification)",
+  "requests": {
+    "nominal": "request_t15.json",
+    "negative_control": "request_t15_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 20,
+    "seed": 4415,
+    "samples": 900,
+    "negative_control_seed": 4416,
+    "negative_control_samples": 900
+  },
+  "sample_size": {
+    "required_n": 183,
+    "verdict": "sufficient",
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "observed_ci_halfwidth": 0.0020451832587852214,
+    "method": "clopper-pearson-zero-failures",
+    "basis": "re-run of the 2026-11-20 campaign (#385) at its recorded sample counts on the #398 split cells; the zero-failure method's requirement (183) is far below the recorded count"
+  },
+  "result": {
+    "status": "pass",
+    "unit": "ps",
+    "mean": -1.2780035297177748,
+    "sigma": 5.384857407826973,
+    "min": -18.6493,
+    "max": 12.06841,
+    "tail": "worst draw -18.6 ps against the -60 limit; zero draws outside +-60 ps",
+    "empirical_yield": 1.0,
+    "empirical_yield_ci": {
+      "low": 0.9959096334824296
+    },
+    "sigma_to_spec": 10.905023480274316,
+    "sigma_to_spec_ci": {
+      "low": 10.396749948382709
+    },
+    "target_sigma": 7,
+    "sigma_target_gate": "lower_bound 10.40 >= 7: met",
+    "normality": "rejected",
+    "negative_control": "detected",
+    "negative_control_basis": "the degraded lane's yield drops from 1.0 (nominal, CI low 0.996) to 0.2633 (900 draws, control seed 4416): the extra 500 fF at the degraded receiver input moves the skew distribution clearly outside the row it passed"
+  },
+  "note": "T-15 PASSES the 7-sigma gate on the #398 split: pooled over the 45-corner grid mean -1.3 ps, sigma 5.4 ps, sigma-to-spec 10.9 with lower bound 10.4 against 7; no draw outside +-60 ps, worst -18.6 ps. Against the 2026-11-20 record (mean -1.8 ps, sigma 5.4 ps) the row is unchanged by the adoption, as the #386 study measured (records/20261121T103057Z-t16-mixed). Supersedes 20261120T202400Z-t15, which stays untouched as append-only evidence; per-corner reading in sim/mc/per_corner.md. The limits and the sigma convention are unchanged."
+}

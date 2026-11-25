@@ -6,7 +6,9 @@ and converted to single-ended there.
 Reads design/aib_tx_clk.spice, design/aib_rx_clk.spice and sim/clock-path/tb_clock_path.cir and
 asserts connectivity only. It measures nothing and states no bound: the crossing level stays
 reported evidence (DR-0022, DR-0026). It holds for the modeled-channel testbench arrangement,
-not for a real die-to-die channel.
+not for a real die-to-die channel. Since the #398 receive split, both clock legs must use the
+committed inverter receiver aib_rx_inv; the supply-referenced aib_rx_data belongs to the data
+lanes only and is rejected in a clock leg.
 
   python3 -I sim/clock-path/check_clk_pair.py [--root DIR]     exit 0 pass, 1 fail
 """
@@ -103,12 +105,17 @@ def check(root):
         if {d[1][0] for d in drv} != {"clk_d", "clkb_d"}:
             errs.append("aib_tx_clk: drivers must take exactly CLK_D and CLKB_D")
 
-    # RX cell: two aib_rx_data receivers, CLK_PAD->CLK_O and CLKB_PAD->CLKB_O (single-ended each).
-    rcv = [i for i in subckt_body(rx, "aib_rx_clk") if i[2] == "aib_rx_data"]
+    # RX cell: two aib_rx_inv receivers, CLK_PAD->CLK_O and CLKB_PAD->CLKB_O (single-ended each).
+    # Since the #398 receive split the clock legs keep the committed inverter receiver
+    # (aib_rx_inv); aib_rx_data is the supply-referenced data receiver and is rejected here --
+    # the study measured it multiplying clock-path duty distortion ~8x at the binding corner.
+    rcv = [i for i in subckt_body(rx, "aib_rx_clk") if i[2] == "aib_rx_inv"]
     if len(rcv) != 2:
-        errs.append("aib_rx_clk: expected 2 aib_rx_data receivers, found %d" % len(rcv))
+        errs.append("aib_rx_clk: expected 2 aib_rx_inv receivers, found %d" % len(rcv))
     elif {(r[1][0], r[1][1]) for r in rcv} != {("clk_pad", "clk_o"), ("clkb_pad", "clkb_o")}:
         errs.append("aib_rx_clk: receivers must map CLK_PAD->CLK_O and CLKB_PAD->CLKB_O")
+    if any(i[2] == "aib_rx_data" for i in subckt_body(rx, "aib_rx_clk")):
+        errs.append("aib_rx_clk: a data receiver (aib_rx_data) is instantiated in a clock leg")
 
     # Testbench: the pair goes through the channel, net by net.
     inst = top_instances(tb)

@@ -1,0 +1,29 @@
+* tb_t16_ctl.cir -- T-16 data-to-clock skew at the RX input, one data edge and its center-aligned clock edge; NEGATIVE CONTROL: data-lane receiver degraded
+* One edge at 2 ns (normalised 0..1 stimulus scaled by the TX supply, 100 ps ramp as the PRBS bench).
+* Subject: the sim/channel-eye lane over CH-3MM-RC (nominal channel); cells .include'd from design/.
+* Supplies: one source per block, corners.supply_v sweeps them together.
+.include ../../spec/channel/channel_rc.cir
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.subckt link txp rxp gnd
+Xch txp rxp gnd chan_rlc len_mm=3
+.ends link
+.include edge_lane_deg.inc
+Vdd_atx vdd_atx 0 DC 1.2
+Vdd_arx vdd_arx 0 DC 1.2
+Vdd_btx vdd_btx 0 DC 1.2
+Vdd_brx vdd_brx 0 DC 1.2
+Vdd_ctx vdd_ctx 0 DC 1.2
+Vdd_crx vdd_crx 0 DC 1.2
+Vpa pa 0 dc 0 pwl(0 0 2n 0 2.1n 1 6n 1)
+Vpc pc 0 dc 0 pwl(0 0 2.5n 0 2.6n 1 6n 1)
+Vpcb pcb 0 dc 1 pwl(0 1 2.5n 1 2.6n 0 6n 0)
+Bda da 0 V = v(pa)*v(vdd_atx)
+Bdcp dcp 0 V = v(pc)*v(vdd_ctx)
+Bdcn dcn 0 V = v(pcb)*v(vdd_ctx)
+Xa da douta rxa vdd_atx vdd_arx lane_deg
+Xcp dcp doutcp rxc vdd_ctx vdd_crx lane
+Xcn dcn doutcn rxcb vdd_ctx vdd_crx lane
+Bdsa dsa 0 V = v(rxa) - 0.5*v(vdd_arx)
+Bcs csig 0 V = v(rxc) - v(rxcb)

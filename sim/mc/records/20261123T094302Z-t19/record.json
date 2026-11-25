@@ -1,0 +1,70 @@
+{
+  "record": "mc-t19",
+  "utc_stamp": "20261123T094302Z",
+  "kind": "simulated, pre-layout",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "row": "T-19",
+  "claim_scope": "BOTH (receiver + capture flop; no channel model)",
+  "design_commit": "feature/issue-398 (the #398 adoption: design/aib_rx_data.spice is the supply-referenced stage; this re-run is the row's first record on the adopted cell)",
+  "bench": "tb_t19.cir: design/aib_rx_data.spice as drawn driving D of sg13g2_dfrbpq_1 (PDK stdcell, vendored verbatim, same cell design/synth maps the RX capture register to). One transient sweeps the data edge across the clock edge in 10 ps steps, first rising data (setup), then falling data (hold); the sweep window is -400..+100 ps, as the committed bench",
+  "aperture_definition": "aperture = setup + hold at the D-pin 50 % crossing, per draw, one posedge flop instance; one-sided 150 ps limit, target_sigma 7",
+  "resolution": "setup and hold are quantised to the 10 ps sweep step (about 4.1 ps rms on the aperture)",
+  "requests": {
+    "nominal": "request_t19.json",
+    "negative_control": "request_t19_ctl.json"
+  },
+  "reports": {
+    "nominal": "report.json.gz",
+    "negative_control": "report_ctl.json.gz"
+  },
+  "yield_report": "yield.json",
+  "sample_set": "samples.json",
+  "monte_carlo": {
+    "vary": "mismatch",
+    "corners": 45,
+    "samples_per_corner": 20,
+    "seed": 4430,
+    "samples": 900,
+    "negative_control_seed": 4431,
+    "negative_control_samples": 900
+  },
+  "sample_size": {
+    "required_n": 5364,
+    "verdict": "insufficient",
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "observed_ci_halfwidth": 0.02494742323673904,
+    "method": "clopper-pearson",
+    "basis": "re-run at the 2026-11-12 record's counts and seeds (20 per corner, 900 total) on the #398 adopted cell; the row fails, so the sample-size verdict reads insufficient (a passing zero-failure run at these counts would have read sufficient at 183)"
+  },
+  "fleet": "batch (--backend batch --wait-for-capacity 600, --max-units-per-job 58); several shards reported failed on first submit and were collected from the completed jobs; the report carries all 900 draws per leg",
+  "limits": {
+    "t19_aperture_ps": {"max": 150, "target_sigma": 7}
+  },
+  "result": {
+    "status": "fail",
+    "unit": "ps",
+    "mean": 39.546640999999994,
+    "sigma": 233.65616274758514,
+    "min": -1520.26,
+    "max": 541.2365,
+    "draws_over_limit": 151,
+    "draws_total": 900,
+    "corners_with_mean_over_150": 8,
+    "sigma_to_spec": 0.47271750807326623,
+    "sigma_to_spec_lower_bound": 0.4038283379548877
+  },
+  "negative_control": {
+    "status": "degraded-not-isolated",
+    "yield_estimate": 0.9233333333333333,
+    "note": "the control (flop clock edge ramped over 1500 ps) reads 92.3 % in-limit against the nominal's 83.2 % -- on this cell the control no longer isolates a degradation: the nominal itself fails (151/900 over the limit), so 'detected' is not a meaningful verdict here. The control's own aperture distribution also widens. Recorded as read, not tuned"
+  },
+  "per_corner": {
+    "worst_readable_means": "ss/1.080V/27C 442.1 ps (setup 163.2, hold 278.9), ss/1.080V/125C 333.9 ps, sf/1.080V/-40C 331.4 ps, sf/1.080V/27C 263.3 ps, sf/1.080V/125C 203.8 ps, ss/1.200V/-40C 188.0 ps, ss/1.200V/27C 157.3 ps, tt/1.080V/-40C 156.3 ps (8 of 45 corners over the 150 ps limit on their means; the low-supply ss/sf corners bind)",
+    "window_saturation": "ss/1.080V/-40C: the capture boundary leaves the bench's -400..+100 ps sweep window (setup readback ~-1598 ps, mean aperture -1159 ps); the row is unmeasurable there without a wider sweep, and the recorded fail stands either way"
+  },
+  "spot_check": "the mechanism is the adopted stage's asymmetric output edge, the same mechanism the clock-path t02 separations quantify (data fall-vs-rise output-delay mismatch +624 ps at ss/1.080V/-40C): the slow d1 transition through the half-width restore inverter keeps the D pin moving long after its 50 % crossing, so the hold side dominates (278.9 ps at ss/1.080V/27C). The receiver-output two-edge disposition (design/README.md) still closes at every corner on the separations, and at every corner where this record's window contains the boundary the measured rising-setup + falling-hold fit inside them (worst phase-window width 599 ps at ss/1.080V/27C)",
+  "note": "T-19 FAILS on the adopted cell: 151 of 900 draws outside the 150 ps one-sided limit, five corners with mean aperture 204-442 ps, and the capture boundary outside the bench window at ss/1.080V/-40C. This is the recorded cost of the #398 adoption (the #386 study did not measure T-19; it is not in that study's side-effect set), it is the row #190's rise/fall symmetry work targets, and it is the one STAT row item 6 / analog now fails on. The pre-adoption record 20261112T082047Z-t19 (mean 27.6 ps, sigma 12.5 ps, 900/900 under 150 ps, on the inverter cell) stays committed as append-only evidence. The spec row, its limit and the bench are unchanged; nothing was tuned."
+}

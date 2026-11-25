@@ -2,6 +2,53 @@
 
 Chronological record of merged PRs and closed issues. Maintained by the Guide role.
 
+### 2026-11-24
+
+- **PR #438**: feat(sim): scrub host home paths from new records and fail CI on new ones
+- **Issue #427** (closed): Record decks include live design/ netlists by path, so an archived record stops replaying when its cell changes
+- **Issue #437** (closed): provenance: committed sim records carry the host's home-directory path, and the new scrub covers one field in one bench
+
+### 2026-11-23
+
+- **PR #432**: refactor(ci): import RECORD_ROOTS directly in the format checker
+- **Issue #428** (closed): Remove the AST lookup for RECORD_ROOTS in the evidence-format checker
+- **PR #430**: chore: ignore .loom/account-ranking.* daemon state in .gitignore
+- **Issue #429** (closed): gitignore: .loom/account-ranking.* daemon state trips check-main-clean.sh on every sweep
+- **PR #424**: feat(design): adopt the supply-referenced RX data receiver, split clock legs to aib_rx_inv (T-10 fix)
+- **PR #425**: docs(channel-model): state seeded-defect band exit without the unmet 10% margin claim
+- **Issue #396** (closed): sim/channel-model README overstates the seeded-defect detection margin (measured: 2 %, not >=10 %)
+- **PR #423**: ci: accept freshness-run membership as generator coverage in the completeness check
+- **Issue #395** (closed): Use the generator freshness run to establish CI coverage and drop five manual entries
+- **Issue #398** (in progress): adopt the supply-referenced RX input stage for the `aib_rx_data` data lanes — receive split landed (`aib_rx_inv` carries the committed inverter for the clock legs), T-10 passes on the adopted cell (0/5400 out), layout/DRC/LVS/PEX re-attested, T-19 recorded as the adoption's failing row (#190 tracks the output-stage fix)
+- **PR #391**: mc: re-run T-15/T-16 Monte Carlo on the current cells; both rows pass the 7-sigma gate
+- **Issue #385** (closed): T1 item 6 (analog): re-run the T-15 / T-16 Monte Carlo campaigns on the current cells — the cited failing records predate two resizes
+- **PR #421**: chore(sim): remove the closed T-16 attribution scaffolding
+- **Issue #420** (closed): Hoist duplicated PWL stimulus helpers into sim/gen_common.py
+- **Issue #418** (closed): Remove the closed T-16 attribution scaffolding from sim/channel-eye (record is self-contained)
+- **PR #417**: fix(ci): fail CI when a record deck's .include stops resolving
+- **PR #416**: fix: pin content_hash on every pinnable evidence citation in the signoff manifest
+- **PR #413**: evidence: re-cite item 5 analog records re-run on the post-e47bb80 pad cell
+- **PR #412**: chore(sim): remove the closed T-16 sizing-study scaffolding
+- **PR #410**: feat(ci): check cited sim records' netlist closures against the tree
+- **PR #399**: evidence(sim): screen and confirm a supply-referenced RX input stage for T-10
+- **Issue #415** (closed): signoff/block-manifest.json: 18 of 37 evidence entries carry no content_hash pin
+- **Issue #414** (closed): Record bench decks' .include paths are staging-dir-relative, so archived decks can silently stop resolving
+- **Issue #411** (closed): Remove the completed #251 T-16 sizing-study scaffolding (12 files, 2576 lines)
+- **Issue #408** (closed): T1 item 5 (analog): re-run the cited dc-static, channel-eye and clock-path records on the current cells — each cites aib_pad_esd at its pre-e47bb80 hash
+- **Issue #405** (closed): No CI check binds a cited analog record's netlist_closure to the tree, so a design/*.spice change silently staleness-es cited evidence
+- **Issue #386** (closed): T-10: receiver threshold fails Monte Carlo on systematic corner shift (8 of 45 corner means outside +-60 mV) — sizing study for the aib_rx_data input stage
+
+### 2026-11-22
+
+- **PR #409**: test: guard test_checkers SUITES and loading against check_local.sh
+- **PR #404**: refactor: split scripts/ci/test_checkers.py into four sibling suites
+- **Issue #406** (closed): Nothing asserts test_checkers.py's SUITES matches check_local.sh, and no CI job runs the aggregator
+- **Issue #401** (closed): Split monolithic scripts/ci/test_checkers.py (2,635 lines) into focused sibling suites
+- **PR #402**: docs: correct the Resd PolyRes coordinates in layout/README.md
+- **Issue #394** (closed): Correct the Resd PolyRes coordinates recorded in layout/README.md (#387 regeneration)
+- **PR #390**: fix(layout,ci): draw Resd at the netlist l=1u and check the device table in CI
+- **Issue #387** (closed): layout: the committed I/O column still draws Resd 2 um x 2 um while design/aib_pad_esd.spice is l=1u — regenerate before the item 7 delta campaign
+
 ### 2026-11-21
 
 - **PR #393**: feat(sim,signoff): add the T-12 channel-model conformance bench and cite its record

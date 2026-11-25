@@ -1,0 +1,10 @@
+* T-10: receiver threshold. The receiver input is swept as a fraction of VDDIO;
+* dnorm is the receiver output normalised to VDDIO, so the 50 % crossing is a
+* literal level at every supply corner. Pre-layout, mismatch via the PDK
+* mos_*_mismatch sections (sg13_lv_* per-instance), cell included from design/.
+Vddio vddio 0 dc 1.2
+Vfr fr 0 dc 0.5
+Bpin pad 0 V=v(fr)*v(vddio)
+.include ../../design/aib_rx_data.spice
+Xrx pad dout vddio 0 aib_rx_data
+Bdn dnorm 0 V=v(dout)/v(vddio)

@@ -1,0 +1,4 @@
+{
+  "description": "Known-stale netlist-closure members of cited sim records, each pending the re-run its reason names. Shrink-only: scripts/ci/check_netlist_closure.py fails on an entry that no longer mismatches, so an entry is dropped when its re-run lands, never edited to cover a new mismatch (#405).",
+  "entries": []
+}
