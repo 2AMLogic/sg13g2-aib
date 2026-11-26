@@ -13,7 +13,9 @@ DR-0013). Simulated, pre-layout; post-layout re-runs follow #37.
 | T-19 capture window | **recorded, fails on the adopted cell** | `records/20261123T094302Z-t19/` (the #398 re-run; the pre-adoption pass `20261112T082047Z-t19/` stays as append-only evidence; #190 tracks the fix) |
 
 The manifest cites all six rows under `spec_rows."6.analog"`. Item 6 / analog is `unmet`
-(`check_failed`). The November 12 TX records for T-13 and T-14 fail the 7-sigma gate.
+(`check_failed`). The November 12 TX records for T-13 and T-14 fail the 7-sigma gate
+on the pad cell that predates the XResd change in `e47bb80`. The current cell's TX skew
+is unmeasured. [Issue #447](https://github.com/2AMLogic/sg13g2-aib/issues/447) tracks both reruns.
 On the adopted cell, T-10, T-15 and T-16 pass. T-19 fails the 150 ps capture aperture
 limit at low-supply ss/sf corners. Issue #190 tracks the output-stage work.
 
