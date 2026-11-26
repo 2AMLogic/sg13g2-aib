@@ -5,6 +5,7 @@
 .include ../../spec/channel/channel_rc.cir
 .include ../../design/aib_tx_data.spice
 .include ../../design/aib_rx_data.spice
+.include ../../design/aib_rx_inv.spice
 .include ../../design/aib_pad_esd.spice
 .subckt link txp rxp gnd
 Xch txp rxp gnd chan_rlc len_mm=3
@@ -23,7 +24,7 @@ Bda da 0 V = v(pa)*v(vdd_atx)
 Bdcp dcp 0 V = v(pc)*v(vdd_ctx)
 Bdcn dcn 0 V = v(pcb)*v(vdd_ctx)
 Xa da douta rxa vdd_atx vdd_arx lane_deg
-Xcp dcp doutcp rxc vdd_ctx vdd_crx lane
-Xcn dcn doutcn rxcb vdd_ctx vdd_crx lane
+Xcp dcp doutcp rxc vdd_ctx vdd_crx lane_clk
+Xcn dcn doutcn rxcb vdd_ctx vdd_crx lane_clk
 Bdsa dsa 0 V = v(rxa) - 0.5*v(vdd_arx)
 Bcs csig 0 V = v(rxc) - v(rxcb)

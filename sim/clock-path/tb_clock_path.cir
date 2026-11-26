@@ -5,11 +5,13 @@
 *
 * Stimulus (clock_stim.inc): ideal complementary 50 % forwarded clock at 500 MHz (1 Gb/s DDR), so the
 * measured DCD is what the TX clock path adds; data toggles every UI, clock edges center aligned.
-* vdd_tx and vdd_rx are swept together by klt. design/aib_{tx,rx}_clk.spice embed aib_tx_data and
-* aib_rx_data, so the data cells are not included separately.
+* vdd_tx and vdd_rx are swept together by klt. Receive split (#398): design/aib_rx_clk.spice
+* embeds aib_rx_inv (the committed inverter receiver) in both clock legs, so the data cell
+* aib_rx_data -- the supply-referenced receiver -- is included separately for the data lane.
 .include ../../spec/channel/channel_rc.cir
 .include ../../design/aib_tx_clk.spice
 .include ../../design/aib_rx_clk.spice
+.include ../../design/aib_rx_data.spice
 .include ../../design/aib_pad_esd.spice
 .subckt link txp rxp gnd
 Xch txp rxp gnd chan_rlc len_mm=3

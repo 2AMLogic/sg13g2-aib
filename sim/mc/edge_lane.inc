@@ -4,6 +4,9 @@
 * Same lane as sim/channel-eye/tb_body.inc (DOUT carries the declared 5 fF load); the stimulus
 * is one edge instead of PRBS-7. Mismatch is per instance (mos_*_mismatch sections).
 * OE tied high (driving), weak pull-up gate PUN high (off), pull-down gate PD low (off).
+* Receive split (#398): `lane` is a data lane on aib_rx_data (the supply-referenced receiver);
+* `lane_clk` is the same lane on aib_rx_inv, the committed inverter receiver the clock pair
+* (aib_rx_clk) uses in both legs. tb_t16.cir instantiates lane_clk for its clock pair.
 .subckt lane din dout rxp vtx vrx
 Xtx   din vtx vtx 0 txi vtx 0 aib_tx_data
 Xesdt txp txi vtx 0 aib_pad_esd
@@ -12,3 +15,11 @@ Xesdr rxp rxi vrx 0 aib_pad_esd
 Xrx   rxi dout vrx 0 aib_rx_data
 Cdout dout 0 5f
 .ends lane
+.subckt lane_clk din dout rxp vtx vrx
+Xtx   din vtx vtx 0 txi vtx 0 aib_tx_data
+Xesdt txp txi vtx 0 aib_pad_esd
+Xlnk  txp rxp 0 link
+Xesdr rxp rxi vrx 0 aib_pad_esd
+Xrxi  rxi dout vrx 0 aib_rx_inv
+Cdout dout 0 5f
+.ends lane_clk

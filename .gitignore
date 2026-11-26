@@ -21,15 +21,6 @@ sim/build/
 # (generated deck + Id-Vgs .dat) and never cleans it up; the record itself
 # lands in sim/pdk-smoke/records/<stamp>/.
 sim/.work/
-# sim/channel-eye: run_t16attr.sh regenerates the four T-16 attribution requests
-# with gen_t16attr.py before every run, so the bench-directory copies are
-# disposable output. The run's own copies stay tracked under records/.
-/sim/channel-eye/request_t16attr_*.json
-# sim/channel-eye: run_t16sizing.sh likewise regenerates the finalist sizing
-# request with gen_t16sizing.py --finalist before every fin-* run (no --check
-# guards it), so the bench-directory copy is disposable output. The run's own
-# copy stays tracked under records/.
-/sim/channel-eye/request_t16sz_fin_*.json
 # cocotb/Icarus build + result artifacts (verification/)
 sim_build/
 results.xml
@@ -116,6 +107,10 @@ results.xml
 .loom/gh-config-by-owner-*/
 /.loom-local/
 # <<< loom-managed <<<
+
+# daemon token-pool state (tokens check --ranking); the loom-managed block above
+# lacks it, so it is ignored here until the template ships upstream in Loom.
+.loom/account-ranking.*
 
 # Repo Skills machine-local install metadata (absolute source path + timestamp)
 .claude/skills/repo/.install-local.json

@@ -173,7 +173,7 @@ class GeneratorTests(unittest.TestCase):
         self.assertEqual(len(t16), 8)
         self.assertTrue(all("TRIG v(dsa)" in c for _, c in t15))
         # T-16 entries are the selection itself (bit index, polarities, crossing counts)
-        # plus the card rendered from it, which gen_t16attr.py consumes unparsed (#388).
+        # plus the card rendered from it (#388).
         self.assertTrue(all("TRIG v(dsa)" in e["card"] for e in t16))
         self.assertTrue(all({"i", "pol", "n", "cpol", "cn"} <= e.keys() for e in t16))
 

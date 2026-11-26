@@ -31,15 +31,15 @@ hygiene, power delivery) read `met` in both partitions, as do `5.digital` and
   T-29 as open work (#194, #195, #196, #176). DR-0026 removed T-02 and T-04, and DR-0028 removes T-05: the
   operator ruled on 2026-11-18 that the ungraded SIM leg leaves the row set,
   its measured load and delay staying reported inputs to T-20 and T-13.
-- **Item 6 / analog.** T-19 passes; T-10, T-15 and T-16 are recorded and fail
-  their sigma gates (`sim/mc/README.md`); T-13 and T-14 have no campaign on
-  `main` (#136).
+- **Item 6 / analog.** T-15, T-16 (2026-11-20 re-run, #385) and T-19 pass their
+  sigma gates (`sim/mc/README.md`); T-10 is recorded and fails (#386 tracks its
+  re-run on the current cells); T-13 and T-14 have no campaign on `main` (#136).
 - **Item 7 / analog.** The four I/O cells extract cleanly, but nothing is
   graded: `klt pex` cannot yet simulate an sg13g2 extraction
   ([klayout-tools#5491](https://github.com/2AMLogic/klayout-tools/issues/5491)).
   No spec row has been measured post-layout.
 - **Item 8, both partitions.** The report follows the records: of 30 rows,
-  16 pass, 3 fail (T-10, T-15, T-16) and 11 are `not-yet-measured`.
+  19 pass, 1 fails (T-10) and 10 are `not-yet-measured`.
 
 On the README's maturity ladder: I/O cells simulated across PVT, channel
 simulated end to end over CH-3MM-RC (with the ±20 % R/C spread run of #252),
@@ -120,9 +120,9 @@ Waiting on a maintainer decision:
 Waiting on an upstream tool fix: klayout-tools#5491, for item 7 / analog
 (#226).
 
-Item 5 / analog stays `unmet` while its five declared gaps stand; the spec
-questions above hold three of them. Items 6 and 8 cannot read `met` while
-T-10, T-15 and T-16 fail; the spec is not relaxed for that.
+Item 5 / analog stays `unmet` with four declared gaps. The spec questions
+above hold T-21 and T-25. Items 6 and 8 cannot read `met` while
+T-10 fails and T-13 / T-14 have no campaign; the spec is not relaxed for that.
 
 ## Not planned
 

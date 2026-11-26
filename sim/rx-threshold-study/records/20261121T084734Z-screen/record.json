@@ -1,0 +1,238 @@
+{
+  "record": "rx-threshold-study",
+  "utc_stamp": "20261121T084734Z",
+  "kind": "simulated",
+  "claim_scope": "BOTH, for the study cell only: the receiver input stage at ideal DC/AC/tran stimulus; the channel legs (clk, t16-*) additionally carry the declared CH-3MM-RC model.",
+  "study": "issue #386 receiver-threshold sizing study; candidates are study cells, design/ is untouched",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 45,
+  "rows": {
+    "T-10": {
+      "verdict": "reported",
+      "pass": 405,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  },
+  "report_only_ranges": {
+    "rx_up.vddio_v": {
+      "spec_row": null,
+      "min": [
+        1.08,
+        "ff/1.080V/-40C"
+      ],
+      "max": [
+        1.32,
+        "tt/1.320V/27C"
+      ]
+    },
+    "rx_up.vth_a2": {
+      "spec_row": null,
+      "min": [
+        0.4800659,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5530892,
+        "sf/1.080V/125C"
+      ]
+    },
+    "rx_up.vth_base": {
+      "spec_row": null,
+      "min": [
+        0.4946053,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5669976,
+        "sf/1.080V/125C"
+      ]
+    },
+    "rx_up.vth_l25": {
+      "spec_row": null,
+      "min": [
+        0.4325846,
+        "fs/1.080V/125C"
+      ],
+      "max": [
+        0.4958929,
+        "sf/1.080V/-40C"
+      ]
+    },
+    "rx_up.vth_l50": {
+      "spec_row": null,
+      "min": [
+        0.4074996,
+        "fs/1.080V/125C"
+      ],
+      "max": [
+        0.4695643,
+        "sf/1.080V/-40C"
+      ]
+    },
+    "rx_up.vth_r20": {
+      "spec_row": null,
+      "min": [
+        0.4876245,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5552498,
+        "sf/1.080V/125C"
+      ]
+    },
+    "rx_up.vth_r225": {
+      "spec_row": null,
+      "min": [
+        0.4913432,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5614727,
+        "sf/1.080V/125C"
+      ]
+    },
+    "rx_up.vth_r30": {
+      "spec_row": null,
+      "min": [
+        0.5001073,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.576466,
+        "sf/1.080V/125C"
+      ]
+    },
+    "rx_up.vth_r35": {
+      "spec_row": null,
+      "min": [
+        0.5046284,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.5843833,
+        "sf/1.080V/125C"
+      ]
+    },
+    "rx_up.vth_vref": {
+      "spec_row": null,
+      "min": [
+        0.4981683,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        0.508131,
+        "ff/1.320V/125C"
+      ]
+    },
+    "t10_a2_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -22.1627,
+        "fs/1.320V/27C"
+      ],
+      "max": [
+        57.33634,
+        "sf/1.080V/125C"
+      ]
+    },
+    "t10_base_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -5.82628,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        79.04041,
+        "sf/1.320V/125C"
+      ]
+    },
+    "t10_l25_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -83.0485,
+        "fs/1.320V/125C"
+      ],
+      "max": [
+        -4.43567,
+        "sf/1.080V/-40C"
+      ]
+    },
+    "t10_l50_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -114.392,
+        "fs/1.320V/27C"
+      ],
+      "max": [
+        -32.8706,
+        "sf/1.080V/-40C"
+      ]
+    },
+    "t10_r20_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -13.3655,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        60.85332,
+        "sf/1.320V/125C"
+      ]
+    },
+    "t10_r225_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -9.34934,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        70.4752,
+        "sf/1.320V/125C"
+      ]
+    },
+    "t10_r30_mv": {
+      "spec_row": "T-10",
+      "min": [
+        0.115884,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        93.7563,
+        "sf/1.320V/125C"
+      ]
+    },
+    "t10_r35_mv": {
+      "spec_row": "T-10",
+      "min": [
+        4.998672,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        106.079,
+        "sf/1.320V/125C"
+      ]
+    },
+    "t10_vref_mv": {
+      "spec_row": "T-10",
+      "min": [
+        -1.97824,
+        "fs/1.080V/-40C"
+      ],
+      "max": [
+        10.73292,
+        "ff/1.320V/125C"
+      ]
+    }
+  },
+  "batch_job_ids": [
+    "klt-sim-4e1ce4ea8ad0"
+  ],
+  "runner_klt_version": [
+    "0.9.0"
+  ]
+}

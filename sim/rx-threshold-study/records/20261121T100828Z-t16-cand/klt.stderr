@@ -1,0 +1,126 @@
+klt sim: notice: splitting 45 units into 45 batch jobs of at most 1 units each (request.batch.job_ceiling_check / max_units_per_job)
+klt sim: batch job klt-sim-274e1023a0ab: done
+klt sim: batch job klt-sim-8e643dbb6fe9: done
+klt sim: batch job klt-sim-fe7a5eb9600c: done
+klt sim: shards 32/45 launched, 1 launching, 12 pending, 32 collected; launch rate unknown, ETA unknown
+klt sim: batch job klt-sim-436db02832f7: done
+klt sim: batch job klt-sim-4f0b573d7e19: done
+klt sim: batch job klt-sim-1bb4fec0f5c9: done
+klt sim: batch job klt-sim-0f54e92ad058: done
+klt sim: batch job klt-sim-57e55b0fc5a3: done
+klt sim: batch job klt-sim-8e83cce9334c: done
+klt sim: batch job klt-sim-0eacb5ca9553: done
+klt sim: batch job klt-sim-cbeb0255d1ec: done
+klt sim: batch job klt-sim-2d3b8991c79c: done
+klt sim: batch job klt-sim-5edae540f65b: done
+klt sim: batch job klt-sim-f60711f1c0ac: done
+klt sim: batch job klt-sim-446a07bd7227: done
+klt sim: batch job klt-sim-98ebad2e01f1: done
+klt sim: batch job klt-sim-4a7f01d88a1c: done
+klt sim: batch job klt-sim-553930bfff10: done
+klt sim: batch job klt-sim-04377c27759f: done
+klt sim: batch job klt-sim-e379a95c7370: done
+klt sim: batch job klt-sim-25b9aad7215e: done
+klt sim: batch job klt-sim-4e8175e725bc: done
+klt sim: batch job klt-sim-4ea319e88817: done
+klt sim: batch job klt-sim-68f1286302b5: done
+klt sim: batch job klt-sim-a0a3d89329b4: done
+klt sim: batch job klt-sim-9232f4c72a4d: done
+klt sim: batch job klt-sim-575889b6a5ca: done
+klt sim: batch job klt-sim-91842aeaf80c: done
+klt sim: batch job klt-sim-b541459478b6: done
+klt sim: waiting for capacity: 33 of 45 shards pending, 1 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 32 of 45 shards pending, 2 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 27 of 45 shards pending, 3 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-c42b3b9f7c45: done
+klt sim: waiting for capacity: 27 of 45 shards pending, 4 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 27 of 45 shards pending, 5 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-3eafaf04226d: done
+klt sim: waiting for capacity: 25 of 45 shards pending, 6 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 24 of 45 shards pending, 7 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-68c45f9c88e2: done
+klt sim: waiting for capacity: 21 of 45 shards pending, 8 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 20 of 45 shards pending, 9 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 20 of 45 shards pending, 10 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 19 of 45 shards pending, 11 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 18 of 45 shards pending, 12 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: waiting for capacity: 17 of 45 shards pending, 13 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-0aaa4902a119 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-0aaa4902a119 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-017e0aea5a05 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-017e0aea5a05 state=no status.json yet elapsed=1s
+klt sim: waiting for capacity: 13 of 45 shards pending, 11 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-0aaa4902a119: running
+klt sim: batch job klt-sim-0aaa4902a119 state=running elapsed=32s
+klt sim: batch job klt-sim-017e0aea5a05: running
+klt sim: batch job klt-sim-017e0aea5a05 state=running elapsed=32s
+klt sim: batch job klt-sim-d0b29130c3bb had been submitted but never launched; launched it
+klt sim: waiting for capacity: 13 of 45 shards pending, 10 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-d0b29130c3bb state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-a2b839440567 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-a2b839440567 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-0aaa4902a119: done
+klt sim: batch job klt-sim-017e0aea5a05: done
+klt sim: batch job klt-sim-d0b29130c3bb: running
+klt sim: batch job klt-sim-d0b29130c3bb state=running elapsed=32s
+klt sim: batch job klt-sim-a2b839440567: running
+klt sim: batch job klt-sim-a2b839440567 state=running elapsed=32s
+klt sim: waiting for capacity: 11 of 45 shards pending, 9 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-d0b29130c3bb: done
+klt sim: batch job klt-sim-a2b839440567: done
+klt sim: batch job klt-sim-f99fa8fdadb6 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-f99fa8fdadb6 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-3a8f1e947318 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-3a8f1e947318 state=no status.json yet elapsed=1s
+klt sim: waiting for capacity: 9 of 45 shards pending, 7 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-6e3ea89646a0 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-6e3ea89646a0 state=no status.json yet elapsed=2s
+klt sim: batch job klt-sim-644879c7e3f8 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-644879c7e3f8 state=no status.json yet elapsed=1s
+klt sim: waiting for capacity: 9 of 45 shards pending, 5 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-f99fa8fdadb6: running
+klt sim: batch job klt-sim-f99fa8fdadb6 state=running elapsed=32s
+klt sim: batch job klt-sim-3a8f1e947318: running
+klt sim: batch job klt-sim-3a8f1e947318 state=running elapsed=32s
+klt sim: batch job klt-sim-6e3ea89646a0: running
+klt sim: batch job klt-sim-6e3ea89646a0 state=running elapsed=33s
+klt sim: batch job klt-sim-644879c7e3f8: running
+klt sim: batch job klt-sim-644879c7e3f8 state=running elapsed=31s
+klt sim: batch job klt-sim-f99fa8fdadb6: done
+klt sim: batch job klt-sim-3a8f1e947318: done
+klt sim: batch job klt-sim-6e3ea89646a0: done
+klt sim: batch job klt-sim-644879c7e3f8: done
+klt sim: shards 41/45 launched, 4 launching, 0 pending, 40 collected; launch rate 1.5/min, ETA 3m
+klt sim: batch job klt-sim-6477ef5dc6f2 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-6477ef5dc6f2 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-6477ef5dc6f2: running
+klt sim: batch job klt-sim-6477ef5dc6f2 state=running elapsed=33s
+klt sim: waiting for capacity: 5 of 45 shards pending, 4 waiting on a launch (last refusal: batch_no_capacity)
+klt sim: batch job klt-sim-6477ef5dc6f2: done
+klt sim: batch job klt-sim-986d2e1d7606 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-05d44e9baa27 had been submitted but never launched; launched it
+klt sim: batch job klt-sim-986d2e1d7606 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-05d44e9baa27 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-986d2e1d7606: running
+klt sim: batch job klt-sim-986d2e1d7606 state=running elapsed=32s
+klt sim: batch job klt-sim-05d44e9baa27: running
+klt sim: batch job klt-sim-05d44e9baa27 state=running elapsed=32s
+klt sim: batch job klt-sim-986d2e1d7606: done
+klt sim: batch job klt-sim-05d44e9baa27: done
+klt sim: notice: cannot re-attach batch job klt-sim-d1c088e9c437 (batch-fleet-provision.sh launch failed (exit 75): error: 224 vCPU already running + 1 instance(s) of up to 32 vCPU exceeds BATCH_MAX_VCPU=224, and only 0 type(s) fit the 0 vCPU left (floor 2) — the spot quota is shared with ci-spot (batch-fleet.md §vCPU budget) (capacity wait budget of 599.994s exhausted after 6 launch attempt(s)) [remote job klt-sim-d1c088e9c437: unknown]); submitting that shard again
+klt: batch job klt-sim-1f9f26ef365b submitting to s3://<bucket>/jobs/klt-sim-1f9f26ef365b
+klt sim: notice: cannot re-attach batch job klt-sim-347591cf265e (batch-fleet-provision.sh launch failed (exit 75): error: 224 vCPU already running + 1 instance(s) of up to 32 vCPU exceeds BATCH_MAX_VCPU=224, and only 0 type(s) fit the 0 vCPU left (floor 2) — the spot quota is shared with ci-spot (batch-fleet.md §vCPU budget) (capacity wait budget of 599.994s exhausted after 6 launch attempt(s)) [remote job klt-sim-347591cf265e: unknown]); submitting that shard again
+klt: batch job klt-sim-0ab729d2789c submitting to s3://<bucket>/jobs/klt-sim-0ab729d2789c
+klt sim: batch job klt-sim-1f9f26ef365b: submitted
+klt sim: batch job klt-sim-0ab729d2789c: submitted
+klt sim: batch job klt-sim-1f9f26ef365b launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-1f9f26ef365b`
+klt sim: batch job klt-sim-1f9f26ef365b state=no status.json yet elapsed=1s
+klt sim: shards 45/45 launched, 0 launching, 0 pending, 43 collected; launch rate 1.2/min, ETA 0m
+klt sim: batch job klt-sim-0ab729d2789c launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-0ab729d2789c`
+klt sim: batch job klt-sim-0ab729d2789c state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-1f9f26ef365b: running
+klt sim: batch job klt-sim-1f9f26ef365b state=running elapsed=32s
+klt sim: batch job klt-sim-0ab729d2789c: running
+klt sim: batch job klt-sim-0ab729d2789c state=running elapsed=32s
+klt sim: batch job klt-sim-1f9f26ef365b: done
+klt sim: batch job klt-sim-0ab729d2789c: done

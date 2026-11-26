@@ -121,8 +121,7 @@ def skew_pairs():
 
     A T-16 dict carries what the selection loop computes -- name, bit index `i`, data
     polarity `pol` with crossing count `n`, clock polarity `cpol` with crossing count
-    `cn` -- plus the measurement `card` rendered from those fields, so gen_t16attr.py
-    consumes the selection itself instead of re-parsing the card (#388).
+    `cn` -- plus the measurement `card` rendered from those fields (#388).
     """
     b = stream()
     tr = [t for t in transitions(b) if 15 <= t[0] <= 130]

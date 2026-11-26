@@ -1,0 +1,25 @@
+{
+  "label": "rx-threshold",
+  "corners": 45,
+  "kind": "simulated",
+  "rows": {
+    "T-10": {
+      "verdict": "reported",
+      "measurements": [
+        "t10_a2_mv",
+        "t10_base_mv",
+        "t10_l25_mv",
+        "t10_l50_mv",
+        "t10_r20_mv",
+        "t10_r225_mv",
+        "t10_r30_mv",
+        "t10_r35_mv",
+        "t10_vref_mv"
+      ],
+      "pass": 405,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  }
+}

@@ -15,7 +15,7 @@
         "check": "stream_readable",
         "role": "layout",
         "passed": true,
-        "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
+        "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
       },
       {
         "check": "top_cell_non_empty",
@@ -35,7 +35,7 @@
   },
   "provenance": {
     "klt_version": "0.9.0",
-    "klayout_version": "0.30.13",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": null,
     "input": {
@@ -43,11 +43,11 @@
         "path": "layout/aib_io_column.gds",
         "scope": "repo"
       },
-      "content_hash": "sha256:54b4295647d7b67953d29ac05358e9af4676685f910b41943d52cdd43dcfdd99"
+      "content_hash": "sha256:d44ff0abe1d09c56edef4128a36c10335180f0c0db32bfdb2e90e7bedb530dfe"
     },
     "regeneration": {
       "generator": "uvx --from klayout-tools==$(cat signoff/KLT_VERSION) python -I layout/gen_io_column.py -o layout/aib_io_column.gds",
-      "regenerated_hash": "sha256:312041e0f2547e4a0420254c41c01b7717fa2d9aa95bb5df35c9bdcedec4a148",
+      "regenerated_hash": "sha256:b10e356c25dce92c6cefd4f1c7a22e2b15b1f858a629da37e21e42a9deb21c05",
       "hash_kind": "geometry"
     }
   }
