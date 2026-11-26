@@ -191,7 +191,7 @@ T-13 (DR-0023, DR-0028).
 | T-20 | no end-to-end `SIM` confirmation and no `ANALYSIS` roll-up; fed by T-19 and T-21, both open | #194 |
 | T-21 | `SIM` half of the dll-interface contract; this repo does not design a DLL (DR-0020) | #195 |
 | T-25 | 0.5 A diode/clamp transient blocked on the T-24/T-25 device trade (DR-0017, DR-0018) | #196 |
-| T-29 | no loopback mux exists in `design/`, so L1/L2 cannot be exercised; also a TC row | #176 |
+| T-29 | TC records leave per-group enable and received-bit checks open on the current cells | #446 |
 
 `SIM-MC` rows (T-10, T-13, T-14, T-19) belong to item 6, not here.
 
@@ -637,9 +637,10 @@ client, so both are pinned in `gen_channel_eye.py` (ceiling undocumented:
 runs them concurrently: `#5544`).
 
 **L1 record (#176, DR-0019): `channel-eye/records/20261113T105218Z-l1/`** — the first
-record of the **L1 on-die loopback**, and T-29's `SIM` leg for L1 (the L2 leg is the
-existing `20261110T083756Z-tc` record). Simulated, TC scope, **never a CH claim**. 135
-corners = PVT-FULL x the route's −20 %, nominal and +20 % R and C points (`corners.params`
+record of the **L1 on-die loopback**. It and the L2 record (`20261110T083756Z-tc`)
+provide historical support for T-29. Both runs held TX enables high and predate the
+current pad and data receiver. T-29's per-group and received-sequence checks are open (#446).
+Scope is TC. The 135 simulated corners cover PVT-FULL x the route's −20 %, nominal and +20 % R and C points (`corners.params`
 zips `kr_l1`/`kc_l1`, so R and C move together), 20 batch jobs of 7 units, `klt sim` exit 0,
 135/135 corners `pass`. T-01 passes 270/270 (`dout` edge count 64.0 on both data lanes at
 every corner) and T-09 passes 2160/2160 (worst over/undershoot 0.0053 x VOS against the
@@ -667,7 +668,7 @@ distortion at the TX output, |DCD| <= 3 %, ideal 50 % input so only the TX clock
 contributes), T-04 (clk/clkb crossing at the RX pins and outputs; report-only, since
 `spec/target-spec.md` gives no numeric crossing bound) and T-02 (SIM half: data edge versus
 both clock edges at the RX; report-only, T-19/T-20 are not graded here). All rows are CH claims.
-T-21 and T-29 are declared gaps (no DLL-side model, no loopback mux in `design/`).
+T-21 and T-29 are gaps in this clock-path bench, which exercises the modeled channel.
 
 ```bash
 python3 -I sim/clock-path/gen_clock_path.py --check   # generated files fresh?
@@ -700,8 +701,8 @@ and `design/` and `spec/` are untouched.
   `main` — the two measure different nodes. Whether the T-20 margin still closes is a T-19/T-20
   budget question, filed as #177; this record relaxes no bound.
 - **T-21 and T-29 are declared gaps**, not claimed: T-21 needs a DLL-side model this repo does not
-  build (scope discipline), and no loopback mux exists in the five `design/` cells for T-29 (which
-  is a TC row besides). Follow-ups: #175 (T-21), #176 (T-29).
+  build (scope discipline). T-29 requires a TC loopback test with per-group enable and observation.
+  Follow-ups: #175 (T-21), #446 (T-29).
 
 See the record's `README.md` for the per-corner numbers and the decomposition.
 

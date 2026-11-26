@@ -61,8 +61,8 @@ and nothing more: `l1` is the digital select, enumerated in both states by
 
 - **`l1 = 1` is not the spec's L1.** The spec's L1 is a TopMetal2 route between two real
   I/O cells (`spec/test-configuration.md`, DR-0009); exercising it needs `l1 = 0`, so that
-  the RX slices sample `rx_wire`, the real RX cell's output. The `SIM` leg of L1 is
-  `sim/channel-eye/tb_l1.cir`, and of L2 the existing `tb_tc.cir` record.
+  the RX slices sample `rx_wire`, the real RX cell's output. The L1 and L2 electrical
+  records provide supporting evidence. Per-group enable and received-bit checks are open (#446).
 - **There is no L2 control input, and none is owed.** Which loopback a wire group offers
   is set by its on-die route and its bonding, not by an RTL state (DR-0019).
 - **Selection granularity is the wire group.** `sdr` and `l1` are one per

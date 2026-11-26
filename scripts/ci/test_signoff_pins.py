@@ -473,6 +473,38 @@ class CharacterizationReportTests(unittest.TestCase):
             for line in unmapped:
                 self.assertIn("not-yet-measured", line)
 
+    def test_supporting_results_do_not_grade_the_row(self):
+        with tempfile.TemporaryDirectory() as t:
+            root = Path(t)
+            self.populate(root)
+            p = root / "measurements/row-evidence.json"
+            evidence = json.loads(p.read_text())
+            # T-01 passes. Cite its numbers for a second row as historical context.
+            graded = evidence["rows"]["T-01"]
+            supporting = [dict(e, supporting_only=True) for e in graded]
+            evidence["rows"]["T-29"] = supporting
+            # Even a missed historical bound cannot change a current measured verdict.
+            graded.append(dict(supporting[0], op="==", value="fail"))
+            p.write_text(json.dumps(evidence))
+            result = run(GEN, "--root", root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            lines = (root / "measurements/characterization-report.md").read_text().splitlines()
+            partial = next(line for line in lines if line.startswith("| T-29 |"))
+            self.assertIn("| not-yet-measured |", partial)
+            self.assertIn(supporting[0]["record"], partial)
+            self.assertIn("| pass |", next(line for line in lines if line.startswith("| T-01 |")))
+
+    def test_supporting_only_citation_cannot_cover_manifest(self):
+        def edit(root):
+            p = root / "measurements/row-evidence.json"
+            evidence = json.loads(p.read_text())
+            for entry in evidence["rows"]["T-01"]:
+                entry["supporting_only"] = True
+            p.write_text(json.dumps(evidence))
+        result = self.scenario(edit)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("does not grade", result.stderr)
+
     def test_manifest_cited_row_missing_from_map_fails(self):
         """A row the manifest cites as evidence must be graded, not silently not-yet-measured."""
         def drop(r):

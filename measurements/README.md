@@ -15,7 +15,10 @@ record was touched to produce it.
 
 Do not edit the report. It is generated from committed records and
 `row-evidence.json` (row id to record, field, corner, comparator). When a record
-for a row lands, add an entry there, then from the repo root:
+for a row lands, add an entry there. Use `"supporting_only": true` for a result
+that provides context without testing the row's target. The report displays its
+value and source. Only grading entries contribute to pass or fail, so a row with
+supporting entries alone stays `not-yet-measured`. Regenerate from the repo root:
 
 ```bash
 python3 -I scripts/ci/gen_characterization_report.py           # rewrites the report and signoff/attest/item8.json

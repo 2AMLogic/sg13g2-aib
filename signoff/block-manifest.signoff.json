@@ -597,7 +597,7 @@
           },
           {
             "id": "T-29",
-            "gap": "no loopback mux exists in design/, so L1/L2 cannot be exercised; also a TC row. Tracked in #176"
+            "gap": "current-cell TC evidence for independent group enables and the received bit sequence through L1 and L2 is pending (#446)"
           }
         ],
         "unratified_rows": [],

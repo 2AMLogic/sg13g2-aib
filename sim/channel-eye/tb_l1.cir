@@ -15,6 +15,7 @@
 .include ../../spec/channel/channel_rc.cir
 .include ../../design/aib_tx_data.spice
 .include ../../design/aib_rx_data.spice
+.include ../../design/aib_rx_inv.spice
 .include ../../design/aib_pad_esd.spice
 .param kr_l1=1 kc_l1=1
 .subckt link txp rxp gnd

@@ -63,7 +63,8 @@ def check_map_covers_manifest(root, mapping):
     silently omits a cited record and its row reads not-yet-measured (issue #230).
     """
     missing = [f"{row} from {d}/" for d, row in manifest_citations(root)
-               if not any(posixpath.dirname(e["record"]) == d for e in mapping.get(row, []))]
+               if not any(posixpath.dirname(e["record"]) == d and not e.get("supporting_only")
+                          for e in mapping.get(row, []))]
     if missing:
         sys.exit(f"{MANIFEST} cites row evidence under {'/'.join(CITED)} that {MAP} does not grade; "
                  f"add an entry citing a file in that record: {', '.join(missing)}")
@@ -99,10 +100,21 @@ def row_table(root, rows, mapping):
             counts[NYM] += 1
             out.append(f"| {rid} | {name} | — | — | — | {NYM} | — |")
             continue
-        results = [evaluate(root, e) for e in evs]
-        status = "pass" if all(r[2] for r in results) else "fail"
+        graded = []
+        measurements = []
+        for e in evs:
+            got, want, ok = evaluate(root, e)
+            if e.get("supporting_only"):
+                label = "supporting only"
+            else:
+                graded.append(ok)
+                label = f"needs {e['op']} {want}"
+            measurements.append(f"{e['basis']}: {got} ({label})")
+        status = NYM
+        if graded:
+            status = "pass" if all(graded) else "fail"
         counts[status] += 1
-        meas = "<br>".join(f"{e['basis']}: {g} (needs {e['op']} {w})" for e, (g, w, _) in zip(evs, results))
+        meas = "<br>".join(measurements)
         corner = "<br>".join(dict.fromkeys(e["corner"] for e in evs))
         scope = "<br>".join(dict.fromkeys(e["scope"] for e in evs))
         recs = "<br>".join(dict.fromkeys(link(e["record"]) for e in evs))

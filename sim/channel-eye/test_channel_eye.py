@@ -97,7 +97,7 @@ class GeneratorTests(unittest.TestCase):
 
     def test_l1_includes_the_cells_and_never_copies_them(self):
         tb = (HERE / "tb_l1.cir").read_text()
-        for cell in ("aib_tx_data", "aib_rx_data", "aib_pad_esd"):
+        for cell in ("aib_tx_data", "aib_rx_data", "aib_rx_inv", "aib_pad_esd"):
             self.assertIn(f".include ../../design/{cell}.spice", tb)
         self.assertNotIn(".subckt aib_", tb)     # no cell body is pasted into the bench
         self.assertIn(".include tb_body.inc", tb)

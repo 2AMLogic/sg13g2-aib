@@ -25,8 +25,8 @@ PATH instead of fetching the pin); the CI `rtl` job installs the pinned klt with
 - `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and with
   the datapath's `l1` loopback select on (with a decoy on `rx_wire`), mode switch, and the
   TX/RX cycle-accounting tests. The `l1` path is the **digital** select only and is not the
-  L1 electrical path of `spec/test-configuration.md` (DR-0019); T-29's `SIM` leg is in
-  `sim/channel-eye/` (`tb_l1.cir` for L1, `tb_tc.cir` for L2).
+  L1 electrical path of `spec/test-configuration.md` (DR-0019). The electrical benches
+  in `sim/channel-eye/` hold TX enables high. Per-group checks remain open (#446).
 - `tb_datapath.v`: bench top; zero-delay wire, `rx_clk` = `clk` delayed a quarter cycle.
 
 ## `klt functional-verification` requests (`klt/`)

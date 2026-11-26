@@ -120,7 +120,7 @@ Two consequences, stated plainly because they are easy to get wrong:
      the route's −20 %, nominal and +20 % R/C points, through the real
      `aib_tx_data` / `aib_pad_esd` / `aib_rx_data` cells.
    - `SIM` leg, L2: the existing `sim/channel-eye/records/20261110T083756Z-tc/`.
-   All three are scope **TC**. None of them is ever quoted as a CH result.
+   These are supporting results at **TC** scope. T-29 remains open (#446).
 4. **T-29's target, fallback, verification, PVT and scope cells in `target-spec.md` are
    unchanged**, and no limit is relaxed anywhere by this record.
 
@@ -161,14 +161,16 @@ Two consequences, stated plainly because they are easy to get wrong:
   `cfar = 0.1 pF`, as `tb_ch.cir` does, on top of the real cells' own pin capacitance.
   Both benches therefore load the receiver side the same way, and both over-count the pin
   load by that term.
-- **Selectability itself is not measured.** The per-group enable and observation above is
-  a structural property of the RTL and of the route and bond plan; no testbench in this
-  repo switches a group between L1 and L2, because no part exists to switch.
+- **Per-group enable and observation remain unverified.** The archived L1 and L2 runs held
+  all TX enables high. L1 counted edges and checked pin excursions. L2 checked pin
+  excursions. Both runs predate the pad resistor and data receiver changes, and L2 also
+  predates the TX predriver change. Even under the interpretation proposed here, T-29 needs
+  a current-cell test that enables two groups in turn, compares the received bits on each
+  active path to the transmitted sequence, and verifies the other group stays disabled (#446).
 - **No silicon.** T-29 is TC-scoped: it is what a part *could* show. Every number cited
   for it today is simulated or an RTL functional result.
-- **The clock lane's loopback** is not covered: `tb_l1.cir` carries the clk/clkb pair as
-  two `aib_tx_data` / `aib_rx_data` instances (as `tb_body.inc` does for every bench
-  here), not `aib_tx_clk` / `aib_rx_clk`.
+- **Clock-lane loopback** remains outside the evidence. The archived L1 bench used
+  `aib_rx_data` on all four lanes. The live bench uses `aib_rx_inv` on its clock lanes.
 
 ## Effects on other work
 
