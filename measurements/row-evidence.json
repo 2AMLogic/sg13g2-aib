@@ -594,26 +594,44 @@
     ],
     "T-13": [
       {
-        "record": "sim/mc/records/20261112T080126Z-t13/record.json",
-        "field": "result.sigma_to_spec",
-        "op": ">=",
-        "value": 7,
+        "record": "sim/mc/records/20261112T080126Z-t13/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
         "corner": "PVT-FULL, 45 corners (pooled)",
-        "scope": "BOTH",
-        "basis": "simulated, pre-layout Monte Carlo sigma-to-spec against the 7-sigma-per-side gate, limit +-40 ps (DR-0019)",
-        "note": "Simulated, not measured. Pooled over the 45-corner grid; no draw outside the limit, the gate is the 14 sigma peak-to-peak tail. TC reading is the on-die array skew, not covered by a single-lane-pair bench."
+        "scope": "CH",
+        "basis": "pre-layout TX pad simulation, klt yield verdict",
+        "note": "All 900 draws on the November 12 pad cell were within ±40 ps. The single-pair bench leaves TC on-die array skew unmeasured."
+      },
+      {
+        "record": "sim/mc/records/20261112T080126Z-t13/yield.json",
+        "field": "measurements[name=t13_skew_ps].sigma_target.lower_bound",
+        "op": ">=",
+        "value_field": "measurements[name=t13_skew_ps].sigma_target.k",
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "CH",
+        "basis": "95% lower confidence bound on sigma-to-spec (DR-0019)"
       }
     ],
     "T-14": [
       {
-        "record": "sim/mc/records/20261112T080126Z-t14/record.json",
-        "field": "result.sigma_to_spec",
-        "op": ">=",
-        "value": 7,
+        "record": "sim/mc/records/20261112T080126Z-t14/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
         "corner": "PVT-FULL, 45 corners (pooled)",
-        "scope": "BOTH",
-        "basis": "simulated, pre-layout Monte Carlo sigma-to-spec against the 7-sigma-per-side gate, limit +-20 ps (DR-0019)",
-        "note": "Simulated, not measured. Pooled over the 45-corner grid; no draw outside the limit, the gate is the 14 sigma peak-to-peak tail. TC reading is the on-die array skew, not covered by a single-lane-pair bench."
+        "scope": "CH",
+        "basis": "pre-layout TX pad simulation, klt yield verdict",
+        "note": "All 900 draws on the November 12 pad cell were within ±20 ps. The single-pair bench leaves TC on-die array skew unmeasured."
+      },
+      {
+        "record": "sim/mc/records/20261112T080126Z-t14/yield.json",
+        "field": "measurements[name=t14_dev_from_half_ui_ps].sigma_target.lower_bound",
+        "op": ">=",
+        "value_field": "measurements[name=t14_dev_from_half_ui_ps].sigma_target.k",
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "CH",
+        "basis": "95% lower confidence bound on sigma-to-spec (DR-0019)"
       }
     ]
   }

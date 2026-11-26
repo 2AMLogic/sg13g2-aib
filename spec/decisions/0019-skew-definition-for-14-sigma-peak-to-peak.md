@@ -2,8 +2,7 @@
 
 **Status**: proposed; ratified by the merge of the pull request that carries it
 (DR-0001, issue #136).
-**Rows**: T-13, T-14, T-15, T-16 (and T-19 when it lands, #138). **Amends**: nothing. No spec
-row or limit changes.
+**Rows**: T-13, T-14, T-15, T-16. **Amends**: nothing. No spec row or limit changes.
 
 ## Context
 
@@ -12,6 +11,9 @@ The skew rows of `spec/target-spec.md` are **STAT** (DR-0013) and their bound is
 how a peak-to-peak line maps to a `target_sigma` in `klt yield`. `sim/mc/README.md` has carried
 a reading ("Assumptions for ratification") since the T-15/T-16 records (`415a6f2`); this record
 ratifies it, so T-13/T-14 and T-15/T-16 use one definition.
+
+T-19 separately measures the receiver capture aperture (setup plus hold) against a
+one-sided maximum of 150 ps.
 
 ## Decision
 

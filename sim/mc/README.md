@@ -146,13 +146,13 @@ t16-mixed leg predicted for the split. The RX-pin T-16 value is not the receiver
 margin; the two-edge DDR disposition at the receiver outputs is recorded in
 `design/README.md` from the clock-path record.
 
-## T-13, T-14 (TX-output skew, CH and TC)
+## T-13, T-14 (TX-output skew, CH)
 
 Single-edge benches at the TX pad node (near-side output: `aib_tx_data` / `aib_tx_clk` plus `aib_pad_esd`;
 no channel, no receiver). `tb_t13.cir`: lane A rises and complement lane B falls together; skew is B's
 falling minus A's rising mid-rail crossing. `tb_t14.cir`: lane A rises, the center-aligned `aib_tx_clk` pair
 (`padc - padcb`) rises 500 ps later; the graded quantity is data-to-clock delay minus the nominal 0.5 UI.
-Limits +-40 ps / +-20 ps (0.04 / 0.02 UI at 1 Gb/s), `target_sigma` 7, definition ratified in DR-0019.
+Limits +-40 ps / +-20 ps (0.04 / 0.02 UI at 1 Gb/s), `target_sigma` 7 per side as proposed in DR-0019.
 45 corners, supplies of each block in lockstep, seeds 4413 / 4418, negative-control seeds 4414 / 4419.
 N: a 20-draw pilot (900 samples) gave a `klt yield` required N of 183 for both rows, so the pilot is the
 recorded run (verdict sufficient). Negative control: an extra 2 pF on one pad (`tb_t13_ctl.cir`,
@@ -162,8 +162,8 @@ recorded run (verdict sufficient). Negative control: an extra 2 pF on one pad (`
 **Results: both fail the 7-sigma gate** (no draw is outside the limit; the row fails on the tail). T-13: mean +2.5 ps,
 sigma 6.2 ps, sigma-to-spec 6.08 (lower bound 5.79) against 7, worst draw 18.3 ps. T-14: mean +1.0 ps, sigma 3.3 ps,
 sigma-to-spec 5.75 (lower bound 5.48) against 7, worst 14.4 ps. Distributions are not normal; pooled grid as for T-10.
-The limits are not relaxed. Scope: the CH value is the TX output before the channel; for TC the on-die array skew
-is what the shmoo observes, and this single-lane-pair spread is not that array measurement.
+The CH result measures a single lane pair at the TX output before the channel.
+TC on-die array skew remains unmeasured and requires the array shmoo.
 
 ## T-19 (receiver capture window, BOTH)
 
@@ -213,9 +213,9 @@ append-only evidence; nothing was tuned.
 
 ## Assumptions for ratification (not in the spec)
 
-- The skew and capture rows (T-13 to T-16 ratified in DR-0019; T-19 open, #138) read "14 sigma peak-to-peak" as a signed
-  lane-to-lane difference with limits +-bound and `target_sigma` 7.
-- T-19 (#138) is a one-sided width limit (150 ps) graded at `target_sigma` 7, the one-sided reading of the same
-  14 sigma peak-to-peak; the negedge flop (same cell, inverted clock) is not run as a second measurement and
+- T-13 through T-16 use signed crossing-time differences with limits +-bound. DR-0019 reads
+  "14 sigma peak-to-peak" as `target_sigma` 7 on each side.
+- T-19 (#138) measures the setup-plus-hold aperture against a one-sided 150 ps maximum at
+  `target_sigma` 7. The negedge flop (same cell, inverted clock) is not run as a second measurement and
   no posedge/negedge difference was estimated; setup and hold are quantised to the 10 ps sweep step
   (about 4.1 ps rms on the aperture).
