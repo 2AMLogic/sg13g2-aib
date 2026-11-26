@@ -21,7 +21,8 @@ Two things therefore need deciding:
 
 ## Evidence
 
-All checked on `main` @ `70b7d23`, 2026-11-13.
+The original checks used `main` at `70b7d23` on 2026-11-13. The T-24 comparison below
+also uses the 2026-11-23 characterization.
 
 - **The cell port lists in #176 are correct.** `git grep -n "^.subckt" -- design/*.spice`:
   `aib_tx_data DIN OE PUN PD PAD VDDIO VSS`, `aib_rx_data PAD DOUT VDDIO VSS`,
@@ -57,13 +58,17 @@ All checked on `main` @ `70b7d23`, 2026-11-13.
   and `N_WIRES = 20` in `sim/channel-eye/gen_channel_eye.py`), N = 8 the fallback.
 - **The L1 route does not exist in layout.**
   `grep -n -i "topmetal2\|TM2\|loopback" layout/gen_io_column.py` returns nothing.
-- **The pin-capacitance margin a mux would spend is 3.6 fF.** DR-0017 closed T-24 at
-  96.42 fF worst case against the 100 fF limit (pad bias VDDIO/2, 45 corners, record
-  `sim/dc-static/records/20261108T004350Z/`). DR-0018 then measured that swapping `XDp1`
-  for the PDK's `diodevdd_2kv` adds 12.5 fF at that bias and **fails T-24 by 8.9 fF**,
-  and that no driver width in this cell closes both T-08 and T-24 once it does. So the
-  headroom at the pin is 3.6 fF, and it is already the subject of an open T-24/T-25
-  conflict.
+- **The current T-24 margin depends on pad bias.** Across 45 pre-layout simulation
+  corners, the worst pin capacitance at VDDIO is 92.42 fF, leaving the smallest margin
+  to the 100 fF limit, 7.58 fF. At VDDIO/2 the margin is 15.56 fF (84.44 fF pin
+  capacitance), and at 0 V it is 19.09 fF (80.91 fF).
+  [November 23 dc-static record](../../sim/dc-static/records/20261123T091724Z/report.json)
+- **The historical diode comparison used VDDIO/2.** The November 8 cell with a
+  4.5 µm × 4.5 µm `dpantenna` at `XDp1` reached 96.42 fF at that bias, leaving
+  3.6 fF of margin. Replacing that diode with `diodevdd_2kv` raised the worst-case
+  pin capacitance by 12.5 fF to 108.9 fF, exceeding T-24 by 8.9 fF on that variant.
+  [DR-0017](0017-driver-series-resistor-and-esd-diode-area.md) ·
+  [DR-0018 diode substitution](0018-dedicated-esd-diode-capacitance-vs-t24.md)
 
 ## What "wire group" is, and what "selectable" resolves to
 
@@ -127,14 +132,12 @@ Two consequences, stated plainly because they are easy to get wrong:
 ## Alternatives rejected
 
 - **A loopback mux inside the I/O cell** (a mode input on `aib_tx_data` / `aib_rx_data`,
-  or a new cell revision). Rejected on measured evidence, not on general density
-  grounds: the pass transistors and their routing sit on the pin node, and T-24 has
-  3.6 fF of margin there (DR-0017, 96.42 fF of 100 fF), with DR-0018 already showing that
-  12.5 fF more at that node fails T-24 by 8.9 fF and that no driver width in this cell
-  recovers it without failing T-08. A mux also adds area in the 55 µm-pitch cell CLAUDE.md
-  names as this block's second risk, and `test-configuration.md` bars changing the cell to
-  suit a loopback. It would additionally need its own PVT-FULL rows and a new LVS/DRC
-  lineage for no row the spec asks for.
+  or a new cell revision). DR-0009 and `test-configuration.md` define L1 by its
+  on-die route and L2 by its wire bonds. Both paths use the existing I/O cells.
+  A pin-side mux would add transistor and routing capacitance at the node T-24 limits.
+  The current simulation leaves only 7.58 fF there at VDDIO. Determining whether a
+  particular mux fits would require characterizing its load at each pad bias. It would
+  also take area in the 55 µm-pitch cell and require new PVT-FULL, LVS and DRC checks.
 - **Declaring the `SIM` half of T-29 a permanent gap.** Rejected: that would read as a
   relaxation of a ratified row when both loopbacks are simulable as configurations of the
   committed cells — L2 already was, and L1 is by this record's testbench.
