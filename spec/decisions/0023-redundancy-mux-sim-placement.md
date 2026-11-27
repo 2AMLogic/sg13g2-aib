@@ -1,7 +1,9 @@
 # DR-0023: where the redundancy mux sits for the T-05 `SIM` leg, and what stands in for it
 
 **Status**: accepted. **Rows**: T-05 (and, as consumers of the numbers, T-13 and T-20).
-**Supersedes**: nothing. **Related**: DR-0003 (spares per direction), DR-0016 (the
+**Supersedes**: nothing. **Amended by**: DR-0024 (where the remap lives; decision point 1
+and the stand-in of point 2 are superseded for the design, and kept as the description of
+what the first record measured). **Related**: DR-0003 (spares per direction), DR-0016 (the
 two-wire shift), DR-0022 (a `SIM` leg with no bound).
 
 ## Context
