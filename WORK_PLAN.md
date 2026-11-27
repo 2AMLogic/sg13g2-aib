@@ -12,7 +12,6 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 - **#168**: feat(sim): record T-13/T-14 TX skew Monte Carlo and ratify skew definition (DR-0019)
 - **#188**: feat(spec,sim): decide T-29 loopback selection and add the L1 on-die SIM record
-- **#201**: docs(spec): refer T-19's aperture to the RX pin, add DR-0021
 - **#249**: evidence(sim): measure two sized remap stages and place the T-05 remap ahead of the TX input register
 - **#374**: feat(design,sim): adopt diodevdd_2kv as the primary pad diode (DR-0030) and record the failing 0.5 A T-25 transient
 
@@ -28,12 +27,13 @@ _None._
 
 - **#9**: spec: T-21 placement-error target leaves zero allocation for phase-spacing error
 - **#194**: T-20 SIM leg: no end-to-end sampling-margin confirmation exists, and two of its inputs are open
+- **#196**: T-25 SIM leg: the 0.5 A ESD transient is blocked on the T-24/T-25 device trade (DR-0017, DR-0018)
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#196**: T-25 SIM leg: the 0.5 A ESD transient is blocked on the T-24/T-25 device trade (DR-0017, DR-0018)
 
 ## In Progress
 
@@ -92,10 +92,10 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 5 |
+| Operator merge-risk holds | 4 |
 | Very important | 0 |
-| Important | 2 |
-| Ready (`loom:issue`) | 0 |
+| Important | 3 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 5 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 5 |
