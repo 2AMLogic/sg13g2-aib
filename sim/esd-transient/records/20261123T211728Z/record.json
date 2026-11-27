@@ -1,0 +1,33 @@
+{
+  "record": "esd-transient",
+  "utc_stamp": "20261123T211728Z",
+  "kind": "simulated",
+  "claim_scope": "T-25 SIM leg only, at the single nominal corner (grid is n/a for this row). Simulated; no MEAS exists and no CDM level is claimed from a transient.",
+  "pulse": "0.5 A triangular current pulse into PAD, 200 ps rise, 400 ps fall, ~400 ps at half amplitude, both polarities, VDDIO powered (1.20 V) and unpowered (0 V), fixed by DR-0030 before the run",
+  "bounds": "DR-0030 s5, stated before the run and not edited after: peak |V(PAD)| <= 7.0 V positive / <= 3.0 V negative, peak |V(PADI)| <= 3.5 V either polarity, protected branch <= 0.05 A either polarity, recovery ratio (|V(PAD)| 1 ns after its crest over its own peak) <= 0.40 either polarity",
+  "credited_models": "diodevdd_2kv forward conduction and the XMn1/XMclamp PSP103 drain-body junctions; the gate-grounded snapback path is neither credited nor verified (DR-0030 s3)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 3,
+  "corners": 1,
+  "rows": {
+    "T-25": {
+      "verdict": "fail",
+      "pass": 14,
+      "fail": 2,
+      "error": 0,
+      "binding": {
+        "corner": "tt/mixed/27C",
+        "measurement": "pwr.t25_vadi_pos_pk_v",
+        "value": 5.130981,
+        "why": "fail"
+      }
+    }
+  },
+  "row_source": "the graded measurements are step-level, so T-25 attaches by the --row-map leaf-prefix fallback of the runner (the mechanism dc-static uses); the derived recovery ratios carry the spec_row tag and need no map",
+  "mc_note": "the mc_dio_fwd / mc_dio_fwd_novdd / mc_xmn1_neg steps are the model check: the first sweep voltage at which each credited path carries 0.5 A, same PDK cards, sizes as committed; report-only, graded by no spec row",
+  "t25_note": "T-25 SIM leg only. Not shown: no MEAS, no CDM level, no LAYOUT current-path check, no ESD rules in the DRC deck (2AMLogic/klayout-tools#3854), ideal stiff rails, single nominal corner (DR-0030, What is not shown)",
+  "batch_job_ids": [],
+  "runner_klt_version": []
+}

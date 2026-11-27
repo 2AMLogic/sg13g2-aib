@@ -39,13 +39,13 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:e36ef92bbb40837511bd358c85773406853355297c830983cee314921bc8e589",
+        "content_hash": "sha256:c7da83b120258fbecbeaefa00942fbe0f7a8dad134df67e6209493c9bda9afbd",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
           "t1_item": 1,
           "path": null,
-          "content_hash": "sha256:e36ef92bbb40837511bd358c85773406853355297c830983cee314921bc8e589",
+          "content_hash": "sha256:c7da83b120258fbecbeaefa00942fbe0f7a8dad134df67e6209493c9bda9afbd",
           "input_verified": true,
           "members": [
             {
@@ -53,7 +53,7 @@
                 "path": "design/aib_pad_esd.sch",
                 "scope": "repo"
               },
-              "content_hash": "sha256:68828bb92a08d6c81d0759d456646e9a9af930e5e0a50f8e3deea7bd0f96444c",
+              "content_hash": "sha256:737b8bbe4a559d454ba994301cdbbd3a56ab0f3053b0facba6f2a4b4f47fc657",
               "status": "verified"
             },
             {
@@ -61,7 +61,7 @@
                 "path": "design/aib_pad_esd.spice",
                 "scope": "repo"
               },
-              "content_hash": "sha256:4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936",
+              "content_hash": "sha256:3cb704eb07544c97702c141626fe54285850dfc17a7ca20932c3bc24c6609489",
               "status": "verified"
             },
             {
@@ -532,12 +532,12 @@
         "Both require the spec table itself to be ratified \u2014 verdicts against a draft spec are provisional by construction."
       ],
       "status": "unmet",
-      "reason": "partial_coverage",
+      "reason": "check_failed",
       "graded_by_build": true,
       "citation": null,
       "citations_graded": [
         {
-          "citation": "sim/dc-static/records/20261123T091724Z/report.json",
+          "citation": "sim/dc-static/records/20261123T211634Z/report.json",
           "rows": [
             "T-06",
             "T-07",
@@ -546,8 +546,8 @@
             "T-24",
             "T-28"
           ],
-          "status": "met",
-          "reason": null
+          "status": "unmet",
+          "reason": "check_failed"
         },
         {
           "citation": "sim/channel-eye/records/20261123T093440Z-ch/report.json",
@@ -577,10 +577,37 @@
           ],
           "status": "met",
           "reason": null
+        },
+        {
+          "citation": "sim/esd-transient/records/20261123T211728Z/report.json",
+          "rows": [
+            "T-25"
+          ],
+          "status": "unmet",
+          "reason": "check_failed"
         }
       ],
       "detail": {
-        "failed_rows": [],
+        "critical_metric_blockers": [
+          {
+            "metric": "sim__corner__failed_count",
+            "value": 45,
+            "higher_is_better": false
+          }
+        ],
+        "failed_citations": [
+          "sim/dc-static/records/20261123T211634Z/report.json",
+          "sim/esd-transient/records/20261123T211728Z/report.json"
+        ],
+        "failed_rows": [
+          "T-06",
+          "T-07",
+          "T-08",
+          "T-11",
+          "T-24",
+          "T-25",
+          "T-28"
+        ],
         "uncovered_rows": [],
         "declared_gaps": [
           {
@@ -592,10 +619,6 @@
             "gap": "SIM half of the dll-interface contract; this repo does not design a DLL (CLAUDE.md, DR-0020). #175 delivered the sibling comparison only. Tracked in #195"
           },
           {
-            "id": "T-25",
-            "gap": "0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
-          },
-          {
             "id": "T-29",
             "gap": "no loopback mux exists in design/, so L1/L2 cannot be exercised; also a TC row. Tracked in #176"
           }
@@ -603,19 +626,13 @@
         "unratified_rows": [],
         "row_sources": {
           "T-01": "derived",
-          "T-06": "asserted",
-          "T-07": "asserted",
-          "T-08": "asserted",
           "T-09": "derived",
-          "T-11": "asserted",
           "T-12": "derived",
           "T-15": "derived",
           "T-16": "derived",
           "T-17": "derived",
           "T-18": "derived",
-          "T-24": "asserted",
-          "T-26": "derived",
-          "T-28": "asserted"
+          "T-26": "derived"
         }
       }
     },

@@ -6,11 +6,12 @@ record: the output of `klt signoff --manifest` for that manifest. Of the 22 T1
 rows (11 items x analog and digital partitions), item 1 (both partitions), `2.analog`, `2.digital`, `3.analog`, `3.digital`, `4.analog`, `4.digital`, `5.digital`, `7.digital`, `11.analog`, `11.digital` and items 9
 and 10 (both partitions) read `met` (see "Item 3 (DRC)", "Item 4 (LVS)", "Item 1 / digital attestation", "Attest item 1 (analog)",
 "Item 2 (layout, analog)", "Item 2 (layout, digital)", "Item 5 / digital evidence", "Item 7 / digital evidence", "Item 11 (power delivery)", "Item 9 attestation" and "Item 10 attestation"); `6.digital` reads `not_applicable`, `6.analog` `unmet` / `check_failed` (see "Item 6")
-and `5.analog` `unmet` / `partial_coverage` (see "Item 5 / analog evidence");
+and `5.analog` `unmet` / `check_failed` (see "Item 5 / analog evidence" — the T-25 transient
+record fails its DR-0030 bound and the T-24 record fails the 100 fF target; both are recorded results);
 `7.analog` reads `unmet` / `check_failed` (see "Item 7 / analog evidence" — the cited `klt pex`
 runs extracted the cells and graded nothing, which is not the same as a spec row failing);
-`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — one recorded row
-fails (T-19, since the #398 adoption; before it, T-10), so the aggregate's envelope is `status: fail`; that is the report following the records,
+`8.analog` and `8.digital` read `unmet` / `check_failed` (see "Item 8" — three recorded rows
+fail (T-19 since the #398 adoption; T-24 and T-25 since the DR-0030 pad-diode adoption), so the aggregate's envelope is `status: fail`; that is the report following the records,
 not a spec target being missed by the report);
 every other row reads
 `unmet` / `no_evidence`, which is the honest state until evidence is cited. Evidence paths resolve
@@ -137,17 +138,33 @@ two layout differences behind the earlier mismatch, and the commands are in
 current directory, so `--check` runs from `layout/lvs/`; the grader runs from the repo root and
 re-hashes the same files. Re-run after any change to `layout/pnr/` or `design/`, then regenerate the record.
 
+**Stale at this head:** DR-0030 changed `design/aib_pad_esd.spice` and regenerated the
+`layout/lvs/*.ref.spice` references to the two-diode mapping, but `aib_io_column.report.json` was
+not re-run, so it still attests the earlier reference against the drawn stream. The drawn layout
+and LVS for the promoted cell are tracked in #435.
+
 ## Item 5 / analog evidence
 
-`5.analog` cites four `klt sim` reports as a list, each naming the `rows` it covers, and
-`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 14 covered and
-4 declared gaps. The item reads **`unmet` / `partial_coverage`** with `failed_rows: []` and
-`uncovered_rows: []`: every cited envelope passes and every covered row is genuinely covered,
-but declared gaps remain.
+`5.analog` cites five `klt sim` reports as a list, each naming the `rows` it covers, and
+`spec_rows."5.analog"` declares the **full** analog `SIM` row set — 18 rows, 15 covered and
+3 declared gaps. The item reads **`unmet` / `check_failed`** with
+`failed_rows: ["T-06", "T-07", "T-08", "T-11", "T-24", "T-25", "T-28"]` and `uncovered_rows: []`
+(only T-24 and T-25 actually fail; see the note below the paragraph): T-24 on the promoted pad netlist (DR-0030) measures 110.89 fF worst
+against the 100 fF target (recorded failure; the operator ruling holds the fallback column),
+and the T-25 transient (`sim/esd-transient/records/20261123T211728Z/`, whole I/O cell) fails
+its pre-stated receiver-isolation bound and is with the operator. Every other envelope passes.
 
-Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
-done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
-tracked in #194, #195, #196 and #176; closing them is what lets the item read `met`.
+`failed_rows` lists five rows that **pass**: T-06, T-07, T-08, T-11 and T-28 are credited as
+failed because a failing `klt sim` envelope credits none of its passing `spec_row`-tagged rows
+(2AMLogic/klayout-tools#6027, fixed on klayout-tools main after the `v0.9.2` tag), and
+`signoff/KLT_VERSION` pins 0.9.0, so no released klt carries the fix here. The per-row truth is
+in the dc-static record's `rows.json` (T-06 180/0, T-07 135/0, T-08 90/0, T-11 45/0, T-28
+225/0, as pass/fail corner counts; only T-24 fails, 90/45). Do not read `failed_rows` as a regression of
+those five.
+
+Three of those gaps are **pending** — a measurement not yet made, which closes when the work is
+done; progress toward T1 is tracked in #3, not here. Those three are T-20, T-21 and T-29,
+tracked in #194, #195 and #176; closing them is what lets the item read `met`.
 **T-12 is covered, not a gap** ([DR-0029](../spec/decisions/0029-t12-conformance-leg.md),
 proposed; #384): the channel model is a declared input (DR-0005), so the row is cited from
 the conformance record `sim/channel-model/records/20261121T000100Z/report.json`, which grades
@@ -165,10 +182,11 @@ and delay are reported inputs to T-20 and T-13, DR-0023).
 
 | envelope | rows | result |
 |---|---|---|
-| `sim/dc-static/records/20261123T091724Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass (#398 re-run on the adopted cell; T-11 unchanged, T-24 76.3-92.4 fF as the study measured) |
+| `sim/dc-static/records/20261123T211634Z/report.json` | T-06, T-07, T-08, T-11, T-24, T-28 | 45/45 corners pass for T-06/07/08/11/28; **T-24 fails 100 fF** (re-run on the promoted `diodevdd_2kv` netlist, DR-0030: 91.8 / 97.6 / 110.9 fF at 0 V / VDDIO/2 / VDDIO, worst `ss/1.080V/125C`) |
 | `sim/channel-eye/records/20261123T093440Z-ch/report.json` | T-01, T-09, T-15, T-16, T-18, T-26 | 45/45 corners pass (CH, simulated; #398 re-run on the split; T-16 binding margin unchanged, T-26 energy per bit 0.387-0.741 pJ, +9.4-22.3 % per corner from the standing divider/tail current) |
 | `sim/clock-path/records/20261123T091724Z/report.json` | T-17 | 45/45 corners pass (CH; #398 re-run on the split; T-17 still inside +/-3 %; the t02 separations the two-edge disposition reads are in its `report_only_ranges`) |
 | `sim/channel-model/records/20261121T000100Z/report.json` | T-12 | 675/675 corners pass (CH, simulated; netlist vs declared table) |
+| `sim/esd-transient/records/20261123T211728Z/report.json` | T-25 | **fails**: peak `|V(PADI)|` 5.13 V powered / 3.91 V unpowered vs 3.5 V on the positive pulse (whole I/O cell, nominal corner, DR-0030; with the operator) |
 
 The declared row set is every row in `spec/target-spec.md` whose verification column has a
 plain `SIM` leg and that is not owned by item 5 / digital or item 6 (`SIM-MC`: T-10, T-13,
@@ -292,8 +310,8 @@ a backend) and #5494 (one `--top` per run cannot express a link testbench, which
 The citation is deliberate: it is a true `klt pex` report about this layout, and `check_failed`
 naming it leads a reader to the reports, where `no_evidence` would have hidden that the
 extraction exists. `spec_rows."7.analog"` declares all 18 rows as gaps with the reason — the
-14 rows `5.analog` grades plus its 4 carried-forward gaps, with the trackers the manifest
-declares: T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 stays
+15 rows `5.analog` grades plus its 3 carried-forward gaps, with the trackers the manifest
+declares: T-20 (#194), T-21 (#195), T-29 (#176); T-25 is carried forward as a post-layout gap (#196); T-12 stays
 a declared gap here (DR-0029 keeps it: item 7 has no extracted T-12 measurement; the
 channel-R/C spread campaign that closed #193 and the T-05 campaign the closed #192
 recorded are complete). Today's grader does not

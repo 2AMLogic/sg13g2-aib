@@ -65,15 +65,22 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
 - `aib_tx_data` (#142): the predriver NOR pull-up `XMnr1p`/`XMnr2p` is 8u/ng=4 (was 4u/ng=2).
   The fall edge charged the 22u `XMn` gate through two series PMOS and ran about 41 ps slower
   than the rise; balanced, the data-to-clock offset (T-16) closes at 45/45 corners.
-- `aib_pad_esd`: `XDp1` is 4.5u x 4.5u (was 10u x 10u) because the wider driver and the
-  primary diode do not both fit T-24. **T-25 (ESD level) is not evaluated**: no ESD-transient
-  simulation exists. DR-0017 states the trade and what would reverse it.
+- `aib_pad_esd`: `XDp1` is the PDK pad diode `diodevdd_2kv` (`sg13g2_esd.lib`, shipped
+  `DEV_A=35`; was the 4.5u x 4.5u `dpantenna`), adopted by DR-0030 (issue #196, operator
+  ruling q210). **T-24 is held at the fallback column**: 110.89 fF worst on the promoted
+  netlist (`sim/dc-static/records/20261123T211634Z/`, VDDIO bias, `ss/1.080V/125C`) against
+  the 100 fF target, so the target is a recorded failure. The T-25 0.5 A transient ran in
+  `sim/esd-transient/` on the whole I/O cell: the receiver-node isolation bound fails on the
+  positive pulse (`XDp2` is a 2 um antenna diode that cannot conduct); the measurement is
+  with the operator, and the pad-side voltage passes are model self-consistency, not
+  survivability. `XResd` is `w=2u l=1u` (#251; the `l=2u` in `design/aib_pad_esd_2kv.spice`
+  predates it). Layout is stale against this cell (#435).
 - `aib_pad_esd` (#251): `XResd` is `w=2u l=1u` (was `l=2u`). The channel-bench T-16 margin at the
   declared kr = kc = 1.2 corner was 1.331 ps; with this change the worst margin over PVT-FULL x the four
   (kr, kc) spread pairs is 19.92 ps. T-08 (min margin bound 42.86 ohm) and T-24 (worst 96.42 fF) are unchanged
-  in the dc-static runs. **T-25 is still not evaluated** and `XResd` is the receiver-isolation element, so the
-  halved resistance is an unmeasured ESD cost. `design/aib_pad_esd_2kv.spice` keeps `l=2u` until #196 decides
-  the diode. Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. The committed
+  in the dc-static runs (before DR-0030's diode change). `XResd` is the receiver-isolation element; DR-0030's
+  transient measures the isolation (`sim/esd-transient/`). `design/aib_pad_esd_2kv.spice` keeps `l=2u` as
+  committed DR-0018 evidence. Evidence: `sim/channel-eye/records/20261118T220000Z-t16-sizing/README.md`. The committed
   layout draws `Resd` at this netlist size since the #387 regeneration (2 um wide, 1 um long;
   DRC `layout/records/20261120T202314Z`). The LVS is a connectivity match
   on the layout and records `device.geometry_not_compared` for `rppd`, so it cannot
@@ -81,7 +88,7 @@ Sizing set in #130 (details and probe table in `sim/dc-static/README.md`):
   the CI evidence job now compares against this netlist on every push
   (`python3 -I layout/gen_io_column.py --check`).
 
-Known open point: T-25 (ESD level) remains unevaluated; DR-0017 states the trade and
+Known open point: T-25's SIM leg fails (DR-0030); DR-0017 states the original trade and
 what would reverse it. The forwarded-clock alignment (DLL) is out of scope.
 
 ## Receive split (#398): the data lanes take the supply-referenced receiver

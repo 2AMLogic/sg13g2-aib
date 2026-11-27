@@ -206,6 +206,15 @@ def check_against_netlists(design_dir):
     assert abs(num(kv["w"]) - ESD_CLAMP[2] * ESD_CLAMP[4]) < 1e-9 and abs(num(kv["l"]) - ESD_CLAMP[3]) < 1e-9
     for name, kind, size, a, b in ESD_DIODES:
         nodes, kv = esd[name]
+        if name == "Dp1":
+            # DR-0030 (#196): the netlist's primary pad diode is the PDK subcircuit
+            # diodevdd_2kv (anode PAD, cathode VDDIO, substrate diode to VSS); the drawn
+            # cell still carries the 4.5 um dpantenna of this table until the layout is
+            # regenerated (#435). The check pins the netlist side so a further change
+            # there is still caught, and states the drawn-vs-netlist gap here rather
+            # than hiding it.
+            assert nodes == ["VDDIO", "PAD", "VSS", "diodevdd_2kv"], (name, nodes)
+            continue
         assert abs(num(kv["w"]) - size) < 1e-9 and abs(num(kv["l"]) - size) < 1e-9, name
         if kind == "p":
             assert nodes[:2] == [a, b] and nodes[2] == "dpantenna", name

@@ -12,7 +12,7 @@
     },
     "1.analog": {
       "file": "signoff/attest/item1-analog.json",
-      "content_hash": "sha256:e36ef92bbb40837511bd358c85773406853355297c830983cee314921bc8e589"
+      "content_hash": "sha256:c7da83b120258fbecbeaefa00942fbe0f7a8dad134df67e6209493c9bda9afbd"
     },
     "2.analog": {
       "file": "signoff/attest/item2-analog.json",
@@ -40,7 +40,7 @@
     },
     "5.analog": [
       {
-        "file": "sim/dc-static/records/20261123T091724Z/report.json",
+        "file": "sim/dc-static/records/20261123T211634Z/report.json",
         "content_hash": "sha256:ab9af08cbac23b437fc6e8fd5c8cf7e2cac508008802c7b3dcc4fe3c12f4b634",
         "rows": [
           "T-06",
@@ -75,6 +75,12 @@
         "content_hash": "sha256:9e0f4dbb4e1ad2d677521c97b3359f25784cbdaf996bdf957fa9e859be4305ce",
         "rows": [
           "T-12"
+        ]
+      },
+      {
+        "file": "sim/esd-transient/records/20261123T211728Z/report.json",
+        "rows": [
+          "T-25"
         ]
       }
     ],
@@ -162,11 +168,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:452ebd06d169ae29f889c0db44a9dbb6cd5556e655bb94f5e7fb6445c240bd9e"
+      "content_hash": "sha256:3672442e2a9a8a29ed44aaf53b33c6a1938a49ca426522d396500729a3568cbc"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:452ebd06d169ae29f889c0db44a9dbb6cd5556e655bb94f5e7fb6445c240bd9e"
+      "content_hash": "sha256:3672442e2a9a8a29ed44aaf53b33c6a1938a49ca426522d396500729a3568cbc"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -256,8 +262,7 @@
         "id": "T-24"
       },
       {
-        "id": "T-25",
-        "gap": "0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
+        "id": "T-25"
       },
       {
         "id": "T-26"
@@ -351,7 +356,7 @@
       },
       {
         "id": "T-25",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: 0.5 A diode/clamp transient not run; blocked on the T-24/T-25 device trade (DR-0017, DR-0018). Grid is n/a for this row. Tracked in #196"
+        "gap": "carried forward from 5.analog, not re-measured post-layout: the 0.5 A transient ran on the schematic netlist (whole I/O cell, DR-0030) and failed its receiver-isolation bound (sim/esd-transient/records/20261123T211728Z, returned to the operator); no post-layout T-25 exists. Grid is n/a for this row. Tracked in #196"
       },
       {
         "id": "T-26",

@@ -1,4 +1,33 @@
 {
   "description": "Known-stale netlist-closure members of cited sim records, each pending the re-run its reason names. Shrink-only: scripts/ci/check_netlist_closure.py fails on an entry that no longer mismatches, so an entry is dropped when its re-run lands, never edited to cover a new mismatch (#405).",
-  "entries": []
+  "entries": [
+    {
+      "record": "sim/channel-eye/records/20261123T093440Z-ch/report.json",
+      "member": "design/aib_pad_esd.spice",
+      "sha256": "4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936",
+      "added": "2026-11-23",
+      "reason": "DR-0030 (PR #374) promotes diodevdd_2kv as XDp1; this record was run on the antenna-diode netlist. Retired by the re-run tracked in #435."
+    },
+    {
+      "record": "sim/clock-path/records/20261123T091724Z/report.json",
+      "member": "design/aib_pad_esd.spice",
+      "sha256": "4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936",
+      "added": "2026-11-23",
+      "reason": "DR-0030 (PR #374) promotes diodevdd_2kv as XDp1; this record was run on the antenna-diode netlist. Retired by the re-run tracked in #435."
+    },
+    {
+      "record": "sim/mc/records/20261123T093311Z-t15/yield.json",
+      "member": "design/aib_pad_esd.spice",
+      "sha256": "4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936",
+      "added": "2026-11-23",
+      "reason": "DR-0030 (PR #374) promotes diodevdd_2kv as XDp1; this record was run on the antenna-diode netlist. Retired by the re-run tracked in #435."
+    },
+    {
+      "record": "sim/mc/records/20261123T093311Z-t16/yield.json",
+      "member": "design/aib_pad_esd.spice",
+      "sha256": "4de31ffa56155c2f3dcdde64c4441578c565894baa765ae79972da43a5a51936",
+      "added": "2026-11-23",
+      "reason": "DR-0030 (PR #374) promotes diodevdd_2kv as XDp1; this record was run on the antenna-diode netlist. Retired by the re-run tracked in #435."
+    }
+  ]
 }

@@ -48,7 +48,7 @@
     ],
     "T-06": [
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=drv_nl.t06_voh_droop_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -58,7 +58,7 @@
         "note": "Unloaded leg. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=drv_nl.t06_vol_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -68,7 +68,7 @@
         "note": "Unloaded leg. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=drv_ld.t06_voh_droop_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -78,7 +78,7 @@
         "note": "Loaded leg: the 1 mA DC load is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=drv_ld.t06_vol_v].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -90,7 +90,7 @@
     ],
     "T-07": [
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=lk_0.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -100,7 +100,7 @@
         "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=lk_5.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -110,7 +110,7 @@
         "note": "T-07's structural half (no resistor from PAD to a termination) is the netlist, not this record. The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=lk_10.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -122,7 +122,7 @@
     ],
     "T-08": [
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=drv_ld.t08_rout_up_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -132,7 +132,7 @@
         "note": "Two-sided limit: the margin is to whichever side binds at the worst corner. The 1 mA chord point is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=drv_ld.t08_rout_dn_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -218,7 +218,7 @@
     ],
     "T-11": [
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=t11_hyst_mv].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -474,9 +474,21 @@
         "note": "The LAYOUT (klt stats) figure the spec row's evidence column and DR-0013 call for once the cell exists; it supersedes the ANALYSIS estimate the row is labelled with. Layout-measured, pre-extraction, I/O cell only (pad, ESD, driver or receiver). Exactly at the 5500 um2 limit, no margin."
       }
     ],
+    "T-25": [
+      {
+        "record": "sim/esd-transient/records/20261123T211728Z/rows.json",
+        "field": "rows.T-25.verdict",
+        "op": "==",
+        "value": "pass",
+        "corner": "nominal corner mos_tt/1.20 V/27 C (T-25's grid column is n/a)",
+        "scope": "BOTH",
+        "basis": "simulated, per-row verdict of the 0.5 A ESD discharge transient on the whole I/O cell (DR-0030)",
+        "note": "Simulated, not measured; no CDM level is claimed from a transient. The DUT carries the tristated aib_tx_data on PAD and aib_rx_data on PADI. The pre-stated receiver-isolation bound fails: peak |V(PADI)| 5.13 V powered / 3.91 V unpowered against 3.5 V on the positive pulse -- XDp2 is a 2 um antenna diode that cannot conduct. The pad-side peak voltages are model self-consistency numbers (the PSP103 build has no avalanche or snapback), not a survivability result against the SG13G2 device limits. T-25 is not relaxed; the measurement is returned to the operator (DR-0030 fail branch)."
+      }
+    ],
     "T-24": [
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=cap_0.t24_cpin_ff].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -486,7 +498,7 @@
         "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=cap_5.t24_cpin_ff].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -496,7 +508,7 @@
         "note": "Extracted-capacitance estimate, pre-layout: no bond-pad model and no PEX. Covers the whole pin (ESD, tristated driver, receiver input). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=cap_10.t24_cpin_ff].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -542,7 +554,7 @@
     ],
     "T-28": [
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=pu_on.t28_rpu_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -552,7 +564,7 @@
         "note": "Pull-strength leg. T-28's tristate and pull *control* is the RTL leg, not this record. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=pd_on.t28_rpd_ohm].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -562,7 +574,7 @@
         "note": "Pull-strength leg. T-28's tristate and pull *control* is the RTL leg, not this record. Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=lk_0.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -572,7 +584,7 @@
         "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=lk_5.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,
@@ -582,7 +594,7 @@
         "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       },
       {
-        "record": "sim/dc-static/records/20261123T091724Z/report.json",
+        "record": "sim/dc-static/records/20261123T211634Z/report.json",
         "field": "measurements[name=lk_10.t07_t28_ipin_a].worst_case.margin",
         "op": ">=",
         "value": 0,

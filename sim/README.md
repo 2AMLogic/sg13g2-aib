@@ -72,7 +72,7 @@ and the family's
 own `record.json` fields. None submits anything itself, so a fleet-handling fix lands once
 (#189; the two original copies had drifted apart on four fleet behaviours).
 
-**All three item 5 (analog) families are on it.** dc-static was the last one recorded by
+**All three item 5 (analog) batch families are on it.** dc-static was the last one recorded by
 hand, from a README recipe, and its four records have four different shapes — none holding
 the request or the bench, none recording `klt_exit_code`, and the one the manifest cites
 holding no `record.json` at all (#228). Those four are append-only evidence and are
@@ -847,3 +847,16 @@ solved, nothing graded. Simulated. The cell that fits both T-24's and T-08's fal
 `IOPadInOut16mA` (163-195 fF; 46-107 / 37-88 ohm), only at its own 3.0-3.6 V `iovdd`; T-16 over the
 channel with this cell is **not measured** (the cell's transient does not converge in ngspice 47).
 See `sim/io-cell-study/README.md`.
+
+## esd-transient
+
+`sim/esd-transient/` is the T-25 SIM leg (issue #196, operator ruling q210, DR-0030): one
+0.5 A CDM-class triangular pulse into PAD -- both polarities, VDDIO powered and unpowered --
+on the committed `aib_pad_esd` netlist, one nominal corner (`mos_tt`, 1.20 V, 27 C), local
+backend, through `run_esd_transient.sh` (the record procedure of the shared harness minus
+the fleet handling: a single-unit local run). T-25's grid column is n/a, so this is a
+single-configuration bench; the bounds were fixed in DR-0030 before the run and are not
+edited after it. Three DC model-check steps report the conduction models the transient
+credits (the pad diode's forward I-V at the powered and unpowered rail, XMn1's drain-body
+junction in the negative-pulse direction). Simulated; no MEAS exists and no CDM level is
+claimed from a transient. See `sim/esd-transient/README.md` and DR-0030.

@@ -1,0 +1,16 @@
+* DC static characteristics of the AIB I/O cell: top-level testbench body.
+* Spec rows: T-06, T-07, T-08, T-11, T-24, T-28 (spec/target-spec.md).
+* Circuit body only (klt sim owns the .control block). The cells under test are
+* included from design/, never copied. The sub-benches share the VDDIO supply
+* source Vddio, which the request's corners.supply_v alters per corner.
+*
+* Pin assembly used here (the I/O-cell assembly itself is a separate issue):
+* the driver and the primary ESD stage sit on the external pad node PAD, the
+* receiver sits behind the ESD series resistor on PADI.
+Vddio vddio 0 dc 1.2
+.include ../../design/aib_tx_data.spice
+.include ../../design/aib_rx_data.spice
+.include ../../design/aib_pad_esd.spice
+.include tb_drive.cir
+.include tb_pin.cir
+.include tb_rx_hyst.cir

@@ -1,0 +1,293 @@
+{
+  "engine": "ngspice",
+  "netlist": "tb_esd_transient.cir",
+  "models": {
+    "pdk": "ihp-sg13g2",
+    "lib": "libs.tech/ngspice/models/cornerMOSlv.lib"
+  },
+  "corners": {
+    "process": [
+      {
+        "name": "tt",
+        "sections": [
+          {
+            "lib": "libs.tech/ngspice/models/cornerMOSlv.lib",
+            "section": "mos_tt"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerRES.lib",
+            "section": "res_typ"
+          },
+          {
+            "lib": "libs.tech/ngspice/models/cornerDIO.lib",
+            "section": "dio_tt"
+          }
+        ]
+      }
+    ],
+    "supply_v": {},
+    "temperature_c": [
+      27
+    ]
+  },
+  "analysis_steps": [
+    {
+      "name": "pwr",
+      "analysis": {
+        "kind": "tran",
+        "args": "1p 55n 0 5p"
+      },
+      "alter": {
+        "Vddio": 1.2
+      },
+      "measurements": [
+        {
+          "name": "t25_vpad_pos_pk_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 0.8n)*(time le 4n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 7.0
+          }
+        },
+        {
+          "name": "t25_vpad_neg_pk_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 50.8n)*(time le 54n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 3.0
+          }
+        },
+        {
+          "name": "t25_vadi_pos_pk_v",
+          "expr": "vecmax(abs(v(padi_f))*(time ge 0.8n)*(time le 4n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 3.5
+          }
+        },
+        {
+          "name": "t25_vadi_neg_pk_v",
+          "expr": "vecmax(abs(v(padi_f))*(time ge 50.8n)*(time le 54n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 3.5
+          }
+        },
+        {
+          "name": "t25_ipadi_pos_pk_a",
+          "expr": "vecmax(abs(i(vmeas_padi))*(time ge 0.8n)*(time le 4n))",
+          "unit": "A",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 0.05
+          }
+        },
+        {
+          "name": "t25_ipadi_neg_pk_a",
+          "expr": "vecmax(abs(i(vmeas_padi))*(time ge 50.8n)*(time le 54n))",
+          "unit": "A",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 0.05
+          }
+        },
+        {
+          "name": "pad_late_pos_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 2.2n)*(time le 3n))",
+          "unit": "V"
+        },
+        {
+          "name": "pad_late_neg_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 52.2n)*(time le 53n))",
+          "unit": "V"
+        }
+      ]
+    },
+    {
+      "name": "unpwr",
+      "analysis": {
+        "kind": "tran",
+        "args": "1p 55n 0 5p"
+      },
+      "alter": {
+        "Vddio": 0
+      },
+      "measurements": [
+        {
+          "name": "t25_vpad_pos_pk_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 0.8n)*(time le 4n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 7.0
+          }
+        },
+        {
+          "name": "t25_vpad_neg_pk_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 50.8n)*(time le 54n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 3.0
+          }
+        },
+        {
+          "name": "t25_vadi_pos_pk_v",
+          "expr": "vecmax(abs(v(padi_f))*(time ge 0.8n)*(time le 4n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 3.5
+          }
+        },
+        {
+          "name": "t25_vadi_neg_pk_v",
+          "expr": "vecmax(abs(v(padi_f))*(time ge 50.8n)*(time le 54n))",
+          "unit": "V",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 3.5
+          }
+        },
+        {
+          "name": "t25_ipadi_pos_pk_a",
+          "expr": "vecmax(abs(i(vmeas_padi))*(time ge 0.8n)*(time le 4n))",
+          "unit": "A",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 0.05
+          }
+        },
+        {
+          "name": "t25_ipadi_neg_pk_a",
+          "expr": "vecmax(abs(i(vmeas_padi))*(time ge 50.8n)*(time le 54n))",
+          "unit": "A",
+          "spec_row": "T-25",
+          "limits": {
+            "max": 0.05
+          }
+        },
+        {
+          "name": "pad_late_pos_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 2.2n)*(time le 3n))",
+          "unit": "V"
+        },
+        {
+          "name": "pad_late_neg_v",
+          "expr": "vecmax(abs(v(pad_t))*(time ge 52.2n)*(time le 53n))",
+          "unit": "V"
+        }
+      ]
+    },
+    {
+      "name": "mc_dio_fwd",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vmc2 0 8 0.01"
+      },
+      "alter": {
+        "Vddio": 1.2,
+        "Vmc2r": 1.2
+      },
+      "measurements": [
+        {
+          "name": "mc_idiode_500ma_v",
+          "expr": "vecmin(v(pad_mc2)*(abs(i(vmc2)) ge 0.5) + 1000*(abs(i(vmc2)) lt 0.5))",
+          "unit": "V"
+        }
+      ]
+    },
+    {
+      "name": "mc_dio_fwd_novdd",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vmc2 0 8 0.01"
+      },
+      "alter": {
+        "Vddio": 0,
+        "Vmc2r": 0
+      },
+      "measurements": [
+        {
+          "name": "mc_idiode_novdd_500ma_v",
+          "expr": "vecmin(v(pad_mc2)*(abs(i(vmc2)) ge 0.5) + 1000*(abs(i(vmc2)) lt 0.5))",
+          "unit": "V"
+        }
+      ]
+    },
+    {
+      "name": "mc_xmn1_neg",
+      "analysis": {
+        "kind": "dc",
+        "args": "Vmc1 0 -4 -0.01"
+      },
+      "alter": {
+        "Vddio": 0
+      },
+      "measurements": [
+        {
+          "name": "mc_ixmn1_neg_500ma_v",
+          "expr": "vecmax(v(pad_mc1)*(abs(i(vmc1)) ge 0.5) - 1000*(abs(i(vmc1)) lt 0.5))",
+          "unit": "V"
+        }
+      ]
+    }
+  ],
+  "measurements": [
+    {
+      "spec_row": "T-25",
+      "name": "t25_pwr_pos_relief",
+      "expr": "abs(pwr.pad_late_pos_v)/abs(pwr.t25_vpad_pos_pk_v)",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      }
+    },
+    {
+      "spec_row": "T-25",
+      "name": "t25_pwr_neg_relief",
+      "expr": "abs(pwr.pad_late_neg_v)/abs(pwr.t25_vpad_neg_pk_v)",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      }
+    },
+    {
+      "spec_row": "T-25",
+      "name": "t25_unpwr_pos_relief",
+      "expr": "abs(unpwr.pad_late_pos_v)/abs(unpwr.t25_vpad_pos_pk_v)",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      }
+    },
+    {
+      "spec_row": "T-25",
+      "name": "t25_unpwr_neg_relief",
+      "expr": "abs(unpwr.pad_late_neg_v)/abs(unpwr.t25_vpad_neg_pk_v)",
+      "unit": "ratio",
+      "limits": {
+        "max": 0.4
+      }
+    }
+  ],
+  "options": {
+    "stage_model_inputs": true,
+    "fail_on_diagnostic": [
+      "nonconvergence"
+    ],
+    "timeout_s": 120,
+    "keep_artifacts": false,
+    "osdi_preload": [
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/psp103_nqs.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/r3_cmc.osdi",
+      "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/mosvar.osdi"
+    ]
+  },
+  "backend": "local"
+}
