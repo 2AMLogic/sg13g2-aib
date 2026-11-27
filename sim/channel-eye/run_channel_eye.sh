@@ -5,6 +5,7 @@
 #   sim/channel-eye/run_channel_eye.sh ch-spread  # CH-3MM-RC at the declared +-20 % channel R/C
 #                                             # spread, 45 corners x 4 (kr, kc) pairs = 180 units (T-12)
 #   sim/channel-eye/run_channel_eye.sh tc      # L2 wire-bond loopback, 45 corners (test configuration; never a CH claim)
+#   sim/channel-eye/run_channel_eye.sh l1      # L1 on-die loopback, 135 corners (PVT-FULL x the route's -20/nom/+20 % R/C; TC, never a CH claim)
 #
 # The submit-and-record procedure is shared with sim/clock-path/run_clock_path.sh and lives in
 # sim/harness/batch_record.sh; this script only names what is specific to this family. Every run
@@ -19,7 +20,7 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-kind="${1:?usage: run_channel_eye.sh ch|ch-spread|tc}"
+kind="${1:?usage: run_channel_eye.sh ch|ch-spread|tc|l1}"
 shift
 units=1   # one unit per job: with timeout_s 2400 the fleet rejects more (sim/README.md)
 case "${kind}" in
@@ -30,6 +31,11 @@ case "${kind}" in
     # to keep units x timeout_s under the fleet's per-job ceiling (gen_channel_eye.py).
     units="$(python3 -I -c 'import sys; sys.path.insert(0, sys.argv[1]); import gen_channel_eye as g; print(g.SPREAD_UNITS_PER_JOB)' "${HERE}")" ;;
   tc) req=request_tc_1g.json ; claim="TC (L2 wire-bond loopback, declared values)" ;;
+  l1) req=request_l1_1g.json
+    claim="TC (L1 on-die loopback: declared RC route emulating CH-3MM-RC R and C within +-20 %, no route inductance per DR-0009; not extracted from layout)"
+    # l1 declares timeout_s 480, so the fleet allows floor((3600 - 120) / 480) = 7 units per job:
+    # that keeps its 135-corner grid to 20 submits instead of 135 (one submit costs about 45 s).
+    units=7 ;;
   *) echo "run_channel_eye.sh: unknown kind '${kind}'" >&2; exit 2 ;;
 esac
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Maps spec rows (spec/target-spec.md, T-01..T-30) to committed records. A row with no entry reads not-yet-measured. Every (record, row) pair signoff/block-manifest.json cites under evidence.\"5.analog\" and evidence.\"6.analog\" must be graded here by an entry citing a file in that same record directory; the generator fails when one is missing, so the manifest is the list of which rows have a record and this file is how each is graded. A row may carry extra entries the manifest does not cite. Grade a row from every record cited for it: one failing record fails the row. Prefer the record's own per-row digest (rows.json, yield.json) over the raw klt sim envelope when the record has one. An entry graded only on a `fail` count passes a row the record merely `reported` (no limits), so grade the record's own `verdict` alongside it. Never edit a spec target to make a row pass. Fields: record (repo path), field (dotted path; [name=X] picks a list item by its name), op (>= <= ==), value or value_field (sibling field of the same record), corner, scope (CH, TC, BOTH or n/a), basis (what the number is), note.",
+  "note": "Maps spec rows (spec/target-spec.md, T-01..T-30) to committed records. Entries marked supporting_only are displayed without grading the row. A row with no grading entry reads not-yet-measured. Every (record, row) pair signoff/block-manifest.json cites under evidence.\"5.analog\" and evidence.\"6.analog\" must be graded here by an entry citing a file in that same record directory; the generator fails when one is missing, so the manifest is the list of which rows have a record and this file is how each is graded. A row may carry extra entries the manifest does not cite. Grade a row from every record cited for it: one failing record fails the row. Prefer the record's own per-row digest (rows.json, yield.json) over the raw klt sim envelope when the record has one. An entry graded only on a `fail` count passes a row the record merely `reported` (no limits), so grade the record's own `verdict` alongside it. Never edit a spec target to make a row pass. Fields: record (repo path), field (dotted path; [name=X] picks a list item by its name), op (>= <= ==), value or value_field (sibling field of the same record), corner, scope (CH, TC, BOTH or n/a), basis (what the number is), note.",
   "rows": {
     "T-01": [
       {
@@ -590,6 +590,63 @@
         "scope": "BOTH",
         "basis": "simulated DC, tristate leakage at the pin with the weak pulls off, pad at VDDIO, margin to the 1 uA limit, A",
         "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
+      }
+    ],
+    "T-29": [
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=l1_round_trip_ddr].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, N = 20: PRBS-7 round trip with the datapath's loopback select on",
+        "note": "These RTL tests exercise the digital bypass inside aib_datapath. Neither test drives the electrical group enables (DR-0019).",
+        "supporting_only": true
+      },
+      {
+        "record": "signoff/attest/item5-digital/fv_datapath_n20.json",
+        "field": "tests[name=l1_ignores_rx_wire].status",
+        "op": "==",
+        "value": "passed",
+        "corner": "n/a (function)",
+        "scope": "TC",
+        "basis": "RTL simulation, N = 20: a decoy on rx_wire corrupts the round trip with the select off and not with it on",
+        "note": "These RTL tests exercise the digital bypass inside aib_datapath. Neither test drives the electrical group enables (DR-0019).",
+        "supporting_only": true
+      },
+      {
+        "record": "sim/channel-eye/records/20261113T105218Z-l1/rows.json",
+        "field": "rows.T-01.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL x the route's -20/nominal/+20 % R/C, 135 corners",
+        "scope": "TC",
+        "basis": "archived L1 simulation, failing T-01 edge-count checks out of 270",
+        "note": "Both data lanes recovered 64 edges per PRBS period. The bench held all transmitters enabled and did not compare received bits. The L1 route uses the declared R/C tolerance with zero inductance (DR-0009). Extracted R/C is pending (#182).",
+        "supporting_only": true
+      },
+      {
+        "record": "sim/channel-eye/records/20261113T105218Z-l1/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL x the route's -20/nominal/+20 % R/C, 135 corners",
+        "scope": "TC",
+        "basis": "archived L1 simulation, failing T-09 pin-excursion checks out of 2160",
+        "note": "Worst L1 pin excursion was 0.0053 × VOS with zero dwell above the limit. Both electrical records predate the pad resistor change (e47bb80) and data receiver replacement (4b73f7c).",
+        "supporting_only": true
+      },
+      {
+        "record": "sim/channel-eye/records/20261110T083756Z-tc/rows.json",
+        "field": "rows.T-09.fail",
+        "op": "==",
+        "value": 0,
+        "corner": "PVT-FULL, 45 corners",
+        "scope": "TC",
+        "basis": "archived L2 wire-bond simulation, failing T-09 pin-excursion checks",
+        "note": "L2 also predates the TX predriver change (89d803b) and assumes 2 nH per wire and 0.5 pF per pin. T-29 remains open until a current-cell test enables two groups in turn, checks the expected bits on each active electrical path, and verifies that the other group stays disabled (#446).",
+        "supporting_only": true
       }
     ]
   }

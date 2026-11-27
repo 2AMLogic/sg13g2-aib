@@ -22,8 +22,11 @@ PATH instead of fetching the pin); the CI `rtl` job installs the pinned klt with
 
 - `test_shift_redundancy.py`: T-05 `RTL` row, all 40 single-fault cases (20 positions x 2 channel directions) plus no-fault, with a TX bit-to-wire bijection check per position.
 - `tb_top.v`: bench top with fault injection (X, stuck-0, stuck-1) on the wires.
-- `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and L1
-  (L1 with a decoy on `rx_wire`), mode switch, and the TX/RX cycle-accounting tests.
+- `test_datapath.py`: T-02, T-27, T-29 `RTL` rows. PRBS-7 round trips in DDR, SDR and with
+  the datapath's `l1` loopback select on (with a decoy on `rx_wire`), mode switch, and the
+  TX/RX cycle-accounting tests. The `l1` path is the **digital** select only and is not the
+  L1 electrical path of `spec/test-configuration.md` (DR-0019). The electrical benches
+  in `sim/channel-eye/` hold TX enables high. Per-group checks remain open (#446).
 - `tb_datapath.v`: bench top; zero-delay wire, `rx_clk` = `clk` delayed a quarter cycle.
 
 ## `klt functional-verification` requests (`klt/`)

@@ -147,7 +147,7 @@ but declared gaps remain.
 
 Four of those gaps are **pending** — a measurement not yet made, which closes when the work is
 done; progress toward T1 is tracked in #3, not here. Those four are T-20, T-21, T-25 and T-29,
-tracked in #194, #195, #196 and #176; closing them is what lets the item read `met`.
+tracked in #194, #195, #196 and #446; closing them is what lets the item read `met`.
 **T-12 is covered, not a gap** ([DR-0029](../spec/decisions/0029-t12-conformance-leg.md),
 proposed; #384): the channel model is a declared input (DR-0005), so the row is cited from
 the conformance record `sim/channel-model/records/20261121T000100Z/report.json`, which grades
@@ -293,7 +293,7 @@ The citation is deliberate: it is a true `klt pex` report about this layout, and
 naming it leads a reader to the reports, where `no_evidence` would have hidden that the
 extraction exists. `spec_rows."7.analog"` declares all 18 rows as gaps with the reason — the
 14 rows `5.analog` grades plus its 4 carried-forward gaps, with the trackers the manifest
-declares: T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#176); T-12 stays
+declares: T-20 (#194), T-21 (#195), T-25 (#196), T-29 (#446); T-12 stays
 a declared gap here (DR-0029 keeps it: item 7 has no extracted T-12 measurement; the
 channel-R/C spread campaign that closed #193 and the T-05 campaign the closed #192
 recorded are complete). Today's grader does not

@@ -135,7 +135,7 @@
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
-          "content_hash": "sha256:61bd5b77ddf08093c8b8481fa7372e02a3ed8d16633e09084f275194213331e2"
+          "content_hash": "sha256:7dd6372488862f8aedd667e003cd598e12a78595d473a61478dbde6779b5efbd"
         }
       }
     },
@@ -162,11 +162,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:452ebd06d169ae29f889c0db44a9dbb6cd5556e655bb94f5e7fb6445c240bd9e"
+      "content_hash": "sha256:0a8bcda10c65fd9e38c11ed895fbca62975050eab9d640bace1823d634588e46"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:452ebd06d169ae29f889c0db44a9dbb6cd5556e655bb94f5e7fb6445c240bd9e"
+      "content_hash": "sha256:0a8bcda10c65fd9e38c11ed895fbca62975050eab9d640bace1823d634588e46"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",
@@ -267,7 +267,7 @@
       },
       {
         "id": "T-29",
-        "gap": "no loopback mux exists in design/, so L1/L2 cannot be exercised; also a TC row. Tracked in #176"
+        "gap": "current-cell TC evidence for independent group enables and the received bit sequence through L1 and L2 is pending (#446)"
       }
     ],
     "6.analog": [
@@ -363,7 +363,7 @@
       },
       {
         "id": "T-29",
-        "gap": "carried forward from 5.analog, not re-measured post-layout: no loopback mux exists in design/, so L1/L2 cannot be exercised; also a TC row. Tracked in #176"
+        "gap": "carried forward from 5.analog: per-group TC loopback verification is pending (#446), as is extraction of the L1 route (#182)"
       }
     ]
   },

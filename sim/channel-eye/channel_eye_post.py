@@ -85,7 +85,9 @@ def short_corner(cid):
     """
     cid, params = split_params(cid)
     parts = cid.split("/")
-    volts = sorted({p.split("=")[1] for p in parts[1].split("_") if "=" in p}) if len(parts) > 2 else []
+    if len(parts) <= 2:
+        return cid
+    volts = sorted({p.split("=")[1] for p in parts[1].split("_") if "=" in p})
     v = volts[0] if len(volts) == 1 else "mixed"
     short = f"{parts[0]}/{v}/{parts[-1]}" if len(parts) > 2 else cid
     return f"{short}/{params}" if params else short

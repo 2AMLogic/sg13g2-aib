@@ -1,0 +1,48 @@
+{
+  "record": "channel-eye",
+  "utc_stamp": "20261113T105218Z",
+  "kind": "simulated",
+  "family": "l1",
+  "claim_scope": "TC (L1 on-die loopback: declared RC route emulating CH-3MM-RC R and C within +-20 %, no route inductance per DR-0009; not extracted from layout)",
+  "pdk": {
+    "release_tag": "v0.3.0"
+  },
+  "klt_exit_code": 0,
+  "corners": 135,
+  "rows": {
+    "T-01": {
+      "verdict": "pass",
+      "pass": 270,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/params:kc_l1=0.8,kr_l1=0.8",
+        "measurement": "t01_dout_edges_a",
+        "value": 64.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-09": {
+      "verdict": "pass",
+      "pass": 2160,
+      "fail": 0,
+      "error": 0,
+      "binding": {
+        "corner": "mos_tt/mixed/-40C/params:kc_l1=0.8,kr_l1=0.8",
+        "measurement": "t09_dwell_over_a",
+        "value": 0.0,
+        "why": "smallest margin"
+      }
+    },
+    "T-26": {
+      "verdict": "reported",
+      "pass": 540,
+      "fail": 0,
+      "error": 0,
+      "binding": null
+    }
+  },
+  "batch_job_id": null,
+  "runner_klt_version": null,
+  "energy_label": "T-26 energy per bit is SIMULATED; no measurement exists"
+}
