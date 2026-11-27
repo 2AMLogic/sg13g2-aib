@@ -741,6 +741,22 @@
           "reason": null
         },
         {
+          "citation": "sim/mc/records/20261112T080126Z-t13/yield.json",
+          "rows": [
+            "T-13"
+          ],
+          "status": "unmet",
+          "reason": "check_failed"
+        },
+        {
+          "citation": "sim/mc/records/20261112T080126Z-t14/yield.json",
+          "rows": [
+            "T-14"
+          ],
+          "status": "unmet",
+          "reason": "check_failed"
+        },
+        {
           "citation": "sim/mc/records/20261123T093311Z-t15/yield.json",
           "rows": [
             "T-15"
@@ -767,22 +783,17 @@
       ],
       "detail": {
         "failed_citations": [
+          "sim/mc/records/20261112T080126Z-t13/yield.json",
+          "sim/mc/records/20261112T080126Z-t14/yield.json",
           "sim/mc/records/20261123T094302Z-t19/yield.json"
         ],
         "failed_rows": [
+          "T-13",
+          "T-14",
           "T-19"
         ],
         "uncovered_rows": [],
-        "declared_gaps": [
-          {
-            "id": "T-13",
-            "gap": "no campaign yet; tracked in #136"
-          },
-          {
-            "id": "T-14",
-            "gap": "no campaign yet; tracked in #136"
-          }
-        ],
+        "declared_gaps": [],
         "unratified_rows": [],
         "row_sources": {
           "T-10": "asserted",

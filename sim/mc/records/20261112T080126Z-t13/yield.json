@@ -1,0 +1,202 @@
+{
+  "samples": "/tmp/w136/samples_t13.json",
+  "limits": null,
+  "source": {
+    "kind": "sample-set",
+    "netlist": null,
+    "monte_carlo": null,
+    "provenance": {
+      "seed": 4413,
+      "draws_per_population": 20
+    },
+    "sample_count": 900
+  },
+  "schema_version": 1,
+  "confidence": 0.95,
+  "target_ci_halfwidth": 0.01,
+  "min_samples": 2,
+  "status": "fail",
+  "measurement_count": 1,
+  "measurements": [
+    {
+      "name": "t13_skew_ps",
+      "unit": "ps",
+      "n": 900,
+      "errored": 0,
+      "failed_unmeasurable": 0,
+      "censored": 0,
+      "inconclusive": 0,
+      "limits": {
+        "min": -40.0,
+        "max": 40.0,
+        "target_sigma": 7.0
+      },
+      "source_corners": [
+        "tt/vdd_atx=1.080_vdd_btx=1.080V/-40C",
+        "tt/vdd_atx=1.080_vdd_btx=1.080V/27C",
+        "tt/vdd_atx=1.080_vdd_btx=1.080V/125C",
+        "tt/vdd_atx=1.200_vdd_btx=1.200V/-40C",
+        "tt/vdd_atx=1.200_vdd_btx=1.200V/27C",
+        "tt/vdd_atx=1.200_vdd_btx=1.200V/125C",
+        "tt/vdd_atx=1.320_vdd_btx=1.320V/-40C",
+        "tt/vdd_atx=1.320_vdd_btx=1.320V/27C",
+        "tt/vdd_atx=1.320_vdd_btx=1.320V/125C",
+        "ss/vdd_atx=1.080_vdd_btx=1.080V/-40C",
+        "ss/vdd_atx=1.080_vdd_btx=1.080V/27C",
+        "ss/vdd_atx=1.080_vdd_btx=1.080V/125C",
+        "ss/vdd_atx=1.200_vdd_btx=1.200V/-40C",
+        "ss/vdd_atx=1.200_vdd_btx=1.200V/27C",
+        "ss/vdd_atx=1.200_vdd_btx=1.200V/125C",
+        "ss/vdd_atx=1.320_vdd_btx=1.320V/-40C",
+        "ss/vdd_atx=1.320_vdd_btx=1.320V/27C",
+        "ss/vdd_atx=1.320_vdd_btx=1.320V/125C",
+        "ff/vdd_atx=1.080_vdd_btx=1.080V/-40C",
+        "ff/vdd_atx=1.080_vdd_btx=1.080V/27C",
+        "ff/vdd_atx=1.080_vdd_btx=1.080V/125C",
+        "ff/vdd_atx=1.200_vdd_btx=1.200V/-40C",
+        "ff/vdd_atx=1.200_vdd_btx=1.200V/27C",
+        "ff/vdd_atx=1.200_vdd_btx=1.200V/125C",
+        "ff/vdd_atx=1.320_vdd_btx=1.320V/-40C",
+        "ff/vdd_atx=1.320_vdd_btx=1.320V/27C",
+        "ff/vdd_atx=1.320_vdd_btx=1.320V/125C",
+        "sf/vdd_atx=1.080_vdd_btx=1.080V/-40C",
+        "sf/vdd_atx=1.080_vdd_btx=1.080V/27C",
+        "sf/vdd_atx=1.080_vdd_btx=1.080V/125C",
+        "sf/vdd_atx=1.200_vdd_btx=1.200V/-40C",
+        "sf/vdd_atx=1.200_vdd_btx=1.200V/27C",
+        "sf/vdd_atx=1.200_vdd_btx=1.200V/125C",
+        "sf/vdd_atx=1.320_vdd_btx=1.320V/-40C",
+        "sf/vdd_atx=1.320_vdd_btx=1.320V/27C",
+        "sf/vdd_atx=1.320_vdd_btx=1.320V/125C",
+        "fs/vdd_atx=1.080_vdd_btx=1.080V/-40C",
+        "fs/vdd_atx=1.080_vdd_btx=1.080V/27C",
+        "fs/vdd_atx=1.080_vdd_btx=1.080V/125C",
+        "fs/vdd_atx=1.200_vdd_btx=1.200V/-40C",
+        "fs/vdd_atx=1.200_vdd_btx=1.200V/27C",
+        "fs/vdd_atx=1.200_vdd_btx=1.200V/125C",
+        "fs/vdd_atx=1.320_vdd_btx=1.320V/-40C",
+        "fs/vdd_atx=1.320_vdd_btx=1.320V/27C",
+        "fs/vdd_atx=1.320_vdd_btx=1.320V/125C"
+      ],
+      "distribution": {
+        "model": "normal",
+        "mean": 2.501383441108887,
+        "stddev": 6.171652786590603,
+        "min": -17.4814,
+        "max": 18.34618,
+        "median": 2.4724570000000003,
+        "skewness": -0.28441242157122343,
+        "excess_kurtosis": 0.08527967186246066,
+        "normality": {
+          "test": "anderson-darling",
+          "statistic": 0.9830982366439462,
+          "critical_value": 0.787,
+          "significance": 0.05,
+          "verdict": "rejected"
+        }
+      },
+      "yield": {
+        "empirical": {
+          "method": "clopper-pearson",
+          "estimate": 1.0,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.9959096334824296,
+            "high": 1.0
+          },
+          "n": 900
+        },
+        "normal": {
+          "method": "normal-delta",
+          "estimate": 0.9999999993808396,
+          "confidence": 0.95,
+          "confidence_interval": {
+            "low": 0.9999999982679135,
+            "high": 1.0
+          },
+          "n": 900
+        },
+        "variance_reduced": null
+      },
+      "capability": {
+        "cp": 2.160415336764116,
+        "cpk": 2.02531465803163,
+        "cpk_confidence_interval": {
+          "low": 1.9291999610544204,
+          "high": 2.1214293550088397
+        },
+        "sigma_to_spec": 6.07594397409489,
+        "sigma_to_spec_confidence_interval": {
+          "low": 5.787599883163261,
+          "high": 6.3642880650265194
+        },
+        "limiting_side": "upper"
+      },
+      "sample_size": {
+        "n": 900,
+        "observed_ci_halfwidth": 0.0020451832587852214,
+        "target_ci_halfwidth": 0.01,
+        "required_n": 183,
+        "required_n_for_target": null,
+        "verdict": "sufficient",
+        "method": "clopper-pearson-zero-failures",
+        "variance_reduced": null
+      },
+      "negative_control": {
+        "description": "lane pad loaded with extra 2 pF",
+        "n": 900,
+        "errored": 0,
+        "failed_unmeasurable": 0,
+        "censored": 0,
+        "yield": {
+          "empirical": {
+            "method": "clopper-pearson",
+            "estimate": 0.0,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.0,
+              "high": 0.004090366517570498
+            },
+            "n": 900
+          },
+          "normal": {
+            "method": "normal-delta",
+            "estimate": 9.979572069652272e-47,
+            "confidence": 0.95,
+            "confidence_interval": {
+              "low": 0.0,
+              "high": 1.0525752758889668e-45
+            },
+            "n": 900
+          },
+          "variance_reduced": null
+        },
+        "nominal_empirical_estimate": 1.0,
+        "degradation_detected": true,
+        "verdict": "detected"
+      },
+      "analytic_cross_check": null,
+      "sampling": {
+        "strategy": "plain_random",
+        "replicates": null,
+        "effective_sample_size": null
+      },
+      "sigma_target": {
+        "k": 7.0,
+        "sigma_to_spec": 6.07594397409489,
+        "lower_bound": 5.787599883163261,
+        "gate": "lower_bound",
+        "met": false
+      },
+      "status": "fail",
+      "warnings": [
+        "measurement 't13_skew_ps': the sample set is not consistent with a normal distribution (Anderson-Darling A2* = 0.9831 > 0.787); treat the parametric yield estimate and Cpk as indicative only and prefer the empirical estimate",
+        "measurement 't13_skew_ps': no sample fell outside the limits, so the empirical yield is bounded only from below -- \"at least 99.5910% at 95% confidence, N = 900\" is the honest statement, not \"100% yield\"",
+        "measurement 't13_skew_ps': samples were pooled across 45 originating corners; each corner is its own population, so the pooled estimate is a worst-case envelope rather than a distribution anyone sampled",
+        "measurement 't13_skew_ps': sigma_to_spec lower bound 5.7876 is below target_sigma 7"
+      ],
+      "spec_row": null
+    }
+  ],
+  "warnings": []
+}

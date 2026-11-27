@@ -591,6 +591,48 @@
         "basis": "simulated DC, tristate leakage at the pin with the weak pulls off, pad at VDDIO, margin to the 1 uA limit, A",
         "note": "Tristate-leakage leg, shared with T-07 (the record measures one quantity for both rows). The 1 uA threshold is Builder-chosen and not ratified (sim/dc-static/README.md, Assumptions). Margin is the record's own distance to the binding limit at the worst of the 45 corners; negative is a fail. Simulated, not measured; pre-layout, no PEX."
       }
+    ],
+    "T-13": [
+      {
+        "record": "sim/mc/records/20261112T080126Z-t13/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "CH",
+        "basis": "pre-layout TX pad simulation, klt yield verdict",
+        "note": "All 900 draws on the November 12 pad cell were within ±40 ps. The single-pair bench leaves TC on-die array skew unmeasured."
+      },
+      {
+        "record": "sim/mc/records/20261112T080126Z-t13/yield.json",
+        "field": "measurements[name=t13_skew_ps].sigma_target.lower_bound",
+        "op": ">=",
+        "value_field": "measurements[name=t13_skew_ps].sigma_target.k",
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "CH",
+        "basis": "95% lower confidence bound on sigma-to-spec (DR-0019)"
+      }
+    ],
+    "T-14": [
+      {
+        "record": "sim/mc/records/20261112T080126Z-t14/yield.json",
+        "field": "status",
+        "op": "==",
+        "value": "pass",
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "CH",
+        "basis": "pre-layout TX pad simulation, klt yield verdict",
+        "note": "All 900 draws on the November 12 pad cell were within ±20 ps. The single-pair bench leaves TC on-die array skew unmeasured."
+      },
+      {
+        "record": "sim/mc/records/20261112T080126Z-t14/yield.json",
+        "field": "measurements[name=t14_dev_from_half_ui_ps].sigma_target.lower_bound",
+        "op": ">=",
+        "value_field": "measurements[name=t14_dev_from_half_ui_ps].sigma_target.k",
+        "corner": "PVT-FULL, 45 corners (pooled)",
+        "scope": "CH",
+        "basis": "95% lower confidence bound on sigma-to-spec (DR-0019)"
+      }
     ]
   }
 }
