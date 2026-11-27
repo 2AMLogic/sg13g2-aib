@@ -131,7 +131,7 @@
       "not_applicable": {
         "spec": {
           "file": "signoff/item6/digital-spec.json",
-          "content_hash": "sha256:fb17a5292cd228e06173facb0dd773cda4405c451db259e3883e54874309d753"
+          "content_hash": "sha256:4237fa32907bfb556566fc4ee7ec3531b9bafbfd56009b9f55cd83bc240763d6"
         },
         "statement": {
           "file": "signoff/item6/digital-statement.json",
@@ -162,11 +162,11 @@
     },
     "8.analog": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:452ebd06d169ae29f889c0db44a9dbb6cd5556e655bb94f5e7fb6445c240bd9e"
+      "content_hash": "sha256:19726aa226717c374a9b2b3c0d18bc95c89394c7b208b3fb7c4b2a73dbe33a5f"
     },
     "8.digital": {
       "file": "signoff/attest/item8.json",
-      "content_hash": "sha256:452ebd06d169ae29f889c0db44a9dbb6cd5556e655bb94f5e7fb6445c240bd9e"
+      "content_hash": "sha256:19726aa226717c374a9b2b3c0d18bc95c89394c7b208b3fb7c4b2a73dbe33a5f"
     },
     "9.analog": {
       "file": "signoff/attest/item9-analog.json",

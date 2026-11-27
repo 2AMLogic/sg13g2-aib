@@ -58,7 +58,7 @@ are reported as mean, sigma and the tail used, not as a single corner value.
 | T-16 | Data-to-clock skew, RX input | ≤ 0.03 UI (30 ps at 1 Gb/s) | ≤ 0.06 UI | ≤ 0.03 UI | `SIM` over the channel model; `SIM-MC` | PVT-FULL | §2.1.3.3 Table 7 (tDCS 0.03 UI) | CH. **STAT** |
 | T-17 | Forwarded-clock duty-cycle distortion at TX output | ±3 % (DDR) | ±5 % | ±3 % | `SIM` | PVT-FULL incl. `mos_sf`, `mos_fs` | §2.1.6.5 Table 8 (tFDCD: DDR ±3 %, SDR ±10 %) | BOTH |
 | T-18 | Eye at the far-end RX input (width) | ≥ 0.40 UI valid window, ≥ ±90 mV eye height around VDDIO/2 | ≥ 0.30 UI | ≥ 0.40 UI | `SIM` (eye over PRBS-7 at the rate, channel model) | PVT-FULL | §4.1 Table 17 (tEW far end 0.40 UI; VEH ±90 mV). The AIB 1.2 near-end width (0.56 UI) and trace consumption (0.1 UI) are reported alongside | CH |
-| T-19 | Receiver capture window (setup + hold aperture), including mismatch | ≤ 0.15 UI (150 ps at 1 Gb/s) | ≤ 0.25 UI | ≤ 0.15 UI (75 ps at 2 Gb/s) | `SIM-MC` of the RX capture flop/latch plus input stage | PVT-FULL | not defined by AIB 1.2 (it defines the eye at the pin, not the capture aperture). Allocation in §Timing budget below; DR-0006 | BOTH. **STAT** |
+| T-19 | Receiver capture window (setup + hold aperture) **referred to the RX pin**, including mismatch | ≤ 0.15 UI (150 ps at 1 Gb/s) | ≤ 0.25 UI | ≤ 0.15 UI (75 ps at 2 Gb/s) | `SIM-MC` of the capture flop/latch with the data and clock input paths, **driven and reported at the RX pins** for both data polarities on both clock edges (DR-0021) | PVT-FULL | not defined by AIB 1.2 (it defines the eye at the pin, not the capture aperture). Allocation in §Timing budget below; DR-0006. **Reference node**: the RX pin (`rxa`, `rxc`/`rxcb`), the node T-16 and T-18 are graded at, so the input stage is inside the aperture and no node between the last pin-referred row and the capture flop is uncharged — DR-0021 | BOTH. **STAT** |
 | T-20 | Sampling-margin budget (the DDR capture window left after all uncertainty) | ≥ 0.10 UI (100 ps at 1 Gb/s) at every PVT-FULL corner | ≥ 0.05 UI | ≥ 0.10 UI | `ANALYSIS` fed by T-16, T-19, T-21, and the DLL interface (dll-interface.md); `SIM` end-to-end confirms | PVT-FULL | not defined by AIB 1.2 (derived; §Timing budget) | CH for the claim; TC value reported separately |
 | T-21 | Forwarded-clock alignment (RX sampling-clock placement) | step ≤ 1/8 UI (125 ps at 1 Gb/s, i.e. 16 steps per clock period); worst-case placement error (half a step plus phase-spacing error) ≤ 0.0625 UI; range ≥ one forwarded-clock period (2 ns at 1 Gb/s); lock ≤ 10 µs; DLL-added jitter ≤ 0.03 UI peak-to-peak | step ≤ 1/4 UI (8 steps per period); placement error ≤ 0.125 UI; jitter ≤ 0.05 UI p-p | step ≤ 1/16 UI | `SIM` of the interface contract (dll-interface.md); compared against the sibling | PVT-FULL | §2.1.6.7 (optional DLL phase selection), §3.2.3 (calibration, which an absent DLL shall still perform as if present); step, range, lock and jitter values are *not defined by AIB 1.2* (DR-0011) | BOTH |
 | T-22 | I/O cell pitch | 55 µm | 80 µm | 40 µm | `LAYOUT` (`klt` bounding box of the unit cell and its abutment) | n/a (geometric) | §1.3.4.1 Table 4 and §4.1 note: ≤ 55 µm bump pitch is the low-density class AIB 1.2 sizes its timing against. Floor from PDK-lay Pad.aR + Pad.bR = 38.4 µm; the PDK's own I/O cells are 80 µm wide (PDK-io LEF) | BOTH (the same cell is in both) |
@@ -76,12 +76,12 @@ are reported as mean, sigma and the tail used, not as a single corner value.
 Everything in UI of the 1 Gb/s target (1 UI = 1000 ps). The far-end valid eye is
 0.40 UI (AIB 1.2 §4.1 Table 17, tEW far end). The sampling clock has to land inside
 it, and everything below shares it. This is an *allocation proposal*: each line
-is a verified row, and the sum is what T-20 checks, not an independent claim.
+has a verification row, and T-20 checks the sum using the results.
 
 | Contribution | UI | ps at 1 Gb/s | Row |
 |---|---|---|---|
 | Far-end valid eye | 0.400 | 400 | T-18 (AIB 1.2) |
-| − receiver capture aperture | 0.150 | 150 | T-19 |
+| − receiver capture aperture, referred to the RX pin | 0.150 | 150 | T-19 (node: DR-0021) |
 | − data-to-clock skew at RX input | 0.030 | 30 | T-16 (AIB 1.2) |
 | − alignment placement error (half a step of 1/8 UI plus phase-spacing error, worst case) | 0.0625 | 62.5 | T-21 |
 | − forwarded-clock + DLL jitter, peak-to-peak (all contributors in the block's clock path) | 0.050 | 50 | T-21 |
@@ -95,6 +95,31 @@ the stretch must not drive the architecture (CLAUDE.md, DR-0002).
 
 The jitter allocation is peak-to-peak at 14 σ (≈ 1e-12 tail); 0.03 UI of it is
 the DLL's (dll-interface.md), i.e. about 2.1 ps rms at 1 Gb/s.
+
+T-18's eye, T-16's skew and T-19's capture aperture share the **RX pins** as
+their reference. For T-19, refer the flop's setup and hold back through the
+data and clock paths. One T-21 phase must satisfy both data polarities on both
+clock edges, so the pin aperture is the largest setup requirement plus the
+largest hold requirement across the four pairings. DR-0021 gives the bounds
+using separate rising and falling delays for each path.
+[DR-0021, decision 2](decisions/0021-t19-reference-node.md#2-one-sampling-phase-must-satisfy-both-data-polarities-and-both-clock-edges)
+
+**The adopted receiver fails the recorded D-pin test.** On the supply-referenced
+data receiver, the simulated November 23 run found a worst recorded D-pin
+aperture of **541.2365 ps**, with **151 of 900** mismatch draws over 150 ps.
+Its pin-referred result is open. The bench drives the flop clock directly,
+while the design uses inverter clock receivers. #190 carries the data
+output-stage revision and T-19 re-run.
+[Adopted T-19 record](../sim/mc/records/20261123T094302Z-t19/record.json)
+
+The earlier inverter receiver gave **99.52 ps** worst pin-referred at the
+bench's 100 ps slew, assuming matched data and clock delays and the same
+flop setup and hold for every pairing. Under those assumptions the
+four-pairing result reduces to `t_su + t_h + 2·|Δ_rx|` for the shared rise/fall
+delay difference. T-20's **0.1075 UI** is the allocated margin. Its evidence
+status is **not-yet-measured**.
+[Historical T-19 record](../sim/mc/records/20261112T082047Z-t19/record.json) ·
+[Characterization report](../measurements/characterization-report.md)
 
 ## What this spec does not cover
 
